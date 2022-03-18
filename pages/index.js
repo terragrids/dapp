@@ -1,18 +1,15 @@
 import Head from 'next/head'
+import { strings } from '../strings/en'
+import Content from './components/content'
+import Layout from './components/layout'
 
 export default function Home() {
   return (
-    <div className={'container'}>
+    <Layout>
       <Head>
-        <title>Terragrids DApp</title>
-        <link rel={'icon'} href={'/favicon.ico'} />
+        <title>{strings.siteTitle}</title>
       </Head>
-
-      <main>
-        <h1>
-          Welcome to the Terragrids dApp
-        </h1>
-      </main>
-    </div>
+      <Content />
+    </Layout>
   )
 }

@@ -1,0 +1,48 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: $z-index-navbar;
+    opacity: 0.9;
+    padding: 15px 0;
+    background-color: $color-black;
+
+    @media (max-width: $screen-medium) {
+        padding: 15px 20px;
+    }
+}
+
+.navContent {
+    padding: 0 40px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $color-alto;
+
+    @media (max-width: $screen-small) {
+        justify-content: center;
+    }
+}
+
+.logo {
+    width: 200px;
+    cursor: pointer;
+
+    @media (max-width: $screen-small) {
+        width: 150px;
+    }
+}
+
+.content {
+    position: relative;
+    padding-top: 100px;
+
+    @media (max-width: $screen-small) {
+        padding-top: 80px;
+    }
+}

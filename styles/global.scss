@@ -1,0 +1,34 @@
+@import 'colors.scss';
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Saira', sans-serif;
+    line-height: 1.6;
+    font-size: 18px;
+    background-color: $color-black;
+    color: $color-alto;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    color: $color-alto;
+    text-decoration: none;
+}
+
+@media (hover: hover) {
+    a:hover {
+        text-decoration: underline;
+    }
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
