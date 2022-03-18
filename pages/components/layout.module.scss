@@ -9,11 +9,7 @@
     z-index: $z-index-navbar;
     opacity: 0.9;
     padding: 15px 0;
-    background-color: $color-black;
-
-    @media (max-width: $screen-medium) {
-        padding: 15px 20px;
-    }
+    background-color: $color-mine-shaft;
 }
 
 .navContent {
@@ -25,7 +21,7 @@
     color: $color-alto;
 
     @media (max-width: $screen-small) {
-        justify-content: center;
+        padding: 0 20px;
     }
 }
 
