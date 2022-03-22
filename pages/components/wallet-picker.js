@@ -9,6 +9,18 @@ import AlgoSignerWallet from '../../public/images/algo-signer-wallet-logo.svg'
 
 export default function WalletPicker({ visible, onClose }) {
     const reach = useRef()
+    const myAlgoConnect = useRef()
+
+    async function connectMyAlgoWallet() {
+        setWallet({ MyAlgoConnect: myAlgoConnect.current })
+        await connectWallet()
+    }
+
+    function setWallet(wallet) {
+        reach.current.setWalletFallback(reach.current.walletFallback({
+            providerEnv: 'TestNet', ...wallet
+        }))
+    }
 
     async function connectWallet() {
         const acc = await reach.current.getDefaultAccount()
@@ -18,14 +30,13 @@ export default function WalletPicker({ visible, onClose }) {
 
     useEffect(() => {
         async function loadLibs() {
-            let [reachStdlib, myAlgoConnect] = await Promise.all([import('@reach-sh/stdlib'), import('@reach-sh/stdlib/ALGO_MyAlgoConnect')])
-
-            const MyAlgoConnect = myAlgoConnect.default
+            let [reachStdlib, myAlgoConnectLib] = await Promise.all([
+                import('@reach-sh/stdlib'),
+                import('@reach-sh/stdlib/ALGO_MyAlgoConnect')
+            ])
 
             reach.current = reachStdlib.loadStdlib({ ...process.env, 'REACH_CONNECTOR_MODE': process.env.NEXT_PUBLIC_REACH_CONNECTOR_MODE })
-            reach.current.setWalletFallback(reach.current.walletFallback({
-                providerEnv: 'TestNet', MyAlgoConnect
-            }))
+            myAlgoConnect.current = myAlgoConnectLib.default
         }
         loadLibs()
     }, [])
@@ -38,7 +49,7 @@ export default function WalletPicker({ visible, onClose }) {
             <div className={styles.container}>
                 <ul>
                     <li><PeraWallet /><div className={styles.text}>{strings.peraWallet}</div></li>
-                    <li onClick={connectWallet}><MyAlgoWallet /><div className={styles.text}>{strings.myAlgoWallet}</div></li>
+                    <li onClick={connectMyAlgoWallet}><MyAlgoWallet /><div className={styles.text}>{strings.myAlgoWallet}</div></li>
                     <li><AlgoSignerWallet /><div className={styles.text}>{strings.algoSigner}</div></li>
                 </ul>
             </div>
