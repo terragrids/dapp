@@ -1,0 +1,28 @@
+@import 'styles/dimens.scss';
+@import 'styles/colors.scss';
+
+.container {
+    width: 450px;
+
+    ul {
+        list-style: none;
+    }
+
+    li {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-radius: $button-border-radius;
+        cursor: pointer;
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: $color-brand;
+            }
+        }
+
+        .text {
+            margin-left: 15px;
+        }
+    }
+}

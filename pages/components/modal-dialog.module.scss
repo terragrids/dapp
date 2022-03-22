@@ -1,0 +1,44 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $color-black-60;
+    z-index: $z-index-modal;
+}
+
+.dialog {
+    position: relative;
+    display: block;
+    max-width: 75vw;
+    max-height: 85vh;
+    border-radius: $dialog-border-radius;
+    background-color: $color-ebony-clay;
+}
+
+.content {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.title {
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.close {
+    cursor: pointer;
+}

@@ -3,8 +3,9 @@ import styles from './layout.module.scss'
 import Logo from '../../public/images/logo+name.svg'
 import { strings } from '../../strings/en'
 import TopMenu from './top-menu'
+import PropTypes from 'prop-types'
 
-export default function Layout({ children }) {
+export default function Layout({ children, onConnectWalletClicked }) {
     return (
         <>
             <Head>
@@ -21,10 +22,15 @@ export default function Layout({ children }) {
             <header className={styles.navbar}>
                 <div className={styles.navContent}>
                     <Logo className={styles.logo} />
-                    <TopMenu />
+                    <TopMenu onConnectWalletClicked={onConnectWalletClicked} />
                 </div>
             </header>
             <main className={styles.content}>{children}</main>
         </>
     )
+}
+
+TopMenu.propTypes = {
+    children: PropTypes.node,
+    onConnectWalletClicked: PropTypes.func
 }
