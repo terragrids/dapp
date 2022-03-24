@@ -1,5 +1,6 @@
 @import 'styles/colors.scss';
 @import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .container {
     position: fixed;
@@ -21,10 +22,20 @@
     max-height: 85vh;
     border-radius: $dialog-border-radius;
     background-color: $color-ebony-clay;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    @media (max-width: $screen-small) {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
 }
 
 .content {
+    position: relative;
     padding: 20px;
+    height: 100%;
+    overflow: hidden;
 }
 
 .header {

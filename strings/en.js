@@ -5,5 +5,7 @@ export const strings = {
     connectWallet: 'Connect to a wallet',
     myAlgoWallet: 'My Algo Wallet',
     peraWallet: 'Pera Wallet',
-    algoSigner: 'AlgoSigner'
+    algoSigner: 'AlgoSigner',
+    errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
+    comingSoon: 'Coming soon'
 }

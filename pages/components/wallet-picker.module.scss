@@ -1,8 +1,18 @@
 @import 'styles/dimens.scss';
 @import 'styles/colors.scss';
+@import 'styles/screens.scss';
 
 .container {
-    width: 450px;
+    width: 400px;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
+
+    @media (max-width: $screen-small) {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
 
     ul {
         list-style: none;
@@ -21,8 +31,26 @@
             }
         }
 
+        svg {
+            flex: 0 0 auto;
+        }
+
         .text {
             margin-left: 15px;
         }
+    }
+
+    .disabled {
+        opacity: 0.6;
+    }
+
+    .loading {
+        padding-bottom: 20px;
+    }
+
+    .error {
+        padding-top: 20px;
+        font-size: 16px;
+        color: $color-downy;
     }
 }

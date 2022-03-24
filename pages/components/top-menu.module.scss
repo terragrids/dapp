@@ -14,6 +14,7 @@
         cursor: pointer;
         font-size: 14px;
         text-transform: uppercase;
+        color: $color-white;
         transition: opacity 0.2s;
 
         @media (hover: hover) {
