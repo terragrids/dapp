@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useContext } from 'react'
 import { strings } from '../../strings/en'
 import ModalDialog from './modal-dialog'
 import styles from './wallet-picker.module.scss'
@@ -7,12 +7,14 @@ import PeraWallet from '../../public/images/pera-wallet-logo.svg'
 import MyAlgoWallet from '../../public/images/myalgo-wallet-logo.svg'
 import AlgoSignerWallet from '../../public/images/algo-signer-wallet-logo.svg'
 import LoadingSpinner from './loading-spinner'
+import { UserContext } from '../context/user-context'
 
 export default function WalletPicker({ visible, onClose }) {
     const reach = useRef()
     const myAlgoConnect = useRef()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState()
+    const user = useContext(UserContext)
 
     async function connectMyAlgoWallet() {
         setWallet({ MyAlgoConnect: myAlgoConnect.current })
@@ -29,13 +31,23 @@ export default function WalletPicker({ visible, onClose }) {
     async function connectWallet() {
         let account
         try {
+            setLoading(true)
             account = await reach.current.getDefaultAccount()
+            const balance = await reach.current.balanceOf(account)
+
+            user.update({
+                authenticated: true,
+                walletAddress: account.networkAccount.addr,
+                walletBalance: reach.current.formatCurrency(balance, 4)
+            })
+
+            setLoading(false)
+            onClose()
         } catch (e) {
+            setLoading(false)
             setError(strings.errorConnectingWallet)
             return
         }
-        const balance = await reach.current.balanceOf(account)
-        reach.current.formatCurrency(balance, 4)
     }
 
     useEffect(() => {
