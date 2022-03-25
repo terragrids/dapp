@@ -1,4 +1,4 @@
-import { strings } from '../../strings/en'
+import { strings } from '../strings/en'
 import styles from './content.module.scss'
 
 export default function Content() {

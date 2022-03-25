@@ -1,8 +1,8 @@
-import { strings } from '../../strings/en'
+import { strings } from '../strings/en'
 import styles from './top-menu.module.scss'
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { UserContext } from '../context/user-context'
-import { useContext } from 'react'
 import { maskWalletAddress } from '../utils/string-utils'
 
 export default function TopMenu({ onConnectWalletClicked }) {

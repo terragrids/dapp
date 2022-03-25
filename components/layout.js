@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from './layout.module.scss'
-import Logo from '../../public/images/logo+name.svg'
-import { strings } from '../../strings/en'
+import Logo from '../public/images/logo+name.svg'
+import { strings } from '../strings/en'
 import TopMenu from './top-menu'
 import PropTypes from 'prop-types'
 
