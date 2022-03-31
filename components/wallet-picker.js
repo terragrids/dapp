@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { strings } from '../strings/en'
 import ModalDialog from './modal-dialog'
 import styles from './wallet-picker.module.scss'
@@ -7,24 +7,24 @@ import PeraWallet from '../public/images/pera-wallet-logo.svg'
 import MyAlgoWallet from '../public/images/myalgo-wallet-logo.svg'
 import AlgoSignerWallet from '../public/images/algo-signer-wallet-logo.svg'
 import LoadingSpinner from './loading-spinner'
+import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 
 export default function WalletPicker({ visible, onClose }) {
-    const reach = useRef()
-    const myAlgoConnect = useRef()
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState()
+    const reach = useContext(ReachContext)
     const user = useContext(UserContext)
 
     async function connectMyAlgoWallet() {
-        setWallet({ MyAlgoConnect: myAlgoConnect.current })
+        setWallet({ MyAlgoConnect: reach.myAlgoConnect })
         await connectWallet()
     }
 
     function setWallet(wallet) {
         setError()
-        reach.current.setWalletFallback(reach.current.walletFallback({
-            providerEnv: 'TestNet', ...wallet
+        reach.stdlib.setWalletFallback(reach.stdlib.walletFallback({
+            providerEnv: process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER, ...wallet
         }))
     }
 
@@ -32,13 +32,13 @@ export default function WalletPicker({ visible, onClose }) {
         let account
         try {
             setLoading(true)
-            account = await reach.current.getDefaultAccount()
-            const balance = await reach.current.balanceOf(account)
+            account = await reach.stdlib.getDefaultAccount()
+            const balance = await reach.stdlib.balanceOf(account)
 
             user.update({
                 authenticated: true,
                 walletAddress: account.networkAccount.addr,
-                walletBalance: reach.current.formatCurrency(balance, 4)
+                walletBalance: reach.stdlib.formatCurrency(balance, 4)
             })
 
             setLoading(false)
@@ -51,21 +51,10 @@ export default function WalletPicker({ visible, onClose }) {
     }
 
     useEffect(() => {
-        async function loadLibs() {
-            let [reachStdlib, myAlgoConnectLib] = await Promise.all([
-                import('@reach-sh/stdlib'),
-                import('@reach-sh/stdlib/ALGO_MyAlgoConnect')
-            ])
-            reach.current = reachStdlib.loadStdlib({ ...process.env, 'REACH_CONNECTOR_MODE': process.env.NEXT_PUBLIC_REACH_CONNECTOR_MODE })
-            myAlgoConnect.current = myAlgoConnectLib.default
-            setLoading(false)
-        }
-        loadLibs()
-    }, [])
-
-    useEffect(() => {
         if (visible) setError()
     }, [visible])
+
+    const showLoading = loading || reach.loading
 
     return (
         <ModalDialog
@@ -73,10 +62,10 @@ export default function WalletPicker({ visible, onClose }) {
             title={strings.connectWallet}
             onClose={onClose}>
             <div className={styles.container}>
-                {loading &&
+                {showLoading &&
                     <div className={styles.loading}><LoadingSpinner /></div>
                 }
-                {!loading &&
+                {!showLoading &&
                     <ul>
                         <li onClick={connectMyAlgoWallet}><MyAlgoWallet /><div className={styles.text}>{strings.myAlgoWallet}</div></li>
                         <li className={styles.disabled}><PeraWallet /><div className={styles.text}>{strings.peraWallet} - {strings.comingSoon}</div></li>

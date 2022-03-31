@@ -7,5 +7,6 @@ export const strings = {
     peraWallet: 'Pera Wallet',
     algoSigner: 'AlgoSigner',
     errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
-    comingSoon: 'Coming soon'
+    comingSoon: 'Coming soon',
+    deploy: 'Deploy'
 }

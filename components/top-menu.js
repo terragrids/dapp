@@ -5,13 +5,16 @@ import PropTypes from 'prop-types'
 import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
 
-export default function TopMenu({ onConnectWalletClicked }) {
+export default function TopMenu({ onConnectWalletClicked, onDeployClicked }) {
     const user = useContext(UserContext)
     return (
         <nav>
             <ul className={styles.top}>
                 {user.authenticated &&
-                    <li className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</li>
+                    <>
+                        <li onClick={onDeployClicked}>{strings.deploy}</li>
+                        <li className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</li>
+                    </>
                 }
                 {!user.authenticated &&
                     <li className={styles.brand} onClick={onConnectWalletClicked}>{strings.connectWallet}</li>
@@ -22,5 +25,6 @@ export default function TopMenu({ onConnectWalletClicked }) {
 }
 
 TopMenu.propTypes = {
-    onConnectWalletClicked: PropTypes.func
+    onConnectWalletClicked: PropTypes.func,
+    onDeployClicked: PropTypes.func
 }
