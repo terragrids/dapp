@@ -29,15 +29,13 @@ export default function WalletPicker({ visible, onClose }) {
     }
 
     async function connectWallet() {
-        let account
         try {
             setLoading(true)
-            account = await reach.stdlib.getDefaultAccount()
+            const account = await reach.stdlib.getDefaultAccount()
             const balance = await reach.stdlib.balanceOf(account)
 
             user.update({
-                authenticated: true,
-                walletAddress: account.networkAccount.addr,
+                walletAccount: account,
                 walletBalance: reach.stdlib.formatCurrency(balance, 4)
             })
 

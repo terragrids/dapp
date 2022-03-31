@@ -1,19 +1,23 @@
 import { useState, useCallback } from 'react'
 
 export function useUser() {
-    const update = useCallback(({ authenticated, walletAddress, walletBalance }) => {
+    const update = useCallback(({ walletAccount, walletBalance }) => {
         setUser(user => ({
             ...user,
-            authenticated,
-            walletAddress,
+            walletAccount,
             walletBalance
         }))
     }, [])
 
     const [user, setUser] = useState({
-        authenticated: false,
+        walletAccount: null,
+        walletBalance: 0,
         update: update
     })
 
-    return user
+    return {
+        ...user,
+        authenticated: user.walletAccount !== null,
+        walletAddress: user.walletAccount ? user.walletAccount.networkAccount.addr : null
+    }
 }
