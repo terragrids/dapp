@@ -8,5 +8,5 @@ export const strings = {
     algoSigner: 'AlgoSigner',
     errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     comingSoon: 'Coming soon',
-    deploy: 'Deploy'
+    create: 'Create'
 }
