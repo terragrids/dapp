@@ -12,7 +12,7 @@ export default function TopMenu({ onConnectWalletClicked, onCreateClicked }) {
             <ul className={styles.top}>
                 {user.authenticated &&
                     <>
-                        <li onClick={onCreateClicked}>{strings.create}</li>
+                        <li onClick={onCreateClicked}>{strings.play}</li>
                         <li className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</li>
                     </>
                 }

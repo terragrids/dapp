@@ -10,21 +10,46 @@ import { UserContext } from '../context/user-context'
 export default function Home() {
   const [walletPickerVisible, setWalletPickerVisible] = useState(false)
   const [contractState, setContractState] = useState({})
+  const [balance, setBalance] = useState({})
   const { backend, stdlib } = useContext(ReachContext)
   const { walletAccount } = useContext(UserContext)
 
   async function onCreateClicked() {
+    const fmt = (x) => stdlib.formatCurrency(x, 4)
+    const updateBalance = async (token) => {
+      const balance = fmt(await stdlib.balanceOf(walletAccount, token))
+      setBalance(b => ({ ...b, amount: balance }))
+    }
+
     const contract = walletAccount.contract(backend)
-    const id = stdlib.randomUInt()
+
     await contract.p.Creator({
-      getId: () => id
-    })
-
-    const ctcInfoStr = JSON.stringify(await ctc.getInfo(), null, 2)
-
-    setContractState({
-      nftId: id,
-      info: ctcInfoStr
+      showContract: async (contract) => {
+        setContractState({ info: JSON.stringify(contract, null, 2) })
+      },
+      getParams: () => ({
+        name: 'Terracell', symbol: 'TRCL',
+        url: 'https://terragrids.org',
+        metadata: 'A basic Terragrids token',
+        supply: stdlib.parseCurrency(10),
+        amt: stdlib.parseCurrency(1)
+      }),
+      showTokenAndOptIn: async (token) => {
+        const onChainPayload = await walletAccount.tokenMetadata(token)
+        setBalance(b => ({ ...b, symbol: onChainPayload.symbol.toString() }))
+        await updateBalance(token)
+        await walletAccount.tokenAccept(token)
+        await updateBalance(token)
+      },
+      didTransfer: async (token) => {
+        await updateBalance(token)
+      },
+      didPayback: async (token) => {
+        await updateBalance(token)
+      },
+      notifyContractClosure: () => {
+        setContractState({ info: null })
+      }
     })
   }
 
@@ -36,9 +61,7 @@ export default function Home() {
         <title>{strings.siteTitle}</title>
       </Head>
 
-      <Content
-        nftId={contractState.nftId}
-        contractInfo={contractState.info} />
+      <Content contractInfo={contractState.info} balance={balance} />
 
       <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />
     </Layout>

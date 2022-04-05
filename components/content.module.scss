@@ -1,3 +1,6 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+
 .container {
     position: relative;
     display: flex;
@@ -5,4 +8,21 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+}
+
+.note {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.code {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: $color-ebony-clay;
+    border-radius: $dialog-border-radius;
+}
+
+.balance {
+    margin: 10px 0;
+    padding: 10px;
 }
