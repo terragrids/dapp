@@ -1,0 +1,33 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - yum update -y
+        - amazon-linux-extras install docker
+        - wget https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)
+        - mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
+        - chmod -v +x /usr/local/bin/docker-compose
+        - make --version
+        - docker --version
+        - docker-compose --version
+        - useradd -p tmppass tmpuser
+        - usermod -a -G docker tmpuser
+        - chown tmpuser .
+        - chmod u+w .
+        - dockerd &
+        - su tmpuser -c "./reach compile"
+        - npm ci
+    build:
+      commands:
+        - echo "APP_ENV=$APP_ENV" >> .env
+        - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
+        - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
