@@ -10,6 +10,7 @@
 
     li {
         padding: 15px 20px;
+        margin-left: 10px;
         border-radius: $button-border-radius;
         cursor: pointer;
         font-size: 14px;
@@ -26,5 +27,9 @@
 
     .brand {
         background-color: $color-brand;
+    }
+
+    .default {
+        background-color: $color-abbey;
     }
 }

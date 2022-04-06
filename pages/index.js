@@ -1,11 +1,12 @@
 import Head from 'next/head'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect, useCallback } from 'react'
 import { strings } from '../strings/en'
 import Content from '../components/content'
 import Layout from '../components/layout'
 import WalletPicker from '../components/wallet-picker'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
+import { MenuEventContext } from '../context/menu-event-context'
 
 export default function Home() {
   const [walletPickerVisible, setWalletPickerVisible] = useState(false)
@@ -13,8 +14,9 @@ export default function Home() {
   const [balance, setBalance] = useState({})
   const { backend, stdlib } = useContext(ReachContext)
   const { walletAccount } = useContext(UserContext)
+  const { setConnectWalletAction, setMintAction, setPlayAction } = useContext(MenuEventContext)
 
-  async function onCreateClicked() {
+  const onPlay = useCallback(async () => {
     const fmt = (x) => stdlib.formatCurrency(x, 4)
     const updateBalance = async (token) => {
       const balance = fmt(await stdlib.balanceOf(walletAccount, token))
@@ -51,12 +53,25 @@ export default function Home() {
         setContractState({ info: null })
       }
     })
-  }
+  }, [backend, stdlib, walletAccount])
+
+  const onMint = useCallback(() => {
+  }, [])
+
+  useEffect(() => {
+    setConnectWalletAction(() => setWalletPickerVisible(true))
+  }, [setConnectWalletAction])
+
+  useEffect(() => {
+    setMintAction(onMint)
+  }, [setMintAction, onMint])
+
+  useEffect(() => {
+    setPlayAction(onPlay)
+  }, [setPlayAction, onPlay])
 
   return (
-    <Layout
-      onConnectWalletClicked={() => setWalletPickerVisible(true)}
-      onCreateClicked={onCreateClicked}>
+    <Layout>
       <Head>
         <title>{strings.siteTitle}</title>
       </Head>

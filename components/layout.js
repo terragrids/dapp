@@ -5,7 +5,7 @@ import { strings } from '../strings/en'
 import TopMenu from './top-menu'
 import PropTypes from 'prop-types'
 
-export default function Layout({ children, onConnectWalletClicked, onCreateClicked }) {
+export default function Layout({ children }) {
     return (
         <>
             <Head>
@@ -22,9 +22,7 @@ export default function Layout({ children, onConnectWalletClicked, onCreateClick
             <header className={styles.navbar}>
                 <div className={styles.navContent}>
                     <Logo className={styles.logo} />
-                    <TopMenu
-                        onConnectWalletClicked={onConnectWalletClicked}
-                        onCreateClicked={onCreateClicked} />
+                    <TopMenu />
                 </div>
             </header>
             <main className={styles.content}>{children}</main>
@@ -32,8 +30,6 @@ export default function Layout({ children, onConnectWalletClicked, onCreateClick
     )
 }
 
-TopMenu.propTypes = {
-    children: PropTypes.node,
-    onConnectWalletClicked: PropTypes.func,
-    onCreateClicked: PropTypes.func
+Layout.propTypes = {
+    children: PropTypes.node
 }
