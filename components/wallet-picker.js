@@ -32,13 +32,14 @@ export default function WalletPicker({ visible, onClose }) {
         try {
             setLoading(true)
 
-            const [account, provider] = await Promise.all([reach.stdlib.getDefaultAccount(), reach.stdlib.getProvider()])
-            const [balance, { assets }] = await Promise.all([reach.stdlib.balanceOf(account), provider.indexer.lookupAccountAssets(account.networkAccount.addr).do()])
+            const account = await reach.stdlib.getDefaultAccount()
+            const [balance, response] = await Promise.all([reach.stdlib.balanceOf(account), fetch(`/api/accounts/${account.networkAccount.addr}/trcl`)])
+            const { assets } = await response.json()
 
             user.update({
                 walletAccount: account,
                 walletBalance: reach.stdlib.formatCurrency(balance, 4),
-                terracells: assets.filter(asset => !asset.deleted && asset.amount > 0)
+                terracells: assets
             })
 
             setLoading(false)
