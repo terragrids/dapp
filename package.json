@@ -8,7 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@reach-sh/stdlib": "^0.1.9-rc.6",
+    "@reach-sh/stdlib": "^0.1.10-rc.0",
     "next": "latest",
     "prop-types": "^15.8.1",
     "react": "17.0.2",
