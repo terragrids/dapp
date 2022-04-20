@@ -9,6 +9,7 @@ import AlgoSignerWallet from '../public/images/algo-signer-wallet-logo.svg'
 import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
+import { endpoints } from '../pages/api/config'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)
@@ -33,8 +34,11 @@ export default function WalletPicker({ visible, onClose }) {
             setLoading(true)
 
             const account = await reach.stdlib.getDefaultAccount()
-            const [balance, response] = await Promise.all([reach.stdlib.balanceOf(account), fetch(`/api/accounts/${account.networkAccount.addr}/trcl`)])
-            const { assets } = await response.json()
+            const [balance, assetResponse] = await Promise.all([
+                reach.stdlib.balanceOf(account),
+                fetch(endpoints.accountTerracells(account.networkAccount.addr))
+            ])
+            const { assets } = await assetResponse.json()
 
             user.update({
                 walletAccount: account,

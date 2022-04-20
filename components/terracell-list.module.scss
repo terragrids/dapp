@@ -1,0 +1,29 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    padding: 20px;
+}
+
+.list {
+    list-style: none;
+
+    li {
+        padding: 15px 20px;
+        margin: 10px 0;
+        border-radius: $button-border-radius;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $color-white;
+        background-color: $color-brand;
+        transition: opacity 0.2s;
+
+        @media (hover: hover) {
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+    }
+}
