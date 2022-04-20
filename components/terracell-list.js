@@ -19,7 +19,7 @@ export default function TerracellList() {
             {terracells &&
                 <ul className={styles.list}>
                     {terracells.map(asset => (
-                        <li key={asset['asset-id']}>{asset.name}</li>
+                        <li key={asset.id}>{asset.name}</li>
                     ))}
                 </ul>
             }
