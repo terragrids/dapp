@@ -3,10 +3,12 @@ import { UserContext } from '../context/user-context'
 import usePrevious from '../hooks/use-previous'
 import { endpoints } from '../pages/api/config'
 import LoadingSpinner from './loading-spinner'
+import TerracellDialog from './terracell-dialog'
 import styles from './terracell-list.module.scss'
 
 export default function TerracellList() {
     const [terracells, setTerracells] = useState()
+    const [terracellDialogId, setTerracellDialogId] = useState()
     const user = useContext(UserContext)
 
     useEffect(() => {
@@ -30,16 +32,29 @@ export default function TerracellList() {
         }
     }, [user, terracells, prevUser])
 
+    function showTerracell(id) {
+        setTerracellDialogId(id)
+    }
+
     return (
         <div className={styles.container}>
             {!terracells && <LoadingSpinner />}
             {terracells &&
                 <ul className={styles.list}>
                     {terracells.map(asset => (
-                        <li key={asset.id} className={asset.owned ? styles.owned : null}>{asset.name}</li>
+                        <li
+                            key={asset.id}
+                            className={asset.owned ? styles.owned : null}
+                            onClick={() => showTerracell(asset.id)}>
+                            {asset.name}
+                        </li>
                     ))}
                 </ul>
             }
+            <TerracellDialog
+                id={terracellDialogId}
+                visible={!!terracellDialogId}
+                onClose={() => setTerracellDialogId()} />
         </div>
     )
 }

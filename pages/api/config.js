@@ -5,8 +5,10 @@ export const algorandIndexerBaseUrl = `https://algoindexer.${env}algoexplorerapi
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
+const terracell = id => `/api/terracells/${id}`
 
 export const endpoints = {
     accountTerracells,
-    terracells
+    terracells,
+    terracell
 }

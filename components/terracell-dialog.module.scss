@@ -1,0 +1,10 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    min-width: 400px;
+}
