@@ -17,7 +17,7 @@
         font-size: 14px;
         text-transform: uppercase;
         color: $color-white;
-        background-color: $color-brand;
+        background-color: $color-abbey;
         transition: opacity 0.2s;
 
         @media (hover: hover) {
@@ -25,5 +25,9 @@
                 opacity: 0.9;
             }
         }
+    }
+
+    .owned {
+        background-color: $color-brand;
     }
 }

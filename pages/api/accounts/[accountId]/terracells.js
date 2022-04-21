@@ -8,7 +8,13 @@ const handler = nc()
         const response = await fetch(`${randLabsIndexerBaseUrl}/accounts/${req.query.accountId}/assets`)
         const json = await response.json()
         res.send({
-            assets: json.assets.filter(asset => !asset.deleted && asset.amount > 0 && asset['unit-name'] === 'TRCL')
+            assets: json.assets
+                .filter(asset => !asset.deleted && asset.amount === 1 && asset['unit-name'] === 'TRCL')
+                .map(asset => ({
+                    id: asset['asset-id'],
+                    name: asset.name,
+                    symbol: asset['unit-name']
+                }))
         })
     })
 
