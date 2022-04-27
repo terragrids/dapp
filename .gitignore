@@ -11,10 +11,10 @@
 /out/
 
 # reach
-/.reach/
+**/.reach/
 
 # production
-/build
+**/build
 
 # misc
 .DS_Store

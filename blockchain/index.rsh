@@ -23,7 +23,10 @@ export const main = Reach.App(() => {
     A.publish(tok, price);
     commit();
 
-    A.pay([[1, tok]]);
+    const amount = 1;
+
+    A.pay([[amount, tok]]);
+    assert(balance(tok) == amount, "Balance of NFT is wrong");
     A.interact.log("The token is on the market");
 
     commit();
@@ -36,7 +39,7 @@ export const main = Reach.App(() => {
                 const isAdmin = this == A;
                 k(isAdmin);
                 require(isAdmin);
-                transfer(1, tok).to(this);
+                transfer(amount, tok).to(this);
                 commit();
                 exit();
             }))
@@ -48,7 +51,7 @@ export const main = Reach.App(() => {
         .timeout(false);
 
     transfer(price).to(A);
-    transfer(1, tok).to(this);
+    transfer(amount, tok).to(this);
 
     commit();
     exit();

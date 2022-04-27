@@ -16,7 +16,7 @@ frontend:
         - chown tmpuser .
         - chmod u+w .
         - dockerd &
-        - su tmpuser -c "./reach compile"
+        - su tmpuser -c "npm run reach-run"
         - npm ci
     build:
       commands:

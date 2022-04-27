@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import * as backend from '../build/index.main.mjs'
+import * as backend from '../blockchain/build/index.main.mjs'
 
 export function useReach() {
     const stdlib = useRef()

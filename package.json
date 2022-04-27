@@ -5,7 +5,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reach-compile": "./reach compile ./blockchain/index.rsh -o ./blockchain/build",
+    "reach-run": "./reach run blockchain",
+    "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
   },
   "dependencies": {
     "@reach-sh/stdlib": "^0.1.10-rc.0",
