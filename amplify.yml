@@ -15,6 +15,8 @@ frontend:
         - usermod -a -G docker tmpuser
         - chown tmpuser .
         - chmod u+w .
+        - chown tmpuser ./blockchain
+        - chmod u+w ./blockchain
         - dockerd &
         - su tmpuser -c "./reach run blockchain"
         - npm ci
