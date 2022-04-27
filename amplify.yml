@@ -11,6 +11,8 @@ frontend:
         - make --version
         - docker --version
         - docker-compose --version
+        - node -v
+        - npm -v
         - useradd -p tmppass tmpuser
         - usermod -a -G docker tmpuser
         - chown tmpuser .
