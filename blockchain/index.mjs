@@ -109,6 +109,9 @@ const test = async () => {
                 console.log(...args)
                 ready.notify()
             }),
+            onReady: (contract) => {
+                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+            },
             tok: gil.id,
             price: stdlib.parseCurrency(10)
         })
