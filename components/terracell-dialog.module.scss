@@ -12,5 +12,21 @@
 }
 
 .message {
-    padding: 0 10px 40px;
+    padding: 0 10px 30px;
+}
+
+.info {
+    padding: 5px 10px;
+    background-color: $color-abbey;
+    border-radius: $dialog-border-radius;
+    font-size: 14px;
+}
+
+.action {
+    width: 100%;
+    margin-top: 50px;
+
+    button {
+        width: 100%;
+    }
 }

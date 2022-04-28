@@ -11,5 +11,6 @@ export const strings = {
     mint: 'Mint',
     play: 'Play',
     mintingTerracell: 'Minting a new $TRCL token',
-    sell: 'Sell'
+    sell: 'Sell',
+    withdraw: 'Withdraw'
 }

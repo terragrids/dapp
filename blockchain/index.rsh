@@ -6,7 +6,7 @@ const Transaction = Tuple(Address, UInt, Token);
 export const main = Reach.App(() => {
     const A = Participant('Admin', {
         ...hasConsoleLogger,
-        showContract: Fun(true, Null),
+        onReady: Fun(true, Null),
         tok: Token,
         price: UInt
     });
@@ -29,7 +29,7 @@ export const main = Reach.App(() => {
     A.pay([[amount, tok]]);
     assert(balance(tok) == amount, "Balance of NFT is wrong");
 
-    A.interact.showContract(getContract());
+    A.interact.onReady(getContract());
     A.interact.log("The token is on the market");
 
     commit();
