@@ -27,7 +27,7 @@ export default function Home() {
 
     const contract = walletAccount.contract(backend)
 
-    await contract.p.Creator({
+    await contract.p.Admin({
       showContract: async (contract) => {
         setContractState({ info: JSON.stringify(contract, null, 2) })
       },

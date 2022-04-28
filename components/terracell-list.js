@@ -8,7 +8,7 @@ import styles from './terracell-list.module.scss'
 
 export default function TerracellList() {
     const [terracells, setTerracells] = useState()
-    const [terracellDialogId, setTerracellDialogId] = useState()
+    const [selectedTerracell, setSelectedTerracell] = useState({})
     const user = useContext(UserContext)
 
     useEffect(() => {
@@ -32,10 +32,6 @@ export default function TerracellList() {
         }
     }, [user, terracells, prevUser])
 
-    function showTerracell(id) {
-        setTerracellDialogId(id)
-    }
-
     return (
         <div className={styles.container}>
             {!terracells && <LoadingSpinner />}
@@ -45,16 +41,17 @@ export default function TerracellList() {
                         <li
                             key={asset.id}
                             className={asset.owned ? styles.owned : null}
-                            onClick={() => showTerracell(asset.id)}>
+                            onClick={() => setSelectedTerracell(asset)}>
                             {asset.name}
                         </li>
                     ))}
                 </ul>
             }
             <TerracellDialog
-                id={terracellDialogId}
-                visible={!!terracellDialogId}
-                onClose={() => setTerracellDialogId()} />
+                id={selectedTerracell.id}
+                canSell={selectedTerracell.owned}
+                visible={!!selectedTerracell.id}
+                onClose={() => setSelectedTerracell({})} />
         </div>
     )
 }
