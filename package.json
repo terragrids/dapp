@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "jest",
     "reach-compile": "./reach compile ./blockchain/index.rsh -o ./blockchain/build",
     "reach-run": "./reach run blockchain",
     "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
@@ -21,8 +22,12 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^6.2.1",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
     "eslint": "^8.13.0",
     "eslint-config-next": "^12.1.5",
+    "jest": "^28.0.3",
+    "jest-environment-jsdom": "^28.0.2",
     "sass": "^1.50.1"
   }
 }

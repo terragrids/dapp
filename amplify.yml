@@ -27,6 +27,7 @@ frontend:
         - echo "APP_ENV=$APP_ENV" >> .env
         - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
         - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
+        - npm run test
         - npm run build
   artifacts:
     baseDirectory: .next

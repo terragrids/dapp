@@ -1,6 +1,7 @@
 import { useContext, useRef, useCallback } from 'react'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
+import { formatAlgoContractInfo } from '../utils/string-utils'
 
 export function useNftSeller() {
     const { backend, stdlib } = useContext(ReachContext)
@@ -25,12 +26,7 @@ export function useNftSeller() {
             contract.current.a.Market.stop()
         }
         else if (appId && walletAccount) {
-            let hex = parseInt(appId).toString(16)
-            while (hex.length < 8) {
-                hex = '0' + hex
-            }
-            hex = `0x${hex}`
-            const contractInfo = { type: 'BigNumber', hex }
+            const contractInfo = formatAlgoContractInfo(appId)
             contract.current = walletAccount.contract(backend, contractInfo)
         }
     }, [backend, walletAccount])
