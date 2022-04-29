@@ -49,6 +49,7 @@ export default function TerracellList() {
             }
             <TerracellDialog
                 id={selectedTerracell.id}
+                isAuthenticated={!!(user && user.walletAccount)}
                 canSell={selectedTerracell.owned}
                 visible={!!selectedTerracell.id}
                 onClose={() => setSelectedTerracell({})} />

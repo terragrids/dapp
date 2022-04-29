@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNftSeller } from '../hooks/use-nft-seller'
 import { endpoints } from '../pages/api/config'
 import { strings } from '../strings/en'
@@ -7,9 +7,10 @@ import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 
-export default function TerracellDialog({ id, visible, onClose, canSell }) {
+export default function TerracellDialog({ id, visible, onClose, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
     const { sell, withdraw } = useNftSeller()
+    const appIdRef = useRef()
 
     useEffect(() => {
         async function fetchTerracell() {
@@ -23,10 +24,10 @@ export default function TerracellDialog({ id, visible, onClose, canSell }) {
         }
     }, [id])
 
-    function onReadyToSell(contractInfo) {
+    function onReadyToSell(contract) {
         setTerracell(trcl => ({
             ...trcl,
-            contractInfo
+            contractInfo: contract.info
         }))
     }
 
@@ -46,6 +47,14 @@ export default function TerracellDialog({ id, visible, onClose, canSell }) {
                             <div className={styles.action}>
                                 {!terracell.contractInfo && <Button label={strings.sell} onClick={() => sell(id, onReadyToSell)} />}
                                 {terracell.contractInfo && <Button label={strings.withdraw} onClick={withdraw} />}
+                            </div>
+                        }
+                        {isAuthenticated && !canSell &&
+                            <div className={styles.action}>
+                                {/* TODO Store application id in a separate database */}
+                                <label>Enter application id</label>
+                                <input ref={appIdRef} />
+                                <Button label={strings.withdraw} onClick={() => withdraw(appIdRef.current.value)} />
                             </div>
                         }
                     </>
