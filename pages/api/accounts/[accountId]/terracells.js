@@ -9,7 +9,7 @@ const handler = nc()
         const json = await response.json()
         res.send({
             assets: json.assets
-                .filter(asset => !asset.deleted && asset.amount === 1 && asset['unit-name'] === 'TRCL')
+                .filter(asset => !asset.deleted && asset.amount === 1 && asset.decimals === 0 && asset['unit-name'] === 'TRCL')
                 .map(asset => ({
                     id: asset['asset-id'],
                     name: asset.name,
