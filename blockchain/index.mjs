@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { loadStdlib } from '@reach-sh/stdlib'
+import assert from 'assert'
 import * as backend from './build/index.main.mjs'
 
 // Define utility functions
@@ -14,16 +15,12 @@ export class Signal {
 
 const thread = async (f) => await f()
 
-const fmt = (x) => stdlib.formatCurrency(x, 4)
+const algo = (x) => stdlib.formatCurrency(x, 4)
+const fmt = (x) => `${algo(x)} ALGO`
+const fmtToken = (x, token) => `${x} ${token.sym}`
 
-const getTokenBalance = async (token, who) => {
-    const amt = await stdlib.balanceOf(who, token.id)
-    return `${amt} ${token.sym}`
-}
-
-const getBalance = async (who) => {
-    const amt = await stdlib.balanceOf(who)
-    return `${fmt(amt)} ALGO`
+const getBalances = async (who, token) => {
+    return await stdlib.balancesOf(who, [null, token.id])
 }
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -62,13 +59,21 @@ const gil = await stdlib.launchToken(accAdmin, 'gil', 'GIL', { supply: 1, decima
 await accAlice.tokenAccept(gil.id)
 await accBob.tokenAccept(gil.id)
 
-const logAllBalances = async () => {
-    console.log(`Admin has ${await getTokenBalance(gil, accAdmin)}`)
-    console.log(`Admin has ${await getBalance(accAdmin)}`)
-    console.log(`Alice has ${await getTokenBalance(gil, accAlice)}`)
-    console.log(`Alice has ${await getBalance(accAlice)}`)
-    console.log(`Bob has ${await getTokenBalance(gil, accBob)}`)
-    console.log(`Bob has ${await getBalance(accBob)}`)
+const getAndLogAllBalances = async () => {
+    const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
+    const [aliceAlgo, aliceGil] = await getBalances(accAlice, gil)
+    const [bobAlgo, bobGil] = await getBalances(accBob, gil)
+
+    console.log(`Admin has ${fmt(adminAlgo)}`)
+    console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+
+    console.log(`Alice has ${fmt(aliceAlgo)}`)
+    console.log(`Alice has ${fmtToken(aliceGil, gil)}`)
+
+    console.log(`Bob has ${fmt(bobAlgo)}`)
+    console.log(`Bob has ${fmtToken(bobGil, gil)}`)
+
+    return [algo(adminAlgo), adminGil, algo(aliceAlgo), aliceGil, algo(bobAlgo), bobGil]
 }
 
 const user = async (name, account, contract, ready) => {
@@ -77,8 +82,10 @@ const user = async (name, account, contract, ready) => {
         const ctc = account.contract(backend, contract.getInfo())
         const market = ctc.a.Market
 
-        console.log(`${name} has ${await getTokenBalance(gil, account)}`)
-        console.log(`${name} has ${await getBalance(account)}`)
+        const [algo1, gil1] = await getBalances(account, gil)
+
+        console.log(`${name} has ${fmt(algo1)}`)
+        console.log(`${name} has ${fmtToken(gil1, gil)}`)
 
         await ready.wait()
 
@@ -86,15 +93,17 @@ const user = async (name, account, contract, ready) => {
 
         await buyToken(name, () => market.buy())
 
-        console.log(`${name} has ${await getTokenBalance(gil, account)}`)
-        console.log(`${name} has ${await getBalance(account)}`)
+        const [algo2, gil2] = await getBalances(account, gil)
+
+        console.log(`${name} has ${fmt(algo2)}`)
+        console.log(`${name} has ${fmtToken(gil2, gil)}`)
     }
 }
 
 const test = async () => {
     const ready = new Signal()
 
-    await logAllBalances()
+    await getAndLogAllBalances()
 
     console.log('Deploying the contract...')
 
@@ -109,8 +118,12 @@ const test = async () => {
                 console.log(...args)
                 ready.notify()
             }),
-            onReady: (contract) => {
+            onReady: async (contract) => {
                 console.log(`Contract deployed ${JSON.stringify(contract)}`)
+                const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
+                assert(adminGil == 0)
+                console.log(`Admin has ${fmt(adminAlgo)}`)
+                console.log(`Admin has ${fmtToken(adminGil, gil)}`)
             },
             tok: gil.id,
             price: stdlib.parseCurrency(10)
@@ -118,7 +131,12 @@ const test = async () => {
     ])
 
     console.log('Token sold.')
-    await logAllBalances()
+    const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances()
+
+    assert(adminGil == 0)
+    assert(parseFloat(adminAlgo) > 100)
+    assert((aliceGil == 1 && bobGil == 0) || (aliceGil == 0 && bobGil == 1))
+    assert((parseFloat(aliceAlgo) < 90 && parseFloat(bobAlgo) > 90) || (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90))
 }
 
 await test()
