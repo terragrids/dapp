@@ -13,6 +13,7 @@ export const main = Reach.App(() => {
 
     const M = API('Market', {
         buy: Fun([], Transaction),
+        getToken: Fun([], Token),
         stop: Fun([], Bool)
     });
 
@@ -32,30 +33,36 @@ export const main = Reach.App(() => {
     A.interact.onReady(getContract());
     A.interact.log("The token is on the market");
 
+    const [done, buyer, paid] =
+        parallelReduce([false, A, 0])
+            .invariant(balance() == paid && balance(tok) == 1)
+            .while(!done)
+            .api(M.stop,
+                (() => { assume(this == A); }),
+                (() => 0),
+                (k => {
+                    const isAdmin = this == A;
+                    k(isAdmin);
+                    return [true, buyer, paid]
+                }))
+            .api(M.getToken,
+                (k => {
+                    k(tok);
+                    return [false, buyer, paid]
+                }))
+            .api(M.buy,
+                () => price,
+                (k => {
+                    k([this, price, tok]);
+                    return [true, this, price + paid];
+                }))
+            .timeout(false);
+
+    transfer(paid).to(A);
+    transfer(1, tok).to(buyer);
     commit();
 
-    fork()
-        .api(M.stop,
-            (() => { assume(this == A); }),
-            (() => 0),
-            (k => {
-                const isAdmin = this == A;
-                k(isAdmin);
-                require(isAdmin);
-                transfer(amount, tok).to(this);
-                commit();
-                exit();
-            }))
-        .api(M.buy,
-            () => price,
-            (k => {
-                k([this, price, tok]);
-            }))
-        .timeout(false);
+    A.interact.log("The market is closing down...");
 
-    transfer(price).to(A);
-    transfer(amount, tok).to(this);
-
-    commit();
     exit();
 });

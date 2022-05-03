@@ -25,16 +25,16 @@ const getBalances = async (who, token) => {
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const buyToken = async (name, f) => {
+const callAPI = async (name, f, successMsg, failureMsg) => {
     console.log(`${name} is calling the API`)
     await timeout(10 * Math.random())
     let result
     try {
         result = await f()
-        console.log(`${name} managed to buy the token`)
+        console.log(successMsg)
     }
     catch (e) {
-        console.log(`${name} failed to buy the token, because it is not on the market anymore`)
+        console.log(failureMsg)
     }
     return result
 }
@@ -91,7 +91,21 @@ const user = async (name, account, contract, ready) => {
 
         console.log(`${name} is trying to buy a token...`)
 
-        await buyToken(name, () => market.buy())
+        const token = await callAPI(
+            name,
+            () => market.getToken(),
+            `${name} managed to fetch information about the token`,
+            `${name} failed to fetch information about the token, because it is not on the market anymore`
+        )
+
+        if (token) console.log(token)
+
+        await callAPI(
+            name,
+            () => market.buy(),
+            `${name} managed to buy the token`,
+            `${name} failed to buy the token, because it is not on the market anymore`
+        )
 
         const [algo2, gil2] = await getBalances(account, gil)
 
