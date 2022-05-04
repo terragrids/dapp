@@ -9,7 +9,7 @@ import AlgoSignerWallet from '../public/images/algo-signer-wallet-logo.svg'
 import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
-import { endpoints } from '../pages/api/config'
+import { endpoints } from '../utils/api-config'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)

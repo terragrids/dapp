@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../context/user-context'
 import usePrevious from '../hooks/use-previous'
-import { endpoints } from '../pages/api/config'
+import { endpoints } from '../utils/api-config'
 import LoadingSpinner from './loading-spinner'
 import TerracellDialog from './terracell-dialog'
 import styles from './terracell-list.module.scss'

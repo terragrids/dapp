@@ -1,6 +1,6 @@
 import nc from 'next-connect'
 import cors from 'cors'
-import { randLabsIndexerBaseUrl } from '../config'
+import { randLabsIndexerBaseUrl } from '../../../utils/api-config'
 
 const handler = nc()
     .use(cors())

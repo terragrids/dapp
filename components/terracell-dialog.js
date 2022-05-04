@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNftSeller } from '../hooks/use-nft-seller'
-import { endpoints } from '../pages/api/config'
+import { endpoints } from '../utils/api-config'
 import { strings } from '../strings/en'
 import Button from './button'
 import LoadingSpinner from './loading-spinner'
