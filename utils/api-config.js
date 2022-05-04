@@ -12,3 +12,8 @@ export const endpoints = {
     terracells,
     terracell
 }
+
+export function setMethodNotAllowedResponse(res, allowedList) {
+    res.setHeader('Allow', allowedList)
+    res.status(405).end()
+}
