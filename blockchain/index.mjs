@@ -3,6 +3,12 @@ import { loadStdlib } from '@reach-sh/stdlib'
 import assert from 'assert'
 import * as backend from './build/index.main.mjs'
 
+// Load Reach stdlib
+const stdlib = loadStdlib()
+if (stdlib.connector !== 'ALGO') {
+    throw Error('stdlib.connector must be ALGO')
+}
+
 // Define utility functions
 export class Signal {
     constructor() {
@@ -14,6 +20,12 @@ export class Signal {
 };
 
 const thread = async (f) => await f()
+const threadWithDelay = async (f, ms) => await new Promise((resolve) => {
+    setTimeout(async () => {
+        // const result = await f()
+        resolve(await f())
+    }, ms)
+})
 
 const algo = (x) => stdlib.formatCurrency(x, 4)
 const fmt = (x) => `${algo(x)} ALGO`
@@ -39,27 +51,25 @@ const callAPI = async (name, f, successMsg, failureMsg) => {
     return result
 }
 
-// Load Reach stdlib
-const stdlib = loadStdlib()
-if (stdlib.connector !== 'ALGO') {
-    throw Error('stdlib.connector must be ALGO')
+const setup = async () => {
+    const startingBalance = stdlib.parseCurrency(100)
+
+    // Create test accounts
+    const accAdmin = await stdlib.newTestAccount(startingBalance)
+    const accAlice = await stdlib.newTestAccount(startingBalance)
+    const accBob = await stdlib.newTestAccount(startingBalance)
+
+    // Launch token
+    const gil = await stdlib.launchToken(accAdmin, 'gil', 'GIL', { supply: 1, decimals: 0 })
+
+    // Opt-in to accept the token on ALGO
+    await accAlice.tokenAccept(gil.id)
+    await accBob.tokenAccept(gil.id)
+
+    return [accAdmin, accAlice, accBob, gil]
 }
 
-const startingBalance = stdlib.parseCurrency(100)
-
-// Create test accounts
-const accAdmin = await stdlib.newTestAccount(startingBalance)
-const accAlice = await stdlib.newTestAccount(startingBalance)
-const accBob = await stdlib.newTestAccount(startingBalance)
-
-// Launch token
-const gil = await stdlib.launchToken(accAdmin, 'gil', 'GIL', { supply: 1, decimals: 0 })
-
-// Opt-in to accept the token on ALGO
-await accAlice.tokenAccept(gil.id)
-await accBob.tokenAccept(gil.id)
-
-const getAndLogAllBalances = async () => {
+const getAndLogAllBalances = async (accAdmin, accAlice, accBob, gil) => {
     const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
     const [aliceAlgo, aliceGil] = await getBalances(accAlice, gil)
     const [bobAlgo, bobGil] = await getBalances(accBob, gil)
@@ -76,7 +86,7 @@ const getAndLogAllBalances = async () => {
     return [algo(adminAlgo), adminGil, algo(aliceAlgo), aliceGil, algo(bobAlgo), bobGil]
 }
 
-const user = async (name, account, contract, ready) => {
+const userConnectAndBuy = async (name, account, contract, gil, ready) => {
     return async () => {
         console.log(`${name} is attaching to the contract...`)
         const ctc = account.contract(backend, contract.getInfo())
@@ -114,10 +124,37 @@ const user = async (name, account, contract, ready) => {
     }
 }
 
-const test = async () => {
+const userConnectAndStop = async (name, account, contract, gil, ready) => {
+    return async () => {
+        console.log(`${name} is attaching to the contract...`)
+        const ctc = account.contract(backend, contract.getInfo())
+        const market = ctc.a.Market
+
+        const [algo1, gil1] = await getBalances(account, gil)
+
+        console.log(`${name} has ${fmt(algo1)}`)
+        console.log(`${name} has ${fmtToken(gil1, gil)}`)
+
+        await ready.wait()
+
+        console.log(`${name} is trying to stop the contract...`)
+
+        await callAPI(
+            name,
+            () => market.stop(),
+            `${name} managed to stop the contract`,
+            `${name} failed to stop the contract`
+        )
+    }
+}
+
+const testSellAndBuy = async () => {
+    console.log('>> Test sell and buy')
+
+    const [accAdmin, accAlice, accBob, gil] = await setup()
     const ready = new Signal()
 
-    await getAndLogAllBalances()
+    await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
     console.log('Deploying the contract...')
 
@@ -125,8 +162,8 @@ const test = async () => {
     const ctcAdmin = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await user('Alice', accAlice, ctcAdmin, ready)),
-        thread(await user('Bob', accBob, ctcAdmin, ready)),
+        thread(await userConnectAndBuy('Alice', accAlice, ctcAdmin, gil, ready)),
+        thread(await userConnectAndBuy('Bob', accBob, ctcAdmin, gil, ready)),
         backend.Admin(ctcAdmin, {
             log: ((...args) => {
                 console.log(...args)
@@ -145,7 +182,7 @@ const test = async () => {
     ])
 
     console.log('Token sold.')
-    const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances()
+    const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
     assert(adminGil == 0)
     assert(parseFloat(adminAlgo) > 100)
@@ -153,4 +190,88 @@ const test = async () => {
     assert((parseFloat(aliceAlgo) < 90 && parseFloat(bobAlgo) > 90) || (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90))
 }
 
-await test()
+const testSellAndStop = async () => {
+    console.log('>> Test sell and stop')
+    const [accAdmin, accAlice, accBob, gil] = await setup()
+    const ready = new Signal()
+
+    await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
+
+    console.log('Deploying the contract...')
+
+    // Deploy the dapp
+    const ctcAdmin = accAdmin.contract(backend)
+
+    await Promise.all([
+        thread(await userConnectAndStop('Admin', accAdmin, ctcAdmin, gil, ready)),
+        backend.Admin(ctcAdmin, {
+            log: ((...args) => {
+                console.log(...args)
+                ready.notify()
+            }),
+            onReady: async (contract) => {
+                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+                const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
+                assert(adminGil == 0)
+                console.log(`Admin has ${fmt(adminAlgo)}`)
+                console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+            },
+            tok: gil.id,
+            price: stdlib.parseCurrency(10)
+        })
+    ])
+
+    console.log('Contract stopped.')
+    const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
+
+    assert(adminGil == 1)
+    assert(parseFloat(adminAlgo) > 99)
+    assert(aliceGil == 0 && bobGil == 0)
+    assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
+}
+
+const testSellAndNonAdminStopAndBuy = async () => {
+    console.log('>> Test sell and non-admin stop and buy')
+
+    const [accAdmin, accAlice, accBob, gil] = await setup()
+    const ready = new Signal()
+
+    await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
+
+    console.log('Deploying the contract...')
+
+    // Deploy the dapp
+    const ctcAdmin = accAdmin.contract(backend)
+
+    await Promise.all([
+        thread(await userConnectAndStop('Bob', accBob, ctcAdmin, gil, ready)),
+        threadWithDelay(await userConnectAndBuy('Alice', accAlice, ctcAdmin, gil, ready), 10),
+        backend.Admin(ctcAdmin, {
+            log: ((...args) => {
+                console.log(...args)
+                ready.notify()
+            }),
+            onReady: async (contract) => {
+                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+                const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
+                assert(adminGil == 0)
+                console.log(`Admin has ${fmt(adminAlgo)}`)
+                console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+            },
+            tok: gil.id,
+            price: stdlib.parseCurrency(10)
+        })
+    ])
+
+    console.log('Contract stopped.')
+    const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
+
+    assert(adminGil == 0)
+    assert(parseFloat(adminAlgo) > 100)
+    assert(aliceGil == 1 && bobGil == 0)
+    assert(parseFloat(aliceAlgo) < 99 && parseFloat(bobAlgo) > 99)
+}
+
+await testSellAndBuy()
+await testSellAndStop()
+await testSellAndNonAdminStopAndBuy()
