@@ -42,6 +42,7 @@ export const main = Reach.App(() => {
                 (() => 0),
                 (k => {
                     const isAdmin = this == A;
+                    require(isAdmin);
                     k(isAdmin);
                     return [true, buyer, paid]
                 }))
