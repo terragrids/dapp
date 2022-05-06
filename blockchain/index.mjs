@@ -19,13 +19,12 @@ export class Signal {
     notify() { this.r(true) }
 };
 
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 const thread = async (f) => await f()
-const threadWithDelay = async (f, ms) => await new Promise((resolve) => {
-    setTimeout(async () => {
-        // const result = await f()
-        resolve(await f())
-    }, ms)
-})
+const threadWithDelay = async (f, ms) => {
+    await timeout(ms)
+    await f()
+}
 
 const algo = (x) => stdlib.formatCurrency(x, 4)
 const fmt = (x) => `${algo(x)} ALGO`
@@ -34,8 +33,6 @@ const fmtToken = (x, token) => `${x} ${token.sym}`
 const getBalances = async (who, token) => {
     return await stdlib.balancesOf(who, [null, token.id])
 }
-
-const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const callAPI = async (name, f, successMsg, failureMsg) => {
     console.log(`${name} is calling the API`)
