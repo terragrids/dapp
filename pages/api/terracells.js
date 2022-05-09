@@ -1,9 +1,9 @@
-import { algorandIndexerBaseUrl, setMethodNotAllowedResponse } from '../../utils/api-config'
+import { algonodeIndexerBaseUrl, setMethodNotAllowedResponse } from '../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            const response = await fetch(`${algorandIndexerBaseUrl}/assets?unit=TRCL`)
+            const response = await fetch(`${algonodeIndexerBaseUrl}/assets?unit=TRCL`)
             const json = await response.json()
             res.send({
                 assets: json.assets

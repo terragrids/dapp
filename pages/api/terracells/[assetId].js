@@ -1,11 +1,11 @@
-import { randLabsIndexerBaseUrl, setMethodNotAllowedResponse } from '../../../utils/api-config'
+import { algonodeIndexerBaseUrl, setMethodNotAllowedResponse } from '../../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             const [assetResponse, balanceRespnse] = await Promise.all([
-                fetch(`${randLabsIndexerBaseUrl}/assets/${req.query.assetId}`),
-                fetch(`${randLabsIndexerBaseUrl}/assets/${req.query.assetId}/balances`)
+                fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}`),
+                fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}/balances`)
             ])
 
             const [{ asset }, { balances }] = await Promise.all([assetResponse.json(), balanceRespnse.json()])

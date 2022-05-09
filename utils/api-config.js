@@ -1,7 +1,8 @@
 
-const env = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
-export const randLabsIndexerBaseUrl = `https://indexer.${env}algoexplorerapi.io/v2`
-export const algorandIndexerBaseUrl = `https://algoindexer.${env}algoexplorerapi.io/v2`
+const randLabsEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
+const algonodeEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet' : 'mainnet'
+export const randLabsIndexerBaseUrl = `https://indexer.${randLabsEnv}algoexplorerapi.io/v2`
+export const algonodeIndexerBaseUrl = `https://${algonodeEnv}-idx.algonode.cloud/v2`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
