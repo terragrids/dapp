@@ -1,3 +1,5 @@
+import { appApproval } from '../../../../blockchain/build/app-approval.mjs'
+import ApplicationNotFoundError from '../../../../repository/error/application-not-found.error.js'
 import AssetNotFoundError from '../../../../repository/error/asset-not-found.error'
 import MissingParameterError from '../../../../repository/error/missing-parameter.error'
 import TokenRepository from '../../../../repository/token.repository'
@@ -15,15 +17,23 @@ export default async function handler(req, res) {
                 if (!req.body.assetPrice) throw new MissingParameterError('assetPrice')
                 if (!req.body.assetPriceUnit) throw new MissingParameterError('assetPriceUnit')
 
-                const response = await fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}`)
-                const { asset } = await response.json()
+                const [assetResponse, appResponse] = await Promise.all([
+                    fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}`),
+                    fetch(`${algonodeIndexerBaseUrl}/applications/${req.body.applicationId}`)
+                ])
+
+                const [{ asset }, { application }] = await Promise.all([assetResponse.json(), appResponse.json()])
 
                 if (!asset || asset.params['unit-name'] !== 'TRCL') {
                     throw new AssetNotFoundError()
                 }
 
+                if (!application || application.params['approval-program'] !== appApproval) {
+                    throw new ApplicationNotFoundError()
+                }
+
                 await new TokenRepository().putTokenContract({
-                    assetId: req.body.assetId,
+                    assetId: req.query.assetId,
                     applicationId: req.body.applicationId,
                     contractInfo: req.body.contractInfo,
                     sellerAddress: req.body.sellerAddress,

@@ -3,12 +3,12 @@ import { algonodeIndexerBaseUrl, setMethodNotAllowedResponse } from '../../../ut
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            const [assetResponse, balanceRespnse] = await Promise.all([
+            const [assetResponse, balanceResponse] = await Promise.all([
                 fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}`),
                 fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}/balances`)
             ])
 
-            const [{ asset }, { balances }] = await Promise.all([assetResponse.json(), balanceRespnse.json()])
+            const [{ asset }, { balances }] = await Promise.all([assetResponse.json(), balanceResponse.json()])
 
             if (!asset || asset.params['unit-name'] !== 'TRCL') {
                 res.status(404).json({ error: 'No TRCL found with this asset-id' })
