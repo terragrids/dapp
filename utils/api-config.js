@@ -18,7 +18,3 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.setHeader('Allow', allowedList)
     res.status(405).end()
 }
-
-export function setBadRequestResponseWithMissingParameter(res, parameter) {
-    res.status(400).end(`${parameter} must be specified`)
-}
