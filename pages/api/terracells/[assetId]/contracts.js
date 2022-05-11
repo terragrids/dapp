@@ -1,6 +1,7 @@
+import AssetNotFoundError from '../../../../repository/error/asset-not-found.error'
 import MissingParameterError from '../../../../repository/error/missing-parameter.error'
 import TokenRepository from '../../../../repository/token.repository'
-import { setMethodNotAllowedResponse } from '../../../../utils/api-config'
+import { algonodeIndexerBaseUrl, setMethodNotAllowedResponse } from '../../../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -13,6 +14,13 @@ export default async function handler(req, res) {
                 if (!req.body.sellerAddress) throw new MissingParameterError('sellerAddress')
                 if (!req.body.assetPrice) throw new MissingParameterError('assetPrice')
                 if (!req.body.assetPriceUnit) throw new MissingParameterError('assetPriceUnit')
+
+                const response = await fetch(`${algonodeIndexerBaseUrl}/assets/${req.query.assetId}`)
+                const { asset } = await response.json()
+
+                if (!asset || asset.params['unit-name'] !== 'TRCL') {
+                    throw new AssetNotFoundError()
+                }
 
                 await new TokenRepository().putTokenContract({
                     assetId: req.body.assetId,
