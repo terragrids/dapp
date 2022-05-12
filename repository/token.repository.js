@@ -14,4 +14,14 @@ export default class TokenRepository extends DynamoDbRepository {
             itemLogName: 'token contract'
         })
     }
+
+    async deleteTokenContract({ assetId, applicationId }) {
+        return await this.delete({
+            key: {
+                pk: { S: `asset|${assetId}` },
+                sk: { S: `application|${applicationId}` }
+            },
+            itemLogName: 'token contract'
+        })
+    }
 }

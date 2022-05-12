@@ -18,3 +18,12 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.setHeader('Allow', allowedList)
     res.status(405).end()
 }
+
+export async function processHttpRequest(res, run) {
+    try {
+        await run()
+    } catch (e) {
+        if (e.httpCode) res.status(e.httpCode).send(e.toJson())
+        else res.status(500).send()
+    }
+}
