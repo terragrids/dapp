@@ -1,8 +1,8 @@
 import { appApproval } from '../../../../../blockchain/build/app-approval.mjs'
-import ApplicationNotFoundError from '../../../../../repository/error/application-not-found.error'
-import ApplicationStillRunningError from '../../../../../repository/error/application-still-running.error.js'
-import AssetNotFoundError from '../../../../../repository/error/asset-not-found.error'
-import MissingParameterError from '../../../../../repository/error/missing-parameter.error'
+import ApplicationNotFoundError from '../../../../../errors/application-not-found.error'
+import ApplicationStillRunningError from '../../../../../errors/application-still-running.error.js'
+import AssetNotFoundError from '../../../../../errors/asset-not-found.error'
+import MissingParameterError from '../../../../../errors/missing-parameter.error'
 import TokenRepository from '../../../../../repository/token.repository'
 import { algonodeIndexerBaseUrl, processHttpRequest, setMethodNotAllowedResponse } from '../../../../../utils/api-config'
 

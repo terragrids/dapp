@@ -1,7 +1,7 @@
 import { ConditionalCheckFailedException, DeleteItemCommand, DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb'
-import AlreadyExistingError from './error/already-existing.error'
-import AssetContractNotFoundError from './error/asset-contract-not-found.error';
-import RepositoryError from './error/repository.error'
+import AlreadyExistingError from '../errors/already-existing.error'
+import AssetContractNotFoundError from '../errors/asset-contract-not-found.error'
+import RepositoryError from '../errors/repository.error'
 
 export default class DynamoDbRepository {
     client;
