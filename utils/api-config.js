@@ -19,7 +19,7 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.status(405).end()
 }
 
-export async function processHttpRequest(res, run) {
+export async function handleHttpRequest(res, run) {
     try {
         await run()
     } catch (e) {

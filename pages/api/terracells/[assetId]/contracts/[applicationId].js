@@ -4,12 +4,12 @@ import ApplicationStillRunningError from '../../../../../errors/application-stil
 import AssetNotFoundError from '../../../../../errors/asset-not-found.error'
 import MissingParameterError from '../../../../../errors/missing-parameter.error'
 import TokenRepository from '../../../../../repository/token.repository'
-import { algonodeIndexerBaseUrl, processHttpRequest, setMethodNotAllowedResponse } from '../../../../../utils/api-config'
+import { algonodeIndexerBaseUrl, handleHttpRequest, setMethodNotAllowedResponse } from '../../../../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
-            await processHttpRequest(res, async () => {
+            await handleHttpRequest(res, async () => {
                 if (!req.query.assetId) throw new MissingParameterError('assetId')
                 if (!req.query.applicationId) throw new MissingParameterError('applicationId')
                 if (!req.body) throw new MissingParameterError('Request body')
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
             break
 
         case 'DELETE':
-            await processHttpRequest(res, async () => {
+            await handleHttpRequest(res, async () => {
                 if (!req.query.assetId) throw new MissingParameterError('assetId')
                 if (!req.query.applicationId) throw new MissingParameterError('applicationId')
 
