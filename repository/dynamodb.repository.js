@@ -1,4 +1,4 @@
-import { ConditionalCheckFailedException, DeleteItemCommand, DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb'
+import { ConditionalCheckFailedException, DeleteItemCommand, DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb'
 import AlreadyExistingError from '../errors/already-existing.error'
 import AssetContractNotFoundError from '../errors/asset-contract-not-found.error'
 import RepositoryError from '../errors/repository.error'
@@ -15,14 +15,18 @@ export default class DynamoDbRepository {
         this.table = process.env.DYNAMO_DB_ENV === 'prod' ? 'terragrids' : 'terragrids-dev'
     }
 
-    async get({ key, projection, attributeNames, itemLogName = 'item' }) {
+    async query({ conditionExpression, attributeNames, attributeValues, pageSize = 1, nextPageKey, forward = true, itemLogName = 'item' }) {
         const params = {
             TableName: this.table,
-            Key: key,
-            ...projection && { ProjectionExpression: projection },
-            ...attributeNames && { ExpressionAttributeNames: attributeNames }
+            KeyConditionExpression: conditionExpression,
+            ExpressionAttributeNames: attributeNames,
+            ExpressionAttributeValues: attributeValues,
+            Limit: pageSize,
+            ExclusiveStartKey: nextPageKey ? JSON.parse(Buffer.from(nextPageKey, 'base64').toString('ascii')) : null,
+            ScanIndexForward: forward
         }
-        const command = new GetItemCommand(params)
+
+        const command = new QueryCommand(params)
 
         try {
             return await this.client.send(command)
