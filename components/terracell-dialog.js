@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import { useNftSeller } from '../hooks/use-nft-seller'
 import { endpoints } from '../utils/api-config'
 import { strings } from '../strings/en'
@@ -6,10 +6,12 @@ import Button from './button'
 import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
+import { UserContext } from '../context/user-context'
 
 export default function TerracellDialog({ id, visible, onClose, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
-    const { sell, withdraw } = useNftSeller()
+    const user = useContext(UserContext)
+    const { sell, withdraw, price, unit } = useNftSeller()
     const appIdRef = useRef()
 
     useEffect(() => {
@@ -24,11 +26,28 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
         }
     }, [id])
 
-    function onReadyToSell(contract) {
+    async function onReadyToSell(contract) {
         setTerracell(trcl => ({
             ...trcl,
+            id: contract.id,
             contractInfo: contract.info
         }))
+
+        await fetch(endpoints.terracellContract(terracell.id, contract.id), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                contractInfo: Buffer.from(contract.info).toString('base64'),
+                sellerAddress: user.walletAddress,
+                assetPrice: price,
+                assetPriceUnit: unit
+            })
+        })
+
+        // TODO handle response.status
     }
 
     return (

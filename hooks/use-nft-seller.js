@@ -7,6 +7,7 @@ export function useNftSeller() {
     const { backend, stdlib } = useContext(ReachContext)
     const { walletAccount } = useContext(UserContext)
     const contract = useRef()
+    const price = 10
 
     const sell = useCallback(async (tokenId, onReady) => {
         if (contract.current) return
@@ -14,10 +15,13 @@ export function useNftSeller() {
         await contract.current.p.Admin({
             log: (() => { }),
             onReady: async (contract) => {
-                onReady({ info: JSON.stringify(contract, null, 2) })
+                onReady({
+                    id: contract.toNumber(),
+                    info: JSON.stringify(contract)
+                })
             },
             tok: tokenId,
-            price: stdlib.parseCurrency(10)
+            price: stdlib.parseCurrency(price)
         })
     }, [backend, stdlib, walletAccount])
 
@@ -31,5 +35,5 @@ export function useNftSeller() {
         }
     }, [backend, walletAccount])
 
-    return { sell, withdraw }
+    return { sell, withdraw, price, unit: 'ALGO' }
 }
