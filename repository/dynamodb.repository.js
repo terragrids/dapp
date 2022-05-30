@@ -1,6 +1,7 @@
 import { ConditionalCheckFailedException, DeleteItemCommand, DynamoDBClient, GetItemCommand, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb'
 import AlreadyExistingError from '../errors/already-existing.error'
 import AssetContractNotFoundError from '../errors/asset-contract-not-found.error'
+import AssetNotFoundError from '../errors/asset-not-found.error';
 import RepositoryError from '../errors/repository.error'
 
 export default class DynamoDbRepository {
@@ -73,14 +74,14 @@ export default class DynamoDbRepository {
         const params = {
             TableName: this.table,
             Key: key,
-            ConditionExpression: 'attribute_exists(pk) AND attribute_exists(sk)'
+            ConditionExpression: 'attribute_exists(pk)'
         }
         const command = new DeleteItemCommand(params)
 
         try {
             return await this.client.send(command)
         } catch (e) {
-            if (e instanceof ConditionalCheckFailedException) throw new AssetContractNotFoundError()
+            if (e instanceof ConditionalCheckFailedException) throw new AssetNotFoundError()
             else throw new RepositoryError(e, `Unable to delete ${itemLogName}`)
         }
     }

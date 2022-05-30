@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types'
 import styles from './button.module.scss'
+import LoadingSpinner from './loading-spinner'
 
-export default function Button({ label, onClick }) {
+export default function Button({ label, loading, onClick }) {
     return (
         <button
             className={styles.this}
-            onClick={onClick}>
-            {label}
+            onClick={onClick}
+            disabled={loading}>
+            {loading && <LoadingSpinner />}
+            {!loading && label}
         </button>
     )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useNftSeller } from '../hooks/use-nft-seller'
 import { endpoints } from '../utils/api-config'
 import { strings } from '../strings/en'
@@ -10,9 +10,9 @@ import { UserContext } from '../context/user-context'
 
 export default function TerracellDialog({ id, visible, onClose, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
+    const [loading, setLoading] = useState(false)
     const user = useContext(UserContext)
     const { sell, withdraw, price, unit } = useNftSeller()
-    const appIdRef = useRef()
 
     useEffect(() => {
         async function fetchTerracell() {
@@ -21,10 +21,22 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
             setTerracell(asset)
         }
         if (id) {
+            setLoading()
             setTerracell()
             fetchTerracell()
         }
     }, [id])
+
+    async function sellTerracell() {
+        setLoading(true)
+        try {
+            await sell(id, onReadyToSell)
+        } catch (e) {
+            // TODO handle error
+            setLoading(false)
+            return
+        }
+    }
 
     async function onReadyToSell({ id, info }) {
         setTerracell(trcl => ({
@@ -52,6 +64,32 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
             })
         })
         // TODO handle response.status
+        setLoading(false)
+    }
+
+    async function withdrawTerracell() {
+        setLoading(true)
+
+        try {
+            await withdraw(terracell.contract.info)
+        } catch (e) {
+            // TODO handle error
+            setLoading(false)
+            return
+        }
+
+        const response = await fetch(endpoints.terracellContract(terracell.id, terracell.contract.id), {
+            method: 'DELETE',
+            referrerPolicy: 'no-referrer'
+        })
+
+        if (response.status === 200) {
+            setTerracell(trcl => ({ ...trcl, contract: null }))
+        } else {
+            // TODO handle response.status
+        }
+
+        setLoading(false)
     }
 
     return (
@@ -74,18 +112,14 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
                                 </div>
                             </div>
                         }
-                        {canSell &&
+                        {canSell && !terracell.contract &&
                             <div className={styles.action}>
-                                {!terracell.contractInfo && <Button label={strings.sell} onClick={() => sell(id, onReadyToSell)} />}
-                                {terracell.contractInfo && <Button label={strings.withdraw} onClick={withdraw} />}
+                                <Button loading={loading} label={strings.sell} onClick={sellTerracell} />
                             </div>
                         }
-                        {isAuthenticated &&
+                        {isAuthenticated && terracell.contract && terracell.contract.info && terracell.contract.sellerAddress === user.walletAddress &&
                             <div className={styles.action}>
-                                {/* TODO Store application id in a separate database */}
-                                <label>Enter application id</label>
-                                <input ref={appIdRef} />
-                                <Button label={strings.withdraw} onClick={() => withdraw(appIdRef.current.value)} />
+                                <Button loading={loading} label={strings.withdraw} onClick={withdrawTerracell} />
                             </div>
                         }
                     </>
