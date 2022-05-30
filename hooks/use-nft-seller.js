@@ -17,7 +17,7 @@ export function useNftSeller() {
             onReady: async (contract) => {
                 onReady({
                     id: contract.toNumber(),
-                    info: JSON.stringify(contract)
+                    info: Buffer.from(JSON.stringify(contract)).toString('base64')
                 })
             },
             tok: tokenId,
@@ -26,12 +26,10 @@ export function useNftSeller() {
     }, [backend, stdlib, walletAccount])
 
     const withdraw = useCallback(async (appId) => {
-        if (contract.current) {
-            contract.current.a.Market.stop()
-        }
-        else if (appId && walletAccount) {
+        if (appId && walletAccount) {
             const contractInfo = formatAlgoContractInfo(appId)
             contract.current = walletAccount.contract(backend, contractInfo)
+            contract.current.a.Market.stop()
         }
     }, [backend, walletAccount])
 

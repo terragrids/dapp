@@ -66,10 +66,7 @@ export default async function handler(req, res) {
                     throw new ApplicationStillRunningError()
                 }
 
-                await new TokenRepository().deleteTokenContract({
-                    assetId: req.query.assetId,
-                    applicationId: req.query.applicationId
-                })
+                await new TokenRepository().deleteTokenContract(req.query.assetId)
 
                 res.status(200).send()
             })

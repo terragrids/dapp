@@ -26,27 +26,31 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
         }
     }, [id])
 
-    async function onReadyToSell(contract) {
+    async function onReadyToSell({ id, info }) {
         setTerracell(trcl => ({
             ...trcl,
-            id: contract.id,
-            contractInfo: contract.info
+            contract: {
+                id,
+                info,
+                sellerAddress: user.walletAddress,
+                assetPrice: price,
+                assetPriceUnit: unit
+            }
         }))
 
-        await fetch(endpoints.terracellContract(terracell.id, contract.id), {
+        await fetch(endpoints.terracellContract(terracell.id, id), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
-                contractInfo: Buffer.from(contract.info).toString('base64'),
+                contractInfo: info,
                 sellerAddress: user.walletAddress,
                 assetPrice: price,
                 assetPriceUnit: unit
             })
         })
-
         // TODO handle response.status
     }
 
@@ -61,14 +65,22 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
                     <>
                         <div className={styles.message}>{terracell.name}</div>
                         <pre className={styles.info}>{`id: ${terracell.id}`}</pre>
-                        {terracell.contractInfo && <pre className={styles.info}>{terracell.contractInfo}</pre>}
+                        {terracell.contract &&
+                            <div className={styles.contract}>
+                                <header>{strings.terracellOnTheMarket}</header>
+                                <div className={styles.info}>
+                                    <pre>{strings.contractId}</pre>
+                                    <pre>{terracell.contract.id}</pre>
+                                </div>
+                            </div>
+                        }
                         {canSell &&
                             <div className={styles.action}>
                                 {!terracell.contractInfo && <Button label={strings.sell} onClick={() => sell(id, onReadyToSell)} />}
                                 {terracell.contractInfo && <Button label={strings.withdraw} onClick={withdraw} />}
                             </div>
                         }
-                        {isAuthenticated && !canSell &&
+                        {isAuthenticated &&
                             <div className={styles.action}>
                                 {/* TODO Store application id in a separate database */}
                                 <label>Enter application id</label>

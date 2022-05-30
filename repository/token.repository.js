@@ -2,14 +2,13 @@ import DynamoDbRepository from './dynamodb.repository'
 
 export default class TokenRepository extends DynamoDbRepository {
     pkPrefix = 'asset'
-    skPrefix = 'trade'
     itemName = 'token trade contract'
 
     async putTokenContract({ assetId, applicationId, contractInfo, sellerAddress, assetPrice, assetPriceUnit }) {
         return await this.put({
             item: {
                 pk: { S: `${this.pkPrefix}|${assetId}` },
-                sk: { S: `${this.skPrefix}|${applicationId}` },
+                applicationId: { S: applicationId },
                 contractInfo: { S: contractInfo },
                 sellerAddress: { S: sellerAddress },
                 assetPrice: { S: assetPrice },
@@ -20,27 +19,23 @@ export default class TokenRepository extends DynamoDbRepository {
     }
 
     async getTokenContract(assetId) {
-        const data = await this.query({
-            conditionExpression: 'pk = :pk and begins_with(sk, :sk)',
-            attributeValues: {
-                ':pk': { S: `${this.pkPrefix}|${assetId}` },
-                ':sk': { S: `${this.skPrefix}|` }
-            },
+        const data = await this.get({
+            key: { pk: { S: `${this.pkPrefix}|${assetId}` } },
             itemLogName: this.itemName
         })
 
-        return data.Items.length > 0 ? {
-            id: data.Items[0].sk.S.replace(`${this.skPrefix}|`, ''),
-            info: data.Items[0].contractInfo.S
+        return data.Item && data.Item.applicationId ? {
+            id: data.Item.applicationId.S,
+            info: data.Item.contractInfo.S,
+            sellerAddress: data.Item.sellerAddress.S,
+            assetPrice: data.Item.assetPrice.S,
+            assetPriceUnit: data.Item.assetPriceUnit.S
         } : null
     }
 
-    async deleteTokenContract({ assetId, applicationId }) {
+    async deleteTokenContract(assetId) {
         return await this.delete({
-            key: {
-                pk: { S: `${this.pkPrefix}|${assetId}` },
-                sk: { S: `${this.skPrefix}|${applicationId}` }
-            },
+            key: { pk: { S: `${this.pkPrefix}|${assetId}` } },
             itemLogName: this.itemName
         })
     }
