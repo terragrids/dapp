@@ -12,6 +12,8 @@ export const strings = {
     mintingTerracell: 'Minting a new $TRCL token',
     sell: 'Sell',
     withdraw: 'Withdraw',
+    buy: 'Buy',
     terracellOnTheMarket: 'This terracell is on the market',
-    contractId: 'Contract ID'
+    contractId: 'Contract ID',
+    transactionFailed: 'Your transaction failed or has been cancelled.'
 }

@@ -9,6 +9,7 @@
     align-items: center;
     padding: 20px;
     min-width: 400px;
+    max-width: 600px;
 }
 
 .message {
@@ -46,4 +47,9 @@
         padding: 10px;
         margin: 5px 0 10px 0;
     }
+}
+
+.error {
+    padding: 20px;
+    color: $color-red;
 }

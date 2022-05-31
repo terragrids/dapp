@@ -28,6 +28,17 @@ export function useNftSeller() {
         }
     }, [backend, stdlib, walletAccount])
 
+    const buy = useCallback(async (contractInfo) => {
+        if (contractInfo && walletAccount) {
+            const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64'))
+            contract.current = walletAccount.contract(backend, infoObject)
+            const token = await contract.current.a.Market.getToken()
+            await walletAccount.tokenAccept(token.toNumber())
+            await contract.current.a.Market.buy()
+            contract.current = null
+        }
+    }, [backend, walletAccount])
+
     const withdraw = useCallback(async (contractInfo) => {
         if (contractInfo && walletAccount) {
             const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64'))
@@ -37,5 +48,5 @@ export function useNftSeller() {
         }
     }, [backend, walletAccount])
 
-    return { sell, withdraw, price, unit: 'ALGO' }
+    return { sell, buy, withdraw, price, unit: 'ALGO' }
 }
