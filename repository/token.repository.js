@@ -2,7 +2,7 @@ import DynamoDbRepository from './dynamodb.repository'
 
 export default class TokenRepository extends DynamoDbRepository {
     pkPrefix = 'asset'
-    itemName = 'token trade contract'
+    itemName = 'token contract'
 
     async putTokenContract({ assetId, applicationId, contractInfo, sellerAddress, assetPrice, assetPriceUnit }) {
         return await this.put({

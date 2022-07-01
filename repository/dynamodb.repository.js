@@ -47,7 +47,7 @@ export default class DynamoDbRepository {
             return await this.client.send(command)
         } catch (e) {
             if (e instanceof ConditionalCheckFailedException) throw new AssetContractNotFoundError()
-            else throw new RepositoryError(e, `Unable to delete ${itemLogName}`)
+            else throw new RepositoryError(e, `Unable to get ${itemLogName}`)
         }
     }
 

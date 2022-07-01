@@ -3,6 +3,12 @@ const randLabsEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER ===
 const algonodeEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet' : 'mainnet'
 export const randLabsIndexerBaseUrl = `https://indexer.${randLabsEnv}algoexplorerapi.io/v2`
 export const algonodeIndexerBaseUrl = `https://${algonodeEnv}-idx.algonode.cloud/v2`
+export const terragridsApiBaseUrl = (
+    process.env.API_ENV === 'local' ?
+        'http://localhost:3003' :
+        process.env.API_ENV === 'dev' ? 'https://api-dev.terragrids.org' :
+            'https://api.terragrids.org'
+)
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
