@@ -1,8 +1,4 @@
 
-const randLabsEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
-const algonodeEnv = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet' : 'mainnet'
-export const randLabsIndexerBaseUrl = `https://indexer.${randLabsEnv}algoexplorerapi.io/v2`
-export const algonodeIndexerBaseUrl = `https://${algonodeEnv}-idx.algonode.cloud/v2`
 const terragridsApiBaseUrl = (
     process.env.API_ENV === 'local' ?
         'http://localhost:3003' :
@@ -27,18 +23,29 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.status(405).end()
 }
 
-export async function callTerragridsApi(res, endpoint) {
+export async function callTerragridsApi(res, method, endpoint, data) {
     await handleHttpRequest(res, async () => {
-        const response = await fetch(`${terragridsApiBaseUrl}/${endpoint}`)
-        if (response.status === 200) {
-            res.send(await response.json())
-        } else {
-            res.status(response.status).end()
+        let response
+        switch (method) {
+            case 'GET':
+                response = await fetch(`${terragridsApiBaseUrl}/${endpoint}`)
+                break
+            case 'POST':
+                response = await httpPost(`${terragridsApiBaseUrl}/${endpoint}`, data)
+                break
+            case 'DELETE':
+                response = await httpDelete(`${terragridsApiBaseUrl}/${endpoint}`)
+                break
+            default:
+                res.status(405).end()
+                return
         }
+
+        res.status(response.status).send(await response.json())
     })
 }
 
-export async function handleHttpRequest(res, run) {
+async function handleHttpRequest(res, run) {
     try {
         await run()
     } catch (e) {
@@ -46,4 +53,23 @@ export async function handleHttpRequest(res, run) {
         console.error(e)
         res.status(500).send()
     }
+}
+
+async function httpPost(url, data = {}) {
+    return await fetch(url, {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+    })
+}
+
+async function httpDelete(url) {
+    return await fetch(url, {
+        method: 'DELETE',
+        referrerPolicy: 'no-referrer'
+    })
 }
