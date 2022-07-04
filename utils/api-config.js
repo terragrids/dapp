@@ -41,7 +41,12 @@ export async function callTerragridsApi(res, method, endpoint, data) {
                 return
         }
 
-        res.status(response.status).send(await response.json())
+        const type = response.headers.get('content-type')
+        const length = response.headers.get('content-length')
+
+        res
+            .status(response.status)
+            .send(length > 0 ? type.includes('application/json') ? await response.json() : await response.text() : '')
     })
 }
 
