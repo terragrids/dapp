@@ -8,7 +8,7 @@ import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from '../context/user-context'
 
-export default function TerracellDialog({ id, visible, onClose, isAuthenticated, canSell }) {
+export default function TerracellDialog({ id, visible, onClose, onUpForSale, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState()
@@ -69,6 +69,7 @@ export default function TerracellDialog({ id, visible, onClose, isAuthenticated,
         })
         // TODO handle response.status
         setLoading(false)
+        onUpForSale(terracell.id)
     }
 
     async function withdrawTerracell() {

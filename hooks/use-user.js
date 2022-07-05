@@ -4,9 +4,9 @@ export function useUser() {
     const update = useCallback(({ walletAccount, walletBalance, terracells }) => {
         setUser(user => ({
             ...user,
-            walletAccount,
-            walletBalance,
-            terracells
+            ...walletAccount && { walletAccount },
+            ...walletBalance && { walletBalance },
+            ...terracells && { terracells }
         }))
     }, [])
 

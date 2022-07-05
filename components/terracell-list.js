@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useCallback } from 'react'
 import { UserContext } from '../context/user-context'
 import usePrevious from '../hooks/use-previous'
 import { endpoints } from '../utils/api-config'
@@ -11,14 +11,38 @@ export default function TerracellList() {
     const [selectedTerracell, setSelectedTerracell] = useState({})
     const user = useContext(UserContext)
 
-    useEffect(() => {
-        async function fetchTerracells() {
-            const terracells = await fetch(endpoints.terracells())
-            const { assets } = await terracells.json()
-            setTerracells(assets)
-        }
-        fetchTerracells()
+    const updateTerracells = useCallback(async () => {
+        const response = await fetch(endpoints.terracells())
+        const { assets } = await response.json()
+        setTerracells(assets)
     }, [])
+
+    const updateUserTerracells = useCallback(async (upForSaleId) => {
+        if (!user) return
+
+        user.update({
+            terracells: user.terracells.filter(t => t.id !== upForSaleId)
+        })
+
+        async function refreshUserTerracells() {
+            const response = await fetch(endpoints.accountTerracells(user.walletAddress))
+            const { assets } = await response.json()
+
+            if (assets.some(t => t.id === upForSaleId)) {
+                setTimeout(refreshUserTerracells, 1000)
+            } else {
+                user.update({
+                    terracells: assets
+                })
+            }
+        }
+
+        refreshUserTerracells()
+    }, [user])
+
+    useEffect(() => {
+        updateTerracells()
+    }, [updateTerracells])
 
     const prevUser = usePrevious(user)
 
@@ -52,6 +76,7 @@ export default function TerracellList() {
                 isAuthenticated={!!(user && user.walletAccount)}
                 canSell={selectedTerracell.owned}
                 visible={!!selectedTerracell.id}
+                onUpForSale={updateUserTerracells}
                 onClose={() => setSelectedTerracell({})} />
         </div>
     )
