@@ -8,7 +8,7 @@ import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from '../context/user-context'
 
-export default function TerracellDialog({ id, visible, onClose, onUpForSale, isAuthenticated, canSell }) {
+export default function TerracellDialog({ id, visible, onClose, onUpForSale, onWithdrawn, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState()
@@ -84,6 +84,11 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, isA
             return
         }
 
+        setTerracell(trcl => ({
+            ...trcl,
+            contract: null
+        }))
+
         const response = await fetch(endpoints.terracellContract(terracell.id, terracell.contract.id), {
             method: 'DELETE',
             referrerPolicy: 'no-referrer'
@@ -96,6 +101,7 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, isA
         }
 
         setLoading(false)
+        onWithdrawn(terracell.id)
     }
 
     async function buyTerracell() {

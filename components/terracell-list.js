@@ -17,28 +17,32 @@ export default function TerracellList() {
         setTerracells(assets)
     }, [])
 
-    const updateUserTerracells = useCallback(async (upForSaleId) => {
-        if (!user) return
+    const updateUserTerracells = useCallback(async (shouldKeepFetching) => {
+        const response = await fetch(endpoints.accountTerracells(user.walletAddress))
+        const { assets } = await response.json()
 
+        if (shouldKeepFetching(assets)) {
+            setTimeout(updateUserTerracells, 1000)
+        } else {
+            user.update({
+                terracells: assets
+            })
+        }
+    }, [user])
+
+    const updateUserTerracellsAfterSale = useCallback(async (upForSaleId) => {
+        if (!user) return
         user.update({
             terracells: user.terracells.filter(t => t.id !== upForSaleId)
         })
 
-        async function refreshUserTerracells() {
-            const response = await fetch(endpoints.accountTerracells(user.walletAddress))
-            const { assets } = await response.json()
+        updateUserTerracells(assets => assets.some(t => t.id === upForSaleId))
+    }, [updateUserTerracells, user])
 
-            if (assets.some(t => t.id === upForSaleId)) {
-                setTimeout(refreshUserTerracells, 1000)
-            } else {
-                user.update({
-                    terracells: assets
-                })
-            }
-        }
-
-        refreshUserTerracells()
-    }, [user])
+    const updateUserTerracellsAfterWithdrawal = useCallback(async (withdrawnId) => {
+        if (!user) return
+        updateUserTerracells(assets => assets.every(t => t.id !== withdrawnId))
+    }, [updateUserTerracells, user])
 
     useEffect(() => {
         updateTerracells()
@@ -76,7 +80,8 @@ export default function TerracellList() {
                 isAuthenticated={!!(user && user.walletAccount)}
                 canSell={selectedTerracell.owned}
                 visible={!!selectedTerracell.id}
-                onUpForSale={updateUserTerracells}
+                onUpForSale={updateUserTerracellsAfterSale}
+                onWithdrawn={updateUserTerracellsAfterWithdrawal}
                 onClose={() => setSelectedTerracell({})} />
         </div>
     )
