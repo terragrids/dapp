@@ -22,7 +22,7 @@ export default function TerracellList() {
         const { assets } = await response.json()
 
         if (shouldKeepFetching(assets)) {
-            setTimeout(updateUserTerracells, 1000)
+            setTimeout(updateUserTerracells, 1000, shouldKeepFetching)
         } else {
             user.update({
                 terracells: assets

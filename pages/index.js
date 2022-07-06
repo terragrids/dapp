@@ -16,6 +16,9 @@ export default function Home() {
   const { walletAccount } = useContext(UserContext)
   const { setConnectWalletAction, setMintAction } = useContext(MenuEventContext)
 
+  /**
+   * Mints an NFT on Algorand and pins assets to Pinata IPFS.
+   */
   const mint = useCallback(async () => {
     const now = new Date().getTime()
     const amount = 1
