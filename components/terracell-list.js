@@ -39,9 +39,9 @@ export default function TerracellList() {
         updateUserTerracells(assets => assets.some(t => t.id === upForSaleId))
     }, [updateUserTerracells, user])
 
-    const updateUserTerracellsAfterWithdrawal = useCallback(async (withdrawnId) => {
+    const updateUserTerracellsAfterPurchaseOrWithdrawal = useCallback(async (assetId) => {
         if (!user) return
-        updateUserTerracells(assets => assets.every(t => t.id !== withdrawnId))
+        updateUserTerracells(assets => assets.every(t => t.id !== assetId))
     }, [updateUserTerracells, user])
 
     useEffect(() => {
@@ -81,7 +81,8 @@ export default function TerracellList() {
                 canSell={selectedTerracell.owned}
                 visible={!!selectedTerracell.id}
                 onUpForSale={updateUserTerracellsAfterSale}
-                onWithdrawn={updateUserTerracellsAfterWithdrawal}
+                onWithdrawn={updateUserTerracellsAfterPurchaseOrWithdrawal}
+                onPurchased={updateUserTerracellsAfterPurchaseOrWithdrawal}
                 onClose={() => setSelectedTerracell({})} />
         </div>
     )

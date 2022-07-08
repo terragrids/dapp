@@ -8,7 +8,7 @@ import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from '../context/user-context'
 
-export default function TerracellDialog({ id, visible, onClose, onUpForSale, onWithdrawn, isAuthenticated, canSell }) {
+export default function TerracellDialog({ id, visible, onClose, onUpForSale, onPurchased, onWithdrawn, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState()
@@ -147,18 +147,29 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onW
             return
         }
 
-        const response = await fetch(endpoints.terracellContract(terracell.id, terracell.contract.id), {
-            method: 'DELETE',
-            referrerPolicy: 'no-referrer'
-        })
+        // TODO Move this logic to a backend service worker.
+        let retries = 30
+        async function deleteContract() {
+            const response = await fetch(endpoints.terracellContract(terracell.id, terracell.contract.id), {
+                method: 'DELETE',
+                referrerPolicy: 'no-referrer'
+            })
 
-        if (response.status === 200) {
-            setTerracell(trcl => ({ ...trcl, contract: null }))
-        } else {
-            // TODO handle response.status
+            if (response.status === 204) {
+                setTerracell(trcl => ({ ...trcl, contract: null }))
+                setLoading(false)
+                onPurchased(terracell.id)
+            } else if (retries > 0) {
+                retries--
+                setTimeout(deleteContract, 1000)
+            } else {
+                // If we end up here, we are in an inconsistent state where this terracell is owned by the seller,
+                // but the contract info is still stored and associated with the terracell in the offchain db.
+                setLoading(false)
+                setErrorMessage(strings.errorDeletingTerracellSaleContract)
+            }
         }
-
-        setLoading(false)
+        deleteContract()
     }
 
     return (
