@@ -1,0 +1,55 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-width: 400px;
+    max-width: 600px;
+}
+
+.message {
+    padding: 0 10px 30px;
+}
+
+.info {
+    padding: 5px 10px;
+    background-color: $color-abbey;
+    border-radius: $dialog-border-radius;
+    font-size: 14px;
+}
+
+.contract {
+    padding: 20px;
+
+    header{
+        margin: 20px 0;
+    }
+}
+
+.action {
+    width: 100%;
+    margin-top: 50px;
+
+    button {
+        width: 100%;
+    }
+
+    label {
+        display: block;
+    }
+
+    input {
+        padding: 10px;
+        margin: 5px 0 10px 0;
+    }
+}
+
+.error {
+    padding: 20px;
+    color: $color-red;
+}

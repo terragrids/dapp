@@ -2,19 +2,22 @@
 @import 'styles/screens.scss';
 @import 'styles/dimens.scss';
 
-.top {
-    display: flex;
-    align-items: center;
-    margin-left: 30px;
+.container {
+    padding: 20px;
+}
+
+.list {
     list-style: none;
 
     li {
         padding: 15px 20px;
+        margin: 10px 0;
         border-radius: $button-border-radius;
         cursor: pointer;
         font-size: 14px;
         text-transform: uppercase;
         color: $color-white;
+        background-color: $color-abbey;
         transition: opacity 0.2s;
 
         @media (hover: hover) {
@@ -24,7 +27,7 @@
         }
     }
 
-    .brand {
+    .owned {
         background-color: $color-brand;
     }
 }

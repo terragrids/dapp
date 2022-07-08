@@ -1,0 +1,35 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.top {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    list-style: none;
+
+    li {
+        padding: 15px 20px;
+        margin-left: 10px;
+        border-radius: $button-border-radius;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase;
+        color: $color-white;
+        transition: opacity 0.2s;
+
+        @media (hover: hover) {
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+    }
+
+    .brand {
+        background-color: $color-brand;
+    }
+
+    .default {
+        background-color: $color-abbey;
+    }
+}

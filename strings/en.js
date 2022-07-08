@@ -7,5 +7,15 @@ export const strings = {
     peraWallet: 'Pera Wallet',
     algoSigner: 'AlgoSigner',
     errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
-    comingSoon: 'Coming soon'
+    comingSoon: 'Coming soon',
+    mint: 'Mint',
+    mintingTerracell: 'Minting a new $TRCL token',
+    sell: 'Sell',
+    withdraw: 'Withdraw',
+    buy: 'Buy',
+    terracellOnTheMarket: 'This terracell is on the market',
+    contractId: 'Contract ID',
+    transactionFailed: 'Your transaction failed or has been cancelled.',
+    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.'
 }

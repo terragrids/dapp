@@ -25,5 +25,8 @@
         "children": "ignore"
       }
     ]
-  }
+  },
+  "ignorePatterns": [
+    "*.rsh"
+  ]
 }
