@@ -1,5 +1,5 @@
 
-const terragridsApiBaseUrl = (
+export const terragridsApiBaseUrl = (
     process.env.API_ENV === 'local' ?
         'http://localhost:3003' :
         process.env.API_ENV === 'dev' ? 'https://api-dev.terragrids.org' :
@@ -50,7 +50,7 @@ export async function callTerragridsApi(res, method, endpoint, data) {
     })
 }
 
-async function handleHttpRequest(res, run) {
+export async function handleHttpRequest(res, run) {
     try {
         await run()
     } catch (e) {
