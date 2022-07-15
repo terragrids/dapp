@@ -8,6 +8,8 @@ The current version allows an `Admin` participant to deploy the contract on Algo
 
 Since deleting a contract involves paying a small transaction fee by the buyer, the current implementation will need to be improved by allowing buyer to only buy the NFT, and admins to delete the contract afterwards (or the contract could terminate automatically after a specific time has passed since the NFT purchase).
 
+Make a copy of `.env.ref` in the root folder and rename it as `.env.local`.
+
 Build it with the following command:
 ```bash
 npm run reach-compile
