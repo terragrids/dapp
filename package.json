@@ -13,7 +13,6 @@
     "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.95.0",
     "@pinata/sdk": "^1.1.26",
     "@reach-sh/stdlib": "^0.1.11-rc.2",
     "next": "^12.1.6",
