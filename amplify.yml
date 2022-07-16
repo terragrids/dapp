@@ -28,8 +28,6 @@ frontend:
       commands:
         - echo "APP_ENV=$APP_ENV" >> .env
         - echo "API_ENV=$API_ENV" >> .env
-        - echo "PINATA_IPFS_API_KEY=$PINATA_IPFS_API_KEY" >> .env
-        - echo "PINATA_IPFS_API_SECRET=$PINATA_IPFS_API_SECRET" >> .env
         - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
         - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
         - npm run test

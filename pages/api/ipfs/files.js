@@ -1,9 +1,9 @@
-import { setMethodNotAllowedResponse } from '../../../utils/api-config'
+import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
-            res.status(200).end()
+            await callTerragridsApi(res, 'POST', 'ipfs/files', req.body)
             break
         default:
             setMethodNotAllowedResponse(res, ['GET'])
