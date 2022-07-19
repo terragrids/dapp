@@ -9,6 +9,7 @@ export const strings = {
     errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     comingSoon: 'Coming soon',
     mint: 'Mint',
+    mintNft: 'Mint a new NFT',
     mintingTerracell: 'Minting a new $TRCL token',
     sell: 'Sell',
     withdraw: 'Withdraw',
