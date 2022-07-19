@@ -1,6 +1,6 @@
 export default class MissingParameterError extends Error {
-    httpCode = 400;
-    message;
+    httpCode = 400
+    message
 
     constructor(parameter) {
         super()

@@ -15,7 +15,7 @@ export default class FileLoader {
             const fileReader = new FileReader()
 
             fileReader.onloadend = event => {
-                resolve(event.target!.result)
+                resolve(event.target ? event.target.result : null)
             }
 
             fileReader.onerror = () => {
