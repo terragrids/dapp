@@ -27,9 +27,9 @@ export default function useFilePicker(props) {
         if (props.disabled) return
 
         const files = event.dataTransfer.files
-        if (props.onFilesAdded) {
+        if (props.onFilesPicked) {
             const array = fileListToArray(files)
-            props.onFilesAdded(array)
+            props.onFilesPicked(array)
         }
         setState({ active: false })
     }
@@ -37,9 +37,10 @@ export default function useFilePicker(props) {
     function onFilesAdded(event) {
         if (props.disabled) return
         const files = event.target.files
-        if (props.onFilesAdded) {
+
+        if (props.onFilesPicked) {
             const array = fileListToArray(files)
-            props.onFilesAdded(array)
+            props.onFilesPicked(array)
         }
     }
 
@@ -52,11 +53,11 @@ export default function useFilePicker(props) {
         return array
     }
 
-    return [state, fileInputRef, openFileDialog, onDragOver, onDragLeave, onDrop, onFilesAdded]
+    return { state, fileInputRef, openFileDialog, onDragOver, onDragLeave, onDrop, onFilesAdded }
 }
 
 useFilePicker.propTypes = {
     disabled: PropTypes.bool,
     multiple: PropTypes.bool,
-    onFilesAdded: PropTypes.func
+    onFilesPicked: PropTypes.func
 }
