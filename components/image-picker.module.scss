@@ -11,7 +11,6 @@
 }
 
 .empty {
-    padding: 15px 0;
     font-size: 16px;
     color: $color-ebony-clay;
     text-align: center;
@@ -49,15 +48,17 @@
 .emptyBorder {
     display: block;
     padding: 40px;
-    border: 2px dashed $color-mine-shaft;
-    border-radius: $border-radius;
+    min-width: 400px;
+    border: 4px dashed $color-brand;
+    border-radius: $dialog-border-radius;
     transition: $quick-transition;
     transition-delay: 0.1s;
+    background-color: $color-abbey;
+    color: $color-white;
 
     @media (hover: hover) {
         &:hover {
-            background-color: $color-abbey;
-            color: $color-white;
+            background-color: $color-brand;
         }
     }
 }
@@ -78,14 +79,6 @@
             opacity: 1;
         }
     }
-}
-
-.visible {
-    opacity: 1;
-    background-color: $color-overlay-dark;
-    border: 5px solid $color-downy;
-    transition: $quick-transition;
-    transition-delay: 0.1s;
 }
 
 .active {

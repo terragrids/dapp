@@ -1,20 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import useFilePicker from 'hooks/use-file-picker.js'
-import { useState } from 'react'
 import { strings } from 'strings/en.js'
 import styles from './image-picker.module.scss'
 
 export const ImagePicker = ({ url = '', disabled = false, multiple = false, clearPickerAtLaunch = true, onFilesPicked }: Props) => {
     const { state, fileInputRef, openFileDialog, onDragOver, onDragLeave, onDrop, onFilesAdded } = useFilePicker({ disabled, multiple, clearPickerAtLaunch, onFilesPicked })
-    const [overlayVisible, setOverlayVisible] = useState(false)
 
     return (
         <div className={`${styles.container} ${state.active ? 'active' : 'idle'}`}
-            onClick={() => {
-                if (!url) openFileDialog()
-                else setOverlayVisible(true)
-            }}
-            onMouseLeave={() => setOverlayVisible(false)}
+            onClick={openFileDialog}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
@@ -50,10 +44,8 @@ export const ImagePicker = ({ url = '', disabled = false, multiple = false, clea
                         </div>
                     }
                     {url &&
-                        <div className={`${styles.activeZone} ${styles.overlay} ${overlayVisible ? 'visible' : null}`}>
-                            {overlayVisible &&
-                                <div>{strings.change}</div>
-                            }
+                        <div className={`${styles.activeZone} ${styles.overlay}`}>
+                            {strings.change}
                         </div>
                     }
                     <input
