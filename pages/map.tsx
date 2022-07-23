@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Map, { MapProps } from 'components/Map'
+import Map, { MapProps } from 'components/map'
 
 // This component is for development purpose (to see if the map works)
 // Should be replaced by another component once the map function is confirmed

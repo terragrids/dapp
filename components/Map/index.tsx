@@ -1,7 +1,7 @@
-import Canvas from 'components/Canvas'
+import Canvas from 'components/canvas'
 import React from 'react'
-import { getTileImages } from './Tiles/getTileImages'
-import Tile from './Tiles/Tile'
+import { getTileImages } from './tiles/getTileImages'
+import Tile from './tiles/tile'
 
 export type MapProps = {
     width: number | undefined
