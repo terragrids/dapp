@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { endpoints } from 'utils/api-config.js'
 
+export class FileUploadState {
+    public static readonly IDLE = 'idle'
+    public static readonly STARTED = 'started'
+    public static readonly ACCEPTED = 'accepted'
+    public static readonly ERROR = 'error'
+}
+
 export function useFileUploader() {
     type ImageProps = {
         file?: File
@@ -11,7 +18,7 @@ export function useFileUploader() {
     }
 
     const [image, setImage] = useState<ImageProps>({
-        uploadState: 'idle'
+        uploadState: FileUploadState.IDLE
     })
 
     /**
@@ -33,12 +40,12 @@ export function useFileUploader() {
                 ...image,
                 id: id,
                 url: url,
-                uploadState: 'accepted'
+                uploadState: FileUploadState.ACCEPTED
             }))
         } else {
             setImage(image => ({
                 ...image,
-                uploadState: 'error'
+                uploadState: FileUploadState.ERROR
             }))
         }
     }
@@ -49,7 +56,7 @@ export function useFileUploader() {
             ...image,
             contentType: file.type,
             file: file,
-            uploadState: 'started'
+            uploadState: FileUploadState.STARTED
         }))
 
         requestFileUpload(file.type)

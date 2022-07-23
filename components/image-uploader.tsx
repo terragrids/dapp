@@ -6,7 +6,7 @@ import { ImagePicker } from './image-picker'
 import styles from './image-uploader.module.scss'
 
 export const ImageUploader = () => {
-    interface State {
+    type State = {
         file?: File
         imageUrl?: string
         loaded: boolean
