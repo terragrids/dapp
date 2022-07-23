@@ -1,5 +1,5 @@
 export default class ApplicationStillRunningError extends Error {
-    httpCode = 400;
+    httpCode = 400
 
     constructor() {
         super()

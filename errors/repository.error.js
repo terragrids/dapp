@@ -1,7 +1,7 @@
 export default class RepositoryError extends Error {
-    error;
-    httpCode = 500;
-    message;
+    error
+    httpCode = 500
+    message
 
     constructor(error, message) {
         super()

@@ -1,5 +1,5 @@
 export default class AssetContractNotFoundError extends Error {
-    httpCode = 404;
+    httpCode = 404
 
     constructor() {
         super()

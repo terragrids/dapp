@@ -13,7 +13,7 @@ export function useNftSeller() {
         contract.current = walletAccount.contract(backend)
         try {
             await contract.current.p.Admin({
-                log: (() => { }),
+                log: (() => { /* add logs */ }),
                 onReady: async (contract) => {
                     onReady({
                         id: contract.toNumber(),
