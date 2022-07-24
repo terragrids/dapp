@@ -52,10 +52,5 @@ export default class Tile {
             this.renderPosition.x,
             this.renderPosition.y + offsetY
         )
-        // return this.save()
-    }
-
-    save(): void {
-        this.ctx.save()
     }
 }
