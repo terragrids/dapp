@@ -60,7 +60,6 @@ jobs:
 
       - name: Build and test Reach backend
         run: |
-          set REACH_CONNECTOR_MODE=${{ secrets.REACH_CONNECTOR_MODE}}
           echo $REACH_CONNECTOR_MODE
           ./reach run blockchain
           node scripts/generate-app-approval.mjs 
