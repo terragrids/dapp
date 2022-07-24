@@ -1,6 +1,6 @@
 import Canvas from 'components/canvas'
 import React from 'react'
-import { getTileImages } from './tiles/getTileImages'
+import { getTileImages } from './tiles/get-tile-images'
 import Tile from './tiles/tile'
 
 export type MapProps = {
