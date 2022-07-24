@@ -13,7 +13,7 @@ on:
 jobs:
   ci:
     # The type of runner that the job will run on
-    name: Test ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Test and build ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -30,10 +30,17 @@ jobs:
       - name: Setup docker
         uses: docker-practice/actions-setup-docker@master
 
+      - name: run docker-compose
+        uses: sudo-bot/action-docker-compose@latest
+        with:
+            # https://docs.docker.com/compose/reference/overview/
+            cli-args: "up"
+
       - name: Test docker
         run: |
           set -x
           docker version
+          docker-compose --version
           docker run --rm hello-world
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
