@@ -2,14 +2,17 @@ name: dev
 
 on:
   push:
-    branches: [dev]
+    branches:
+      - dev
+      - master
   pull_request:
-    branches: [dev]
+      - dev
+      - master
 
 jobs:
   test:
     # The type of runner that the job will run on
-    name: Test PR on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Test ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -31,7 +34,7 @@ jobs:
           npm ci
           npm run lint
           npm test
-          npm build
+          npm run build
         env:
           APP_ENV: dev
           API_ENV: local
