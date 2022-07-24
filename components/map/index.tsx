@@ -8,6 +8,10 @@ export type MapProps = {
     height: number | undefined
 }
 
+const ZOOM_SENSITIVITY = 0.0001
+// const MAX_ZOOM = 1.1
+// const MIN_ZOOM = 0.9
+
 const Map = ({ width, height }: MapProps) => {
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
     const tileMap = [
@@ -59,7 +63,34 @@ const Map = ({ width, height }: MapProps) => {
         renderTiles(ctx)(tileStartX, tileStartY)
     }
 
-    return <Canvas drawOnCanvas={render} attributes={{ width, height }} />
+    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        let cameraZoom = 1
+        const delta = e.deltaY * ZOOM_SENSITIVITY
+
+        cameraZoom += delta
+
+        // cameraZoom = Math.min(cameraZoom, MAX_ZOOM)
+        // cameraZoom = Math.max(cameraZoom, MIN_ZOOM)
+
+        ctx.translate(e.offsetX, e.offsetY)
+        ctx.scale(cameraZoom, cameraZoom)
+        ctx.translate(-e.offsetX, -e.offsetY)
+    }
+
+    const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        onScrollY(ctx, e)
+
+        // This is needed to redraw scaled map based on canvas map
+        render(ctx)
+    }
+
+    return (
+        <Canvas
+            drawOnCanvas={render}
+            onWheel={onWheel}
+            attributes={{ width, height }}
+        />
+    )
 }
 
 export default Map
