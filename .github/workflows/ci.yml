@@ -30,7 +30,8 @@ jobs:
       - name: Setup docker
         uses: docker-practice/actions-setup-docker@master
 
-      - uses: KengoTODA/actions-setup-docker-compose@main
+      - name: Setup docker composer
+        uses: KengoTODA/actions-setup-docker-compose@main
         with:
           version: '2.6.1'
 
