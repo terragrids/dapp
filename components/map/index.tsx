@@ -34,7 +34,7 @@ const Map = ({ width, height }: MapProps) => {
                         tileIndex: { x: tileX, y: tileY },
                         ctx
                     })
-                    tile.drawTile(100)
+                    tile.drawTile(0)
                 }
             }
         }
@@ -42,9 +42,17 @@ const Map = ({ width, height }: MapProps) => {
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const tileStartX = width / 2 - 50
-        const tileStartY = height / 2 - 250
-        // Can remove below ctx method calls
+        const gridSize = Math.sqrt(tileMap.length)
+
+        const offsetX = Tile.TILE_WIDTH / 2
+        const offsetY = Tile.TILE_HEIGHT
+
+        const remainingHeight = height - Tile.TILE_HEIGHT * gridSize
+
+        const tileStartX = width / 2 - offsetX
+        const tileStartY = remainingHeight / 2 + offsetY
+
+        // Can remove below ctx method calls as it just adds background color
         ctx.fillStyle = '#151d26'
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
 
