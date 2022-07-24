@@ -30,11 +30,9 @@ jobs:
       - name: Setup docker
         uses: docker-practice/actions-setup-docker@master
 
-      - name: run docker-compose
-        uses: sudo-bot/action-docker-compose@latest
+      - uses: KengoTODA/actions-setup-docker-compose@main
         with:
-            # https://docs.docker.com/compose/reference/overview/
-            cli-args: "up"
+          version: '2.6.1'
 
       - name: Test docker
         run: |
