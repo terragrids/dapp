@@ -29,6 +29,8 @@ jobs:
 
       - name: Setup docker
         uses: docker-practice/actions-setup-docker@master
+
+      - name: Test docker
         run: |
           set -x
           docker version
