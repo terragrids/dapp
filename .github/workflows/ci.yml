@@ -12,7 +12,6 @@ on:
 
 jobs:
   ci:
-    # The type of runner that the job will run on
     name: Test and build ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -48,7 +47,6 @@ jobs:
           docker-compose --version
           docker run --rm hello-world
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository 
         uses: actions/checkout@v3
 
