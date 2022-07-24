@@ -1,4 +1,4 @@
-name: dev
+name: ci
 
 on:
   push:
@@ -50,6 +50,13 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+
+      - name: Setup .env
+        run: |
+          echo "APP_ENV=$APP_ENV" >> .env
+          echo "API_ENV=$API_ENV" >> .env
+          echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
+          echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
 
       - name: Build and test Reach backend
         run: |
