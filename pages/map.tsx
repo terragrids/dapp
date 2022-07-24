@@ -4,19 +4,19 @@ import Map, { MapProps } from 'components/map'
 // This component is for development purpose (to see if the map works)
 // Should be replaced by another component once the map function is confirmed
 const MapPage = () => {
-    const [mapSize, setMapsize] = useState<MapProps>({
+    const [mapSize, setMapSize] = useState<MapProps>({
         width: undefined,
         height: undefined
     })
 
     useEffect(() => {
         const handleResize = () => {
-            setMapsize({
+            setMapSize({
                 width: window.innerWidth,
                 height: (window.innerHeight / 100) * 70
             })
         }
-        setMapsize({
+        setMapSize({
             width: window.innerWidth,
             height: (window.innerHeight / 100) * 70
         })
