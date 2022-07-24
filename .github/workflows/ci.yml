@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  test:
+  ci:
     # The type of runner that the job will run on
     name: Test ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -27,6 +27,13 @@ jobs:
           # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0
           node-version: ${{ matrix.node_version }}
 
+      - name: Setup docker
+        uses: docker-practice/actions-setup-docker@master
+        run: |
+          set -x
+          docker version
+          docker run --rm hello-world
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
@@ -35,7 +42,6 @@ jobs:
           npm ci
           npm run lint
           npm test
-          npm run build
         env:
           APP_ENV: dev
           API_ENV: local
