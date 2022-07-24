@@ -16,7 +16,7 @@ const Canvas = ({ drawOnCanvas, attributes }: CanvasProps) => {
         if (!context) return
 
         drawOnCanvas(context)
-    }, [canvasRef.current, drawOnCanvas])
+    }, [drawOnCanvas])
 
     return <canvas ref={canvasRef} {...attributes} />
 }
