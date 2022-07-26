@@ -5,7 +5,7 @@ import ImageLoader, { ImageSize } from 'utils/image-loader'
 import { ImagePicker } from './image-picker'
 import styles from './image-uploader.module.scss'
 
-export const ImageUploader = () => {
+export const ImageUploader = ({ onFileSelected }: Props) => {
     type State = {
         file?: File
         imageUrl?: string
@@ -45,6 +45,8 @@ export const ImageUploader = () => {
             tooSmall: false,
             tooLarge: false
         }))
+
+        onFileSelected(fileList[0])
     }
 
     useEffect(() => {
@@ -99,3 +101,7 @@ export const ImageUploader = () => {
         </div>
     )
 }
+
+type Props = {
+    onFileSelected: (file: File) => void
+};
