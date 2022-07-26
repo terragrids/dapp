@@ -8,9 +8,11 @@ export type MapProps = {
     height: number | undefined
 }
 
+const DEFAULT_MAP_SCALE = 1
+// Set temporarily (Should be changed once the requirements for UI/UX are all determined)
 const ZOOM_SENSITIVITY = 0.0001
-// const MAX_ZOOM = 1.1
-// const MIN_ZOOM = 0.9
+const MAX_SCALE = 2
+const MIN_SCALE = 0.8
 
 const Map = ({ width, height }: MapProps) => {
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
@@ -64,23 +66,25 @@ const Map = ({ width, height }: MapProps) => {
     }
 
     const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        let cameraZoom = 1
-        const delta = e.deltaY * ZOOM_SENSITIVITY
+        const currentScale = ctx.getTransform().a
+        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-        cameraZoom += delta
+        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-        // cameraZoom = Math.min(cameraZoom, MAX_ZOOM)
-        // cameraZoom = Math.max(cameraZoom, MIN_ZOOM)
+        const scale = DEFAULT_MAP_SCALE + zoomAmount
 
         ctx.translate(e.offsetX, e.offsetY)
-        ctx.scale(cameraZoom, cameraZoom)
+        ctx.scale(scale, scale)
         ctx.translate(-e.offsetX, -e.offsetY)
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         onScrollY(ctx, e)
 
-        // This is needed to redraw scaled map based on canvas map
+        // This is needed to redraw scaled map
         render(ctx)
     }
 
