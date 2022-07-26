@@ -14,9 +14,14 @@ export default class ImageLoader {
             img.onload = () => resolve({
                 width: img.width,
                 height: img.height
-            })
+            } as ImageSize)
             img.onerror = reject
             img.src = src || this.src
         })
     }
+}
+
+export interface ImageSize {
+    width: number
+    height: number
 }

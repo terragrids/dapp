@@ -14,7 +14,7 @@ export default function ModalDialog({ visible, title, children, onClose }) {
                 <div className={styles.content}>{children}</div>
             </div>
         </div>
-    ) : ''
+    ) : <div />
 }
 
 ModalDialog.propTypes = {

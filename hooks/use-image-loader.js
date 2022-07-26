@@ -50,5 +50,5 @@ export function useImageLoader(url) {
         }
     }, [url])
 
-    return [state.loading, state.loaded, state.error, state.imageSize]
+    return { loading, loaded, error, imageSize } = state
 }

@@ -1,0 +1,18 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+    min-width: 400px;
+    max-width: 600px;
+}
+
+.uploader {
+    margin-bottom: 20px;
+}
+
+.button {
+    min-width: 200px;
+}
