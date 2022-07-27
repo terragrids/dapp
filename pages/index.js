@@ -10,7 +10,7 @@ import { MenuEventContext } from '../context/menu-event-context'
 import LoadingDialog from '../components/loading-dialog'
 
 export default function Home() {
-  const [walletPickerVisible, setWalletPickerVisible] = useState(false)
+  const [walletPickerVisible, setWalletPickerVisible ] = useState(false)
   const [loading, setLoading] = useState({ visible: false, message: null })
   const { stdlib } = useContext(ReachContext)
   const { walletAccount } = useContext(UserContext)
@@ -40,6 +40,7 @@ export default function Home() {
   useEffect(() => {
     setMintAction(mint)
   }, [setMintAction, mint])
+
 
   return (
     <Layout>

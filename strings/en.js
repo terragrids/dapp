@@ -17,5 +17,8 @@ export const strings = {
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
     errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.'
+    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    yourWallet: 'Your wallet',
+    disconnect: 'Disconnect',
+    
 }

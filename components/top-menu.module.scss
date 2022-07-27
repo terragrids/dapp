@@ -8,6 +8,8 @@
     margin-left: 30px;
     list-style: none;
 
+    i { font-size: 18px; }
+
     li {
         padding: 15px 20px;
         margin-left: 10px;
@@ -25,11 +27,25 @@
         }
     }
 
+
     .brand {
-        background-color: $color-brand;
+    
+        @media (max-width: $screen-small) {
+            display: none;
+        }
     }
 
+
     .default {
-        background-color: $color-abbey;
+        display: none;
+        @media (max-width: $screen-small) {
+
+        }
+    }
+}
+.toggle_menu {
+    display: none;
+    @media (max-width: $screen-small) {
+        display: block;
     }
 }
