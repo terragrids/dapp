@@ -10,12 +10,14 @@ const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
 const terracell = id => `/api/terracells/${id}`
 const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
+const fileUpload = '/api/files/upload'
 
 export const endpoints = {
     accountTerracells,
     terracells,
     terracell,
-    terracellContract
+    terracellContract,
+    fileUpload
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

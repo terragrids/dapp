@@ -84,7 +84,9 @@ npm run start
 ```
 
 ## Continuous integration
-For every commit on the `dev` or `master` branch, the DApp is built on AWS Amplify and deployed on AWS Cloudfront Lambda@Edge functions.
+For every commit or PR opened on the `dev` or `master` branch, the DApp is built and tested using a [GitHub actions workflow](https://github.com/terragrids/dapp/actions). The build steps are defined under `.github/workflows/ci.yml`.
+
+For every commit on the `dev` or `master` branch, the DApp is built on AWS Amplify and deployed on AWS Cloudfront Lambda@Edge functions. The build steps are defined in `amplify.yml`.
 
 `dev` builds will be accessible at `https://testnet.terragrids.org` and running on Algorand testnet, while `master` builds will be accessible at `https://app.terragrids.org` and running on Algorand mainnet. 
 
