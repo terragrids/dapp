@@ -1,0 +1,15 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    color: $color-white;
+    background-color: $color-abbey;
+    font-size: 18px;
+    padding: 5px;
+    width: 100%;
+    border-radius: $border-radius;
+
+    &:focus, &:focus-visible {
+        outline: none;
+    }
+}

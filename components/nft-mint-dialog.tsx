@@ -3,6 +3,7 @@ import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
 import { useState } from 'react'
 import { strings } from 'strings/en.js'
 import Button from './button.js'
+import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
 import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
@@ -23,7 +24,8 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             title={strings.mintNft}
             onClose={onClose} >
             <div className={styles.container}>
-                <div className={styles.uploader}><ImageUploader onFileSelected={file => setFile(file)} /></div>
+                <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
+                <div className={styles.section}><DropDownSelector options={['$TRCL', '$TRLD', '$TRAS']} /></div>
                 <Button
                     className={styles.button}
                     disabled={!file}
