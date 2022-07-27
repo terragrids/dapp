@@ -1,0 +1,77 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+  pull_request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  ci:
+    name: Test and build ${{ github.ref }} on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node_version: ['16']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Setup node.js environment
+        uses: actions/setup-node@v3
+        with:
+          # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0
+          node-version: ${{ matrix.node_version }}
+
+      - name: Setup docker
+        uses: docker-practice/actions-setup-docker@master
+
+      - name: Setup docker composer
+        uses: KengoTODA/actions-setup-docker-compose@main
+        with:
+          version: '2.6.1'
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Test docker
+        run: |
+          set -x
+          docker version
+          docker-compose --version
+          docker run --rm hello-world
+
+      - name: Checkout repository 
+        uses: actions/checkout@v3
+
+      - name: Setup .env
+        run: |
+          echo "APP_ENV=${{ secrets.APP_ENV }}" >> .env
+          echo "API_ENV=${{ secrets.API_ENV}}" >> .env
+          echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=${{ secrets.REACH_CONSENSUS_NETWORK_PROVIDER }}" >> .env
+          echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=${{ secrets.REACH_CONNECTOR_MODE}}" >> .env
+
+      - name: Build and test Reach backend
+        run: |
+          ./reach run blockchain
+          node scripts/generate-app-approval.mjs
+        env:
+          REACH_CONNECTOR_MODE: ${{ secrets.REACH_CONNECTOR_MODE}}
+
+      - name: Build and test next.js app
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+        env:
+          APP_ENV: dev
+          API_ENV: local
+          NEXT_PUBLIC_REACH_CONNECTOR_MODE: ${{ secrets.REACH_CONNECTOR_MODE}}
+          NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER: ${{ secrets.REACH_CONSENSUS_NETWORK_PROVIDER }}
