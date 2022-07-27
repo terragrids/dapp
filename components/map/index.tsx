@@ -45,6 +45,12 @@ const Map = ({ width, height }: MapProps) => {
             }
         }
 
+    const renderBackground = (ctx: CanvasRenderingContext2D) => {
+        // Can/Should change the color once UI design is determined
+        ctx.fillStyle = '#151d26'
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    }
+
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
@@ -58,9 +64,7 @@ const Map = ({ width, height }: MapProps) => {
         const tileStartX = width / 2 - offsetX
         const tileStartY = remainingHeight / 2 + offsetY
 
-        // Can remove below ctx method calls as it just adds background color
-        ctx.fillStyle = '#151d26'
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+        renderBackground(ctx)
 
         renderTiles(ctx)(tileStartX, tileStartY)
     }
@@ -83,6 +87,9 @@ const Map = ({ width, height }: MapProps) => {
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         onScrollY(ctx, e)
+
+        // Refill the background as the previously rendered part stays
+        renderBackground(ctx)
 
         // This is needed to redraw scaled map
         render(ctx)

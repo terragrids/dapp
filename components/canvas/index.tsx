@@ -18,6 +18,7 @@ const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
         if (!context) return
 
         canvas.addEventListener('wheel', (e) => onWheel(context, e))
+
         drawOnCanvas(context)
 
         return () => {
