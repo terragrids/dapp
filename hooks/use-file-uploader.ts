@@ -4,10 +4,10 @@ import { getQueryParameter } from 'utils/string-utils.js'
 import usePrevious from './use-previous.js'
 
 export enum FileUploadState {
-    IDLE, STARTED, ACCEPTED, UPLOADED, ERROR
+    IDLE, STARTED, ACCEPTED, UPLOADED, PINNED, ERROR
 }
 
-export function useFileUploader() {
+export function useFileUploader({ name, description }: Props) {
     type FileProps = {
         file?: File
         contentType?: string
@@ -73,7 +73,7 @@ export function useFileUploader() {
         if (response.status === 200) {
             setFileProps(file => ({
                 ...file,
-                uploadState: FileUploadState.ACCEPTED
+                uploadState: FileUploadState.UPLOADED
             }))
         } else {
             setFileProps(file => ({
@@ -84,13 +84,46 @@ export function useFileUploader() {
     }, [fileProps.contentType, fileProps.file, fileProps.url])
 
     /**
+     * Step 3: Pin the uploaded file to IPFS
+     */
+    const pinFileToIpfs = useCallback(async (): Promise<void> => {
+        if (!fileProps.id) return
+
+        const response = await fetch(endpoints.ipfsFiles, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                assetName: name,
+                assetDescription: description,
+                fileName: fileProps.id
+            })
+        })
+
+        if (response.status === 201) {
+            setFileProps(file => ({
+                ...file,
+                uploadState: FileUploadState.PINNED
+            }))
+        } else {
+            setFileProps(file => ({
+                ...file,
+                uploadState: FileUploadState.ERROR
+            }))
+        }
+    }, [name, description, fileProps.id])
+
+    /**
      * State machine
      * Upload states (with shouldConfirm): idle -> started -> accepted -> uploaded -> done
      * Upload states (without shouldConfirm): idle -> started -> accepted -> uploaded
      */
     useEffect(() => {
         if (prevUploadState === FileUploadState.STARTED && fileProps.uploadState === FileUploadState.ACCEPTED) uploadFile()
-    }, [prevUploadState, fileProps.uploadState, uploadFile])
+        if (prevUploadState === FileUploadState.ACCEPTED && fileProps.uploadState === FileUploadState.UPLOADED) pinFileToIpfs()
+    }, [prevUploadState, fileProps.uploadState, uploadFile, pinFileToIpfs])
 
 
     function upload(file: File) {
@@ -106,3 +139,8 @@ export function useFileUploader() {
 
     return { upload, uploadState: fileProps.uploadState }
 }
+
+type Props = {
+    name: string
+    description: string
+};

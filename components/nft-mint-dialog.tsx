@@ -8,8 +8,15 @@ import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
-    const { upload, uploadState } = useFileUploader()
+    type Asset = {
+        name: string
+        description: string
+    }
+
+    const [asset] = useState<Asset>({ name: 'name', description: 'description' })
+    const { upload, uploadState } = useFileUploader(asset)
     const [file, setFile] = useState<File>()
+
     return (
         <ModalDialog
             visible={visible}
