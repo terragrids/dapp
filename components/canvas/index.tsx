@@ -12,19 +12,18 @@ const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
     useEffect(() => {
         if (!canvasRef.current) return
 
-        const context = canvasRef.current.getContext('2d')
+        const canvas = canvasRef.current
+        const context = canvas.getContext('2d')
 
         if (!context) return
 
-        canvasRef.current.addEventListener('wheel', (e) => onWheel(context, e))
+        canvas.addEventListener('wheel', (e) => onWheel(context, e))
         drawOnCanvas(context)
 
         return () => {
-            canvasRef.current?.removeEventListener('wheel', (e) =>
-                onWheel(context, e)
-            )
+            canvas.removeEventListener('wheel', (e) => onWheel(context, e))
         }
-    }, [drawOnCanvas])
+    }, [drawOnCanvas, onWheel])
 
     return <canvas ref={canvasRef} {...attributes} />
 }
