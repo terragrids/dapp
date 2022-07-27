@@ -17,7 +17,7 @@ export class Signal {
     }
     wait() { return this.p }
     notify() { this.r(true) }
-};
+}
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
 const thread = async (f) => await f()

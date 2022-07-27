@@ -8,6 +8,12 @@ export type MapProps = {
     height: number | undefined
 }
 
+const DEFAULT_MAP_SCALE = 1
+// Set temporarily (Should be changed once the requirements for UI/UX are all determined)
+const ZOOM_SENSITIVITY = 0.0001
+const MAX_SCALE = 2
+const MIN_SCALE = 0.8
+
 const Map = ({ width, height }: MapProps) => {
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
     const tileMap = [
@@ -39,6 +45,12 @@ const Map = ({ width, height }: MapProps) => {
             }
         }
 
+    const renderBackground = (ctx: CanvasRenderingContext2D) => {
+        // Can/Should change the color once UI design is determined
+        ctx.fillStyle = '#151d26'
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    }
+
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
@@ -52,14 +64,44 @@ const Map = ({ width, height }: MapProps) => {
         const tileStartX = width / 2 - offsetX
         const tileStartY = remainingHeight / 2 + offsetY
 
-        // Can remove below ctx method calls as it just adds background color
-        ctx.fillStyle = '#151d26'
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+        renderBackground(ctx)
 
         renderTiles(ctx)(tileStartX, tileStartY)
     }
 
-    return <Canvas drawOnCanvas={render} attributes={{ width, height }} />
+    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        const currentScale = ctx.getTransform().a
+        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+
+        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+
+        const scale = DEFAULT_MAP_SCALE + zoomAmount
+
+        ctx.translate(e.offsetX, e.offsetY)
+        ctx.scale(scale, scale)
+        ctx.translate(-e.offsetX, -e.offsetY)
+    }
+
+    const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        onScrollY(ctx, e)
+
+        // Refill the background as the previously rendered part stays
+        renderBackground(ctx)
+
+        // This is needed to redraw scaled map
+        render(ctx)
+    }
+
+    return (
+        <Canvas
+            drawOnCanvas={render}
+            onWheel={onWheel}
+            attributes={{ width, height }}
+        />
+    )
 }
 
 export default Map
