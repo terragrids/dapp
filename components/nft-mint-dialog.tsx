@@ -13,11 +13,19 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     type Asset = {
         name: string
         description: string
+        symbol?: string
     }
 
-    const [asset] = useState<Asset>({ name: 'name', description: 'description' })
+    const [asset, setAsset] = useState<Asset>({ name: 'name', description: 'description' })
     const { upload, uploadState } = useFileUploader(asset)
     const [file, setFile] = useState<File>()
+
+    function onNftTypeSelected(symbol: string) {
+        setAsset(asset => ({
+            ...asset,
+            symbol: symbol
+        }))
+    }
 
     return (
         <ModalDialog
@@ -27,7 +35,9 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             <div className={styles.container}>
                 <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
                 <div className={styles.section}>
-                    <DropDownSelector options={Nft.currencyList()} />
+                    <DropDownSelector
+                        options={Nft.currencyList()}
+                        onSelected={onNftTypeSelected} />
                 </div>
                 <Button
                     className={styles.button}
