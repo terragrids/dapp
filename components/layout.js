@@ -1,14 +1,23 @@
+import { useContext, useEffect, useState } from 'react'
 import Head from 'next/head'
 import styles from './layout.module.scss'
 import Logo from '../public/images/logo+name.svg'
 import { strings } from '../strings/en'
 import TopMenu from './top-menu'
 import PropTypes from 'prop-types'
-import { useContext } from 'react'
 import { UserContext } from '../context/user-context'
+import MainMenu from './main-menu'
+import { MenuEventContext } from '../context/menu-event-context'
 
 export default function Layout({ children }) {
     const user = useContext(UserContext)
+    const { setToggleMenuAction } = useContext(MenuEventContext)
+    const [ mainMenuVisible, setMainMenuVisible ] = useState(false)
+    
+    
+useEffect(() => {
+    setToggleMenuAction(() => setMainMenuVisible(b => !b))
+},[setToggleMenuAction])
 
     return (
         <>
@@ -30,10 +39,15 @@ export default function Layout({ children }) {
                     <span>TESTNET</span>
                     </div>
 
-                    <TopMenu />
+                    <TopMenu mainMenuVisible={mainMenuVisible} />
                 </div>
             </header>
-            <main className={styles.content}>{children}</main>
+            <main className={styles.content}>
+                {user.authenticated &&
+                    <MainMenu visible={mainMenuVisible} />
+                }
+                {children}
+            </main>
         </>
     )
 }

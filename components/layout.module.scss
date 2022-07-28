@@ -2,8 +2,6 @@
 @import 'styles/screens.scss';
 @import 'styles/dimens.scss';
 
-
-
 .navbar {
     position: fixed;
     top: 0;
@@ -19,7 +17,6 @@
 
         @media (max-width: $screen-small) {
             padding: 0 20px;
-
         }
     }
 }
@@ -35,6 +32,7 @@
 
     .navContent {
         padding-top: 15px 0;
+        display: block; 
 
         @media (max-width: $screen-small) {
     
@@ -64,9 +62,9 @@
 
     //nav {margin-left: auto;}
 
-    @media (max-width: $screen-small) {
-        display: block; 
-    }
+    // @media (max-width: $screen-small) {
+    
+    // }
 
 }
 

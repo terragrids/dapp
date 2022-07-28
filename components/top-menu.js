@@ -4,10 +4,11 @@ import { useContext } from 'react'
 import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
 import { MenuEventContext } from '../context/menu-event-context'
+import PropTypes from 'prop-types'
 
-export default function TopMenu() {
+export default function TopMenu({ mainMenuVisible }) {
     const user = useContext(UserContext)
-    const { onConnectWallet, onMint } = useContext(MenuEventContext)
+    const { onConnectWallet, onToggleMenu } = useContext(MenuEventContext)
 
     return (
         <nav>
@@ -15,9 +16,9 @@ export default function TopMenu() {
                 {user.authenticated &&
                     <>  
                         
-                        <li><button className={styles.default} onClick={onMint}>{strings.mint}</button></li>
-                        <li><button className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</button></li>
-                        <li><button><i className={icon-menu}></i></button></li>
+                        {/* <li><</li> */}
+                        <li><button className={styles.brand} onClick={onToggleMenu}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</button></li>
+                        <li className={styles.toggle_menu} onClick={onToggleMenu} ><button><i className={mainMenuVisible ? 'icon-cross' : 'icon-menu'} /></button></li>
                     </>
                 }
                 {!user.authenticated &&
@@ -29,4 +30,7 @@ export default function TopMenu() {
         </nav>
         
     )
+}
+TopMenu.propTypes = {
+    mainMenuVisible: PropTypes.bool
 }

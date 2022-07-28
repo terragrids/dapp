@@ -9,8 +9,6 @@
     list-style: none;
 
     // li {
-        
-
     //     @media (hover: hover) {
     //         &:hover {
     //             opacity: 0.9;
@@ -20,10 +18,26 @@
     
     .brand {
         background-color: $color-brand;
+
+        @media (max-width: $screen-small) {
+            display: none;
+        }
     }
     
     .default {
         background-color: $color-abbey;
     }
+
+    [class^=icon-], [class*=" icon-"] {
+        font-size: 24px;
+    }
     
+}
+
+.toggle_menu {
+    display: none;
+
+    @media (max-width: $screen-small) {
+        display: block;
+    }
 }
