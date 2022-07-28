@@ -4,6 +4,7 @@
 
 .this {
     padding: 15px 20px;
+    min-height: 55px;
     border-radius: $button-border-radius;
     border: none;
     cursor: pointer;
@@ -17,5 +18,11 @@
         &:hover {
             opacity: 0.9;
         }
+    }
+
+    &.disabled {
+        color: $color-nomad;
+        background-color: $color-abbey;
+        cursor: default;
     }
 }

@@ -11,6 +11,8 @@ const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
 const terracell = id => `/api/terracells/${id}`
 const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
 const nfts = accountId => `/api/accounts/${accountId}/nfts`
+const fileUpload = '/api/files/upload'
+const ipfsFiles = '/api/ipfs/files'
 
 export const endpoints = {
     accountTerracells,
@@ -18,6 +20,8 @@ export const endpoints = {
     terracell,
     terracellContract,
     nfts
+    fileUpload,
+    ipfsFiles
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

@@ -9,10 +9,12 @@ export const strings = {
     errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     comingSoon: 'Coming soon',
     mint: 'Mint',
+    mintNft: 'Mint a new NFT',
     mintingTerracell: 'Minting a new $TRCL token',
     sell: 'Sell',
     withdraw: 'Withdraw',
     buy: 'Buy',
+    change: 'Change',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
@@ -21,4 +23,12 @@ export const strings = {
     errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect'
+    dropImageHere: 'Drop image here',
+    orPickFromDialog: 'or click to pick from dialog',
+    tapToPick: 'Tap to pick an image',
+    errorFileReader: 'Something went wrong when reading this file. This could be because or permission problems, sometimes caused by the file being only a reference to the actual file stored in the cloud.',
+    type: 'Type',
+    name: 'Name',
+    description: 'Description',
+    nominalPower: 'Nominal power (TRW)'
 }
