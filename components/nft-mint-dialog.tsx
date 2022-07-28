@@ -2,6 +2,7 @@
 import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
 import { useState } from 'react'
 import { strings } from 'strings/en.js'
+import { Nft } from 'types/nft'
 import Button from './button.js'
 import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
@@ -26,7 +27,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             <div className={styles.container}>
                 <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
                 <div className={styles.section}>
-                    <DropDownSelector options={['$TRCL', '$TRLD', '$TRAS']} />
+                    <DropDownSelector options={Nft.currencyList()} />
                 </div>
                 <Button
                     className={styles.button}

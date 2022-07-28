@@ -15,7 +15,13 @@
     "cSpell.language": "en,en-GB,en-US",
     "javascript.suggest.completeFunctionCalls": true,
     "cSpell.words": [
-        "Ipfs"
+        "Ipfs",
+        "Terracell",
+        "Terraland",
+        "Terrasset",
+        "TRAS",
+        "TRCL",
+        "TRLD"
     ],
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
