@@ -9,10 +9,12 @@ export type MapProps = {
 }
 
 const DEFAULT_MAP_SCALE = 1
+const DEFAULT_DELTA_X = 1
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
 const ZOOM_SENSITIVITY = 0.0001
 const MAX_SCALE = 2
 const MIN_SCALE = 0.8
+const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
 const Map = ({ width, height }: MapProps) => {
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
@@ -85,8 +87,17 @@ const Map = ({ width, height }: MapProps) => {
         ctx.translate(-e.offsetX, -e.offsetY)
     }
 
+    const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        const moveAmount =
+            DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
+
+        // Only allows x axis move
+        ctx.translate(moveAmount, 0)
+    }
+
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         onScrollY(ctx, e)
+        onScrollX(ctx, e)
 
         // Refill the background as the previously rendered part stays
         renderBackground(ctx)
