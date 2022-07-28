@@ -19,7 +19,7 @@ export const endpoints = {
     terracells,
     terracell,
     terracellContract,
-    nfts
+    nfts,
     fileUpload,
     ipfsFiles
 }

@@ -22,7 +22,7 @@ export const strings = {
     errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
     errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
-    disconnect: 'Disconnect'
+    disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
     orPickFromDialog: 'or click to pick from dialog',
     tapToPick: 'Tap to pick an image',
