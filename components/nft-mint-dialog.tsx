@@ -13,10 +13,10 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     type Asset = {
         name: string
         description: string
-        symbol?: string
+        symbol: string
     }
 
-    const [asset, setAsset] = useState<Asset>({ name: 'name', description: 'description' })
+    const [asset, setAsset] = useState<Asset>({ name: 'name', description: 'description', symbol: Nft.TRCL.symbol })
     const { upload, uploadState } = useFileUploader(asset)
     const [file, setFile] = useState<File>()
 
@@ -25,6 +25,10 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             ...asset,
             symbol: symbol
         }))
+    }
+
+    function isValidAsset() {
+        return !!asset.name && !!asset.description && !!asset.symbol
     }
 
     return (
@@ -41,7 +45,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 </div>
                 <Button
                     className={styles.button}
-                    disabled={!file}
+                    disabled={!file || !isValidAsset()}
                     label={strings.mint}
                     loading={uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR}
                     onClick={() => { if (file) upload(file) }} />
