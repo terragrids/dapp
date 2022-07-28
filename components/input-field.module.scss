@@ -2,14 +2,17 @@
 @import 'styles/dimens.scss';
 @import 'styles/fonts.scss';
 
-.selector {
+.field {
     color: $color-white;
     background-color: $color-abbey;
     font-size: 18px;
     font-family: $font-default;
-    padding: 8px 5px;
+    padding: 10px;
     width: 100%;
+    border: none;
     border-radius: $border-radius;
+    box-sizing: border-box;
+    -webkit-appearance: none;
 
     &:focus,
     &:focus-visible {

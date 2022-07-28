@@ -6,6 +6,7 @@ import { Nft } from 'types/nft'
 import Button from './button.js'
 import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
+import { InputField } from './input-field'
 import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
 
@@ -20,11 +21,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     const { upload, uploadState } = useFileUploader(asset)
     const [file, setFile] = useState<File>()
 
-    function onNftTypeSelected(symbol: string) {
-        setAsset(asset => ({
-            ...asset,
-            symbol: symbol
-        }))
+    function setNftSymbol(symbol: string) {
+        setAsset(asset => ({ ...asset, symbol }))
+    }
+
+    function setNftName(name: string) {
+        setAsset(asset => ({ ...asset, name }))
     }
 
     function isValidAsset() {
@@ -40,8 +42,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
                 <div className={styles.section}>
                     <DropDownSelector
+                        label={strings.type}
                         options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
-                        onSelected={onNftTypeSelected} />
+                        onSelected={setNftSymbol} />
+                </div>
+                <div className={styles.section}>
+                    <InputField label={strings.name} onChange={setNftName} />
                 </div>
                 <Button
                     className={styles.button}

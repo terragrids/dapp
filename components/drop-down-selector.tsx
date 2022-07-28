@@ -1,4 +1,3 @@
-import { strings } from 'strings/en.js'
 import uniqid from 'uniqid'
 import { Label } from './label'
 import styles from './drop-down-selector.module.scss'
@@ -9,7 +8,7 @@ export type SelectOption = {
     value: string
 }
 
-export const DropDownSelector = ({ options, onSelected }: Props) => {
+export const DropDownSelector = ({ options, label, onSelected }: Props) => {
     const id = useRef(uniqid())
 
     function onSelectItem(event: React.ChangeEvent<HTMLSelectElement>): void {
@@ -18,10 +17,10 @@ export const DropDownSelector = ({ options, onSelected }: Props) => {
 
     return (
         <>
-            <Label text={strings.selectNftType} forId={id.current} />
+            <Label text={label} forId={id.current} />
             <select
                 id={id.current}
-                className={styles.container}
+                className={styles.selector}
                 onChange={onSelectItem}>
                 {options.map(option => (
                     <option
@@ -37,5 +36,6 @@ export const DropDownSelector = ({ options, onSelected }: Props) => {
 
 type Props = {
     options: Array<SelectOption>
+    label: string
     onSelected: (value: string) => void
 };
