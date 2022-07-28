@@ -1,6 +1,7 @@
 
 import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
-import { useState } from 'react'
+import { useTokenMinter } from 'hooks/use-token-minter.js'
+import { useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { Nft } from 'types/nft'
 import Button from './button.js'
@@ -20,6 +21,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
 
     const [asset, setAsset] = useState<Asset>({ name: '', description: 'description', symbol: Nft.TRCL.symbol })
     const { upload, uploadState } = useFileUploader(asset)
+    const { mint } = useTokenMinter()
     const [file, setFile] = useState<File>()
 
     function setNftSymbol(symbol: string) {
@@ -39,6 +41,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.power && asset.power > 0
         return valid
     }
+
+    useEffect(() => {
+        if (uploadState === FileUploadState.PINNED) {
+            mint()
+        }
+    }, [mint, uploadState])
 
     return (
         <ModalDialog
