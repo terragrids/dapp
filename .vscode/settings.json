@@ -1,0 +1,23 @@
+{
+    "files.associations": {
+        "*.rsh": "javascript"
+    },
+    "cSpell.enableFiletypes": [
+        "!css",
+        "!javascript",
+        "!javascriptreact",
+        "!json",
+        "!scss",
+        "!yaml",
+        "!yml",
+        "markdown"
+    ],
+    "cSpell.language": "en,en-GB,en-US",
+    "javascript.suggest.completeFunctionCalls": true,
+    "cSpell.words": [
+        "Ipfs"
+    ],
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.formatOnSave": true
+}

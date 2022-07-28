@@ -25,7 +25,9 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             onClose={onClose} >
             <div className={styles.container}>
                 <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
-                <div className={styles.section}><DropDownSelector options={['$TRCL', '$TRLD', '$TRAS']} /></div>
+                <div className={styles.section}>
+                    <DropDownSelector options={['$TRCL', '$TRLD', '$TRAS']} />
+                </div>
                 <Button
                     className={styles.button}
                     disabled={!file}
