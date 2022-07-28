@@ -23,5 +23,9 @@ export const strings = {
     dropImageHere: 'Drop image here',
     orPickFromDialog: 'or click to pick from dialog',
     tapToPick: 'Tap to pick an image',
-    errorFileReader: 'Something went wrong when reading this file. This could be because or permission problems, sometimes caused by the file being only a reference to the actual file stored in the cloud.'
+    errorFileReader: 'Something went wrong when reading this file. This could be because or permission problems, sometimes caused by the file being only a reference to the actual file stored in the cloud.',
+    type: 'Type',
+    name: 'Name',
+    description: 'Description',
+    nominalPower: 'Nominal power (TRW)'
 }
