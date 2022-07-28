@@ -14,7 +14,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     type Asset = {
         name: string
         description: string
-        symbol: string,
+        symbol: string
         power?: number
     }
 
