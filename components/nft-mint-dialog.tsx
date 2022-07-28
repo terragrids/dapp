@@ -36,7 +36,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
                 <div className={styles.section}>
                     <DropDownSelector
-                        options={Nft.currencyList()}
+                        options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
                         onSelected={onNftTypeSelected} />
                 </div>
                 <Button

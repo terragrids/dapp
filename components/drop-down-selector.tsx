@@ -4,6 +4,11 @@ import { Label } from './label'
 import styles from './drop-down-selector.module.scss'
 import { useRef } from 'react'
 
+export type SelectOption = {
+    key: string
+    value: string
+}
+
 export const DropDownSelector = ({ options, onSelected }: Props) => {
     const id = useRef(uniqid())
 
@@ -20,9 +25,9 @@ export const DropDownSelector = ({ options, onSelected }: Props) => {
                 onChange={onSelectItem}>
                 {options.map(option => (
                     <option
-                        key={option}
-                        value={option}>
-                        {option}
+                        key={option.key}
+                        value={option.key}>
+                        {option.value}
                     </option>
                 ))}
             </select>
@@ -31,6 +36,6 @@ export const DropDownSelector = ({ options, onSelected }: Props) => {
 }
 
 type Props = {
-    options: Array<string>
+    options: Array<SelectOption>
     onSelected: (value: string) => void
 };

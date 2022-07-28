@@ -3,22 +3,18 @@ export class Nft {
     static readonly TRLD = new Nft('TRLD', 'Terraland')
     static readonly TRAS = new Nft('TRAS', 'Terrasset')
 
+    currencySymbol: string
+
     // private to disallow creating other instances of this type
-    private constructor(private readonly symbol: string, public readonly name: string) { }
+    private constructor(public readonly symbol: string, public readonly name: string) {
+        this.currencySymbol = `$${this.symbol}`
+    }
 
     toString() {
-        return `${this.name} [${this.symbol}]`
+        return `${this.name} (${this.currencySymbol})`
     }
 
-    toCurrencySymbol() {
-        return `$${this.symbol}`
-    }
-
-    static currencyList() {
-        return [
-            Nft.TRCL.toCurrencySymbol(),
-            Nft.TRLD.toCurrencySymbol(),
-            Nft.TRAS.toCurrencySymbol()
-        ]
+    static list() {
+        return [Nft.TRCL, Nft.TRLD, Nft.TRAS]
     }
 }
