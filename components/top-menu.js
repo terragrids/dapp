@@ -13,15 +13,20 @@ export default function TopMenu() {
         <nav>
             <ul className={styles.top}>
                 {user.authenticated &&
-                    <>
-                        <li className={styles.default} onClick={onMint}>{strings.mint}</li>
-                        <li className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</li>
+                    <>  
+                        
+                        <li><button className={styles.default} onClick={onMint}>{strings.mint}</button></li>
+                        <li><button className={styles.brand}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</button></li>
+                        <li><button><i className={icon-menu}></i></button></li>
                     </>
                 }
                 {!user.authenticated &&
-                    <li className={styles.brand} onClick={onConnectWallet}>{strings.connectWallet}</li>
+                    <>
+                    <li><button className={styles.brand} onClick={onConnectWallet}>{strings.connectWallet}</button></li>
+                    </>
                 }
             </ul>
         </nav>
+        
     )
 }

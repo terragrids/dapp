@@ -1,5 +1,7 @@
 @import 'colors.scss';
 @import 'fonts.scss';
+@import 'dimens.scss';
+@import 'screens.scss';
 
 html,
 body {
@@ -33,3 +35,23 @@ img {
     max-width: 100%;
     display: block;
 }
+
+nav button, .btn {
+        padding: 15px 20px;
+        margin-left: 10px;
+        border-radius: $button-border-radius;
+        cursor: pointer;
+        font-size: 14px;
+        //text-transform: uppercase;
+        color: $color-white;
+        transition: opacity 0.2s;
+        border: none;
+        background-color: transparent;
+        font-family: 'Saira', sans-serif;
+}
+
+nav button:hover, .btn:hover,
+nav button:focus, .btn:focus {
+    opacity: 0.9;
+}
+
