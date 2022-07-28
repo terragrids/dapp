@@ -8,7 +8,7 @@ export type SelectOption = {
     value: string
 }
 
-export const InputField = ({ text, label, multiline = false, max = 64, onChange }: Props) => {
+export const InputField = ({ initialValue, label, multiline = false, max = 64, type = 'text', onChange }: Props) => {
     const id = useRef(uniqid())
 
     function onTextChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -22,8 +22,9 @@ export const InputField = ({ text, label, multiline = false, max = 64, onChange 
                 <input
                     id={id.current}
                     className={styles.field}
-                    defaultValue={text}
+                    defaultValue={initialValue}
                     maxLength={max}
+                    type={type}
                     onChange={onTextChange} />
             }
 
@@ -31,7 +32,7 @@ export const InputField = ({ text, label, multiline = false, max = 64, onChange 
                 <textarea
                     id={id.current}
                     className={styles.field}
-                    defaultValue={text}
+                    defaultValue={initialValue}
                     maxLength={max}
                     onChange={onTextChange} />
             }
@@ -40,9 +41,10 @@ export const InputField = ({ text, label, multiline = false, max = 64, onChange 
 }
 
 type Props = {
-    text?: string
+    initialValue?: string
     label: string
     multiline?: boolean
     max?: number
+    type?: string
     onChange: (value: string) => void
 };
