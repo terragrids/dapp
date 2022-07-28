@@ -17,7 +17,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         symbol: string
     }
 
-    const [asset, setAsset] = useState<Asset>({ name: 'name', description: 'description', symbol: Nft.TRCL.symbol })
+    const [asset, setAsset] = useState<Asset>({ name: '', description: 'description', symbol: Nft.TRCL.symbol })
     const { upload, uploadState } = useFileUploader(asset)
     const [file, setFile] = useState<File>()
 
@@ -26,6 +26,10 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     function setNftName(name: string) {
+        setAsset(asset => ({ ...asset, name }))
+    }
+
+    function setNftDescription(name: string) {
         setAsset(asset => ({ ...asset, name }))
     }
 
@@ -48,6 +52,9 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 </div>
                 <div className={styles.section}>
                     <InputField label={strings.name} onChange={setNftName} />
+                </div>
+                <div className={styles.section}>
+                    <InputField multiline max={512} label={strings.description} onChange={setNftDescription} />
                 </div>
                 <Button
                     className={styles.button}
