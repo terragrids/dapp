@@ -33,6 +33,7 @@ export default function Home() {
       })
     } catch (e) { }
     setLoading({ visible: false })
+    
   }, [stdlib, walletAccount])
 
   useEffect(() => {
