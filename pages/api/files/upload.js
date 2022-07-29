@@ -3,7 +3,7 @@ import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../utils/a
 export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
-            await callTerragridsApi(res, 'POST', 'ipfs/files', req.body)
+            await callTerragridsApi(res, 'POST', 'files/upload', req.body)
             break
         default:
             setMethodNotAllowedResponse(res, ['POST'])

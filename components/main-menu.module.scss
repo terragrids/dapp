@@ -11,8 +11,7 @@
     background-color: $color-abbey;   
     
     border-radius: $button-border-radius;
-    // color: $color-white;
-    z-index: 16;
+    z-index: $z-index-navbar;
 
     ul { 
         list-style: none;
@@ -84,16 +83,10 @@
 .secondary {
 
     border: 1px solid $color-white;
-    background-color: $color-mine-shaft;
     padding: 8px 20px;
     border-radius: 14px;
     display: block;
     margin: 1.5em auto;
 
-    // @media (max-width: $screen-small) {
-    //     position: absolute;
-    //     bottom: 5%;
-    //     left: 30%;
-    // }
 
 }

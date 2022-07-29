@@ -1,0 +1,21 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/fonts.scss';
+
+.field {
+    color: $color-white;
+    background-color: $color-abbey;
+    font-size: 18px;
+    font-family: $font-default;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: $border-radius;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+
+    &:focus,
+    &:focus-visible {
+        outline: none;
+    }
+}

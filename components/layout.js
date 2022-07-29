@@ -35,8 +35,8 @@ useEffect(() => {
             <header className={!user.authenticated ? `${styles.notconnected}` : `${styles.navbar}`}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
-                    <Logo className={styles.logo} />
-                    <span>TESTNET</span>
+                        <Logo className={styles.logo} />
+                        <span>TESTNET</span>
                     </div>
 
                     <TopMenu mainMenuVisible={mainMenuVisible} />
