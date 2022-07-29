@@ -14,6 +14,11 @@
     border-color: colors.$color-alto transparent colors.$color-alto transparent;
     animation: loading-dual-ring 1.2s linear infinite;
   }
+
+  &.small:after {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 @keyframes loading-dual-ring {

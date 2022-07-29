@@ -10,18 +10,83 @@
     opacity: 0.9;
     padding: 15px 0;
     background-color: $color-mine-shaft;
+    border-bottom: 1px solid $color-emperor;
+
+    .navContent {
+        padding: 0 40px;
+
+        @media (max-width: $screen-small) {
+            padding: 0 20px;
+            li:last-child button {
+                padding-right: 0;
+            }
+        }
+    }
+}
+
+.notconnected {
+    z-index: $z-index-navbar;
+    padding: 15px 0;
+    border-bottom: 1px solid $color-emperor;
+
+    @media (max-width: $screen-small) {
+        border-bottom: none;
+    }
+
+    .navContent {
+        padding-top: 15px 0;
+
+        @media (max-width: $screen-small) {
+            display: block;
+
+            ul,
+            ul li {
+                width: 100%;
+                margin: 0;
+            }
+
+            button {
+                display: block;
+                margin: 2em auto;
+            }
+        }
+
+        .logo {
+            margin-left: 20px;
+        }
+
+        nav {
+            padding: 0 40px;
+
+            @media (max-width: $screen-small) {
+                border-top: 1px solid $color-emperor;
+            }
+        }
+    }
 }
 
 .navContent {
-    padding: 0 40px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: $color-alto;
+}
+
+.logowrapper {
+    display: flex;
+    align-items: center;
 
     @media (max-width: $screen-small) {
-        padding: 0 20px;
+        padding-bottom: 15px;
+
+        span {
+            font-size: 80%;
+        }
+    }
+
+    span {
+        margin-left: 10px;
     }
 }
 

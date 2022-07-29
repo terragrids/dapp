@@ -1,13 +1,15 @@
 @import 'colors.scss';
+@import 'icons.scss';
 @import 'fonts.scss';
+@import 'dimens.scss';
+@import 'screens.scss';
 
 html,
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Saira', sans-serif;
+    font-family: $font-default;
     line-height: 1.6;
-    font-size: 18px;
     background-color: $color-mine-shaft;
     color: $color-alto;
 }
@@ -32,4 +34,25 @@ a {
 img {
     max-width: 100%;
     display: block;
+}
+
+nav button,
+.btn {
+    padding: 15px 20px;
+    margin-left: 10px;
+    border-radius: $button-border-radius;
+    cursor: pointer;
+    font-size: 14px;
+    color: $color-white;
+    transition: opacity 0.2s;
+    border: none;
+    background-color: transparent;
+    font-family: 'Saira', sans-serif;
+}
+
+nav button:hover,
+.btn:hover,
+nav button:focus,
+.btn:focus {
+    opacity: 0.9;
 }
