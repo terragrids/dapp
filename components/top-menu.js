@@ -15,8 +15,6 @@ export default function TopMenu({ mainMenuVisible }) {
             <ul className={styles.top}>
                 {user.authenticated &&
                     <>  
-                        
-                        {/* <li><</li> */}
                         <li><button className={styles.brand} onClick={onToggleMenu}>{maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO</button></li>
                         <li className={styles.toggle_menu} onClick={onToggleMenu} ><button><i className={mainMenuVisible ? 'icon-cross' : 'icon-menu'} /></button></li>
                     </>

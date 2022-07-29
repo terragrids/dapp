@@ -31,6 +31,11 @@ export default function MainMenu({ visible }) {
         fetchNfts()
     },[user])
 
+    const openMintDialog = () => {
+        onMint()
+        onToggleMenu()
+    }
+
     return visible ? (
 
         <nav className={styles.wrapper}> 
@@ -50,7 +55,7 @@ export default function MainMenu({ visible }) {
                 <li>{Nft.TRAS.currencySymbol} <strong>{accountNfts.tras}</strong></li>
             </ul>
 
-            <button className={styles.accent} onClick={onMint}>{strings.mint}</button>
+            <button className={styles.accent} onClick={openMintDialog}>{strings.mint}</button>
             <button className={`${styles.secondary} secondary`}>{strings.disconnect}</button> 
         </>
         }

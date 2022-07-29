@@ -10,7 +10,6 @@ body {
     margin: 0;
     font-family: $font-default;
     line-height: 1.6;
-    // font-size: 18px;
     background-color: $color-mine-shaft;
     color: $color-alto;
 }
@@ -42,8 +41,7 @@ nav button, .btn {
         margin-left: 10px;
         border-radius: $button-border-radius;
         cursor: pointer;
-        font-size: 14px;
-        //text-transform: uppercase;
+        font-size: 14px;        
         color: $color-white;
         transition: opacity 0.2s;
         border: none;
@@ -55,4 +53,3 @@ nav button:hover, .btn:hover,
 nav button:focus, .btn:focus {
     opacity: 0.9;
 }
-
