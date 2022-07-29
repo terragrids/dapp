@@ -8,7 +8,6 @@
     margin-left: 30px;
     list-style: none;
 
-    
     .brand {
         background-color: $color-brand;
 
@@ -16,15 +15,15 @@
             display: none;
         }
     }
-    
+
     .default {
         background-color: $color-abbey;
     }
 
-    [class^=icon-], [class*=" icon-"] {
+    [class^='icon-'],
+    [class*=' icon-'] {
         font-size: 24px;
     }
-    
 }
 
 .toggle_menu {

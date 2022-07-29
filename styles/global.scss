@@ -36,20 +36,23 @@ img {
     display: block;
 }
 
-nav button, .btn {
-        padding: 15px 20px;
-        margin-left: 10px;
-        border-radius: $button-border-radius;
-        cursor: pointer;
-        font-size: 14px;        
-        color: $color-white;
-        transition: opacity 0.2s;
-        border: none;
-        background-color: transparent;
-        font-family: 'Saira', sans-serif;
+nav button,
+.btn {
+    padding: 15px 20px;
+    margin-left: 10px;
+    border-radius: $button-border-radius;
+    cursor: pointer;
+    font-size: 14px;
+    color: $color-white;
+    transition: opacity 0.2s;
+    border: none;
+    background-color: transparent;
+    font-family: 'Saira', sans-serif;
 }
 
-nav button:hover, .btn:hover,
-nav button:focus, .btn:focus {
+nav button:hover,
+.btn:hover,
+nav button:focus,
+.btn:focus {
     opacity: 0.9;
 }

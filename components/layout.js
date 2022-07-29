@@ -19,7 +19,7 @@ useEffect(() => {
     setToggleMenuAction(() => setMainMenuVisible(b => !b))
 },[setToggleMenuAction])
 
-    return (
+    return ( 
         <>
             <Head>
                 <link rel={'icon'} href={'/favicon.ico'} />
