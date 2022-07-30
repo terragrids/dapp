@@ -67,8 +67,10 @@ const Map = ({ width, height }: MapProps) => {
                 }
             }
 
-            const mouse_x = mouseRef.current.x - x
-            const mouse_y = mouseRef.current.y - y
+            const { e: xPos, f: yPos } = ctx.getTransform()
+
+            const mouse_x = mouseRef.current.x - x - xPos
+            const mouse_y = mouseRef.current.y - y - yPos
 
             const hoverTileX =
                 Math.floor(
