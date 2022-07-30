@@ -9,11 +9,12 @@ export enum FileUploadState {
 
 export function useFileUploader({ name, description }: Props) {
     type FileProps = {
+        uploadState: FileUploadState
         file?: File
         contentType?: string
         id?: string
         uploadUrl?: string
-        uploadState: FileUploadState
+        cdnUrl?: string
         arc3Name?: string
         ipfsMetadataUrl?: string
         ipfsMetadataHash?: Uint8Array
@@ -76,6 +77,7 @@ export function useFileUploader({ name, description }: Props) {
         if (response.status === 200) {
             setFileProps(file => ({
                 ...file,
+                cdnUrl: `https://images.terragrids.org/${fileProps.id}`,
                 uploadState: FileUploadState.UPLOADED
             }))
         } else {
@@ -84,7 +86,7 @@ export function useFileUploader({ name, description }: Props) {
                 uploadState: FileUploadState.ERROR
             }))
         }
-    }, [fileProps.contentType, fileProps.file, fileProps.uploadUrl])
+    }, [fileProps.contentType, fileProps.file, fileProps.id, fileProps.uploadUrl])
 
     /**
      * Step 3: Pin the uploaded file to IPFS
@@ -111,7 +113,7 @@ export function useFileUploader({ name, description }: Props) {
                 ...file,
                 arc3Name: assetName,
                 ipfsMetadataUrl: url,
-                ipfsMetadataHash: new Uint8Array(metadataHash),
+                ipfsMetadataHash: integrity,
                 uploadState: FileUploadState.PINNED
             }))
         } else {
@@ -144,7 +146,16 @@ export function useFileUploader({ name, description }: Props) {
         createSignedFileUploadUrl(file.type)
     }
 
-    return { upload, uploadState: fileProps.uploadState }
+    return {
+        upload,
+        uploadState: fileProps.uploadState,
+        fileProps: {
+            cdnUrl: fileProps.cdnUrl,
+            arc3Name: fileProps.arc3Name,
+            ipfsMetadataUrl: fileProps.ipfsMetadataUrl,
+            ipfsMetadataHash: fileProps.ipfsMetadataHash
+        }
+    }
 }
 
 type Props = {

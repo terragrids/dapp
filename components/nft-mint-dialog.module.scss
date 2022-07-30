@@ -1,3 +1,5 @@
+@import 'styles/colors.scss';
+
 .container {
     display: flex;
     flex-direction: column;
@@ -17,4 +19,10 @@
 
 .button {
     min-width: 200px;
+}
+
+.error {
+    color: $color-red;
+    padding-top: 40px;
+    font-size: 16px;
 }

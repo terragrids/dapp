@@ -7,12 +7,14 @@ export function useTokenMinter() {
     const { walletAccount } = useContext(UserContext)
 
     async function mint({ name, symbol, url, metadataHash }) {
+        const hashBuffer = Buffer.from(metadataHash, 'base64')
+        const hashArray = new Uint8Array(hashBuffer)
         try {
             await stdlib.launchToken(walletAccount, name, symbol, {
                 supply: 1,
                 decimals: 0,
                 url,
-                metadataHash
+                metadataHash: hashArray
             })
             return true
         } catch (e) { return false }

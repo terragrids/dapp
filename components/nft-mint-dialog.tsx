@@ -11,6 +11,10 @@ import { InputField } from './input-field'
 import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
 
+enum MintState {
+    IDLE, MINTING, MINTED, ERROR
+}
+
 export const NftMintDialog = ({ visible, onClose }: Props) => {
     type Asset = {
         name: string
@@ -19,10 +23,11 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         power?: number
     }
 
-    const [asset, setAsset] = useState<Asset>({ name: '', description: '', symbol: Nft.TRCL.symbol })
-    const { upload, uploadState } = useFileUploader(asset)
+    const [asset, setAsset] = useState<Asset>({ name: '', description: '', symbol: Nft.TRCL.symbol, power: 10 })
+    const { upload, uploadState, fileProps } = useFileUploader(asset)
     const { mint } = useTokenMinter()
     const [file, setFile] = useState<File>()
+    const [mintState, setMintState] = useState<MintState>(MintState.IDLE)
 
     function setNftSymbol(symbol: string) {
         setAsset(asset => ({ ...asset, symbol }))
@@ -32,8 +37,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         setAsset(asset => ({ ...asset, name }))
     }
 
-    function setNftDescription(name: string) {
-        setAsset(asset => ({ ...asset, name }))
+    function setNftDescription(description: string) {
+        setAsset(asset => ({ ...asset, description }))
+    }
+
+    function setNftPower(power: string) {
+        setAsset(asset => ({ ...asset, power: +power }))
     }
 
     function isValidNft() {
@@ -44,17 +53,19 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
 
     useEffect(() => {
         async function mintToken() {
-            await mint({
-                name: asset.name,
+            setMintState(MintState.MINTING)
+            const success = await mint({
+                name: fileProps.arc3Name,
                 symbol: asset.symbol,
-                url: '',
-                metadataHash: ''
+                url: fileProps.ipfsMetadataUrl,
+                metadataHash: fileProps.ipfsMetadataHash
             })
+            setMintState(success ? MintState.MINTED : MintState.ERROR)
         }
-        if (uploadState === FileUploadState.PINNED) {
+        if (uploadState === FileUploadState.PINNED && mintState === MintState.IDLE) {
             mintToken()
         }
-    }, [asset.description, asset.name, asset.symbol, mint, uploadState])
+    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState])
 
     return (
         <ModalDialog
@@ -77,15 +88,18 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 </div>
                 {asset.symbol === Nft.TRCL.symbol &&
                     <div className={styles.section}>
-                        <InputField type={'number'} initialValue={'10'} label={strings.nominalPower} onChange={setNftDescription} />
+                        <InputField type={'number'} initialValue={'10'} label={strings.nominalPower} onChange={setNftPower} />
                     </div>
                 }
                 <Button
                     className={styles.button}
                     disabled={!file || !isValidNft()}
                     label={strings.mint}
-                    loading={uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR}
+                    loading={uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR && mintState !== MintState.IDLE && mintState !== MintState.MINTED && mintState !== MintState.ERROR}
                     onClick={() => { if (file) upload(file) }} />
+
+                {uploadState === FileUploadState.ERROR && <div className={styles.error}>{strings.errorUploadingFile}</div>}
+                {mintState === MintState.ERROR && <div className={styles.error}>{strings.errorMinting}</div>}
             </div>
         </ModalDialog>
     )
