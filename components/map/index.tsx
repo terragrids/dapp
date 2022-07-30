@@ -16,6 +16,9 @@ const MAX_SCALE = 2
 const MIN_SCALE = 0.8
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
+// TODO: FIGURE OUT HOW THIS IS DETERMINED
+const MAGIC_NUMBER_TO_ADJUST = 80
+
 const Map = ({ width, height }: MapProps) => {
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
     const tileMap = [
@@ -42,7 +45,7 @@ const Map = ({ width, height }: MapProps) => {
                         tileIndex: { x: tileX, y: tileY },
                         ctx
                     })
-                    tile.drawTile(0)
+                    tile.drawTile(MAGIC_NUMBER_TO_ADJUST)
                 }
             }
         }
@@ -64,7 +67,9 @@ const Map = ({ width, height }: MapProps) => {
         const remainingHeight = height - Tile.TILE_HEIGHT * gridSize
 
         const tileStartX = width / 2 - offsetX
-        const tileStartY = remainingHeight / 2 + offsetY
+        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling Tile.drawTile()
+        const tileStartY =
+            remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
         renderBackground(ctx)
 
