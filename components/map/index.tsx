@@ -21,6 +21,7 @@ const MAGIC_NUMBER_TO_ADJUST = 80
 
 const Map = ({ width, height }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
+    const startPositionRef = useRef({ x: -1, y: -1 })
 
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
     const tileMap = [
@@ -51,8 +52,8 @@ const Map = ({ width, height }: MapProps) => {
     const renderTiles =
         (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
             const gridSize = Math.sqrt(tileMap.length)
-
             const images = getTileImages()
+
             for (let tileX = 0; tileX < gridSize; ++tileX) {
                 for (let tileY = 0; tileY < gridSize; ++tileY) {
                     const imageIndex = tileMap[tileY * gridSize + tileX]
@@ -116,6 +117,8 @@ const Map = ({ width, height }: MapProps) => {
         const tileStartY =
             remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
+        startPositionRef.current = { x: tileStartX, y: tileStartY }
+
         renderBackground(ctx)
 
         renderTiles(ctx)(tileStartX, tileStartY)
@@ -159,11 +162,42 @@ const Map = ({ width, height }: MapProps) => {
         }
     }
 
+    const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        const gridSize = Math.sqrt(tileMap.length)
+
+        const { e: xPos, f: yPos } = ctx.getTransform()
+
+        const mouse_x = e.clientX - startPositionRef.current.x - xPos
+        const mouse_y = e.clientY - startPositionRef.current.y - yPos
+
+        const hoverTileX =
+            Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) -
+            1
+        const hoverTileY = Math.floor(
+            -mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT
+        )
+
+        if (
+            hoverTileX >= 0 &&
+            hoverTileY >= 0 &&
+            hoverTileX < gridSize &&
+            hoverTileY < gridSize
+        ) {
+            const tileIndex = hoverTileY * gridSize + hoverTileX
+            if (tileIndex < tileMap.length) {
+                // TODO: temporary switch tile randomly
+                const tileType = Math.floor(Math.random() * tileMap.length) % 35
+                tileMap[tileIndex] = tileType
+            }
+        }
+    }
+
     return (
         <Canvas
             drawOnCanvas={render}
             onWheel={onWheel}
             onMouseMove={onMouseMove}
+            onClick={onClick}
             attributes={{ width, height }}
         />
     )
