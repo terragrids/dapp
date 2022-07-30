@@ -3,10 +3,16 @@ import React, { useRef, useEffect } from 'react'
 export type CanvasProps = {
     drawOnCanvas: (ctx: CanvasRenderingContext2D) => void
     onWheel: (ctx: CanvasRenderingContext2D, e: WheelEvent) => void
+    onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
     attributes?: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
-const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
+const Canvas = ({
+    drawOnCanvas,
+    onWheel,
+    onMouseMove,
+    attributes
+}: CanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -18,6 +24,7 @@ const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
         if (!context) return
 
         canvas.addEventListener('wheel', (e) => onWheel(context, e))
+        canvas.addEventListener('mousemove', (e) => onMouseMove(context, e))
 
         // let animationFrameId: number
         const render = () => {
@@ -29,11 +36,15 @@ const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
 
         return () => {
             canvas.removeEventListener('wheel', (e) => onWheel(context, e))
+            canvas.removeEventListener('mousemove', (e) =>
+                onMouseMove(context, e)
+            )
+
             // TODO: Fix flickering when calling cancelAnimationFrame
             // This might help: https://stackoverflow.com/questions/40265707/flickering-images-in-canvas-animation
             // cancelAnimationFrame(animationFrameId)
         }
-    }, [drawOnCanvas, onWheel])
+    }, [drawOnCanvas, onWheel, onMouseMove])
 
     return <canvas ref={canvasRef} {...attributes} />
 }
