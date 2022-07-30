@@ -19,10 +19,19 @@ const Canvas = ({ drawOnCanvas, onWheel, attributes }: CanvasProps) => {
 
         canvas.addEventListener('wheel', (e) => onWheel(context, e))
 
-        drawOnCanvas(context)
+        // let animationFrameId: number
+        const render = () => {
+            drawOnCanvas(context)
+            requestAnimationFrame(render)
+            // animationFrameId = requestAnimationFrame(render)
+        }
+        render()
 
         return () => {
             canvas.removeEventListener('wheel', (e) => onWheel(context, e))
+            // TODO: Fix flickering when calling cancelAnimationFrame
+            // This might help: https://stackoverflow.com/questions/40265707/flickering-images-in-canvas-animation
+            // cancelAnimationFrame(animationFrameId)
         }
     }, [drawOnCanvas, onWheel])
 

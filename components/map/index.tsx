@@ -103,12 +103,6 @@ const Map = ({ width, height }: MapProps) => {
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         onScrollY(ctx, e)
         onScrollX(ctx, e)
-
-        // Refill the background as the previously rendered part stays
-        renderBackground(ctx)
-
-        // This is needed to redraw scaled map
-        render(ctx)
     }
 
     return (
