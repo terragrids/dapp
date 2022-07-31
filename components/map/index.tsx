@@ -8,12 +8,14 @@ export type MapProps = {
     height: number | undefined
 }
 
-const DEFAULT_MAP_SCALE = 1
-const DEFAULT_DELTA_X = 1
+// TO LOCK THE SIZE OF THE MAP TO 1x
+// const DEFAULT_MAP_SCALE = 1
+// const ZOOM_SENSITIVITY = 0.0001
+// const MAX_SCALE = 2
+// const MIN_SCALE = 0.8
+
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const ZOOM_SENSITIVITY = 0.0001
-const MAX_SCALE = 2
-const MIN_SCALE = 0.8
+const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
@@ -124,21 +126,22 @@ const Map = ({ width, height }: MapProps) => {
         renderTiles(ctx)(tileStartX, tileStartY)
     }
 
-    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const currentScale = ctx.getTransform().a
-        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+    // TO LOCK THE SIZE OF THE MAP TO 1x
+    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+    //     const currentScale = ctx.getTransform().a
+    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-        const scale = DEFAULT_MAP_SCALE + zoomAmount
+    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
 
-        ctx.translate(e.offsetX, e.offsetY)
-        ctx.scale(scale, scale)
-        ctx.translate(-e.offsetX, -e.offsetY)
-    }
+    //     ctx.translate(e.offsetX, e.offsetY)
+    //     ctx.scale(scale, scale)
+    //     ctx.translate(-e.offsetX, -e.offsetY)
+    // }
 
     const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         const moveAmount =
@@ -149,7 +152,8 @@ const Map = ({ width, height }: MapProps) => {
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        onScrollY(ctx, e)
+        // TO LOCK THE SIZE OF THE MAP TO 1x
+        // onScrollY(ctx, e)
         onScrollX(ctx, e)
     }
 
