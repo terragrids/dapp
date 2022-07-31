@@ -32,6 +32,10 @@
   content: '\e900';
 }
 
+.icon-discord:before {
+  content: "\e902";
+}
+
 .icon-menu:before {
   content: '\e92b';
 }
@@ -42,4 +46,8 @@
 
 .icon-chevron-right-circle:before {
   content: '\e965';
+}
+
+.icon-check:before {
+  content: "\e934";
 }

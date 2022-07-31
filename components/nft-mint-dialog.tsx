@@ -14,16 +14,16 @@ import styles from './nft-mint-dialog.module.scss'
 enum MintState {
     IDLE, MINTING, MINTED, ERROR
 }
+type Asset = {
+    name: string
+    description: string
+    symbol: string
+    power?: number
+}
+const defaultAsset = { name: '', description: '', symbol: Nft.TRCL.symbol, power: 10 } as Asset
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
-    type Asset = {
-        name: string
-        description: string
-        symbol: string
-        power?: number
-    }
-
-    const [asset, setAsset] = useState<Asset>({ name: '', description: '', symbol: Nft.TRCL.symbol, power: 10 })
+    const [asset, setAsset] = useState<Asset>(defaultAsset)
     const { upload, uploadState, fileProps } = useFileUploader(asset)
     const { mint } = useTokenMinter()
     const [file, setFile] = useState<File>()
@@ -51,6 +51,13 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         return valid
     }
 
+    function isInProgress() {
+        const uploading = uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR // don't count PINNED to avoid stopping progress before minting starts
+        const minting = mintState === MintState.MINTING
+        const minted = mintState === MintState.MINTED
+        return !minted && (uploading || minting)
+    }
+
     useEffect(() => {
         async function mintToken() {
             setMintState(MintState.MINTING)
@@ -65,7 +72,17 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (uploadState === FileUploadState.PINNED && mintState === MintState.IDLE) {
             mintToken()
         }
-    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState])
+        if (mintState === MintState.MINTED) {
+            setTimeout(function () { onClose() }, 2000)
+        }
+    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState, onClose])
+
+    useEffect(() => {
+        if (visible) {
+            setMintState(MintState.IDLE)
+            setAsset(defaultAsset)
+        }
+    }, [visible])
 
     return (
         <ModalDialog
@@ -95,7 +112,8 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     className={styles.button}
                     disabled={!file || !isValidNft()}
                     label={strings.mint}
-                    loading={uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR && mintState !== MintState.IDLE && mintState !== MintState.MINTED && mintState !== MintState.ERROR}
+                    loading={isInProgress()}
+                    checked={mintState === MintState.MINTED}
                     onClick={() => { if (file) upload(file) }} />
 
                 {uploadState === FileUploadState.ERROR && <div className={styles.error}>{strings.errorUploadingFile}</div>}
