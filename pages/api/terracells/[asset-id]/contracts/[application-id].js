@@ -3,10 +3,10 @@ import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../../../u
 export default async function handler(req, res) {
     switch (req.method) {
         case 'POST':
-            await callTerragridsApi(res, 'POST', `terracells/${req.query.assetId}/contracts/${req.query.applicationId}`, req.body)
+            await callTerragridsApi(res, 'POST', `terracells/${req.query['asset-id']}/contracts/${req.query['application-id']}`, req.body)
             break
         case 'DELETE':
-            await callTerragridsApi(res, 'DELETE', `terracells/${req.query.assetId}/contracts/${req.query.applicationId}`)
+            await callTerragridsApi(res, 'DELETE', `terracells/${req.query['asset-id']}/contracts/${req.query['application-id']}`)
             break
         default:
             setMethodNotAllowedResponse(res, ['POST', 'DELETE'])
