@@ -12,14 +12,13 @@ import { MenuEventContext } from '../context/menu-event-context'
 export default function Layout({ children }) {
     const user = useContext(UserContext)
     const { setToggleMenuAction } = useContext(MenuEventContext)
-    const [ mainMenuVisible, setMainMenuVisible ] = useState(false)
-    
-    
-useEffect(() => {
-    setToggleMenuAction(() => setMainMenuVisible(b => !b))
-},[setToggleMenuAction])
+    const [mainMenuVisible, setMainMenuVisible] = useState(false)
 
-    return ( 
+    useEffect(() => {
+        setToggleMenuAction(() => setMainMenuVisible(b => !b))
+    }, [setToggleMenuAction])
+
+    return (
         <>
             <Head>
                 <link rel={'icon'} href={'/favicon.ico'} />
@@ -32,7 +31,7 @@ useEffect(() => {
                     content={''} />
                 <meta name={'twitter:card'} content={'summary_large_image'} />
             </Head>
-            <header className={!user.authenticated ? `${styles.notconnected}` : `${styles.navbar}`}>
+            <header className={`${styles.topbar} ${!user.authenticated ? styles.notconnected : styles.navbar}`}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
                         <Logo className={styles.logo} />

@@ -2,7 +2,7 @@
 @import 'styles/screens.scss';
 @import 'styles/dimens.scss';
 
-.navbar {
+.topbar {
     position: fixed;
     top: 0;
     width: 100%;
@@ -10,13 +10,16 @@
     opacity: 0.9;
     padding: 15px 0;
     background-color: $color-mine-shaft;
-    border-bottom: 1px solid $color-emperor;
+    border-bottom: 1px solid $color-cape-cod;
+}
 
+.navbar {
     .navContent {
         padding: 0 40px;
 
         @media (max-width: $screen-small) {
             padding: 0 20px;
+
             li:last-child button {
                 padding-right: 0;
             }
@@ -25,10 +28,6 @@
 }
 
 .notconnected {
-    z-index: $z-index-navbar;
-    padding: 15px 0;
-    border-bottom: 1px solid $color-emperor;
-
     @media (max-width: $screen-small) {
         border-bottom: none;
     }

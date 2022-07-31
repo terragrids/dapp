@@ -3,12 +3,12 @@
 @import 'styles/dimens.scss';
 
 .wrapper {
-    position: absolute;
+    position: fixed;
     width: 20%;
     min-width: 288px;
     right: 2.2em;
     top: 4.8em;
-    background-color: $color-abbey;
+    background-color: $color-tundora;
 
     border-radius: $button-border-radius;
     z-index: $z-index-navbar;
@@ -27,7 +27,7 @@
         }
 
         li:first-child {
-            border-bottom: 1px solid $color-nomad;
+            border-bottom: 1px solid $color-emperor;
         }
 
         li:nth-child(2) {
@@ -35,7 +35,7 @@
         }
 
         li:last-child {
-            border-bottom: 1px solid $color-nomad;
+            border-bottom: 1px solid $color-emperor;
         }
 
         li:hover,
@@ -58,12 +58,13 @@
     line-height: 3.5;
     padding: 0 15px;
     color: $color-nomad;
-    border-bottom: 1px solid $color-nomad;
+    border-bottom: 1px solid $color-emperor;
 
     i {
         font-weight: bold;
         color: $color-white;
     }
+
     h2 {
         font-size: 1em;
     }
