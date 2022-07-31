@@ -2,14 +2,15 @@ import PropTypes from 'prop-types'
 import styles from './button.module.scss'
 import LoadingSpinner from './loading-spinner'
 
-export default function Button({ label, loading = false, disabled = false, className = '', onClick }) {
+export default function Button({ label, loading = false, checked = false, disabled = false, className = '', onClick }) {
     return (
         <button
             className={`${styles.this} ${className} ${disabled ? styles.disabled : ''}`}
             onClick={onClick}
-            disabled={disabled || loading}>
+            disabled={disabled || loading || checked}>
             {loading && <LoadingSpinner small />}
-            {!loading && label}
+            {checked && <i className={'icon-check'} />}
+            {!loading && !checked && label}
         </button>
     )
 }

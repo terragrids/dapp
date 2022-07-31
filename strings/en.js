@@ -30,5 +30,7 @@ export const strings = {
     type: 'Type',
     name: 'Name',
     description: 'Description',
-    nominalPower: 'Nominal power (TRW)'
+    nominalPower: 'Nominal power (TRW)',
+    errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
+    errorMinting: 'Something went wrong when minting your NFT. Please try again'
 }
