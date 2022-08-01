@@ -21,6 +21,8 @@ const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
 const MAGIC_NUMBER_TO_ADJUST = 80
 
+const GRID_SIZE = 10 // Math.sqrt of tileMap length (=100)
+
 const Map = ({ width, height }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
@@ -53,12 +55,11 @@ const Map = ({ width, height }: MapProps) => {
 
     const renderTiles =
         (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-            const gridSize = Math.sqrt(tileMap.length)
             const images = getTileImages()
 
-            for (let tileX = 0; tileX < gridSize; ++tileX) {
-                for (let tileY = 0; tileY < gridSize; ++tileY) {
-                    const imageIndex = tileMap[tileY * gridSize + tileX]
+            for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
+                for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
+                    const imageIndex = tileMap[tileY * GRID_SIZE + tileX]
 
                     const tile: Tile = new Tile({
                         tileImage: images[imageIndex],
@@ -86,8 +87,8 @@ const Map = ({ width, height }: MapProps) => {
             if (
                 hoverTileX >= 0 &&
                 hoverTileY >= 0 &&
-                hoverTileX < gridSize &&
-                hoverTileY < gridSize
+                hoverTileX < GRID_SIZE &&
+                hoverTileY < GRID_SIZE
             ) {
                 const renderX =
                     x + (hoverTileX - hoverTileY) * Tile.TILE_HALF_WIDTH
@@ -107,12 +108,10 @@ const Map = ({ width, height }: MapProps) => {
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const gridSize = Math.sqrt(tileMap.length)
-
         const offsetX = Tile.TILE_WIDTH / 2
         const offsetY = Tile.TILE_HEIGHT
 
-        const remainingHeight = height - Tile.TILE_HEIGHT * gridSize
+        const remainingHeight = height - Tile.TILE_HEIGHT * GRID_SIZE
 
         const tileStartX = width / 2 - offsetX
         // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling Tile.drawTile()
@@ -167,7 +166,7 @@ const Map = ({ width, height }: MapProps) => {
     }
 
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        const gridSize = Math.sqrt(tileMap.length)
+        const GRID_SIZE = Math.sqrt(tileMap.length)
 
         const { e: xPos, f: yPos } = ctx.getTransform()
 
@@ -184,10 +183,10 @@ const Map = ({ width, height }: MapProps) => {
         if (
             hoverTileX >= 0 &&
             hoverTileY >= 0 &&
-            hoverTileX < gridSize &&
-            hoverTileY < gridSize
+            hoverTileX < GRID_SIZE &&
+            hoverTileY < GRID_SIZE
         ) {
-            const tileIndex = hoverTileY * gridSize + hoverTileX
+            const tileIndex = hoverTileY * GRID_SIZE + hoverTileX
             if (tileIndex < tileMap.length) {
                 // TODO: temporary switch tile randomly
                 const tileType = Math.floor(Math.random() * tileMap.length) % 35
