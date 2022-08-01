@@ -1,4 +1,3 @@
-
 export const terragridsApiBaseUrl = (
     process.env.API_ENV === 'local' ?
         'http://localhost:3003' :
