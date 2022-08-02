@@ -95,6 +95,7 @@ export default function Home() {
                 onSelectTile={onSelectTile}
                 width={mapSize.width}
                 height={mapSize.height}
+                headerHeight={headerRef.current?.clientHeight}
             />
 
             <WalletPicker

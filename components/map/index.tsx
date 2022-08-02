@@ -13,6 +13,7 @@ export type TileInfo = {
 export type MapProps = {
     width: number | undefined
     height: number | undefined
+    headerHeight: number | undefined
     onSelectTile: (tileInfo: TileInfo) => void
 }
 
@@ -31,7 +32,7 @@ const MAGIC_NUMBER_TO_ADJUST = 80
 
 const GRID_SIZE = 10 // Math.sqrt of tileMap length (=100)
 
-const Map = ({ width, height, onSelectTile }: MapProps) => {
+const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
 
@@ -174,10 +175,13 @@ const Map = ({ width, height, onSelectTile }: MapProps) => {
     }
 
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        if (!headerHeight) return
+
         const { e: xPos, f: yPos } = ctx.getTransform()
 
         const mouse_x = e.clientX - startPositionRef.current.x - xPos
-        const mouse_y = e.clientY - startPositionRef.current.y - yPos
+        const mouse_y =
+            e.clientY - startPositionRef.current.y - yPos - headerHeight
 
         const hoverTileX =
             Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) -
