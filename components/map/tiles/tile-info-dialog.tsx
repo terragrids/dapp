@@ -23,9 +23,8 @@ const TileInfoDialog = ({
     return (
         <ModalDialog
             visible={visible}
-            title={'Selected tile infomation'}
-            onClose={onClose}
-        >
+            title={strings.terralandInformation}
+            onClose={onClose}>
             <div className={styles.container}>
                 <div className={styles.section}>
                     {/* Can remove `ImagePicker` once this dialog is fully implemented
