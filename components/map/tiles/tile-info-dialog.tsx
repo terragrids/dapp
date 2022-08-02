@@ -5,6 +5,7 @@ import React from 'react'
 import Button from 'components/button'
 import { ImagePicker } from 'components/image-picker'
 import { TileInfo } from 'components/map'
+import { strings } from 'strings/en'
 
 type TileInfoDialogProps = {
     visible: boolean
@@ -46,7 +47,7 @@ const TileInfoDialog = ({
                 <Button
                     className={styles.button}
                     disabled={false}
-                    label={'Close'}
+                    label={strings.close}
                     loading={false}
                     onClick={onClose}
                 />
