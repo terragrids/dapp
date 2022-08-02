@@ -1,0 +1,28 @@
+@import 'styles/colors.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+    min-width: 400px;
+    max-width: 600px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.button {
+    min-width: 200px;
+}
+
+.error {
+    color: $color-red;
+    padding-top: 40px;
+    font-size: 16px;
+}
