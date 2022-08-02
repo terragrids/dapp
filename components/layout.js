@@ -31,8 +31,7 @@ export default function Layout({ children, headerRef }) {
                 className={`${styles.topbar} ${
                     !user.authenticated ? styles.notconnected : styles.navbar
                 }`}
-                ref={headerRef}
-            >
+                ref={headerRef}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
                         <Logo className={styles.logo} />
