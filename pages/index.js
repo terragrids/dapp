@@ -67,10 +67,6 @@ export default function Home() {
         setLoading({ visible: false })
     }, [stdlib, walletAccount])
 
-    const closeTileInfoDialog = () => {
-        setTileInfoVisible(false)
-    }
-
     const onSelectTile = (tile) => {
         setSelectedTile(tile)
         setTileInfoVisible(true)
@@ -112,7 +108,7 @@ export default function Home() {
             />
             <TileInfoDialog
                 visible={tileInfoVisible}
-                onClose={closeTileInfoDialog}
+                onClose={() => setTileInfoVisible(false)}
                 tileInfo={selectedTile}
             />
         </Layout>
