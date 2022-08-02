@@ -175,7 +175,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     }
 
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        if (!headerHeight) return
+        if (headerHeight === undefined) return
 
         const { e: xPos, f: yPos } = ctx.getTransform()
 
