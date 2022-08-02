@@ -1,36 +1,61 @@
 import React, { useEffect, useState } from 'react'
-import Map, { MapProps } from 'components/map'
+import Map, { TileInfo } from 'components/map'
+import TileInfoDialog from 'components/map/tiles/tile-info-dialog'
 
 // This component is for development purpose (to see if the map works)
 // Should be replaced by another component once the map function is confirmed
 const MapPage = () => {
-    const [mapSize, setMapSize] = useState<MapProps>({
+    const [mapSize, setMapSize] = useState<{
+        width: number | undefined
+        height: number | undefined
+    }>({
         width: undefined,
         height: undefined
     })
+
+    const [visible, setVisible] = useState(false)
+    const [selectedTile, setSelectedTile] = useState<TileInfo>()
 
     useEffect(() => {
         const handleResize = () => {
             setMapSize({
                 width: window.innerWidth,
-                height: (window.innerHeight / 100) * 70
+                height: window.innerHeight
             })
         }
         setMapSize({
             width: window.innerWidth,
-            height: (window.innerHeight / 100) * 70
+            height: window.innerHeight
         })
         window.addEventListener('resize', handleResize)
 
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
+    const openTileInfoDialog = () => {
+        setVisible(true)
+    }
+    const closeTileInfoDialog = () => {
+        setVisible(false)
+    }
+
+    const onSelectTile = (tile: TileInfo) => {
+        setSelectedTile(tile)
+        openTileInfoDialog()
+    }
+
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
-            <div style={{ width: '100vw', height: '70vh' }}>
-                <Map {...mapSize} />
-            </div>
-            <div style={{ width: '100vw', height: '30vh' }}>This is rest</div>
+            <TileInfoDialog
+                visible={visible}
+                onClose={closeTileInfoDialog}
+                tileInfo={selectedTile}
+            />
+            <Map
+                onSelectTile={onSelectTile}
+                width={mapSize.width}
+                height={mapSize.height}
+            />
         </div>
     )
 }
