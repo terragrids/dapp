@@ -2,6 +2,7 @@ import Canvas from 'components/canvas'
 import React, { useRef } from 'react'
 import { getTileImages, TILE_TEXTURES } from './tiles/get-tile-images'
 import Tile from './tiles/tile'
+import variables from './index.module.scss'
 
 export type TileInfo = {
     xCoord: number
@@ -109,8 +110,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
         }
 
     const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        // Can/Should change the color once UI design is determined
-        ctx.fillStyle = '#151d26'
+        ctx.fillStyle = variables.backgroundColor
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
     }
 
