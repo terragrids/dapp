@@ -27,6 +27,8 @@ const TileInfoDialog = ({
         >
             <div className={styles.container}>
                 <div className={styles.section}>
+                    {/* Can remove `ImagePicker` once this dialog is fully implemented
+                       for now just to show if the right tile is selected */}
                     <ImagePicker
                         url={tileInfo.imageUrl}
                         onFilesPicked={(array) => {
