@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { useState, useContext, useEffect, useCallback, useRef } from 'react'
 import { strings } from '../strings/en'
-// import Content from '../components/content'
 import Layout from '../components/layout'
 import WalletPicker from '../components/wallet-picker'
 import { ReachContext } from '../context/reach-context'
@@ -86,7 +85,6 @@ export default function Home() {
                 <title>{strings.siteTitle}</title>
             </Head>
 
-            {/* <Content /> */}
             <Map
                 onSelectTile={onSelectTile}
                 width={mapSize.width}
