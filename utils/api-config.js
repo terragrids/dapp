@@ -1,9 +1,9 @@
-export const terragridsApiBaseUrl = (
-    process.env.API_ENV === 'local' ?
-        'http://localhost:3003' :
-        process.env.API_ENV === 'dev' ? 'https://api-dev.terragrids.org' :
-            'https://api.terragrids.org'
-)
+export const terragridsApiBaseUrl =
+    process.env.API_ENV === 'local'
+        ? 'http://localhost:3003'
+        : process.env.API_ENV === 'dev'
+        ? 'https://api-dev.terragrids.org'
+        : 'https://api.terragrids.org'
 
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 
@@ -14,6 +14,7 @@ const terracellContract = (id, applicationId) => `/api/terracells/${id}/contract
 const nfts = accountId => `/api/accounts/${accountId}/nfts`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
+const plots = (symbol, next) => `/api/nfts/type/${symbol}${next ? `?next=${next}` : ''}`
 
 export const endpoints = {
     accountTerracells,
@@ -21,6 +22,7 @@ export const endpoints = {
     terracell,
     terracellContract,
     nfts,
+    plots,
     fileUpload,
     ipfsFiles
 }
@@ -51,9 +53,9 @@ export async function callTerragridsApi(res, method, endpoint, data) {
         const type = response.headers.get('content-type')
         const length = response.headers.get('content-length')
 
-        res
-            .status(response.status)
-            .send(length > 0 ? type.includes('application/json') ? await response.json() : await response.text() : '')
+        res.status(response.status).send(
+            length > 0 ? (type.includes('application/json') ? await response.json() : await response.text()) : ''
+        )
     })
 }
 
