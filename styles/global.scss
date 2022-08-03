@@ -36,6 +36,10 @@ img {
     display: block;
 }
 
+ul {
+    list-style: none;
+}
+
 nav button,
 .btn {
     padding: 15px 20px;
@@ -55,4 +59,11 @@ nav button:hover,
 nav button:focus,
 .btn:focus {
     opacity: 0.9;
+}
+
+.thumbPlaceholder {
+    width: 105px;
+    height: 95px;
+    background-color: gray;
+    border-radius: $dialog-border-radius;
 }

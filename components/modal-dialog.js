@@ -1,17 +1,22 @@
 import styles from './modal-dialog.module.scss'
 import PropTypes from 'prop-types'
 
-export default function ModalDialog({ visible, title, children, onClose }) {
+export default function ModalDialog({ visible, title, children, onClose, subtitle, cssClass }) {
     return visible ? (
         <div className={styles.container}>
-            <div className={styles.dialog}>
+            <div className={`${styles.dialog} ${cssClass}`}>
                 {(title || onClose) &&
                     <header className={styles.header}>
-                        <div className={styles.title}>{title}</div>
+                        <h1 className={styles.title}>{title}
+                            {subtitle &&
+                                <small>{subtitle}</small>
+                            }
+                        </h1>
+
                         {onClose && <div><i className={`${styles.close} icon-cross`} onClick={onClose} /></div>}
                     </header>
                 }
-                <div className={styles.content}>{children}</div>
+                <section className={styles.content}>{children}</section>
             </div>
         </div>
     ) : <div />
@@ -21,5 +26,7 @@ ModalDialog.propTypes = {
     visible: PropTypes.bool,
     title: PropTypes.string,
     children: PropTypes.node,
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
+    subtitle: PropTypes.string,
+    cssClass: PropTypes.string
 }

@@ -30,5 +30,7 @@ export const strings = {
     type: 'Type',
     name: 'Name',
     description: 'Description',
-    nominalPower: 'Nominal power (TRW)'
+    nominalPower: 'Nominal power (TRW)',
+    totalOutput: 'Total output',
+    output: 'Output'
 }

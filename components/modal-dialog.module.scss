@@ -20,10 +20,9 @@
     display: block;
     max-width: 75vw;
     max-height: 85vh;
-    border-radius: $dialog-border-radius;
     background-color: $color-ebony-clay;
-    overflow-x: hidden;
-    overflow-y: auto;
+    border-radius: $dialog-border-radius;
+    //overflow: hidden;
 
     @media (max-width: $screen-small) {
         max-width: 95vw;
@@ -34,8 +33,9 @@
 .content {
     position: relative;
     padding: 20px;
-    height: 100%;
-    overflow: hidden;
+    height: 75vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .header {
