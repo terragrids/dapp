@@ -15,6 +15,8 @@ export const strings = {
     withdraw: 'Withdraw',
     buy: 'Buy',
     change: 'Change',
+    close: 'Close',
+    terralandInformation: 'Terraland information',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',

@@ -1,11 +1,21 @@
 import Canvas from 'components/canvas'
 import React, { useRef } from 'react'
-import { getTileImages } from './tiles/get-tile-images'
+import { getTileImages, TILE_TEXTURES } from './tiles/get-tile-images'
 import Tile from './tiles/tile'
+import variables from './index.module.scss'
+
+export type TileInfo = {
+    xCoord: number
+    yCoord: number
+    index: number
+    imageUrl: string
+}
 
 export type MapProps = {
     width: number | undefined
     height: number | undefined
+    headerHeight: number | undefined
+    onSelectTile: (tileInfo: TileInfo) => void
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
@@ -23,7 +33,7 @@ const MAGIC_NUMBER_TO_ADJUST = 80
 
 const GRID_SIZE = 10 // Math.sqrt of tileMap length (=100)
 
-const Map = ({ width, height }: MapProps) => {
+const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
 
@@ -100,8 +110,7 @@ const Map = ({ width, height }: MapProps) => {
         }
 
     const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        // Can/Should change the color once UI design is determined
-        ctx.fillStyle = '#151d26'
+        ctx.fillStyle = variables.backgroundColor
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
     }
 
@@ -166,12 +175,13 @@ const Map = ({ width, height }: MapProps) => {
     }
 
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        const GRID_SIZE = Math.sqrt(tileMap.length)
+        if (headerHeight === undefined) return
 
         const { e: xPos, f: yPos } = ctx.getTransform()
 
         const mouse_x = e.clientX - startPositionRef.current.x - xPos
-        const mouse_y = e.clientY - startPositionRef.current.y - yPos
+        const mouse_y =
+            e.clientY - startPositionRef.current.y - yPos - headerHeight
 
         const hoverTileX =
             Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) -
@@ -188,9 +198,14 @@ const Map = ({ width, height }: MapProps) => {
         ) {
             const tileIndex = hoverTileY * GRID_SIZE + hoverTileX
             if (tileIndex < tileMap.length) {
-                // TODO: temporary switch tile randomly
-                const tileType = Math.floor(Math.random() * tileMap.length) % 35
-                tileMap[tileIndex] = tileType
+                // TODO: should change the passed value
+                // temporarily passing a selected tile info
+                onSelectTile({
+                    xCoord: hoverTileX,
+                    yCoord: hoverTileY,
+                    index: tileIndex,
+                    imageUrl: TILE_TEXTURES[tileMap[tileIndex]]
+                })
             }
         }
     }
