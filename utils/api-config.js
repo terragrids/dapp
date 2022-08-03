@@ -1,10 +1,11 @@
-
 export const terragridsApiBaseUrl = (
     process.env.API_ENV === 'local' ?
         'http://localhost:3003' :
         process.env.API_ENV === 'dev' ? 'https://api-dev.terragrids.org' :
             'https://api.terragrids.org'
 )
+
+export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`

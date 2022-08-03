@@ -6,7 +6,8 @@ export const strings = {
     myAlgoWallet: 'My Algo Wallet',
     peraWallet: 'Pera Wallet',
     algoSigner: 'AlgoSigner',
-    errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
+    errorConnectingWallet:
+        'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     comingSoon: 'Coming soon',
     mint: 'Mint',
     mintNft: 'Mint a new NFT',
@@ -15,12 +16,17 @@ export const strings = {
     withdraw: 'Withdraw',
     buy: 'Buy',
     change: 'Change',
+    close: 'Close',
+    terralandInformation: 'Terraland information',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
-    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
-    errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingTerracellSaleContract:
+        'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract:
+        'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorAccountNfts:
+        'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
@@ -32,5 +38,8 @@ export const strings = {
     description: 'Description',
     nominalPower: 'Nominal power (TRW)',
     totalOutput: 'Total output',
-    output: 'Output'
+    output: 'Output',
+    errorUploadingFile:
+        'Something went wrong when uploading or pinning your NFT file. Please try again.',
+    errorMinting: 'Something went wrong when minting your NFT. Please try again'
 }

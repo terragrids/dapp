@@ -1,15 +1,18 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useContext } from 'react'
 import { useNftSeller } from '../hooks/use-nft-seller'
-import { endpoints } from '../utils/api-config'
+import { endpoints, ipfsUrl } from '../utils/api-config'
 import { strings } from '../strings/en'
 import Button from './button'
 import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from '../context/user-context'
+import { getIpfsHash } from 'utils/string-utils.js'
 
 export default function TerracellDialog({ id, visible, onClose, onUpForSale, onPurchased, onWithdrawn, isAuthenticated, canSell }) {
     const [terracell, setTerracell] = useState()
+    const [nftImageUrl, setNftImageUrl] = useState()
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState()
     const user = useContext(UserContext)
@@ -17,9 +20,19 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onP
 
     useEffect(() => {
         async function fetchTerracell() {
+            setNftImageUrl()
             const terracell = await fetch(endpoints.terracell(id))
             const { asset } = await terracell.json()
             setTerracell(asset)
+
+            const ipfsMetadataHash = getIpfsHash(asset.url)
+
+            if (ipfsMetadataHash) {
+                const metadata = await fetch(ipfsUrl(ipfsMetadataHash))
+                const { image } = await metadata.json()
+                const ipfsFileHash = getIpfsHash(image)
+                setNftImageUrl(ipfsUrl(ipfsFileHash))
+            }
         }
         if (id) {
             setErrorMessage()
@@ -183,6 +196,17 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onP
                     <>
                         <div className={styles.message}>{terracell.name}</div>
                         <pre className={styles.info}>{`id: ${terracell.id}`}</pre>
+
+                        {/* TODO: replace with Image */}
+                        {nftImageUrl &&
+                            <div className={styles.image}>
+                                <picture>
+                                    <source srcSet={nftImageUrl} type={'image/*'} />
+                                    <img src={nftImageUrl} alt={'image'} />
+                                </picture>
+                            </div>
+                        }
+
                         {terracell.contract &&
                             <div className={styles.contract}>
                                 <header>{strings.terracellOnTheMarket}</header>
@@ -213,6 +237,6 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onP
                     </>
                 }
             </div>
-        </ModalDialog>
+        </ModalDialog >
     )
 }

@@ -1,22 +1,42 @@
 import Canvas from 'components/canvas'
-import React from 'react'
-import { getTileImages } from './tiles/get-tile-images'
+import React, { useRef } from 'react'
+import { getTileImages, TILE_TEXTURES } from './tiles/get-tile-images'
 import Tile from './tiles/tile'
+import variables from './index.module.scss'
+
+export type TileInfo = {
+    xCoord: number
+    yCoord: number
+    index: number
+    imageUrl: string
+}
 
 export type MapProps = {
     width: number | undefined
     height: number | undefined
+    headerHeight: number | undefined
+    onSelectTile: (tileInfo: TileInfo) => void
 }
 
-const DEFAULT_MAP_SCALE = 1
-const DEFAULT_DELTA_X = 1
+// TO LOCK THE SIZE OF THE MAP TO 1x
+// const DEFAULT_MAP_SCALE = 1
+// const ZOOM_SENSITIVITY = 0.0001
+// const MAX_SCALE = 2
+// const MIN_SCALE = 0.8
+
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const ZOOM_SENSITIVITY = 0.0001
-const MAX_SCALE = 2
-const MIN_SCALE = 0.8
+const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
-const Map = ({ width, height }: MapProps) => {
+// TODO: FIGURE OUT HOW THIS IS DETERMINED
+const MAGIC_NUMBER_TO_ADJUST = 80
+
+const GRID_SIZE = 10 // Math.sqrt of tileMap length (=100)
+
+const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
+    const mouseRef = useRef({ x: -1, y: -1 })
+    const startPositionRef = useRef({ x: -1, y: -1 })
+
     // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
     const tileMap = [
         14, 23, 23, 23, 23, 23, 23, 23, 23, 13, 21, 32, 33, 33, 28, 33, 33, 33,
@@ -27,14 +47,29 @@ const Map = ({ width, height }: MapProps) => {
         22, 22, 22, 22, 22, 22, 12
     ]
 
+    const renderTileHover =
+        (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+            ctx.beginPath()
+            ctx.setLineDash([])
+            ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
+            ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
+            ctx.lineWidth = 2
+            ctx.moveTo(x, y)
+            ctx.lineTo(x + Tile.TILE_WIDTH / 2, y - Tile.TILE_HEIGHT / 2)
+            ctx.lineTo(x + Tile.TILE_WIDTH, y)
+            ctx.lineTo(x + Tile.TILE_WIDTH / 2, y + Tile.TILE_HEIGHT / 2)
+            ctx.lineTo(x, y)
+            ctx.stroke()
+            ctx.fill()
+        }
+
     const renderTiles =
         (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-            const gridSize = Math.sqrt(tileMap.length)
-
             const images = getTileImages()
-            for (let tileX = 0; tileX < gridSize; ++tileX) {
-                for (let tileY = 0; tileY < gridSize; ++tileY) {
-                    const imageIndex = tileMap[tileY * gridSize + tileX]
+
+            for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
+                for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
+                    const imageIndex = tileMap[tileY * GRID_SIZE + tileX]
 
                     const tile: Tile = new Tile({
                         tileImage: images[imageIndex],
@@ -42,50 +77,79 @@ const Map = ({ width, height }: MapProps) => {
                         tileIndex: { x: tileX, y: tileY },
                         ctx
                     })
-                    tile.drawTile(0)
+                    tile.drawTile(MAGIC_NUMBER_TO_ADJUST)
                 }
+            }
+
+            const { e: xPos, f: yPos } = ctx.getTransform()
+
+            const mouse_x = mouseRef.current.x - x - xPos
+            const mouse_y = mouseRef.current.y - y - yPos
+
+            const hoverTileX =
+                Math.floor(
+                    mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH
+                ) - 1
+            const hoverTileY = Math.floor(
+                -mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT
+            )
+
+            if (
+                hoverTileX >= 0 &&
+                hoverTileY >= 0 &&
+                hoverTileX < GRID_SIZE &&
+                hoverTileY < GRID_SIZE
+            ) {
+                const renderX =
+                    x + (hoverTileX - hoverTileY) * Tile.TILE_HALF_WIDTH
+                const renderY =
+                    y + (hoverTileX + hoverTileY) * Tile.TILE_HALF_HEIGHT
+
+                renderTileHover(ctx)(renderX, renderY + Tile.TILE_HEIGHT)
             }
         }
 
     const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        // Can/Should change the color once UI design is determined
-        ctx.fillStyle = '#151d26'
+        ctx.fillStyle = variables.backgroundColor
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
     }
 
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const gridSize = Math.sqrt(tileMap.length)
-
         const offsetX = Tile.TILE_WIDTH / 2
         const offsetY = Tile.TILE_HEIGHT
 
-        const remainingHeight = height - Tile.TILE_HEIGHT * gridSize
+        const remainingHeight = height - Tile.TILE_HEIGHT * GRID_SIZE
 
         const tileStartX = width / 2 - offsetX
-        const tileStartY = remainingHeight / 2 + offsetY
+        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling Tile.drawTile()
+        const tileStartY =
+            remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
+
+        startPositionRef.current = { x: tileStartX, y: tileStartY }
 
         renderBackground(ctx)
 
         renderTiles(ctx)(tileStartX, tileStartY)
     }
 
-    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const currentScale = ctx.getTransform().a
-        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+    // TO LOCK THE SIZE OF THE MAP TO 1x
+    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+    //     const currentScale = ctx.getTransform().a
+    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-        const scale = DEFAULT_MAP_SCALE + zoomAmount
+    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
 
-        ctx.translate(e.offsetX, e.offsetY)
-        ctx.scale(scale, scale)
-        ctx.translate(-e.offsetX, -e.offsetY)
-    }
+    //     ctx.translate(e.offsetX, e.offsetY)
+    //     ctx.scale(scale, scale)
+    //     ctx.translate(-e.offsetX, -e.offsetY)
+    // }
 
     const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         const moveAmount =
@@ -96,20 +160,62 @@ const Map = ({ width, height }: MapProps) => {
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        onScrollY(ctx, e)
+        // TO LOCK THE SIZE OF THE MAP TO 1x
+        // onScrollY(ctx, e)
         onScrollX(ctx, e)
+    }
 
-        // Refill the background as the previously rendered part stays
-        renderBackground(ctx)
+    const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        const rect = ctx.canvas.getBoundingClientRect()
 
-        // This is needed to redraw scaled map
-        render(ctx)
+        mouseRef.current = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        }
+    }
+
+    const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        if (headerHeight === undefined) return
+
+        const { e: xPos, f: yPos } = ctx.getTransform()
+
+        const mouse_x = e.clientX - startPositionRef.current.x - xPos
+        const mouse_y =
+            e.clientY - startPositionRef.current.y - yPos - headerHeight
+
+        const hoverTileX =
+            Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) -
+            1
+        const hoverTileY = Math.floor(
+            -mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT
+        )
+
+        if (
+            hoverTileX >= 0 &&
+            hoverTileY >= 0 &&
+            hoverTileX < GRID_SIZE &&
+            hoverTileY < GRID_SIZE
+        ) {
+            const tileIndex = hoverTileY * GRID_SIZE + hoverTileX
+            if (tileIndex < tileMap.length) {
+                // TODO: should change the passed value
+                // temporarily passing a selected tile info
+                onSelectTile({
+                    xCoord: hoverTileX,
+                    yCoord: hoverTileY,
+                    index: tileIndex,
+                    imageUrl: TILE_TEXTURES[tileMap[tileIndex]]
+                })
+            }
+        }
     }
 
     return (
         <Canvas
             drawOnCanvas={render}
             onWheel={onWheel}
+            onMouseMove={onMouseMove}
+            onClick={onClick}
             attributes={{ width, height }}
         />
     )

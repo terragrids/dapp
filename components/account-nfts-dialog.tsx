@@ -7,11 +7,6 @@ import styles from './account-nfts-dialog.module.scss'
 //import { Nft } from 'types/nft'
 
 export const AccountNftsDialog = ({ visible, onClose }: Props) => {
-    //const symbol = useContext(MenuEventContext)
-
-    // useEffect(() => {
-    // }, [symbol])
-
     return visible ? (
         <ModalDialog
             visible={visible}

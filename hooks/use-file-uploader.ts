@@ -9,11 +9,15 @@ export enum FileUploadState {
 
 export function useFileUploader({ name, description }: Props) {
     type FileProps = {
+        uploadState: FileUploadState
         file?: File
         contentType?: string
         id?: string
-        url?: string
-        uploadState: FileUploadState
+        uploadUrl?: string
+        cdnUrl?: string
+        arc3Name?: string
+        ipfsMetadataUrl?: string
+        ipfsMetadataHash?: Uint8Array
     }
 
     const [fileProps, setFileProps] = useState<FileProps>({
@@ -40,7 +44,7 @@ export function useFileUploader({ name, description }: Props) {
             setFileProps(props => ({
                 ...props,
                 id: id,
-                url: url,
+                uploadUrl: url,
                 uploadState: FileUploadState.ACCEPTED
             }))
         } else {
@@ -55,12 +59,12 @@ export function useFileUploader({ name, description }: Props) {
      * Step 2: Upload the file using the URL provided
      */
     const uploadFile = useCallback(async (): Promise<void> => {
-        if (!fileProps.url || !fileProps.contentType) return
+        if (!fileProps.uploadUrl || !fileProps.contentType) return
 
-        let cacheControl = getQueryParameter(fileProps.url, 'Cache-Control')
+        let cacheControl = getQueryParameter(fileProps.uploadUrl, 'Cache-Control')
         if (cacheControl) cacheControl = cacheControl.replace('%3D', '=')
 
-        const response = await fetch(fileProps.url, {
+        const response = await fetch(fileProps.uploadUrl, {
             method: 'PUT',
             headers: {
                 'Content-Type': fileProps.contentType,
@@ -73,6 +77,7 @@ export function useFileUploader({ name, description }: Props) {
         if (response.status === 200) {
             setFileProps(file => ({
                 ...file,
+                cdnUrl: `https://images.terragrids.org/${fileProps.id}`,
                 uploadState: FileUploadState.UPLOADED
             }))
         } else {
@@ -81,7 +86,7 @@ export function useFileUploader({ name, description }: Props) {
                 uploadState: FileUploadState.ERROR
             }))
         }
-    }, [fileProps.contentType, fileProps.file, fileProps.url])
+    }, [fileProps.contentType, fileProps.file, fileProps.id, fileProps.uploadUrl])
 
     /**
      * Step 3: Pin the uploaded file to IPFS
@@ -103,8 +108,12 @@ export function useFileUploader({ name, description }: Props) {
         })
 
         if (response.status === 201) {
+            const { assetName, url, integrity } = await response.json()
             setFileProps(file => ({
                 ...file,
+                arc3Name: assetName,
+                ipfsMetadataUrl: url,
+                ipfsMetadataHash: integrity,
                 uploadState: FileUploadState.PINNED
             }))
         } else {
@@ -137,7 +146,16 @@ export function useFileUploader({ name, description }: Props) {
         createSignedFileUploadUrl(file.type)
     }
 
-    return { upload, uploadState: fileProps.uploadState }
+    return {
+        upload,
+        uploadState: fileProps.uploadState,
+        fileProps: {
+            cdnUrl: fileProps.cdnUrl,
+            arc3Name: fileProps.arc3Name,
+            ipfsMetadataUrl: fileProps.ipfsMetadataUrl,
+            ipfsMetadataHash: fileProps.ipfsMetadataHash
+        }
+    }
 }
 
 type Props = {

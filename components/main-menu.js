@@ -13,23 +13,22 @@ export default function MainMenu({ visible }) {
     const { onMint, onToggleMenu } = useContext(MenuEventContext)
     const user = useContext(UserContext)
     const [errorMessage, setErrorMessage] = useState()
-    
+
     useEffect(() => {
         const fetchNfts = async () => {
-            
-            try{
-                const response = await fetch(endpoints.nfts(user.walletAccount))
-                const accountNfts= await response.json()
-                setAccountNfts(accountNfts) 
+            try {
+                const response = await fetch(endpoints.nfts(user.walletAddress))
+                const accountNfts = await response.json()
+                setAccountNfts(accountNfts)
 
-            } catch(e){
+            } catch (e) {
                 setErrorMessage(strings.errorAccountNfts)
                 return
             }
         }
 
         fetchNfts()
-    },[user])
+    }, [user])
 
     const openMintDialog = () => {
         onMint()
@@ -38,34 +37,33 @@ export default function MainMenu({ visible }) {
 
     return visible ? (
 
-        <nav className={styles.wrapper}> 
-        
-        <header className={styles.header}>
-            <h2 className={styles.title}>{strings.yourWallet}</h2>
-            <i className={`${styles.close} icon-cross`} onClick={onToggleMenu} />
-        </header>
+        <nav className={styles.wrapper}>
 
-        { user.authenticated &&
-        <>
-            <ul>
-                <li>{maskWalletAddress(user.walletAddress)}</li>
-                <li>$ALGO <strong>{user.walletBalance}</strong></li>
-                <li>{Nft.TRCL.currencySymbol} <strong>{accountNfts.trcl}</strong></li>
-                <li>{Nft.TRLD.currencySymbol} <strong>{accountNfts.trld}</strong></li>
-                <li>{Nft.TRAS.currencySymbol} <strong>{accountNfts.tras}</strong></li>
-            </ul>
+            <header className={styles.header}>
+                <h2 className={styles.title}>{strings.yourWallet}</h2>
+                <i className={`${styles.close} icon-cross`} onClick={onToggleMenu} />
+            </header>
 
-            <button className={styles.accent} onClick={openMintDialog}>{strings.mint}</button>
-            <button className={`${styles.secondary} secondary`}>{strings.disconnect}</button> 
-        </>
-        }
-        {errorMessage &&
-            <div className={styles.error}>{errorMessage}</div>
-        }
+            {user.authenticated &&
+                <>
+                    <ul>
+                        <li>{maskWalletAddress(user.walletAddress)}</li>
+                        <li>$ALGO <strong>{user.walletBalance}</strong></li>
+                        <li>{Nft.TRCL.currencySymbol} <strong>{accountNfts.trcl}</strong></li>
+                        <li>{Nft.TRLD.currencySymbol} <strong>{accountNfts.trld}</strong></li>
+                        <li>{Nft.TRAS.currencySymbol} <strong>{accountNfts.tras}</strong></li>
+                    </ul>
+
+                    <button className={styles.accent} onClick={openMintDialog}>{strings.mint}</button>
+                    <button className={`${styles.secondary} secondary`}>{strings.disconnect}</button>
+                </>
+            }
+            {errorMessage &&
+                <div className={styles.error}>{errorMessage}</div>
+            }
         </nav>
 
     ) : ''
-
 }
 
 MainMenu.propTypes = {
