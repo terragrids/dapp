@@ -201,8 +201,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
 
     useEffect(() => {
         const load = async () => {
-            // 'trld' shoule be changed dynamically?
-            const res = await fetch(endpoints.plots('trld'))
+            const res = await fetch(endpoints.terralands())
             if (!res.ok) return
 
             const { assets } = await res.json()
