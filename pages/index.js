@@ -8,7 +8,7 @@ import { UserContext } from '../context/user-context'
 import { MenuEventContext } from '../context/menu-event-context'
 import LoadingDialog from '../components/loading-dialog'
 import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
-import TileInfoDialog from 'components/map/tiles/tile-info-dialog'
+import PlotInfoDialog from 'components/map/tiles/plot-info-dialog'
 import Map from 'components/map'
 
 export default function Home() {
@@ -17,12 +17,11 @@ export default function Home() {
     const [loading, setLoading] = useState({ visible: false, message: null })
     const { stdlib } = useContext(ReachContext)
     const { walletAccount } = useContext(UserContext)
-    const { setConnectWalletAction, setMintAction } =
-        useContext(MenuEventContext)
+    const { setConnectWalletAction, setMintAction } = useContext(MenuEventContext)
 
     const headerRef = useRef()
-    const [tileInfoVisible, setTileInfoVisible] = useState(false)
-    const [selectedTile, setSelectedTile] = useState()
+    const [plotInfoVisible, setPlotInfoVisible] = useState(false)
+    const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
         width: undefined,
         height: undefined
@@ -52,23 +51,18 @@ export default function Home() {
         const amount = 1
         setLoading({ visible: true, message: strings.mintingTerracell })
         try {
-            await stdlib.launchToken(
-                walletAccount,
-                `Terracell #${now}`,
-                'TRCL',
-                {
-                    supply: amount,
-                    decimals: 0,
-                    url: `https://terragrids.org#${now}`
-                }
-            )
+            await stdlib.launchToken(walletAccount, `Terracell #${now}`, 'TRCL', {
+                supply: amount,
+                decimals: 0,
+                url: `https://terragrids.org#${now}`
+            })
         } catch (e) {}
         setLoading({ visible: false })
     }, [stdlib, walletAccount])
 
-    const onSelectTile = (tile) => {
-        setSelectedTile(tile)
-        setTileInfoVisible(true)
+    const onSelectPlot = plot => {
+        setSelectedPlot(plot)
+        setPlotInfoVisible(true)
     }
 
     useEffect(() => {
@@ -86,28 +80,19 @@ export default function Home() {
             </Head>
 
             <Map
-                onSelectTile={onSelectTile}
+                onSelectPlot={onSelectPlot}
                 width={mapSize.width}
                 height={mapSize.height}
                 headerHeight={headerRef.current?.clientHeight}
             />
 
-            <WalletPicker
-                visible={walletPickerVisible}
-                onClose={() => setWalletPickerVisible(false)}
-            />
-            <LoadingDialog
-                visible={loading.visible}
-                message={loading.message}
-            />
-            <NftMintDialog
-                visible={nftMintVisible}
-                onClose={() => setNftMintVisible(false)}
-            />
-            <TileInfoDialog
-                visible={tileInfoVisible}
-                onClose={() => setTileInfoVisible(false)}
-                tileInfo={selectedTile}
+            <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />
+            <LoadingDialog visible={loading.visible} message={loading.message} />
+            <NftMintDialog visible={nftMintVisible} onClose={() => setNftMintVisible(false)} />
+            <PlotInfoDialog
+                visible={plotInfoVisible}
+                onClose={() => setPlotInfoVisible(false)}
+                plotInfo={selectedPlot}
             />
         </Layout>
     )

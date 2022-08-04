@@ -9,7 +9,7 @@ type PlotType = {
     holders: { address: string; amount: number }[]
 }
 
-type MapTileType = PlotType & {
+type MapPlotType = PlotType & {
     index: number
     image: HTMLImageElement
 }

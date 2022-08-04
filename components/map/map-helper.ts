@@ -1,12 +1,12 @@
-import { Position2D } from './tiles/tile'
+import { Position2D } from './tiles/plot'
 
-export const GRID_SIZE = 10 // Math.sqrt of tileMap length (=100)
+export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 
 export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
 }
 
-export const convertToTileMap = ({ offchainUrl, positionX, positionY, ...rest }: PlotType): MapTileType => {
+export const convertToMapPlot = ({ offchainUrl, positionX, positionY, ...rest }: PlotType): MapPlotType => {
     const image = new Image()
     image.src = offchainUrl
     return {

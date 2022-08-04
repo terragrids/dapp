@@ -1,29 +1,29 @@
 import ModalDialog from 'components/modal-dialog'
-import styles from './tile-info-dialog.module.scss'
+import styles from './plot-info-dialog.module.scss'
 
 import React from 'react'
 import Button from 'components/button'
 import { ImagePicker } from 'components/image-picker'
 import { strings } from 'strings/en'
-import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './tile-helpers'
+import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './plot-helpers'
 
-type TileInfoDialogProps = {
+type PlotInfoDialogProps = {
     visible: boolean
     onClose: () => void
-    tileInfo: MapTileType | undefined
+    plotInfo: MapPlotType | undefined
 }
 
-const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => {
-    if (!tileInfo) return null
+const PlotInfoDialog = ({ visible, onClose, plotInfo }: PlotInfoDialogProps) => {
+    if (!plotInfo) return null
 
-    const { name, positionX, positionY, offchainUrl, holders } = tileInfo
+    const { name, positionX, positionY, offchainUrl, holders } = plotInfo
 
     return (
         <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
             <div className={styles.container}>
                 <div className={styles.section}>
                     {/* Can remove `ImagePicker` once this dialog is fully implemented
-                       for now just to show if the right tile is selected */}
+                       for now just to show if the right plot is selected */}
                     <ImagePicker
                         url={offchainUrl}
                         onFilesPicked={array => {
@@ -33,9 +33,9 @@ const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => 
                 </div>
                 <div className={styles.section}>
                     <p>Name: {removeSuffix(name, TRDL_SUFFIX)}</p>
-                    <p>Tile index : {tileInfo.index}</p>
+                    <p>Plot index : {plotInfo.index}</p>
                     <p>
-                        Tile xCoord : {positionX} / yCoord : {positionY}
+                        Plot xCoord : {positionX} / yCoord : {positionY}
                     </p>
                     <div className={styles.section}>
                         <h4>Holders</h4>
@@ -61,4 +61,4 @@ const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => 
     )
 }
 
-export default TileInfoDialog
+export default PlotInfoDialog
