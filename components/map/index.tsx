@@ -37,55 +37,69 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [tileMaps, setTileMaps] = useState<TileMapType[]>([])
 
-    const renderTileHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-        ctx.beginPath()
-        ctx.setLineDash([])
-        ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
-        ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
-        ctx.lineWidth = 2
-        ctx.moveTo(x, y)
-        ctx.lineTo(x + Tile.TILE_WIDTH / 2, y - Tile.TILE_HEIGHT / 2)
-        ctx.lineTo(x + Tile.TILE_WIDTH, y)
-        ctx.lineTo(x + Tile.TILE_WIDTH / 2, y + Tile.TILE_HEIGHT / 2)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-        ctx.fill()
-    }
+    const renderTileHover =
+        (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+            ctx.beginPath()
+            ctx.setLineDash([])
+            ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
+            ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
+            ctx.lineWidth = 2
+            ctx.moveTo(x, y)
+            ctx.lineTo(x + Tile.TILE_WIDTH / 2, y - Tile.TILE_HEIGHT / 2)
+            ctx.lineTo(x + Tile.TILE_WIDTH, y)
+            ctx.lineTo(x + Tile.TILE_WIDTH / 2, y + Tile.TILE_HEIGHT / 2)
+            ctx.lineTo(x, y)
+            ctx.stroke()
+            ctx.fill()
+        }
 
-    const renderTiles = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-        if (tileMaps.length === 0) return
+    const renderTiles =
+        (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+            if (tileMaps.length === 0) return
 
-        for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
-            for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
-                const index = (tileY * GRID_SIZE + tileX) % 14
-                const target = tileMaps.find(el => el.index === index)
-                if (!target) continue
+            for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
+                for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
+                    const index = (tileY * GRID_SIZE + tileX) % 14
+                    const target = tileMaps.find(el => el.index === index)
+                    if (!target) continue
 
-                const tile: Tile = new Tile({
-                    tileImage: target.image,
-                    mapStartPosition: { ...{ x, y } },
-                    tileIndex: { x: tileX, y: tileY },
-                    ctx
-                })
-                tile.drawTile(MAGIC_NUMBER_TO_ADJUST)
+                    const tile: Tile = new Tile({
+                        tileImage: target.image,
+                        mapStartPosition: { ...{ x, y } },
+                        tileIndex: { x: tileX, y: tileY },
+                        ctx
+                    })
+                    tile.drawTile(MAGIC_NUMBER_TO_ADJUST)
+                }
+            }
+
+            const { e: xPos, f: yPos } = ctx.getTransform()
+
+            const mouse_x = mouseRef.current.x - x - xPos
+            const mouse_y = mouseRef.current.y - y - yPos
+
+            const hoverTileX =
+                Math.floor(
+                    mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH
+                ) - 1
+            const hoverTileY = Math.floor(
+                -mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT
+            )
+
+            if (
+                hoverTileX >= 0 &&
+                hoverTileY >= 0 &&
+                hoverTileX < GRID_SIZE &&
+                hoverTileY < GRID_SIZE
+            ) {
+                const renderX =
+                    x + (hoverTileX - hoverTileY) * Tile.TILE_HALF_WIDTH
+                const renderY =
+                    y + (hoverTileX + hoverTileY) * Tile.TILE_HALF_HEIGHT
+
+                renderTileHover(ctx)(renderX, renderY + Tile.TILE_HEIGHT)
             }
         }
-
-        const { e: xPos, f: yPos } = ctx.getTransform()
-
-        const mouse_x = mouseRef.current.x - x - xPos
-        const mouse_y = mouseRef.current.y - y - yPos
-
-        const hoverTileX = Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) - 1
-        const hoverTileY = Math.floor(-mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT)
-
-        if (hoverTileX >= 0 && hoverTileY >= 0 && hoverTileX < GRID_SIZE && hoverTileY < GRID_SIZE) {
-            const renderX = x + (hoverTileX - hoverTileY) * Tile.TILE_HALF_WIDTH
-            const renderY = y + (hoverTileX + hoverTileY) * Tile.TILE_HALF_HEIGHT
-
-            renderTileHover(ctx)(renderX, renderY + Tile.TILE_HEIGHT)
-        }
-    }
 
     const renderBackground = (ctx: CanvasRenderingContext2D) => {
         ctx.fillStyle = variables.backgroundColor
@@ -102,7 +116,8 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
 
         const tileStartX = width / 2 - offsetX
         // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling Tile.drawTile()
-        const tileStartY = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
+        const tileStartY =
+            remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
         startPositionRef.current = { x: tileStartX, y: tileStartY }
 
@@ -129,7 +144,8 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     // }
 
     const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
+        const moveAmount =
+            DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
 
         // Only allows x axis move
         ctx.translate(moveAmount, 0)
@@ -156,12 +172,22 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
         const { e: xPos, f: yPos } = ctx.getTransform()
 
         const mouse_x = e.clientX - startPositionRef.current.x - xPos
-        const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
+        const mouse_y =
+            e.clientY - startPositionRef.current.y - yPos - headerHeight
 
-        const hoverTileX = Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) - 1
-        const hoverTileY = Math.floor(-mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT)
+        const hoverTileX =
+            Math.floor(mouse_y / Tile.TILE_HEIGHT + mouse_x / Tile.TILE_WIDTH) -
+            1
+        const hoverTileY = Math.floor(
+            -mouse_x / Tile.TILE_WIDTH + mouse_y / Tile.TILE_HEIGHT
+        )
 
-        if (hoverTileX >= 0 && hoverTileY >= 0 && hoverTileX < GRID_SIZE && hoverTileY < GRID_SIZE) {
+        if (
+            hoverTileX >= 0 &&
+            hoverTileY >= 0 &&
+            hoverTileX < GRID_SIZE &&
+            hoverTileY < GRID_SIZE
+        ) {
             const tileIndex = hoverTileY * GRID_SIZE + hoverTileX
             const target = tileMaps.find(el => el.index === tileIndex)
 
@@ -181,7 +207,9 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
 
             const { assets } = await res.json()
 
-            const maps = assets.map((asset: PlotType) => convertToTileMap(asset))
+            const maps = assets.map((asset: PlotType) =>
+                convertToTileMap(asset)
+            )
             setTileMaps(maps)
         }
         load()
