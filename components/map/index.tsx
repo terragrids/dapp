@@ -16,7 +16,7 @@ export type MapProps = {
     width: number | undefined
     height: number | undefined
     headerHeight: number | undefined
-    onSelectTile: (tileInfo: TileInfo) => void
+    onSelectTile: (tileInfo: TileMapType) => void
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
@@ -172,14 +172,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
             if (!target) return
 
             if (tileIndex < tileMaps.length) {
-                // TODO: should change the passed value
-                // temporarily passing a selected tile info
-                onSelectTile({
-                    xCoord: hoverTileX,
-                    yCoord: hoverTileY,
-                    index: tileIndex,
-                    imageUrl: target.offchainUrl
-                })
+                onSelectTile(target)
             }
         }
     }
