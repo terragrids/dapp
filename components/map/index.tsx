@@ -59,7 +59,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
 
             for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
                 for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
-                    const index = (tileY * GRID_SIZE + tileX) % 14
+                    const index = tileY * GRID_SIZE + tileX
                     const target = tileMaps.find(el => el.index === index)
                     if (!target) continue
 
