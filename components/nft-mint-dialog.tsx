@@ -3,7 +3,9 @@ import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
 import { useTokenMinter } from 'hooks/use-token-minter'
 import { useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
+import { setTimeout } from 'timers'
 import { Nft } from 'types/nft'
+import { endpoints } from 'utils/api-config.js'
 import Button from './button.js'
 import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
@@ -12,22 +14,33 @@ import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
 
 enum MintState {
-    IDLE, MINTING, MINTED, ERROR
+    IDLE, MINTING, SAVING, DONE, ERROR
 }
 type Asset = {
+    id?: string
     name: string
     symbol: string
-    description: AssetDescription
+    details: AssetDetails
+    description: object
 }
 
-type AssetDescription = {
-    text?: string
-    power?: number
-    positionX?: number
-    positionY?: number
+type AssetDetails = {
+    text: string
+    power: number
+    positionX: number
+    positionY: number
 }
 
-const defaultAsset = { name: '', description: {} as AssetDescription, symbol: Nft.TRCL.symbol, power: 10 } as Asset
+const defaultAsset = {
+    name: '',
+    symbol: Nft.TRCL.symbol,
+    details: {
+        text: '',
+        power: 10,
+        positionX: 0,
+        positionY: 0
+    } as AssetDetails
+} as Asset
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
     const [asset, setAsset] = useState<Asset>(defaultAsset)
@@ -45,53 +58,134 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     function setNftDescription(description: string) {
-        setAsset(asset => ({ ...asset, description: { ...asset.description, text: description } }))
+        setAsset(asset => ({ ...asset, details: { ...asset.details, text: description } }))
     }
 
     function setNftPower(power: string) {
-        setAsset(asset => ({ ...asset, description: { ...asset.description, power: +power } }))
+        setAsset(asset => ({ ...asset, details: { ...asset.details, power: +power } }))
     }
 
     function setNftPositionX(x: string) {
-        setAsset(asset => ({ ...asset, description: { ...asset.description, positionX: +x } }))
+        setAsset(asset => ({ ...asset, details: { ...asset.details, positionX: +x } }))
     }
 
     function setNftPositionY(y: string) {
-        setAsset(asset => ({ ...asset, description: { ...asset.description, positionY: +y } }))
+        setAsset(asset => ({ ...asset, details: { ...asset.details, positionY: +y } }))
     }
 
     function isValidNft() {
-        let valid = !!asset.name && !!asset.description.text && !!asset.symbol
-        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.description.power && asset.description.power > 0
-        if (asset.symbol === Nft.TRLD.symbol) valid = valid && asset.description.positionX !== undefined && asset.description.positionY !== undefined
+        let valid = !!asset.name && !!asset.symbol && !!asset.details.text
+        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.details.power && asset.details.power > 0
+        if (asset.symbol === Nft.TRLD.symbol) valid = valid && asset.details.positionX !== undefined && asset.details.positionY !== undefined
         return valid
     }
 
     function isInProgress() {
-        const uploading = uploadState != FileUploadState.IDLE && uploadState != FileUploadState.ERROR // don't count PINNED to avoid stopping progress before minting starts
+        const uploading = uploadState != FileUploadState.IDLE
         const minting = mintState === MintState.MINTING
-        const minted = mintState === MintState.MINTED
-        return !minted && (uploading || minting)
+        const saving = mintState === MintState.SAVING
+        const minted = mintState === MintState.DONE
+        const failed = uploadState === FileUploadState.ERROR || mintState === MintState.ERROR
+        return !minted && !failed && (uploading || minting || saving)
     }
 
+    /**
+     * 1. Save NFT file on S3 and IPFS 
+     */
+    function onUpload() {
+        if (!file) return
+
+        switch (asset.symbol) {
+            case Nft.TRCL.symbol:
+                setAsset(asset => ({
+                    ...asset, description: {
+                        text: asset.details.text,
+                        power: asset.details.power
+                    }
+                }))
+                break
+            case Nft.TRLD.symbol:
+                setAsset(asset => ({
+                    ...asset, description: {
+                        text: asset.details.text,
+                        positionX: asset.details.positionX,
+                        positionY: asset.details.positionY
+                    }
+                }))
+                break
+            case Nft.TRAS.symbol:
+                setAsset(asset => ({
+                    ...asset, description: {
+                        text: asset.details.text
+                    }
+                }))
+                break
+        }
+        upload(file)
+    }
+
+    /**
+     * 2. Mint token on the blockchain
+     */
     useEffect(() => {
         async function mintToken() {
             setMintState(MintState.MINTING)
-            const success = await mint({
+            const assetId = await mint({
                 name: fileProps.arc3Name,
                 symbol: asset.symbol,
                 url: fileProps.ipfsMetadataUrl,
                 metadataHash: fileProps.ipfsMetadataHash
             })
-            setMintState(success ? MintState.MINTED : MintState.ERROR)
+
+            if (assetId) {
+                setAsset(asset => ({ ...asset, id: assetId }))
+                setMintState(MintState.SAVING)
+            } else {
+                setMintState(MintState.ERROR)
+            }
         }
+
         if (uploadState === FileUploadState.PINNED && mintState === MintState.IDLE) {
             mintToken()
         }
-        if (mintState === MintState.MINTED) {
+    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState])
+
+    /**
+     * 3. Save token off-chain
+     */
+    useEffect(() => {
+        async function saveToken() {
+            const response = await fetch(endpoints.nfts, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify({
+                    assetId: asset.id,
+                    symbol: asset.symbol,
+                    offchainUrl: fileProps.offChainUrl,
+                    ...asset.symbol === Nft.TRCL.symbol && { power: asset.details.power },
+                    ...asset.symbol === Nft.TRLD.symbol && { positionX: asset.details.positionX, positionY: asset.details.positionY }
+                })
+            })
+
+            setMintState(response.status === 201 ? MintState.DONE : MintState.ERROR)
+        }
+
+        if (mintState === MintState.SAVING) {
+            saveToken()
+        }
+    }, [asset.details.positionX, asset.details.positionY, asset.details.power, asset.id, asset.symbol, fileProps.offChainUrl, mintState])
+
+    /**
+     * 4. All done, close dialog
+     */
+    useEffect(() => {
+        if (mintState === MintState.DONE) {
             setTimeout(function () { onClose() }, 2000)
         }
-    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState, onClose])
+    }, [mintState, onClose])
 
     useEffect(() => {
         if (visible) {
@@ -139,8 +233,8 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     disabled={!file || !isValidNft()}
                     label={strings.mint}
                     loading={isInProgress()}
-                    checked={mintState === MintState.MINTED}
-                    onClick={() => { if (file) upload(file) }} />
+                    checked={mintState === MintState.DONE}
+                    onClick={onUpload} />
 
                 {uploadState === FileUploadState.ERROR && <div className={styles.error}>{strings.errorUploadingFile}</div>}
                 {mintState === MintState.ERROR && <div className={styles.error}>{strings.errorMinting}</div>}
