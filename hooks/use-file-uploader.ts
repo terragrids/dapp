@@ -160,5 +160,5 @@ export function useFileUploader({ name, description }: Props) {
 
 type Props = {
     name: string
-    description: string
+    description: object
 };

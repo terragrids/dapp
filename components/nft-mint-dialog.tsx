@@ -16,11 +16,18 @@ enum MintState {
 }
 type Asset = {
     name: string
-    description: string
     symbol: string
-    power?: number
+    description: AssetDescription
 }
-const defaultAsset = { name: '', description: '', symbol: Nft.TRCL.symbol, power: 10 } as Asset
+
+type AssetDescription = {
+    text?: string
+    power?: number
+    positionX?: number
+    positionY?: number
+}
+
+const defaultAsset = { name: '', description: {} as AssetDescription, symbol: Nft.TRCL.symbol, power: 10 } as Asset
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
     const [asset, setAsset] = useState<Asset>(defaultAsset)
@@ -38,16 +45,25 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     function setNftDescription(description: string) {
-        setAsset(asset => ({ ...asset, description }))
+        setAsset(asset => ({ ...asset, description: { ...asset.description, text: description } }))
     }
 
     function setNftPower(power: string) {
-        setAsset(asset => ({ ...asset, power: +power }))
+        setAsset(asset => ({ ...asset, description: { ...asset.description, power: +power } }))
+    }
+
+    function setNftPositionX(x: string) {
+        setAsset(asset => ({ ...asset, description: { ...asset.description, positionX: +x } }))
+    }
+
+    function setNftPositionY(y: string) {
+        setAsset(asset => ({ ...asset, description: { ...asset.description, positionY: +y } }))
     }
 
     function isValidNft() {
-        let valid = !!asset.name && !!asset.description && !!asset.symbol
-        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.power && asset.power > 0
+        let valid = !!asset.name && !!asset.description.text && !!asset.symbol
+        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.description.power && asset.description.power > 0
+        if (asset.symbol === Nft.TRLD.symbol) valid = valid && asset.description.positionX !== undefined && asset.description.positionY !== undefined
         return valid
     }
 
@@ -107,6 +123,16 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     <div className={styles.section}>
                         <InputField type={'number'} initialValue={'10'} label={strings.nominalPower} onChange={setNftPower} />
                     </div>
+                }
+                {asset.symbol === Nft.TRLD.symbol &&
+                    <>
+                        <div className={styles.section}>
+                            <InputField type={'number'} initialValue={'0'} label={strings.positionX} onChange={setNftPositionX} />
+                        </div>
+                        <div className={styles.section}>
+                            <InputField type={'number'} initialValue={'0'} label={strings.positionY} onChange={setNftPositionY} />
+                        </div>
+                    </>
                 }
                 <Button
                     className={styles.button}
