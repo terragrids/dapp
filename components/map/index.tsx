@@ -16,7 +16,7 @@ export type MapProps = {
     width: number | undefined
     height: number | undefined
     headerHeight: number | undefined
-    onSelectTile: (tileInfo: TileMapType) => void
+    onSelectTile: (tileInfo: MapTileType) => void
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
@@ -35,7 +35,7 @@ const MAGIC_NUMBER_TO_ADJUST = 80
 const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
-    const [tileMaps, setTileMaps] = useState<TileMapType[]>([])
+    const [mapTiles, setMapTiles] = useState<MapTileType[]>([])
 
     const renderTileHover =
         (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
@@ -55,12 +55,12 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
 
     const renderTiles =
         (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-            if (tileMaps.length === 0) return
+            if (mapTiles.length === 0) return
 
             for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
                 for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
                     const index = tileY * GRID_SIZE + tileX
-                    const target = tileMaps.find(el => el.index === index)
+                    const target = mapTiles.find(el => el.index === index)
                     if (!target) continue
 
                     const tile: Tile = new Tile({
@@ -189,11 +189,11 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
             hoverTileY < GRID_SIZE
         ) {
             const tileIndex = hoverTileY * GRID_SIZE + hoverTileX
-            const target = tileMaps.find(el => el.index === tileIndex)
+            const target = mapTiles.find(el => el.index === tileIndex)
 
             if (!target) return
 
-            if (tileIndex < tileMaps.length) {
+            if (tileIndex < mapTiles.length) {
                 onSelectTile(target)
             }
         }
@@ -210,7 +210,7 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
             const maps = assets.map((asset: PlotType) =>
                 convertToTileMap(asset)
             )
-            setTileMaps(maps)
+            setMapTiles(maps)
         }
         load()
     }, [])

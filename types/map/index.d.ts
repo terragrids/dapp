@@ -8,4 +8,8 @@ type PlotType = {
     holders: { address: string; amount: number }[]
 }
 
-type TileMapType = PlotType & { coord: Position2D; index: number; image: HTMLImageElement }
+type MapTileType = PlotType & {
+    coord: Position2D
+    index: number
+    image: HTMLImageElement
+}

@@ -10,7 +10,7 @@ import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './tile-helpers'
 type TileInfoDialogProps = {
     visible: boolean
     onClose: () => void
-    tileInfo: TileMapType | undefined
+    tileInfo: MapTileType | undefined
 }
 
 const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => {
