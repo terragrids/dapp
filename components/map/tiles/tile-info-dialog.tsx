@@ -16,7 +16,7 @@ type TileInfoDialogProps = {
 const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => {
     if (!tileInfo) return null
 
-    const { name, coord, offchainUrl, holders } = tileInfo
+    const { name, positionX, positionY, offchainUrl, holders } = tileInfo
 
     return (
         <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
@@ -35,7 +35,7 @@ const TileInfoDialog = ({ visible, onClose, tileInfo }: TileInfoDialogProps) => 
                     <p>Name: {removeSuffix(name, TRDL_SUFFIX)}</p>
                     <p>Tile index : {tileInfo.index}</p>
                     <p>
-                        Tile xCoord : {coord.x} / yCoord : {coord.y}
+                        Tile xCoord : {positionX} / yCoord : {positionY}
                     </p>
                     <div className={styles.section}>
                         <h4>Holders</h4>

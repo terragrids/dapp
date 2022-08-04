@@ -1,14 +1,19 @@
 /* eslint-disable unicorn/filename-case */
 import { NextApiRequest, NextApiResponse } from 'next/types'
 import { setMethodNotAllowedResponse } from 'utils/api-config'
-import { matchKey, NFT_MOCKS } from './mock-data'
+import { matchKey, NFT_MOCKS } from '../../../../mocks/nfts/type/symbol'
 
 type Data = {
-    assets?: typeof NFT_MOCKS['trld']['assets'] | typeof NFT_MOCKS['trcl']['assets']
+    assets?:
+        | typeof NFT_MOCKS['trld']['assets']
+        | typeof NFT_MOCKS['trcl']['assets']
     'next-token'?: string
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<Data>
+) {
     switch (req.method) {
         case 'GET':
             if (matchKey(req.query.symbol)) {

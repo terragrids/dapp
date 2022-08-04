@@ -6,19 +6,15 @@ export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
 }
 
-export const convertToTileMap = ({ position, offchainUrl, ...rest }: PlotType): MapTileType => {
-    const [x, y] = position.split(',')
+export const convertToTileMap = ({ offchainUrl, positionX, positionY, ...rest }: PlotType): MapTileType => {
     const image = new Image()
     image.src = offchainUrl
     return {
         ...rest,
-        position,
         offchainUrl,
-        coord: {
-            x: Number(x),
-            y: Number(y)
-        },
-        index: positionToIndex({ x: Number(x), y: Number(y) }),
+        positionX,
+        positionY,
+        index: positionToIndex({ x: positionX, y: positionY }),
         image
     }
 }

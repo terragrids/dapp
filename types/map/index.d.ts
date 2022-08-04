@@ -4,12 +4,12 @@ type PlotType = {
     symbol: string
     url: string
     offchainUrl: string
-    position: string
+    positionX: number
+    positionY: number
     holders: { address: string; amount: number }[]
 }
 
 type MapTileType = PlotType & {
-    coord: Position2D
     index: number
     image: HTMLImageElement
 }
