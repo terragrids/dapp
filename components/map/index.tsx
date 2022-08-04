@@ -53,19 +53,15 @@ const Map = ({ width, height, headerHeight, onSelectTile }: MapProps) => {
     }
 
     const renderTiles = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-        // const images = getTileImages()
         if (tileMaps.length === 0) return
 
         for (let tileX = 0; tileX < GRID_SIZE; ++tileX) {
             for (let tileY = 0; tileY < GRID_SIZE; ++tileY) {
-                // const imageIndex = tileMap[tileY * GRID_SIZE + tileX]
-
                 const index = (tileY * GRID_SIZE + tileX) % 14
                 const target = tileMaps.find(el => el.index === index)
                 if (!target) continue
 
                 const tile: Tile = new Tile({
-                    // tileImage: images[imageIndex],
                     tileImage: target.image,
                     mapStartPosition: { ...{ x, y } },
                     tileIndex: { x: tileX, y: tileY },
