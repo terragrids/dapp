@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import variables from './index.module.scss'
 import { endpoints } from 'utils/api-config'
 import { convertToMapPlot, GRID_SIZE } from './map-helper'
-import Plot from './tiles/plot'
+import Plot from './plots/plot'
 
 export type MapProps = {
     width: number | undefined

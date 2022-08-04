@@ -1,4 +1,4 @@
-import { Position2D } from './tiles/plot'
+import { Position2D } from './plots/plot'
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 

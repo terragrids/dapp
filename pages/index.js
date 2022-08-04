@@ -8,7 +8,7 @@ import { UserContext } from '../context/user-context'
 import { MenuEventContext } from '../context/menu-event-context'
 import LoadingDialog from '../components/loading-dialog'
 import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
-import PlotInfoDialog from 'components/map/tiles/plot-info-dialog'
+import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 
 export default function Home() {
