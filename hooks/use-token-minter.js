@@ -10,13 +10,13 @@ export function useTokenMinter() {
         const hashBuffer = Buffer.from(metadataHash, 'base64')
         const hashArray = new Uint8Array(hashBuffer)
         try {
-            await stdlib.launchToken(walletAccount, name, symbol, {
+            const response = await stdlib.launchToken(walletAccount, name, symbol, {
                 supply: 1,
                 decimals: 0,
                 url,
                 metadataHash: hashArray
             })
-            return true
+            return response.id.toNumber()
         } catch (e) { return false }
     }
 

@@ -17,7 +17,7 @@ export default function MainMenu({ visible, onSelectSymbol }) {
     useEffect(() => {
         const fetchNfts = async () => {
             try {
-                const response = await fetch(endpoints.nfts(user.walletAddress))
+                const response = await fetch(endpoints.accountNfts(user.walletAddress))
                 const accountNfts = await response.json()
                 setAccountNfts(accountNfts)
             } catch (e) {
