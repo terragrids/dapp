@@ -27,6 +27,41 @@ export const AccountNftsDialog = ({
                         <small>{strings.output}: 45 TRW</small>
                     </h2>
                 </li>
+                <li>
+                    <div className={'thumbPlaceholder'}></div>
+                    <h2>
+                        Terracell #1
+                        <small>{strings.output}: 45 TRW</small>
+                    </h2>
+                </li>
+                <li>
+                    <div className={'thumbPlaceholder'}></div>
+                    <h2>
+                        Terracell #1
+                        <small>{strings.output}: 45 TRW</small>
+                    </h2>
+                </li>
+                <li>
+                    <div className={'thumbPlaceholder'}></div>
+                    <h2>
+                        Terracell #1
+                        <small>{strings.output}: 45 TRW</small>
+                    </h2>
+                </li>
+                <li>
+                    <div className={'thumbPlaceholder'}></div>
+                    <h2>
+                        Terracell #1
+                        <small>{strings.output}: 45 TRW</small>
+                    </h2>
+                </li>
+                <li>
+                    <div className={'thumbPlaceholder'}></div>
+                    <h2>
+                        Terracell #1
+                        <small>{strings.output}: 45 TRW</small>
+                    </h2>
+                </li>
             </ul>
         </ModalDialog>
     ) : (
@@ -36,6 +71,6 @@ export const AccountNftsDialog = ({
 
 type Props = {
     visible: boolean
-    onClose: () => void
     selectedSymbol: string
+    onClose: () => void
 }

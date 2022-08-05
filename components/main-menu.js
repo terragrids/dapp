@@ -34,6 +34,11 @@ export default function MainMenu({ visible, onSelectSymbol }) {
         onToggleMenu()
     }
 
+    const openNftListDialog = (symbol) => {
+        onSelectSymbol(symbol)
+        onToggleMenu()
+    }
+
     return visible ? (
         <nav className={styles.wrapper}>
             <header className={styles.header}>
@@ -51,15 +56,15 @@ export default function MainMenu({ visible, onSelectSymbol }) {
                         <li>
                             $ALGO <strong>{user.walletBalance}</strong>
                         </li>
-                        <li onClick={onSelectSymbol(Nft.TRCL.symbol)}>
+                        <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
                             {Nft.TRCL.currencySymbol}{' '}
                             <strong>{accountNfts.trcl}</strong>
                         </li>
-                        <li>
+                        <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>
                             {Nft.TRLD.currencySymbol}{' '}
                             <strong>{accountNfts.trld}</strong>
                         </li>
-                        <li>
+                        <li onClick={() => openNftListDialog(Nft.TRAS.symbol)}>
                             {Nft.TRAS.currencySymbol}{' '}
                             <strong>{accountNfts.tras}</strong>
                         </li>

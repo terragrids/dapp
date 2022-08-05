@@ -17,7 +17,8 @@
 
 .dialog {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     max-width: 75vw;
     max-height: 85vh;
     background-color: $color-ebony-clay;
@@ -32,7 +33,8 @@
 .content {
     position: relative;
     padding: 20px;
-    height: 75vh;
+    margin-bottom: 10px;
+    max-height: 85vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
