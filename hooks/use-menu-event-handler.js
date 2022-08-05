@@ -4,6 +4,7 @@ export function useMenuEventHandler() {
     const [onConnectWallet, setConnectWalletAction] = useEventAction()
     const [onMint, setMintAction] = useEventAction()
     const [onToggleMenu, setToggleMenuAction] = useEventAction()
+    const [onOpenNftsDialog, setOpenNftsDialogAction] = useEventAction()
 
     return {
         onConnectWallet,
@@ -11,6 +12,8 @@ export function useMenuEventHandler() {
         onMint,
         setMintAction,
         onToggleMenu,
-        setToggleMenuAction
+        setToggleMenuAction,
+        onOpenNftsDialog,
+        setOpenNftsDialogAction
     }
 }

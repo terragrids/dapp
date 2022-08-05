@@ -13,8 +13,7 @@ export const AccountNftsDialog = ({ visible, onClose }: Props) => {
             title={'Your NFTs'}
             subtitle={strings.totalOutput}
             onClose={onClose}
-            cssClass={styles.listDialog}
-        >
+            cssClass={styles.listDialog}>
             <ul>
                 <li>
                     <div className={'thumbPlaceholder'}></div>

@@ -8,15 +8,23 @@ import PropTypes from 'prop-types'
 import { UserContext } from '../context/user-context'
 import MainMenu from './main-menu'
 import { MenuEventContext } from '../context/menu-event-context'
+import { AccountNftsDialog } from './account-nfts-dialog.tsx'
 
 export default function Layout({ children, headerRef }) {
     const user = useContext(UserContext)
     const { setToggleMenuAction } = useContext(MenuEventContext)
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
+    const [AccountNftsDialogVisible, setAccountNftsDialogVisible] =
+        useState(true)
 
     useEffect(() => {
         setToggleMenuAction(() => setMainMenuVisible((b) => !b))
     }, [setToggleMenuAction])
+
+    // const onSelectSymbol = (symbol) => {
+    //     setLoading({ visible: true, message: symbol })
+    //     setAccountNftsDialogVisible(true)
+    // }
 
     return (
         <>
@@ -44,6 +52,10 @@ export default function Layout({ children, headerRef }) {
             <main className={styles.content}>
                 {user.authenticated && <MainMenu visible={mainMenuVisible} />}
                 {children}
+                <AccountNftsDialog
+                    visible={AccountNftsDialogVisible}
+                    onClose={() => setAccountNftsDialogVisible(false)}
+                />
             </main>
         </>
     )
