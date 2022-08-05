@@ -14,7 +14,7 @@ export function useFileUploader({ name, description }: Props) {
         contentType?: string
         id?: string
         uploadUrl?: string
-        cdnUrl?: string
+        offChainUrl?: string
         arc3Name?: string
         ipfsMetadataUrl?: string
         ipfsMetadataHash?: Uint8Array
@@ -77,7 +77,7 @@ export function useFileUploader({ name, description }: Props) {
         if (response.status === 200) {
             setFileProps(file => ({
                 ...file,
-                cdnUrl: `https://images.terragrids.org/${fileProps.id}`,
+                offChainUrl: `https://images.terragrids.org/${fileProps.id}`,
                 uploadState: FileUploadState.UPLOADED
             }))
         } else {
@@ -150,7 +150,7 @@ export function useFileUploader({ name, description }: Props) {
         upload,
         uploadState: fileProps.uploadState,
         fileProps: {
-            cdnUrl: fileProps.cdnUrl,
+            offChainUrl: fileProps.offChainUrl,
             arc3Name: fileProps.arc3Name,
             ipfsMetadataUrl: fileProps.ipfsMetadataUrl,
             ipfsMetadataHash: fileProps.ipfsMetadataHash
@@ -160,5 +160,5 @@ export function useFileUploader({ name, description }: Props) {
 
 type Props = {
     name: string
-    description: string
+    description: object
 };
