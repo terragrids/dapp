@@ -6,14 +6,19 @@ import styles from './account-nfts-dialog.module.scss'
 //import { endpoints } from '../utils/api-config'
 //import { Nft } from 'types/nft'
 
-export const AccountNftsDialog = ({ visible, onClose }: Props) => {
+export const AccountNftsDialog = ({
+    visible,
+    onClose,
+    selectedSymbol
+}: Props) => {
     return visible ? (
         <ModalDialog
             visible={visible}
             title={'Your NFTs'}
-            subtitle={strings.totalOutput}
+            //subtitle=`${strings.totalOutput} ${selectedSymbol}`
+            subtitle={selectedSymbol}
             onClose={onClose}
-            cssClass={styles.listDialog}>
+            className={styles.listDialog}>
             <ul>
                 <li>
                     <div className={'thumbPlaceholder'}></div>
@@ -32,4 +37,5 @@ export const AccountNftsDialog = ({ visible, onClose }: Props) => {
 type Props = {
     visible: boolean
     onClose: () => void
+    selectedSymbol: string
 }

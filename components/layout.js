@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import Head from 'next/head'
 import styles from './layout.module.scss'
 import Logo from '../public/images/logo+name.svg'
@@ -15,16 +15,17 @@ export default function Layout({ children, headerRef }) {
     const { setToggleMenuAction } = useContext(MenuEventContext)
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [AccountNftsDialogVisible, setAccountNftsDialogVisible] =
-        useState(true)
+        useState(false)
+    const [selectedSymbol, setSelectedSymbol] = useState({ undefined })
 
     useEffect(() => {
         setToggleMenuAction(() => setMainMenuVisible((b) => !b))
     }, [setToggleMenuAction])
 
-    // const onSelectSymbol = (symbol) => {
-    //     setLoading({ visible: true, message: symbol })
-    //     setAccountNftsDialogVisible(true)
-    // }
+    const onSelectSymbol = (symbol) => {
+        setSelectedSymbol(symbol)
+        setAccountNftsDialogVisible(true)
+    }
 
     return (
         <>
@@ -50,9 +51,15 @@ export default function Layout({ children, headerRef }) {
                 </div>
             </header>
             <main className={styles.content}>
-                {user.authenticated && <MainMenu visible={mainMenuVisible} />}
+                {user.authenticated && (
+                    <MainMenu
+                        visible={mainMenuVisible}
+                        onSelectSymbol={onSelectSymbol}
+                    />
+                )}
                 {children}
                 <AccountNftsDialog
+                    selectedSymbol={selectedSymbol}
                     visible={AccountNftsDialogVisible}
                     onClose={() => setAccountNftsDialogVisible(false)}
                 />
