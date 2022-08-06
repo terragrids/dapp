@@ -44,7 +44,7 @@ const defaultAsset = {
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
     const [asset, setAsset] = useState<Asset>(defaultAsset)
-    const { upload, uploadState, fileProps } = useFileUploader(asset)
+    const { upload, uploadState, fileProps, reset: resetFileUploader } = useFileUploader(asset)
     const { mint } = useTokenMinter()
     const [file, setFile] = useState<File>()
     const [mintState, setMintState] = useState<MintState>(MintState.IDLE)
@@ -183,16 +183,14 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
      */
     useEffect(() => {
         if (mintState === MintState.DONE) {
-            setTimeout(function () { onClose() }, 2000)
-        }
-    }, [mintState, onClose])
-
-    useEffect(() => {
-        if (visible) {
-            setMintState(MintState.IDLE)
+            resetFileUploader()
             setAsset(defaultAsset)
+            setTimeout(function () {
+                setMintState(MintState.IDLE)
+                onClose()
+            }, 2000)
         }
-    }, [visible])
+    }, [mintState, onClose, resetFileUploader])
 
     return (
         <ModalDialog
@@ -208,7 +206,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                         onSelected={setNftSymbol} />
                 </div>
                 <div className={styles.section}>
-                    <InputField label={strings.name} onChange={setNftName} />
+                    <InputField max={26} label={strings.name} onChange={setNftName} />
                 </div>
                 <div className={styles.section}>
                     <InputField multiline max={512} label={strings.description} onChange={setNftDescription} />
