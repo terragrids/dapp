@@ -173,10 +173,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             const { assets } = await res.json()
 
-            const maps = assets.map((asset: PlotType) => convertToMapPlot(asset))
+            const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
-            setMapPlots([spp, ...maps])
+            setMapPlots([spp, ...plots])
         }
         load()
     }, [])
