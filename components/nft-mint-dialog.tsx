@@ -185,7 +185,6 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     useEffect(() => {
         if (mintState === MintState.DONE) {
             resetFileUploader()
-            setAsset(defaultAsset)
             setTimeout(function () {
                 setMintState(MintState.IDLE)
                 onClose()
