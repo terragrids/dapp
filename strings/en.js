@@ -15,6 +15,8 @@ export const strings = {
     withdraw: 'Withdraw',
     buy: 'Buy',
     change: 'Change',
+    close: 'Close',
+    terralandInformation: 'Terraland information',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
@@ -30,5 +32,9 @@ export const strings = {
     type: 'Type',
     name: 'Name',
     description: 'Description',
-    nominalPower: 'Nominal power (TRW)'
+    nominalPower: 'Nominal power (TRW)',
+    errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
+    errorMinting: 'Something went wrong when minting your NFT. Please try again',
+    positionX: 'Position X',
+    positionY: 'Position Y'
 }

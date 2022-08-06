@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/filename-case */
 import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../utils/api-config'
 
 export default async function handler(req, res) {

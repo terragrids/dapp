@@ -1,115 +1,192 @@
 import Canvas from 'components/canvas'
-import React from 'react'
-import { getTileImages } from './tiles/get-tile-images'
-import Tile from './tiles/tile'
+import React, { useEffect, useRef, useState } from 'react'
+import variables from './index.module.scss'
+import { endpoints } from 'utils/api-config'
+import { convertToMapPlot, getSppPlot, GRID_SIZE } from './map-helper'
+import Plot from './plots/plot'
 
 export type MapProps = {
     width: number | undefined
     height: number | undefined
+    headerHeight: number | undefined
+    onSelectPlot: (plotInfo: MapPlotType) => void
 }
 
-const DEFAULT_MAP_SCALE = 1
-const DEFAULT_DELTA_X = 1
+// TO LOCK THE SIZE OF THE MAP TO 1x
+// const DEFAULT_MAP_SCALE = 1
+// const ZOOM_SENSITIVITY = 0.0001
+// const MAX_SCALE = 2
+// const MIN_SCALE = 0.8
+
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const ZOOM_SENSITIVITY = 0.0001
-const MAX_SCALE = 2
-const MIN_SCALE = 0.8
+const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
-const Map = ({ width, height }: MapProps) => {
-    // This shows which tile image should be displayed(index of TILE_TEXTURES fetched by getTileImages())
-    const tileMap = [
-        14, 23, 23, 23, 23, 23, 23, 23, 23, 13, 21, 32, 33, 33, 28, 33, 33, 33,
-        31, 20, 21, 34, 9, 9, 34, 1, 1, 1, 34, 20, 21, 34, 4, 4, 34, 1, 1, 10,
-        34, 20, 21, 25, 33, 33, 24, 33, 33, 33, 27, 20, 21, 34, 4, 7, 34, 18,
-        17, 10, 34, 20, 21, 34, 6, 8, 34, 16, 19, 10, 34, 20, 21, 34, 1, 1, 34,
-        10, 10, 10, 34, 20, 21, 29, 33, 33, 26, 33, 33, 33, 30, 20, 11, 22, 22,
-        22, 22, 22, 22, 22, 22, 12
-    ]
+// TODO: FIGURE OUT HOW THIS IS DETERMINED
+const MAGIC_NUMBER_TO_ADJUST = 80
 
-    const renderTiles =
-        (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-            const gridSize = Math.sqrt(tileMap.length)
+const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
+    const mouseRef = useRef({ x: -1, y: -1 })
+    const startPositionRef = useRef({ x: -1, y: -1 })
+    const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-            const images = getTileImages()
-            for (let tileX = 0; tileX < gridSize; ++tileX) {
-                for (let tileY = 0; tileY < gridSize; ++tileY) {
-                    const imageIndex = tileMap[tileY * gridSize + tileX]
+    const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+        ctx.beginPath()
+        ctx.setLineDash([])
+        ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
+        ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
+        ctx.lineWidth = 2
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y - Plot.PLOT_HEIGHT / 2)
+        ctx.lineTo(x + Plot.PLOT_WIDTH, y)
+        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y + Plot.PLOT_HEIGHT / 2)
+        ctx.lineTo(x, y)
+        ctx.stroke()
+        ctx.fill()
+    }
 
-                    const tile: Tile = new Tile({
-                        tileImage: images[imageIndex],
-                        mapStartPosition: { ...{ x, y } },
-                        tileIndex: { x: tileX, y: tileY },
-                        ctx
-                    })
-                    tile.drawTile(0)
-                }
+    const renderPlots = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+        if (mapPlots.length === 0) return
+
+        for (let plotX = 0; plotX < GRID_SIZE; ++plotX) {
+            for (let plotY = 0; plotY < GRID_SIZE; ++plotY) {
+                const index = plotY * GRID_SIZE + plotX
+                const target = mapPlots.find(el => el.index === index)
+                if (!target) continue
+
+                const plot: Plot = new Plot({
+                    image: target.image,
+                    mapStartPosition: { ...{ x, y } },
+                    coord: { x: plotX, y: plotY },
+                    ctx
+                })
+                plot.draw(MAGIC_NUMBER_TO_ADJUST)
             }
         }
 
+        const { e: xPos, f: yPos } = ctx.getTransform()
+
+        const mouse_x = mouseRef.current.x - x - xPos
+        const mouse_y = mouseRef.current.y - y - yPos
+
+        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
+        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
+
+        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
+            const renderX = x + (hoverPlotX - hoverPlotY) * Plot.PLOT_HALF_WIDTH
+            const renderY = y + (hoverPlotX + hoverPlotY) * Plot.PLOT_HALF_HEIGHT
+
+            renderPlotHover(ctx)(renderX, renderY + Plot.PLOT_HEIGHT)
+        }
+    }
+
     const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        // Can/Should change the color once UI design is determined
-        ctx.fillStyle = '#151d26'
+        ctx.fillStyle = variables.backgroundColor
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
     }
 
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const gridSize = Math.sqrt(tileMap.length)
+        const offsetX = Plot.PLOT_WIDTH / 2
+        const offsetY = Plot.PLOT_HEIGHT
 
-        const offsetX = Tile.TILE_WIDTH / 2
-        const offsetY = Tile.TILE_HEIGHT
+        const remainingHeight = height - Plot.PLOT_HEIGHT * GRID_SIZE
 
-        const remainingHeight = height - Tile.TILE_HEIGHT * gridSize
+        const plotStartX = width / 2 - offsetX
+        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
+        const plotStartY = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
-        const tileStartX = width / 2 - offsetX
-        const tileStartY = remainingHeight / 2 + offsetY
+        startPositionRef.current = { x: plotStartX, y: plotStartY }
 
         renderBackground(ctx)
 
-        renderTiles(ctx)(tileStartX, tileStartY)
+        renderPlots(ctx)(plotStartX, plotStartY)
     }
 
-    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const currentScale = ctx.getTransform().a
-        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+    // TO LOCK THE SIZE OF THE MAP TO 1x
+    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+    //     const currentScale = ctx.getTransform().a
+    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-        const scale = DEFAULT_MAP_SCALE + zoomAmount
+    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
 
-        ctx.translate(e.offsetX, e.offsetY)
-        ctx.scale(scale, scale)
-        ctx.translate(-e.offsetX, -e.offsetY)
-    }
+    //     ctx.translate(e.offsetX, e.offsetY)
+    //     ctx.scale(scale, scale)
+    //     ctx.translate(-e.offsetX, -e.offsetY)
+    // }
 
     const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmount =
-            DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
+        const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
 
         // Only allows x axis move
         ctx.translate(moveAmount, 0)
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        onScrollY(ctx, e)
+        // TO LOCK THE SIZE OF THE MAP TO 1x
+        // onScrollY(ctx, e)
         onScrollX(ctx, e)
-
-        // Refill the background as the previously rendered part stays
-        renderBackground(ctx)
-
-        // This is needed to redraw scaled map
-        render(ctx)
     }
+
+    const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        const rect = ctx.canvas.getBoundingClientRect()
+
+        mouseRef.current = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        }
+    }
+
+    const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
+        if (headerHeight === undefined) return
+
+        const { e: xPos, f: yPos } = ctx.getTransform()
+
+        const mouse_x = e.clientX - startPositionRef.current.x - xPos
+        const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
+
+        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
+        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
+
+        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
+            const index = hoverPlotY * GRID_SIZE + hoverPlotX
+            const target = mapPlots.find(el => el.index === index)
+
+            if (!target) return
+
+            if (index < mapPlots.length) {
+                onSelectPlot(target)
+            }
+        }
+    }
+
+    useEffect(() => {
+        const load = async () => {
+            const res = await fetch(endpoints.terralands())
+            if (!res.ok) return
+
+            const { assets } = await res.json()
+
+            const maps = assets.map((asset: PlotType) => convertToMapPlot(asset))
+
+            const spp = getSppPlot()
+            setMapPlots([spp, ...maps])
+        }
+        load()
+    }, [])
 
     return (
         <Canvas
             drawOnCanvas={render}
             onWheel={onWheel}
+            onMouseMove={onMouseMove}
+            onClick={onClick}
             attributes={{ width, height }}
         />
     )

@@ -4,6 +4,9 @@
 @import 'styles/screens.scss';
 
 .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     width: 100%;
     border-radius: $dialog-border-radius;
@@ -85,9 +88,11 @@
     .drop-zone {
         opacity: 1;
     }
+
     .active-zone {
         opacity: 0;
     }
+
     .empty-border {
         background-color: $color-abbey;
         color: $color-white;

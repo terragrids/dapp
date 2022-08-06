@@ -9,30 +9,29 @@ import { UserContext } from '../context/user-context'
 import MainMenu from './main-menu'
 import { MenuEventContext } from '../context/menu-event-context'
 
-export default function Layout({ children }) {
+export default function Layout({ children, headerRef }) {
     const user = useContext(UserContext)
     const { setToggleMenuAction } = useContext(MenuEventContext)
-    const [ mainMenuVisible, setMainMenuVisible ] = useState(false)
-    
-    
-useEffect(() => {
-    setToggleMenuAction(() => setMainMenuVisible(b => !b))
-},[setToggleMenuAction])
+    const [mainMenuVisible, setMainMenuVisible] = useState(false)
 
-    return ( 
+    useEffect(() => {
+        setToggleMenuAction(() => setMainMenuVisible((b) => !b))
+    }, [setToggleMenuAction])
+
+    return (
         <>
             <Head>
                 <link rel={'icon'} href={'/favicon.ico'} />
-                <meta
-                    name={'description'}
-                    content={strings.siteDescription} />
+                <meta name={'description'} content={strings.siteDescription} />
                 <meta name={'og:title'} content={strings.siteTitle} />
-                <meta
-                    property={'og:image'}
-                    content={''} />
+                <meta property={'og:image'} content={''} />
                 <meta name={'twitter:card'} content={'summary_large_image'} />
             </Head>
-            <header className={!user.authenticated ? `${styles.notconnected}` : `${styles.navbar}`}>
+            <header
+                className={`${styles.topbar} ${
+                    !user.authenticated ? styles.notconnected : styles.navbar
+                }`}
+                ref={headerRef}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
                         <Logo className={styles.logo} />
@@ -43,9 +42,7 @@ useEffect(() => {
                 </div>
             </header>
             <main className={styles.content}>
-                {user.authenticated &&
-                    <MainMenu visible={mainMenuVisible} />
-                }
+                {user.authenticated && <MainMenu visible={mainMenuVisible} />}
                 {children}
             </main>
         </>
