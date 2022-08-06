@@ -160,7 +160,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             if (!target) return
 
-            if (index < mapPlots.length) {
+            if (index === 0) {
+                // TODO onSelectSolarPowerPlant()
+            }
+            else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }
@@ -173,10 +176,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             const { assets } = await res.json()
 
-            const maps = assets.map((asset: PlotType) => convertToMapPlot(asset))
+            const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
-            setMapPlots([spp, ...maps])
+            setMapPlots([spp, ...plots])
         }
         load()
     }, [])

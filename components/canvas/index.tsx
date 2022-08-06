@@ -25,30 +25,42 @@ const Canvas = ({
 
         if (!context) return
 
-        canvas.addEventListener('wheel', (e) => onWheel(context, e))
-        canvas.addEventListener('mousemove', (e) => onMouseMove(context, e))
-        canvas.addEventListener('click', (e) => onClick(context, e))
+        let animationFrameId: number
 
-        // let animationFrameId: number
         const render = () => {
             drawOnCanvas(context)
-            requestAnimationFrame(render)
-            // animationFrameId = requestAnimationFrame(render)
+            animationFrameId = requestAnimationFrame(render)
         }
         render()
 
         return () => {
-            canvas.removeEventListener('wheel', (e) => onWheel(context, e))
-            canvas.removeEventListener('mousemove', (e) =>
-                onMouseMove(context, e)
-            )
-            canvas.removeEventListener('click', (e) => onClick(context, e))
-
-            // TODO: Fix flickering when calling cancelAnimationFrame
-            // This might help: https://stackoverflow.com/questions/40265707/flickering-images-in-canvas-animation
-            // cancelAnimationFrame(animationFrameId)
+            cancelAnimationFrame(animationFrameId)
         }
-    }, [drawOnCanvas, onWheel, onMouseMove, onClick])
+
+    }, [drawOnCanvas])
+
+    useEffect(() => {
+        if (!canvasRef.current) return
+
+        const canvas = canvasRef.current
+        const context = canvas.getContext('2d')
+
+        if (!context) return
+
+        const onWheelListener = (e: WheelEvent) => onWheel(context, e)
+        const onMouseMoveListener = (e: MouseEvent) => onMouseMove(context, e)
+        const onClickListener = (e: MouseEvent) => onClick(context, e)
+
+        canvas.addEventListener('wheel', onWheelListener)
+        canvas.addEventListener('mousemove', onMouseMoveListener)
+        canvas.addEventListener('click', onClickListener)
+
+        return () => {
+            canvas.removeEventListener('wheel', onWheelListener)
+            canvas.removeEventListener('mousemove', onMouseMoveListener)
+            canvas.removeEventListener('click', onClickListener)
+        }
+    }, [onClick, onMouseMove, onWheel])
 
     return <canvas ref={canvasRef} {...attributes} />
 }

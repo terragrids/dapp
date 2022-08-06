@@ -35,6 +35,7 @@ export const strings = {
     nominalPower: 'Nominal power (TRW)',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
+    errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
     positionX: 'Position X',
     positionY: 'Position Y'
 }
