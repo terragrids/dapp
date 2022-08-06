@@ -1,5 +1,6 @@
 
 import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
+import usePrevious from 'hooks/use-previous.js'
 import { useTokenMinter } from 'hooks/use-token-minter'
 import { useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
@@ -191,6 +192,18 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             }, 2000)
         }
     }, [mintState, onClose, resetFileUploader])
+
+    /**
+     * Reset state when opening the dialog
+     */
+    const prevVisible = usePrevious(visible)
+    useEffect(() => {
+        if (visible && prevVisible === false) {
+            setMintState(MintState.IDLE)
+            resetFileUploader()
+            setAsset(defaultAsset)
+        }
+    }, [prevVisible, resetFileUploader, visible])
 
     return (
         <ModalDialog
