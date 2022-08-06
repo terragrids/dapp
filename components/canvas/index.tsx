@@ -25,13 +25,18 @@ const Canvas = ({
 
         if (!context) return
 
-        // let animationFrameId: number
+        let animationFrameId: number
+
         const render = () => {
             drawOnCanvas(context)
-            requestAnimationFrame(render)
-            // animationFrameId = requestAnimationFrame(render)
+            animationFrameId = requestAnimationFrame(render)
         }
         render()
+
+        return () => {
+            cancelAnimationFrame(animationFrameId)
+        }
+
     }, [drawOnCanvas])
 
     useEffect(() => {
@@ -54,10 +59,6 @@ const Canvas = ({
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
             canvas.removeEventListener('click', onClickListener)
-
-            // TODO: Fix flickering when calling cancelAnimationFrame
-            // This might help: https://stackoverflow.com/questions/40265707/flickering-images-in-canvas-animation
-            // cancelAnimationFrame(animationFrameId)
         }
     }, [onClick, onMouseMove, onWheel])
 
