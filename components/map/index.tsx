@@ -160,7 +160,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             if (!target) return
 
-            if (index < GRID_SIZE * GRID_SIZE) {
+            if (index === 0) {
+                // TODO onSelectSolarPowerPlant()
+            }
+            else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }

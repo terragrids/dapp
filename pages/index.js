@@ -92,8 +92,7 @@ export default function Home() {
       <PlotInfoDialog
         visible={plotInfoVisible}
         onClose={() => setPlotInfoVisible(false)}
-        nftId={selectedPlot ? selectedPlot.id : null}
-      />
+        nftId={selectedPlot ? selectedPlot.id : null} />
     </Layout>
   )
 }
