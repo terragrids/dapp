@@ -160,7 +160,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             if (!target) return
 
-            if (index < mapPlots.length) {
+            if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }

@@ -25,10 +25,6 @@ const Canvas = ({
 
         if (!context) return
 
-        canvas.addEventListener('wheel', (e) => onWheel(context, e))
-        canvas.addEventListener('mousemove', (e) => onMouseMove(context, e))
-        canvas.addEventListener('click', (e) => onClick(context, e))
-
         // let animationFrameId: number
         const render = () => {
             drawOnCanvas(context)
@@ -36,6 +32,19 @@ const Canvas = ({
             // animationFrameId = requestAnimationFrame(render)
         }
         render()
+    }, [drawOnCanvas])
+
+    useEffect(() => {
+        if (!canvasRef.current) return
+
+        const canvas = canvasRef.current
+        const context = canvas.getContext('2d')
+
+        if (!context) return
+
+        canvas.addEventListener('wheel', (e) => onWheel(context, e))
+        canvas.addEventListener('mousemove', (e) => onMouseMove(context, e))
+        canvas.addEventListener('click', (e) => onClick(context, e))
 
         return () => {
             canvas.removeEventListener('wheel', (e) => onWheel(context, e))
@@ -48,7 +57,7 @@ const Canvas = ({
             // This might help: https://stackoverflow.com/questions/40265707/flickering-images-in-canvas-animation
             // cancelAnimationFrame(animationFrameId)
         }
-    }, [drawOnCanvas, onWheel, onMouseMove, onClick])
+    }, [onClick, onMouseMove, onWheel])
 
     return <canvas ref={canvasRef} {...attributes} />
 }
