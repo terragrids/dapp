@@ -2,8 +2,8 @@ export const terragridsApiBaseUrl =
     process.env.API_ENV === 'local'
         ? 'http://localhost:3003'
         : process.env.API_ENV === 'dev'
-            ? 'https://api-dev.terragrids.org'
-            : 'https://api.terragrids.org'
+        ? 'https://api-dev.terragrids.org'
+        : 'https://api.terragrids.org'
 
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 
@@ -17,6 +17,9 @@ const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
 const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+const terracellNfts = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
+const solarPowerPlant = 'api/spp'
+
 export const endpoints = {
     accountTerracells,
     terracells,
@@ -25,9 +28,11 @@ export const endpoints = {
     nfts,
     nft,
     terralands,
+    terracellNfts,
     accountNfts,
     fileUpload,
-    ipfsFiles
+    ipfsFiles,
+    solarPowerPlant
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {
