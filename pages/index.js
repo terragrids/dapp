@@ -10,6 +10,7 @@ import LoadingDialog from '../components/loading-dialog'
 import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
+import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
 
 export default function Home() {
   const [walletPickerVisible, setWalletPickerVisible] = useState(false)
@@ -21,6 +22,7 @@ export default function Home() {
 
   const headerRef = useRef()
   const [plotInfoVisible, setPlotInfoVisible] = useState(false)
+  const [sppVisible, setSppVisible] = useState(false)
   const [selectedPlot, setSelectedPlot] = useState()
   const [mapSize, setMapSize] = useState({
     width: undefined,
@@ -56,13 +58,17 @@ export default function Home() {
         decimals: 0,
         url: `https://terragrids.org#${now}`
       })
-    } catch (e) { }
+    } catch (e) {}
     setLoading({ visible: false })
   }, [stdlib, walletAccount])
 
   const onSelectPlot = plot => {
     setSelectedPlot(plot)
     setPlotInfoVisible(true)
+  }
+
+  const onSelectSolarPowerPlant = () => {
+    setSppVisible(true)
   }
 
   useEffect(() => {
@@ -80,10 +86,11 @@ export default function Home() {
       </Head>
 
       <Map
-        onSelectPlot={onSelectPlot}
         width={mapSize.width}
         height={mapSize.height}
         headerHeight={headerRef.current?.clientHeight}
+        onSelectPlot={onSelectPlot}
+        onSelectSolarPowerPlant={onSelectSolarPowerPlant}
       />
 
       <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />
@@ -92,7 +99,9 @@ export default function Home() {
       <PlotInfoDialog
         visible={plotInfoVisible}
         onClose={() => setPlotInfoVisible(false)}
-        nftId={selectedPlot ? selectedPlot.id : null} />
+        nftId={selectedPlot ? selectedPlot.id : null}
+      />
+      <SolarPowerPlantDialog visible={sppVisible} onClose={() => setSppVisible(false)} />
     </Layout>
   )
 }

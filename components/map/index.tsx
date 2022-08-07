@@ -10,6 +10,7 @@ export type MapProps = {
     height: number | undefined
     headerHeight: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
+    onSelectSolarPowerPlant: () => void
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
@@ -25,7 +26,7 @@ const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
 const MAGIC_NUMBER_TO_ADJUST = 80
 
-const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
+const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
@@ -161,9 +162,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
             if (!target) return
 
             if (index === 0) {
-                // TODO onSelectSolarPowerPlant()
-            }
-            else if (index < GRID_SIZE * GRID_SIZE) {
+                onSelectSolarPowerPlant()
+            } else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }
