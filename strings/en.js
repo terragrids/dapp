@@ -6,11 +6,13 @@ export const strings = {
     myAlgoWallet: 'My Algo Wallet',
     peraWallet: 'Pera Wallet',
     algoSigner: 'AlgoSigner',
-    errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
+    errorConnectingWallet:
+        'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     comingSoon: 'Coming soon',
     mint: 'Mint',
     mintNft: 'Mint a new NFT',
     mintingTerracell: 'Minting a new $TRCL token',
+    solarPowerPlant: 'Solar Power Plant',
     sell: 'Sell',
     withdraw: 'Withdraw',
     buy: 'Buy',
@@ -20,9 +22,12 @@ export const strings = {
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
-    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
-    errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingTerracellSaleContract:
+        'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract:
+        'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorAccountNfts:
+        'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
