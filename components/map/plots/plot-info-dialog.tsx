@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import ModalDialog from 'components/modal-dialog'
 import styles from './plot-info-dialog.module.scss'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Button from 'components/button'
 import { strings } from 'strings/en'
 import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './plot-helpers'
@@ -9,6 +9,8 @@ import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
 import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user.js'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -19,7 +21,9 @@ type PlotInfoDialogProps = {
 const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const [terraland, setTerraland] = useState<Terraland | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
+    const [canSell, setCanSell] = useState<boolean>()
     const [error, setError] = useState<string | null>()
+    const user = useContext<User>(UserContext)
 
     useEffect(() => {
         async function fetchTerraland() {
@@ -48,6 +52,13 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
         }
         nftId && fetchTerraland()
     }, [nftId])
+
+    useEffect(() => {
+        if (user && terraland) {
+            const owned = terraland.holders.some(holder => holder.address === user.walletAddress)
+            setCanSell(owned && !terraland.contractId)
+        }
+    }, [terraland, user])
 
     return (
         <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
@@ -84,13 +95,14 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 {!terraland && !error && <div className={styles.loader}><LoadingSpinner /></div>}
                 {error && <div className={styles.error}>{error}</div>}
 
-                <Button
-                    className={styles.button}
-                    disabled={false}
-                    label={strings.close}
-                    loading={false}
-                    onClick={onClose}
-                />
+                {canSell &&
+                    <Button
+                        className={styles.button}
+                        disabled={false}
+                        label={strings.sell}
+                        loading={false}
+                        onClick={onClose} />
+                }
             </div>
         </ModalDialog>
     )
