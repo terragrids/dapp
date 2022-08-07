@@ -38,6 +38,8 @@ export const strings = {
     description: 'Description',
     nominalPower: 'Nominal power (TRW)',
     totalOutput: 'Total output',
+    landPlots: 'Land plots',
+    totalBuildings: 'Total buildings',
     output: 'Output',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
