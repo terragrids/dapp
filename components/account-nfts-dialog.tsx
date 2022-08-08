@@ -23,7 +23,6 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         totalOutput: number
     }
 
-    //type ObjectKey = keyof typeof Nft
     const [state, setState] = useState<State>({
         accountNfts: [],
         errorMessage: '',
@@ -64,7 +63,6 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
                     ...state,
                     errorMessage: strings.errorAccountNfts
                 }))
-                return
             }
         }
 
