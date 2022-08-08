@@ -8,12 +8,12 @@
     "lint": "next lint",
     "test": "jest",
     "sanitize": "scripts/sanitize-package-lock.sh",
-    "reach-compile": "./reach compile ./blockchain/index.rsh -o ./blockchain/build; node scripts/generate-app-approval.mjs",
-    "reach-run": "./reach run blockchain; node scripts/generate-app-approval.mjs",
+    "reach-compile": "./reach compile ./blockchain/token-market/index.rsh -o ./blockchain/token-market/build; node scripts/generate-app-approval.mjs",
+    "reach-run": "./reach run blockchain/token-market; node scripts/generate-app-approval.mjs",
     "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
   },
   "dependencies": {
-    "@reach-sh/stdlib": "^0.1.11-rc.2",
+    "@reach-sh/stdlib": "^0.1.11-rc.6",
     "next": "^12.1.6",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
