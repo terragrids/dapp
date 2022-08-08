@@ -15,6 +15,10 @@ export type User = {
     update?: (user: User) => void
 }
 
+export enum UserCapabilities {
+    CAN_SELL, CAN_BUY, CAN_WITHDRAW
+}
+
 export function useUser() {
     const update = useCallback(({ walletAccount, walletBalance, terracells }: User) => {
         setUser(user => ({

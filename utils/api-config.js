@@ -14,9 +14,11 @@ const terracellContract = (id, applicationId) => `/api/terracells/${id}/contract
 const nfts = '/api/nfts'
 const nft = id => `/api/nfts/${id}`
 const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
+const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicationId}`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
 const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+
 export const endpoints = {
     accountTerracells,
     terracells,
@@ -24,8 +26,9 @@ export const endpoints = {
     terracellContract,
     nfts,
     nft,
-    terralands,
     accountNfts,
+    nftContract,
+    terralands,
     fileUpload,
     ipfsFiles
 }
