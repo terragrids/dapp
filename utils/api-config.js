@@ -5,15 +5,16 @@ export const terragridsApiBaseUrl =
             ? 'https://api-dev.terragrids.org'
             : 'https://api.terragrids.org'
 
-export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
+export const ipfsUrl = (hash) => `https://gateway.pinata.cloud/ipfs/${hash}`
 
-const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
-const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
-const terracell = id => `/api/terracells/${id}`
+const accountTerracells = (accountId) => `/api/accounts/${accountId}/terracells`
+const terracells = (next) => `/api/terracells${next ? `?next=${next}` : ''}`
+const terracell = (id) => `/api/terracells/${id}`
 const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
 const nfts = '/api/nfts'
 const nft = id => `/api/nfts/${id}`
 const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
+const accountNftsByType = (accountId, symbol) => `/api/accounts/${accountId}/nfts/${symbol}`
 const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicationId}`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
@@ -24,11 +25,12 @@ export const endpoints = {
     terracells,
     terracell,
     terracellContract,
+    terralands,
     nfts,
     nft,
     accountNfts,
+    accountNftsByType,
     nftContract,
-    terralands,
     fileUpload,
     ipfsFiles
 }
@@ -46,10 +48,15 @@ export async function callTerragridsApi(res, method, endpoint, data) {
                 response = await fetch(`${terragridsApiBaseUrl}/${endpoint}`)
                 break
             case 'POST':
-                response = await httpPost(`${terragridsApiBaseUrl}/${endpoint}`, data)
+                response = await httpPost(
+                    `${terragridsApiBaseUrl}/${endpoint}`,
+                    data
+                )
                 break
             case 'DELETE':
-                response = await httpDelete(`${terragridsApiBaseUrl}/${endpoint}`)
+                response = await httpDelete(
+                    `${terragridsApiBaseUrl}/${endpoint}`
+                )
                 break
             default:
                 res.status(405).end()
@@ -60,7 +67,11 @@ export async function callTerragridsApi(res, method, endpoint, data) {
         const length = response.headers.get('content-length')
 
         res.status(response.status).send(
-            length > 0 ? (type.includes('application/json') ? await response.json() : await response.text()) : ''
+            length > 0
+                ? type.includes('application/json')
+                    ? await response.json()
+                    : await response.text()
+                : ''
         )
     })
 }
