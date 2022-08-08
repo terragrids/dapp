@@ -19,6 +19,8 @@ frontend:
         - chmod u+w .
         - chown tmpuser ./blockchain
         - chmod u+w ./blockchain
+        - chown tmpuser ./blockchain/token-market
+        - chmod u+w ./blockchain/token-market
         - dockerd &
         - su tmpuser -c "docker login -u $DOCKER_USER -p $DOCKER_ACCESS_TOKEN"
         - su tmpuser -c "./reach run blockchain/token-market"
