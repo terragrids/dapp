@@ -1,31 +1,32 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { strings } from 'strings/en.js'
 import ModalDialog from './modal-dialog.js'
 import styles from './account-nfts-dialog.module.scss'
-//import { MenuEventContext } from '../context/menu-event-context.js'
 import { endpoints } from '../utils/api-config'
-//import { UserContext } from '../context/user-context'
+import { UserContext } from '../context/user-context'
 import { Nft } from 'types/nft'
 
 export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) => {
-    //const { user } = useContext(UserContext) how do I use the context with typescript?
+    const user = useContext<User>(UserContext)
     type Asset = {
+        id: string
         name: string
         symbol: string
-        image: string
-        description: string
-        id: string
+        url: string
+        output: 10
     }
 
     type State = {
-        accountNfts?: Array<Asset>
+        accountNfts: Array<Asset>
         errorMessage: string
+        totalOutput: number
     }
 
     //type ObjectKey = keyof typeof Nft
     const [state, setState] = useState<State>({
         accountNfts: [],
-        errorMessage: ''
+        errorMessage: '',
+        totalOutput: 0
     })
 
     let subtitle = ''
@@ -33,15 +34,15 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
 
     switch (selectedSymbol) {
         case 'TRCL':
-            subtitle = `${strings.totalOutput}`
+            subtitle = `${strings.totalOutput} ${state.totalOutput} TRW`
             title = Nft.TRCL.name
             break
         case 'TRLD':
-            subtitle = `${strings.landPlots}`
+            subtitle = `${strings.landPlots} ${state.totalOutput}`
             title = Nft.TRLD.name
             break
         case 'TRAS':
-            subtitle = `${strings.totalBuildings}`
+            subtitle = `${strings.totalBuildings} ${state.totalOutput}`
             title = Nft.TRAS.name
             break
     }
@@ -49,20 +50,14 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
     useEffect(() => {
         const fetchNfts = async () => {
             try {
-                if (visible) {
-                    const response = await fetch(
-                        endpoints.accountNftsByType(
-                            'WILRZ5OWS6QITI57LKTRH6MAQYXSFYKRZDJZIIBOAAVLCX4JEFPF3S6LTM',
-                            selectedSymbol
-                        )
-                    )
-                    const accountNfts = await response.json()
-                    //setAccountNfts(accountNfts)
-                    setState(state => ({
-                        ...state,
-                        accountNfts: accountNfts
-                    }))
-                }
+                const response = await fetch(endpoints.accountNftsByType(user.walletAddress, selectedSymbol))
+                const accountNfts = await response.json()
+
+                setState(state => ({
+                    ...state,
+                    accountNfts: accountNfts.assets,
+                    totalOutput: accountNfts.totalOutput
+                }))
             } catch (e) {
                 setState(state => ({
                     ...state,
@@ -72,8 +67,10 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
             }
         }
 
-        fetchNfts()
-    }, [selectedSymbol, visible])
+        if (visible) {
+            fetchNfts()
+        }
+    }, [selectedSymbol, visible, user])
 
     return visible ? (
         <ModalDialog
@@ -83,13 +80,15 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
             onClose={onClose}
             className={styles.listDialog}>
             <ul>
-                <li>
-                    <div className={'thumbPlaceholder'}></div>
-                    <h2>
-                        Terracell #1
-                        <small>{strings.output}: 45 TRW</small>
-                    </h2>
-                </li>
+                {state.accountNfts.map(asset => (
+                    <li key={asset.id}>
+                        <div className={'thumbPlaceholder'}></div>
+                        <h2>
+                            {asset.name}
+                            <small>{`${strings.output}: ${asset.output} TRW`}</small>
+                        </h2>
+                    </li>
+                ))}
             </ul>
             {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
         </ModalDialog>
