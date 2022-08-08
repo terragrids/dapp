@@ -47,7 +47,11 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onP
         setErrorMessage()
 
         try {
-            await sell(id, onReadyToSell)
+            await sell({
+                tokenId: id,
+                price: 10,
+                onReady: onReadyToSell
+            })
         } catch (e) {
             setErrorMessage(strings.errorCreatingTerracellSaleContract)
             setLoading(false)
