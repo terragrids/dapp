@@ -38,7 +38,7 @@ export function useNftSeller() {
                 })
             })
 
-            const { contractVerified } = await response.json()  
+            const { contractVerified } = await response.json()
 
             if (response.status === 201 && contractVerified) {
                 succeed({ applicationId, contractInfo })
@@ -88,17 +88,14 @@ export function useNftSeller() {
     }, [])
 
     const sell = useCallback(async ({ tokenId, price }) => {
-        if (contract.current) Promise.reject()
-
         let succeed, fail
         var promise = new Promise(function (resolve, reject) {
             succeed = resolve
             fail = reject
         })
 
-        contract.current = walletAccount.contract(backend)
-
         try {
+            contract.current = walletAccount.contract(backend)
             contract.current.p.Admin({
                 log: (() => { /* add logs */ }),
                 onReady: async (contract) => {
