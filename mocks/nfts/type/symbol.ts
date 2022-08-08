@@ -5,12 +5,11 @@ const trldAssets = [
         symbol: 'TRLD',
         url: 'ipfs://QmecxV7vrVEUTjvtu7VutqxhoYLFGtEENXvhBPAcJLSHxH',
         offchainUrl: 'https://images.terragrids.org/map-tile-grass.png',
-        positionX: 0,
+        positionX: 1,
         positiony: 0,
         holders: [
             {
-                address:
-                    'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
                 amount: 1
             }
         ]
@@ -21,12 +20,11 @@ const trldAssets = [
         symbol: 'TRLD',
         url: 'ipfs://QmecxV7vrVEUTjvtu7VutqxhoYLFGtEENXvhBPAcJLSXdX',
         offchainUrl: 'https://images.terragrids.org/map-tile-clay.png',
-        positionX: 1,
+        positionX: 2,
         positiony: 0,
         holders: [
             {
-                address:
-                    'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
                 amount: 1
             }
         ]
@@ -37,12 +35,11 @@ const trldAssets = [
         symbol: 'TRLD',
         url: 'ipfs://QmecxV7vrVEUTjvtu7VutqxhoYLFGtEENXvhBPAcJLSXdX',
         offchainUrl: 'https://images.terragrids.org/map-tile-slope.png',
-        positionX: 2,
+        positionX: 3,
         positiony: 0,
         holders: [
             {
-                address:
-                    'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
                 amount: 1
             }
         ]
@@ -53,6 +50,8 @@ const createPositions = () => {
     const temp: { positionX: number; positionY: number }[] = []
     for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
+            // Position (0, 0) is for Solar Power Plant
+            if (i === 0 && j === 0) continue
             temp.push({ positionX: j, positionY: i })
         }
     }
@@ -90,8 +89,5 @@ export const NFT_MOCKS = {
 type NftMockKeys = keyof typeof NFT_MOCKS
 
 export const matchKey = (str: unknown): str is NftMockKeys => {
-    return (
-        str !== undefined &&
-        (str === 'trld' || str === 'trcl' || str === 'tras')
-    )
+    return str !== undefined && (str === 'trld' || str === 'trcl' || str === 'tras')
 }

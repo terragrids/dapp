@@ -146,6 +146,12 @@ export function useFileUploader({ name, description }: Props) {
         createSignedFileUploadUrl(file.type)
     }
 
+    function reset() {
+        setFileProps({
+            uploadState: FileUploadState.IDLE
+        })
+    }
+
     return {
         upload,
         uploadState: fileProps.uploadState,
@@ -154,7 +160,8 @@ export function useFileUploader({ name, description }: Props) {
             arc3Name: fileProps.arc3Name,
             ipfsMetadataUrl: fileProps.ipfsMetadataUrl,
             ipfsMetadataHash: fileProps.ipfsMetadataHash
-        }
+        },
+        reset
     }
 }
 

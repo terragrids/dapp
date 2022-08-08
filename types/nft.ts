@@ -18,3 +18,27 @@ export class Nft {
         return [Nft.TRCL, Nft.TRLD, Nft.TRAS]
     }
 }
+
+export type Holder = {
+    address: string
+    amount: number
+}
+export type Terraland = {
+    id: string
+    name: string
+    symbol: string
+    url: string
+    offchainUrl: string
+    positionX: number
+    positionY: number
+    holders: Array<Holder>
+    contractId: string
+}
+export type Terracell = {
+    id: string
+    name: string
+    symbol: string
+    url: string
+    offchainUrl: string
+    power: number
+}

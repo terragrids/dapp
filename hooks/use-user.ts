@@ -1,7 +1,22 @@
 import { useState, useCallback } from 'react'
+import { Terracell } from 'types/nft.js'
+
+export type User = {
+    walletAccount?: null | {
+        networkAccount: {
+            addr: string
+        }
+    }
+    stdlib?: object
+    walletBalance?: string
+    terracells?: null | Array<Terracell>
+    authenticated?: boolean
+    walletAddress?: null | string
+    update?: (user: User) => void
+}
 
 export function useUser() {
-    const update = useCallback(({ walletAccount, walletBalance, terracells }) => {
+    const update = useCallback(({ walletAccount, walletBalance, terracells }: User) => {
         setUser(user => ({
             ...user,
             ...walletAccount && { walletAccount },
@@ -10,9 +25,9 @@ export function useUser() {
         }))
     }, [])
 
-    const [user, setUser] = useState({
+    const [user, setUser] = useState<User>({
         walletAccount: null,
-        walletBalance: 0,
+        walletBalance: '0',
         terracells: null,
         update: update
     })

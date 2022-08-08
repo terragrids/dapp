@@ -15,6 +15,11 @@
     flex-direction: column;
     width: 100%;
     margin-bottom: 20px;
+
+    picture {
+        display: flex;
+        justify-content: center;
+    }
 }
 
 .button {
@@ -23,6 +28,10 @@
 
 .error {
     color: $color-red;
-    padding-top: 40px;
+    padding-bottom: 40px;
     font-size: 16px;
+}
+
+.loader {
+    padding-bottom: 40px;
 }
