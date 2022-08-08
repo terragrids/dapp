@@ -1,5 +1,5 @@
 //import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../../../utils/api-config'
-import { setMethodNotAllowedResponse } from '../../../../../utils/api-config'import { setMethodNotAllowedResponse } from '../../../../../utils/api-config'
+import { setMethodNotAllowedResponse } from '../../../../../utils/api-config'
 
 export default async function handler(req, res) {
     switch (req.method) {
