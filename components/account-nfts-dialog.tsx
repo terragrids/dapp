@@ -5,6 +5,7 @@ import styles from './account-nfts-dialog.module.scss'
 import { endpoints } from '../utils/api-config'
 import { UserContext } from '../context/user-context'
 import { Nft } from 'types/nft'
+import { User } from 'hooks/use-user'
 
 export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) => {
     const user = useContext<User>(UserContext)
