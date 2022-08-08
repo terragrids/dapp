@@ -10,7 +10,8 @@ import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
 import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
-import { User } from 'hooks/use-user.js'
+import { User, UserCapabilities } from 'hooks/use-user'
+import { useNftSeller } from 'hooks/use-nft-seller.js'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -21,9 +22,12 @@ type PlotInfoDialogProps = {
 const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const [terraland, setTerraland] = useState<Terraland | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
-    const [canSell, setCanSell] = useState<boolean>()
+    const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
     const [error, setError] = useState<string | null>()
+    const [waiting, setWaiting] = useState<boolean>(false)
     const user = useContext<User>(UserContext)
+    const { sell, buy, withdraw, unit } = useNftSeller()
+    const assetPrice = 10
 
     useEffect(() => {
         async function fetchTerraland() {
@@ -40,25 +44,87 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                     name: removeSuffix(asset.name, TRDL_SUFFIX)
                 })
 
-                const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
-
-                if (ipfsResponse.ok) {
-                    const { image } = await ipfsResponse.json()
-                    setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
-                }
+                try {
+                    const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
+                    if (ipfsResponse.ok) {
+                        const { image } = await ipfsResponse.json()
+                        setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
+                    }
+                } catch (e) { }
             } else {
                 setError(strings.errorFetchingTerraland)
             }
         }
-        nftId && fetchTerraland()
-    }, [nftId])
+        nftId && visible && fetchTerraland()
+    }, [nftId, visible])
 
     useEffect(() => {
-        if (user && terraland) {
+        if (user && user.authenticated && terraland) {
             const owned = terraland.holders.some(holder => holder.address === user.walletAddress)
-            setCanSell(owned && !terraland.contractId)
+            const onSale = !!terraland.contractId
+            const isSeller = terraland.sellerAddress === user.walletAddress
+
+            if (owned && !onSale) setUserCapability(UserCapabilities.CAN_SELL)
+            else if (isSeller && onSale) setUserCapability(UserCapabilities.CAN_WITHDRAW)
+            else if (!owned && !isSeller && onSale) setUserCapability(UserCapabilities.CAN_BUY)
+            else setUserCapability(null)
         }
     }, [terraland, user])
+
+    async function onSell() {
+        if (!terraland) return
+
+        setWaiting(true)
+        setError(null)
+
+        try {
+            const { applicationId, contractInfo } = await sell({
+                tokenId: terraland.id,
+                price: assetPrice
+            })
+            setTerraland({ ...terraland, contractId: applicationId, contractInfo })
+            onClose()
+        } catch (e) {
+            setError(strings.errorCreatingNftSaleContract)
+            return
+        } finally {
+            setWaiting(false)
+        }
+    }
+
+    async function onWithdraw() {
+        if (!terraland) return
+
+        setWaiting(true)
+        setError(null)
+
+        try {
+            await withdraw(terraland.id, terraland.contractId, terraland.contractInfo)
+            setTerraland({ ...terraland, contractId: undefined, contractInfo: undefined })
+            onClose()
+        } catch (e) {
+            setError(strings.errorDeletingNftSaleContract)
+        } finally {
+            setWaiting(false)
+        }
+    }
+
+    async function onBuy() {
+        if (!terraland) return
+
+        setWaiting(true)
+        setError(null)
+
+        try {
+            await buy(terraland.id, terraland.contractId, terraland.contractInfo)
+            setTerraland({ ...terraland, contractId: undefined, contractInfo: undefined })
+            onClose()
+        } catch (e) {
+            setError(strings.errorDeletingNftSaleContract)
+        } finally {
+            setWaiting(false)
+        }
+    }
 
     return (
         <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
@@ -89,19 +155,39 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                                     ))}
                                 </ul>
                             </div>
+                            {terraland.contractId &&
+                                <div className={styles.section}>
+                                    Contract ID : {terraland.contractId}
+                                </div>
+                            }
                         </div>
                     </>
                 }
                 {!terraland && !error && <div className={styles.loader}><LoadingSpinner /></div>}
                 {error && <div className={styles.error}>{error}</div>}
 
-                {canSell &&
+                {userCapability === UserCapabilities.CAN_SELL && terraland &&
                     <Button
                         className={styles.button}
-                        disabled={false}
-                        label={strings.sell}
-                        loading={false}
-                        onClick={onClose} />
+                        label={`${strings.sellFor} ${assetPrice} $${unit}`}
+                        loading={waiting}
+                        onClick={onSell} />
+                }
+
+                {userCapability === UserCapabilities.CAN_WITHDRAW && terraland &&
+                    <Button
+                        className={styles.button}
+                        label={strings.withdraw}
+                        loading={waiting}
+                        onClick={onWithdraw} />
+                }
+
+                {userCapability === UserCapabilities.CAN_BUY && terraland &&
+                    <Button
+                        className={styles.button}
+                        label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
+                        loading={waiting}
+                        onClick={onBuy} />
                 }
             </div>
         </ModalDialog>

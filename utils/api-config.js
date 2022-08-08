@@ -10,16 +10,16 @@ export const ipfsUrl = (hash) => `https://gateway.pinata.cloud/ipfs/${hash}`
 const accountTerracells = (accountId) => `/api/accounts/${accountId}/terracells`
 const terracells = (next) => `/api/terracells${next ? `?next=${next}` : ''}`
 const terracell = (id) => `/api/terracells/${id}`
-const terracellContract = (id, applicationId) =>
-    `/api/terracells/${id}/contracts/${applicationId}`
+const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
 const nfts = '/api/nfts'
-const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
-const accountNftsByType = (accountId, symbol) =>
-    `/api/accounts/${accountId}/nfts/${symbol}`
 const nft = id => `/api/nfts/${id}`
+const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
+const accountNftsByType = (accountId, symbol) => `/api/accounts/${accountId}/nfts/${symbol}`
+const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicationId}`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
-const terralands = (next) => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+
 export const endpoints = {
     accountTerracells,
     terracells,
@@ -30,6 +30,7 @@ export const endpoints = {
     nft,
     accountNfts,
     accountNftsByType,
+    nftContract,
     fileUpload,
     ipfsFiles
 }

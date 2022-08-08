@@ -32,7 +32,10 @@ export type Terraland = {
     positionX: number
     positionY: number
     holders: Array<Holder>
-    contractId: string
+    contractId?: string
+    contractInfo?: string
+    assetPrice?: number
+    sellerAddress?: string
 }
 export type Terracell = {
     id: string
