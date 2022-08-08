@@ -8,7 +8,7 @@ export default async function handler(
 ) {
     switch (req.method) {
         case 'GET':
-            await callTerragridsApi(res, 'GET', `nfts/type/${req.query.symbol}`)
+            await callTerragridsApi(res, 'GET', `nfts/${req.query.assetId}`)
             break
         default:
             setMethodNotAllowedResponse(res, ['GET'])
