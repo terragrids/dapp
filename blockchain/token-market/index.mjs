@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 /* eslint-disable no-console */
 import { loadStdlib } from '@reach-sh/stdlib'
 import assert from 'assert'
