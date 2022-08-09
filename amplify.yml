@@ -21,9 +21,12 @@ frontend:
         - chmod u+w ./blockchain
         - chown tmpuser ./blockchain/token-market
         - chmod u+w ./blockchain/token-market
+        - chown tmpuser ./blockchain/solar-power-plant
+        - chmod u+w ./blockchain/solar-power-plant
         - dockerd &
         - su tmpuser -c "docker login -u $DOCKER_USER -p $DOCKER_ACCESS_TOKEN"
         - su tmpuser -c "./reach run blockchain/token-market"
+        - su tmpuser -c "./reach run blockchain/solar-power-plant"
         - node scripts/generate-app-approval.mjs 
         - npm ci
     build:
