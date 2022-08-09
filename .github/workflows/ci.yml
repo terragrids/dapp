@@ -3,6 +3,7 @@ name: ci
 on:
   push:
     branches:
+      - 'feature/**'
       - dev
       - master
   pull_request:
