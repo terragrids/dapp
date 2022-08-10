@@ -85,6 +85,6 @@ export const drawLine = (context: CanvasRenderingContext2D, x: number, y: number
     context.lineTo(x - Plot.PLOT_WIDTH / 2, y)
 
     // draw path
-    context.strokeStyle = 'gray'
+    context.strokeStyle = '#3a3a3a'
     context.stroke()
 }
