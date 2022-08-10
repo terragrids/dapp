@@ -80,11 +80,6 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
         }
     }
 
-    const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        ctx.fillStyle = variables.backgroundColor
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
-    }
-
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
@@ -99,8 +94,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
         startPositionRef.current = { x: plotStartX, y: plotStartY }
 
-        renderBackground(ctx)
-
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
         renderPlots(ctx)(plotStartX, plotStartY)
     }
 
