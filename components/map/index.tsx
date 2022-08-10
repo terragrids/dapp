@@ -1,7 +1,14 @@
 import Canvas from 'components/canvas'
 import React, { useEffect, useRef, useState } from 'react'
 import { endpoints } from 'utils/api-config'
-import { convertToMapPlot, getSppPlot, getStartPosition, GRID_SIZE, MAGIC_NUMBER_TO_ADJUST } from './map-helper'
+import {
+    convertToMapPlot,
+    drawGrid,
+    getSppPlot,
+    getStartPosition,
+    GRID_SIZE,
+    MAGIC_NUMBER_TO_ADJUST
+} from './map-helper'
 import Plot from './plots/plot'
 
 export type MapProps = {
@@ -79,8 +86,12 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
+        const { x, y } = startPositionRef.current
+
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-        renderPlots(ctx)(startPositionRef.current.x, startPositionRef.current.y)
+
+        drawGrid(ctx, { x, y })
+        renderPlots(ctx)(x, y)
     }
 
     // TO LOCK THE SIZE OF THE MAP TO 1x

@@ -49,3 +49,42 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
 
     return { x, y }
 }
+
+// ref: https://github.com/rtatol/isometric-map/blob/master/js/isomap.js
+export const drawGrid = (context: CanvasRenderingContext2D, startPosition: Position2D) => {
+    for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+            // calculate coordinates (same as Plot class 'calculateRenderPosition' method)
+            const coordX = startPosition.x + (i - j) * Plot.PLOT_HALF_WIDTH + Plot.PLOT_WIDTH
+            const coordY = startPosition.y + (i + j) * Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_HEIGHT
+            // draw single plot
+            drawLine(context, coordX, coordY)
+        }
+    }
+}
+
+export const drawLine = (context: CanvasRenderingContext2D, x: number, y: number) => {
+    context.beginPath()
+    context.setLineDash([1, 1])
+
+    // move to start point
+    context.moveTo(x - Plot.PLOT_WIDTH / 2, y)
+
+    /**
+     * create four lines
+     * --------------------------------------------
+     *    step 1  |  step 2  |  step 3  |  step 4
+     * --------------------------------------------
+     *    /       |  /       |  /       |  /\
+     *            |  \       |  \/      |  \/
+     * --------------------------------------------
+     */
+    context.lineTo(x - Plot.PLOT_WIDTH, y + Plot.PLOT_HEIGHT / 2)
+    context.lineTo(x - Plot.PLOT_WIDTH / 2, y + Plot.PLOT_HEIGHT)
+    context.lineTo(x, y + Plot.PLOT_HEIGHT / 2)
+    context.lineTo(x - Plot.PLOT_WIDTH / 2, y)
+
+    // draw path
+    context.strokeStyle = 'gray'
+    context.stroke()
+}
