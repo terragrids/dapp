@@ -1,8 +1,14 @@
 import Canvas from 'components/canvas'
 import React, { useEffect, useRef, useState } from 'react'
-import variables from './index.module.scss'
 import { endpoints } from 'utils/api-config'
-import { convertToMapPlot, getSppPlot, GRID_SIZE } from './map-helper'
+import {
+    convertToMapPlot,
+    drawGrid,
+    getSppPlot,
+    getStartPosition,
+    GRID_SIZE,
+    MAGIC_NUMBER_TO_ADJUST
+} from './map-helper'
 import Plot from './plots/plot'
 
 export type MapProps = {
@@ -21,9 +27,6 @@ export type MapProps = {
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
 const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
-
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-const MAGIC_NUMBER_TO_ADJUST = 80
 
 const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
@@ -80,28 +83,15 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
         }
     }
 
-    const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        ctx.fillStyle = variables.backgroundColor
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
-    }
-
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const offsetX = Plot.PLOT_WIDTH / 2
-        const offsetY = Plot.PLOT_HEIGHT
+        const { x, y } = startPositionRef.current
 
-        const remainingHeight = height - Plot.PLOT_HEIGHT * GRID_SIZE
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-        const plotStartX = width / 2 - offsetX
-        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
-        const plotStartY = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
-
-        startPositionRef.current = { x: plotStartX, y: plotStartY }
-
-        renderBackground(ctx)
-
-        renderPlots(ctx)(plotStartX, plotStartY)
+        drawGrid(ctx, { x, y })
+        renderPlots(ctx)(x, y)
     }
 
     // TO LOCK THE SIZE OF THE MAP TO 1x
@@ -162,8 +152,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             if (index === 0) {
                 // TODO onSelectSolarPowerPlant()
-            }
-            else if (index < GRID_SIZE * GRID_SIZE) {
+            } else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }
@@ -183,6 +172,14 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
         }
         load()
     }, [])
+
+    useEffect(() => {
+        if (width === undefined || height === undefined) return
+
+        const { x, y } = getStartPosition(width, height)
+
+        startPositionRef.current = { x, y }
+    }, [width, height])
 
     return (
         <Canvas
