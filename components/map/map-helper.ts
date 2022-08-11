@@ -46,12 +46,15 @@ export const getOptimalScale = (canvasWidth: number) => {
 }
 
 export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
+    const halfCanvasWidth = canvasWidth / 2
+
     const offsetX = Plot.PLOT_WIDTH / 2
     const offsetY = Plot.PLOT_HEIGHT
 
     const remainingHeight = canvasHeight - Plot.PLOT_HEIGHT * GRID_SIZE
 
-    const x = canvasWidth / 2 - offsetX
+    const scale = getOptimalScale(canvasWidth)
+    const x = halfCanvasWidth / scale - offsetX
     // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
     const y = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
