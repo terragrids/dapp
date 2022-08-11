@@ -1,6 +1,10 @@
 import Plot, { Position2D } from './plots/plot'
 // TODO: should change image once design for SPP is ready
 import SPP from 'public/images/map-tile-strip-lake.png'
+import variables from './index.module.scss'
+
+export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
+export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
@@ -35,6 +39,10 @@ export const convertToMapPlot = ({ offchainUrl, positionX, positionY, ...rest }:
         index: positionToIndex({ x: positionX, y: positionY }),
         image
     }
+}
+
+export const getOptimalScale = (canvasWidth: number) => {
+    return Math.max(Math.min(canvasWidth / BASE_SCREEN_SIZE, 1), MINIMUM_MAP_SCALE)
 }
 
 export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
