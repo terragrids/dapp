@@ -7,6 +7,8 @@ export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
 export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
+export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
+
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
 export const MAGIC_NUMBER_TO_ADJUST = 80
 

@@ -1,3 +1,4 @@
+import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
 import React, { useRef, useEffect } from 'react'
 
 export type CanvasProps = {
@@ -5,20 +6,14 @@ export type CanvasProps = {
     onWheel: (ctx: CanvasRenderingContext2D, e: WheelEvent) => void
     onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
     onClick: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
-    attributes?: React.CanvasHTMLAttributes<HTMLCanvasElement>
+    attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
-const Canvas = ({
-    drawOnCanvas,
-    onWheel,
-    onMouseMove,
-    onClick,
-    attributes
-}: CanvasProps) => {
+const Canvas = ({ drawOnCanvas, onWheel, onMouseMove, onClick, attributes: { width, height } }: CanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
-        if (!canvasRef.current) return
+        if (!canvasRef.current || !width) return
 
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -26,6 +21,13 @@ const Canvas = ({
         if (!context) return
 
         let animationFrameId: number
+
+        const currentScale = context.getTransform().a
+        const scale = getOptimalScale(Number(width))
+
+        if (BASE_SCREEN_SIZE >= width && currentScale > scale) {
+            context.scale(scale, scale)
+        }
 
         const render = () => {
             drawOnCanvas(context)
@@ -36,8 +38,7 @@ const Canvas = ({
         return () => {
             cancelAnimationFrame(animationFrameId)
         }
-
-    }, [drawOnCanvas])
+    }, [drawOnCanvas, width])
 
     useEffect(() => {
         if (!canvasRef.current) return
@@ -62,7 +63,7 @@ const Canvas = ({
         }
     }, [onClick, onMouseMove, onWheel])
 
-    return <canvas ref={canvasRef} {...attributes} />
+    return <canvas ref={canvasRef} {...{ width, height }} />
 }
 
 export default Canvas
