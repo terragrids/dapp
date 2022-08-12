@@ -29,11 +29,7 @@ export type MapProps = {
 const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
-
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-const MAGIC_NUMBER_TO_ADJUST = 80
 const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
-
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
@@ -156,9 +152,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             if (!target) return
 
             if (index === 0) {
-
                 onSelectSolarPowerPlant()
-
             } else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
