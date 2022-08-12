@@ -2,87 +2,87 @@
 @import 'styles/dimens.scss';
 
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
 
-  span {
-    z-index: $z-index-modal + 1;
-  }
+    span {
+        z-index: $z-index-modal + 1;
+    }
 }
 
 .section {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .back {
-  padding: 20px;
-  display: block;
-  width: 91px;
-  cursor: pointer;
+    padding: 20px;
+    display: block;
+    width: 91px;
+    cursor: pointer;
 }
 
 .content {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-  min-width: 600px;
-  width: 100%;
-  padding: 0 30px;
-
-  .stack {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    min-width: 600px;
     width: 100%;
+    padding: 0 30px;
 
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      padding-left: 50px;
-      text-transform: uppercase;
+    .stack {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+
+        h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            padding-left: 50px;
+            text-transform: uppercase;
+        }
+
+        dl {
+            margin-bottom: 20px;
+
+            width: 100px;
+            padding-left: 50px;
+
+            dt {
+                min-width: 260px;
+            }
+            dd {
+                display: inline;
+            }
+        }
     }
-
-    dl {
-      margin-bottom: 20px;
-
-      width: 100px;
-      padding-left: 50px;
-
-      dt {
-        min-width: 260px;
-      }
-      dd {
-        display: inline;
-      }
+    .image {
+        width: 100%;
+        picture {
+            display: flex;
+            justify-content: center;
+        }
     }
-  }
-  .image {
-    width: 100%;
-    picture {
-      display: flex;
-      justify-content: center;
-    }
-  }
 }
 .default {
-  background-color: transparent;
-  border: 1px solid $color-white;
-  width: 70%;
-  margin: auto;
+    background-color: transparent;
+    border: 1px solid $color-white;
+    width: 70%;
+    margin: auto;
 }
 
 .error {
-  color: $color-red;
-  padding-bottom: 40px;
-  font-size: 16px;
+    color: $color-red;
+    padding-bottom: 40px;
+    font-size: 16px;
 }
 
 .loader {
-  padding-bottom: 40px;
+    padding-bottom: 40px;
 }
