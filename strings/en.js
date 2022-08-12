@@ -54,7 +54,7 @@ export const strings = {
     errorFechingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
     positionX: 'Position X',
     positionY: 'Position Y',
-    availableToBuy: 'Available',
+    availableToBuy: 'Available to buy',
     capacity: 'Capacity',
     back: '< Back'
 }
