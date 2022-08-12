@@ -18,19 +18,23 @@ const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicat
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
 const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+const terracellNfts = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
+const solarPowerPlant = 'api/spp'
 
 export const endpoints = {
   accountTerracells,
   terracells,
   terracell,
   terracellContract,
-  terralands,
   nfts,
   nft,
+  terralands,
+  terracellNfts,
   accountNftsByType,
   nftContract,
   fileUpload,
-  ipfsFiles
+  ipfsFiles,
+  solarPowerPlant
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

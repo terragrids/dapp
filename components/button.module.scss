@@ -3,30 +3,35 @@
 @import 'styles/screens.scss';
 
 .this {
-    padding: 15px 20px;
-    min-height: 55px;
-    border-radius: $button-border-radius;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    text-transform: uppercase;
-    color: $color-white;
-    transition: opacity 0.2s;
-    background-color: $color-brand;
+  padding: 15px 20px;
+  min-height: 55px;
+  border-radius: $button-border-radius;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: $color-white;
+  transition: opacity 0.2s;
+  background-color: $color-brand;
 
-    @media (hover: hover) {
-        &:hover {
-            opacity: 0.9;
-        }
+  @media (hover: hover) {
+    &:hover {
+      opacity: 0.9;
     }
+  }
 
-    &.disabled {
-        color: $color-nomad;
-        background-color: $color-abbey;
-        cursor: default;
-    }
+  &.disabled {
+    color: $color-nomad;
+    background-color: $color-abbey;
+    cursor: default;
+  }
 
-    i {
-        font-size: 22px;
-    }
+  i {
+    font-size: 22px;
+  }
+}
+
+.default {
+  background-color: $color-white;
+  border-color: transparent;
 }

@@ -2,67 +2,59 @@
 @import 'styles/dimens.scss';
 
 .listDialog {
+  padding: 0;
+  color: $color-white;
+
+  header {
+    padding: 20px;
+
+    div {
+      align-self: baseline;
+    }
+  }
+
+  h1 {
+    font-weight: bold;
+    display: block;
+  }
+
+  h2 {
+    font-size: 16px;
+    padding-left: 40px;
+
+    text-transform: uppercase;
+    small {
+      display: block;
+      font-weight: 100;
+      text-transform: none;
+    }
+  }
+
+  ul {
+    padding-bottom: 20px;
+  }
+
+  li {
+    padding: 3px 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    min-width: 425px;
+  }
+
+  li:hover,
+  li:focus {
+    background-color: $color-brand;
+  }
+
+  section {
     padding: 0;
-    color: $color-white;
-
-    header {
-        padding: 20px;
-        h1 {
-            font-size: 14px;
-        }
-
-        small {
-            display: block;
-            text-transform: none;
-        }
-
-        div {
-            align-self: baseline;
-        }
-    }
-
-    h1 {
-        font-weight: bold;
-        display: block;
-    }
-
-    h2 {
-        font-size: 16px;
-        padding-left: 40px;
-
-        text-transform: uppercase;
-        small {
-            display: block;
-            font-weight: 100;
-            text-transform: none;
-        }
-    }
-
-    ul {
-        padding-bottom: 20px;
-    }
-
-    li {
-        padding: 3px 20px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        min-width: 425px;
-    }
-
-    li:hover,
-    li:focus {
-        background-color: $color-brand;
-    }
-
-    section {
-        padding: 0;
-    }
+  }
 }
 
 .thumbPlaceholder {
-    width: 105px;
-    height: 95px;
-    background-color: gray;
-    border-radius: $dialog-border-radius;
+  width: 105px;
+  height: 95px;
+  background-color: gray;
+  border-radius: $dialog-border-radius;
 }
