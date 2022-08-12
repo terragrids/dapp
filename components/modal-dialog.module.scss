@@ -3,67 +3,69 @@
 @import 'styles/screens.scss';
 
 .container {
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: $color-black-60;
-  z-index: $z-index-modal;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $color-black-60;
+    z-index: $z-index-modal;
 }
 
 .dialog {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  max-width: 75vw;
-  max-height: 85vh;
-  background-color: $color-ebony-clay;
-  border-radius: $dialog-border-radius;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-width: 75vw;
+    max-height: 85vh;
+    background-color: $color-ebony-clay;
+    border-radius: $dialog-border-radius;
 
-  @media (max-width: $screen-small) {
-    max-width: 95vw;
-    max-height: 95vh;
-  }
+    @media (max-width: $screen-small) {
+        max-width: none;
+        width: 95%;
+        margin: 0 15px;
+        max-height: 95vh;
+    }
 }
 
 .content {
-  position: relative;
-  padding: 20px;
-  margin-bottom: 10px;
-  max-height: 85vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+    position: relative;
+    padding: 20px;
+    margin-bottom: 10px;
+    max-height: 85vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
 
-  h1 {
-    font-size: 14px;
-  }
+    h1 {
+        font-size: 14px;
+    }
 
-  small {
-    display: block;
-    text-transform: none;
-  }
+    small {
+        display: block;
+        text-transform: none;
+    }
 
-  div {
-    align-self: baseline;
-  }
+    div {
+        align-self: baseline;
+    }
 }
 
 .title {
-  text-transform: uppercase;
-  font-size: 12px;
+    text-transform: uppercase;
+    font-size: 12px;
 }
 
 .close {
-  cursor: pointer;
+    cursor: pointer;
 }
