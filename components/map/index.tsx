@@ -1,8 +1,16 @@
 import Canvas from 'components/canvas'
 import React, { useEffect, useRef, useState } from 'react'
-import variables from './index.module.scss'
 import { endpoints } from 'utils/api-config'
-import { convertToMapPlot, getSppPlot, GRID_SIZE } from './map-helper'
+import {
+    convertToMapPlot,
+    drawGrid,
+    getOptimalScale,
+    getSppPlot,
+    getStartPosition,
+    GRID_SIZE,
+    MAGIC_NUMBER_TO_ADJUST,
+    ORIGINAL_MAP_WIDTH
+} from './map-helper'
 import Plot from './plots/plot'
 
 export type MapProps = {
@@ -13,7 +21,7 @@ export type MapProps = {
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
-// const DEFAULT_MAP_SCALE = 1
+const DEFAULT_MAP_SCALE = 1
 // const ZOOM_SENSITIVITY = 0.0001
 // const MAX_SCALE = 2
 // const MIN_SCALE = 0.8
@@ -22,12 +30,10 @@ export type MapProps = {
 const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-const MAGIC_NUMBER_TO_ADJUST = 80
-
 const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
+    const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
@@ -80,30 +86,23 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
         }
     }
 
-    const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        ctx.fillStyle = variables.backgroundColor
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
-    }
-
     const render = (ctx: CanvasRenderingContext2D) => {
         if (!width || !height) return
 
-        const offsetX = Plot.PLOT_WIDTH / 2
-        const offsetY = Plot.PLOT_HEIGHT
+        const { x, y } = startPositionRef.current
 
-        const remainingHeight = height - Plot.PLOT_HEIGHT * GRID_SIZE
+        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
+            // if map width is bigger than canvas width, increase the range to be cleared
+            // otherwise the area initially not rendered on screen will not be cleared
+            // when scrolling horizontally
+            ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
+        } else {
+            ctx.clearRect(0, 0, width, height)
+        }
 
-        const plotStartX = width / 2 - offsetX
-        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
-        const plotStartY = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
-
-        startPositionRef.current = { x: plotStartX, y: plotStartY }
-
-        renderBackground(ctx)
-
-        renderPlots(ctx)(plotStartX, plotStartY)
+        drawGrid(ctx, { x, y })
+        renderPlots(ctx)(x, y)
     }
-
     // TO LOCK THE SIZE OF THE MAP TO 1x
     // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
     //     const currentScale = ctx.getTransform().a
@@ -162,8 +161,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             if (index === 0) {
                 // TODO onSelectSolarPowerPlant()
-            }
-            else if (index < GRID_SIZE * GRID_SIZE) {
+            } else if (index < GRID_SIZE * GRID_SIZE) {
                 onSelectPlot(target)
             }
         }
@@ -183,6 +181,16 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
         }
         load()
     }, [])
+
+    useEffect(() => {
+        if (width === undefined || height === undefined) return
+
+        const { x, y } = getStartPosition(width, height)
+        startPositionRef.current = { x, y }
+
+        const optimalScale = getOptimalScale(width)
+        initialScaleRef.current = optimalScale
+    }, [width, height])
 
     return (
         <Canvas

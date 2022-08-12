@@ -28,6 +28,14 @@
             border-bottom: 1px solid $color-emperor;
         }
 
+        li:nth-child(2):hover,
+        li:nth-child(2):focus,
+        li:first-child:hover,
+        li:first-child:focus {
+            background-color: transparent;
+            cursor: inherit;
+        }
+
         li:nth-child(2) {
             color: $color-nomad;
         }

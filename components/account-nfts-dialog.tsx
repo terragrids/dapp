@@ -81,7 +81,7 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
             <ul>
                 {state.accountNfts.map(asset => (
                     <li key={asset.id}>
-                        <div className={'thumbPlaceholder'}></div>
+                        <div className={styles.thumbPlaceholder}></div>
                         <h2>
                             {asset.name}
                             <small>{`${strings.output}: ${asset.output} TRW`}</small>
