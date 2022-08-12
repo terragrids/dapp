@@ -4,10 +4,12 @@ import { endpoints } from 'utils/api-config'
 import {
     convertToMapPlot,
     drawGrid,
+    getOptimalScale,
     getSppPlot,
     getStartPosition,
     GRID_SIZE,
-    MAGIC_NUMBER_TO_ADJUST
+    MAGIC_NUMBER_TO_ADJUST,
+    ORIGINAL_MAP_WIDTH
 } from './map-helper'
 import Plot from './plots/plot'
 
@@ -20,7 +22,7 @@ export type MapProps = {
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
-// const DEFAULT_MAP_SCALE = 1
+const DEFAULT_MAP_SCALE = 1
 // const ZOOM_SENSITIVITY = 0.0001
 // const MAX_SCALE = 2
 // const MIN_SCALE = 0.8
@@ -32,6 +34,7 @@ const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
+    const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
@@ -89,12 +92,18 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
         const { x, y } = startPositionRef.current
 
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
+            // if map width is bigger than canvas width, increase the range to be cleared
+            // otherwise the area initially not rendered on screen will not be cleared
+            // when scrolling horizontally
+            ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
+        } else {
+            ctx.clearRect(0, 0, width, height)
+        }
 
         drawGrid(ctx, { x, y })
         renderPlots(ctx)(x, y)
     }
-
     // TO LOCK THE SIZE OF THE MAP TO 1x
     // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
     //     const currentScale = ctx.getTransform().a
@@ -178,8 +187,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         if (width === undefined || height === undefined) return
 
         const { x, y } = getStartPosition(width, height)
-
         startPositionRef.current = { x, y }
+
+        const optimalScale = getOptimalScale(width)
+        initialScaleRef.current = optimalScale
     }, [width, height])
 
     return (

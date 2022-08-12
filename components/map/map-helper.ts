@@ -1,8 +1,14 @@
 import Plot, { Position2D } from './plots/plot'
 // TODO: should change image once design for SPP is ready
 import SPP from 'public/images/map-tile-strip-lake.png'
+import variables from './index.module.scss'
+
+export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
+export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
+export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
+
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
 export const MAGIC_NUMBER_TO_ADJUST = 80
 
@@ -37,13 +43,20 @@ export const convertToMapPlot = ({ offchainUrl, positionX, positionY, ...rest }:
     }
 }
 
+export const getOptimalScale = (canvasWidth: number) => {
+    return Math.max(Math.min(canvasWidth / BASE_SCREEN_SIZE, 1), MINIMUM_MAP_SCALE)
+}
+
 export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
+    const halfCanvasWidth = canvasWidth / 2
+
     const offsetX = Plot.PLOT_WIDTH / 2
     const offsetY = Plot.PLOT_HEIGHT
 
     const remainingHeight = canvasHeight - Plot.PLOT_HEIGHT * GRID_SIZE
 
-    const x = canvasWidth / 2 - offsetX
+    const scale = getOptimalScale(canvasWidth)
+    const x = halfCanvasWidth / scale - offsetX
     // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
     const y = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
