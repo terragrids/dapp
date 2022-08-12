@@ -12,12 +12,12 @@
     padding: 0;
 
     @media (max-width: $screen-medium) {
-        max-width: 100%;
+        min-width: $main-content-width / 2.5;
+        width: 100%;
     }
 
     @media (max-width: $screen-small) {
-        min-width: 80%;
-        max-width: 100%;
+        min-width: $main-content-width / 3;
     }
 }
 
@@ -89,6 +89,7 @@
     padding: 0 60px;
 
     @media (max-width: $screen-medium) {
+        padding: 0 30px;
         grid-template-columns: repeat(2, 1fr);
     }
 
