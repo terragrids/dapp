@@ -9,10 +9,13 @@ export const main = Reach.App(() => {
         onReady: Fun(true, Null)
     });
 
-    const V = API('Vault', {
+    const V = API('SolarPowerPlant', {
         stop: Fun([], Bool),
-        getSolarPowerPlant: Fun([], SolarPowerPlant),
-        increaseCapacity: Fun([UInt], UInt)
+        get: Fun([], SolarPowerPlant),
+        setCapacity: Fun([UInt], UInt),
+        increaseCapacity: Fun([UInt], UInt),
+        setOutput: Fun([UInt], UInt),
+        increaseOutput: Fun([UInt], UInt)
     });
 
     init();
@@ -20,21 +23,36 @@ export const main = Reach.App(() => {
     A.publish();
 
     A.interact.onReady(getContract());
-    A.interact.log("The token vault is ready");
+    A.interact.log("The solar power plant is ready");
 
-    const [done, buyer, paid, capacity, output] =
-        parallelReduce([false, A, 0, 0, 0])
-            .invariant(balance() == paid)
+    const [done, capacity, output] =
+        parallelReduce([false, 0, 0])
+            .invariant(balance() == 0)
             .while(!done)
-            .api(V.getSolarPowerPlant,
+            .api(V.get,
                 (k => {
                     k([capacity, output]);
-                    return [false, buyer, paid, capacity, output]
+                    return [false, capacity, output]
+                }))
+            .api(V.setCapacity,
+                ((amount, k) => {
+                    k(amount);
+                    return [false, amount, output]
                 }))
             .api(V.increaseCapacity,
-                ((cap, k) => {
-                    k(capacity + cap);
-                    return [false, buyer, paid, capacity + cap, output]
+                ((amount, k) => {
+                    k(capacity + amount);
+                    return [false, capacity + amount, output]
+                }))
+            .api(V.setOutput,
+                ((amount, k) => {
+                    k(amount);
+                    return [false, capacity, amount]
+                }))
+            .api(V.increaseOutput,
+                ((amount, k) => {
+                    k(output + amount);
+                    return [false, capacity, output + amount]
                 }))
             .api(V.stop,
                 (() => { assume(this == A); }),
@@ -43,14 +61,13 @@ export const main = Reach.App(() => {
                     const isAdmin = this == A;
                     require(isAdmin);
                     k(isAdmin);
-                    return [true, buyer, paid, capacity, output]
+                    return [true, capacity, output]
                 }))
             .timeout(false);
 
-    transfer(paid).to(A);
     commit();
 
-    A.interact.log("The token vault is closing down...");
+    A.interact.log("The solar power plant is closing down...");
 
     exit();
 });

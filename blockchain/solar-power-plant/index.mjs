@@ -25,11 +25,6 @@ const thread = async (f) => await f()
 
 const algo = (x) => stdlib.formatCurrency(x, 4)
 const fmt = (x) => `${algo(x)} ALGO`
-const fmtToken = (x, token) => `${x} ${token.sym}`
-
-const getBalances = async (who, token) => {
-    return await stdlib.balancesOf(who, [null, token.id])
-}
 
 const callAPI = async (name, f, successMsg, failureMsg) => {
     console.log(`${name} is calling the API`)
@@ -50,103 +45,170 @@ const setup = async () => {
 
     // Create test accounts
     const accAdmin = await stdlib.newTestAccount(startingBalance)
-    const accAlice = await stdlib.newTestAccount(startingBalance)
-    const accBob = await stdlib.newTestAccount(startingBalance)
 
-    // Launch token
-    const trcl = await stdlib.launchToken(accAdmin, 'Terracell', 'TRCL', { supply: 1, decimals: 0 })
-
-    // Opt-in to accept the token on ALGO
-    await accAlice.tokenAccept(trcl.id)
-    await accBob.tokenAccept(trcl.id)
-
-    return [accAdmin, accAlice, accBob, trcl]
+    return accAdmin
 }
 
-const getAndLogAllBalances = async (accAdmin, accAlice, accBob, trcl) => {
-    const [adminAlgo, adminTrcl] = await getBalances(accAdmin, trcl)
-    const [aliceAlgo, aliceTrcl] = await getBalances(accAlice, trcl)
-    const [bobAlgo, bobTrcl] = await getBalances(accBob, trcl)
-
-    console.log(`Admin has ${fmt(adminAlgo)}`)
-    console.log(`Admin has ${fmtToken(adminTrcl, trcl)}`)
-
-    console.log(`Alice has ${fmt(aliceAlgo)}`)
-    console.log(`Alice has ${fmtToken(aliceTrcl, trcl)}`)
-
-    console.log(`Bob has ${fmt(bobAlgo)}`)
-    console.log(`Bob has ${fmtToken(bobTrcl, trcl)}`)
-
-    return [algo(adminAlgo), adminTrcl, algo(aliceAlgo), aliceTrcl, algo(bobAlgo), bobTrcl]
+const getAndLogBalance = async (account, name) => {
+    const balance = await stdlib.balanceOf(account)
+    console.log(`${name} has ${fmt(balance)}`)
+    return algo(balance)
 }
 
-const userConnectAndStop = async (name, account, contract, trcl, ready) => {
+const userConnectAndStop = async (name, account, contract, ready) => {
     return async () => {
         console.log(`${name} is attaching to the contract...`)
         const ctc = account.contract(backend, contract.getInfo())
-        const vault = ctc.a.Vault
+        const spp = ctc.a.SolarPowerPlant
 
-        const [algo1, trcl1] = await getBalances(account, trcl)
-
-        console.log(`${name} has ${fmt(algo1)}`)
-        console.log(`${name} has ${fmtToken(trcl1, trcl)}`)
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
         await ready.wait()
 
-        let spp = await callAPI(
+        // Initial state
+
+        let sppDetails = await callAPI(
             name,
-            () => vault.getSolarPowerPlant(),
+            () => spp.get(),
             `${name} managed to get the spp`,
             `${name} failed to get the spp`
         )
 
         console.log(`${name} sees that spp has `, {
-            capacity: spp[0].toNumber(),
-            output: spp[1].toNumber()
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
         })
 
-        assert(spp[0].toNumber() == 0)
-        assert(spp[1].toNumber() == 0)
+        assert(sppDetails[0].toNumber() == 0)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Set capacity
 
         await callAPI(
             name,
-            () => vault.increaseCapacity(25),
+            () => spp.setCapacity(10),
+            `${name} managed to set the spp capacity`,
+            `${name} failed to set the spp capacity`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 10)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Increase capacity
+
+        await callAPI(
+            name,
+            () => spp.increaseCapacity(25),
             `${name} managed to increase the spp capacity`,
             `${name} failed to increase the spp capacity`
         )
 
-        spp = await callAPI(
+        sppDetails = await callAPI(
             name,
-            () => vault.getSolarPowerPlant(),
+            () => spp.get(),
             `${name} managed to get the spp`,
             `${name} failed to get the spp`
         )
 
         console.log(`${name} sees that spp has `, {
-            capacity: spp[0].toNumber(),
-            output: spp[1].toNumber()
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
         })
 
-        assert(spp[0].toNumber() == 25)
-        assert(spp[1].toNumber() == 0)
+        assert(sppDetails[0].toNumber() == 35)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Set output
+
+        await callAPI(
+            name,
+            () => spp.setOutput(15),
+            `${name} managed to set the spp output`,
+            `${name} failed to set the spp output`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 35)
+        assert(sppDetails[1].toNumber() == 15)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Increase output
+
+        await callAPI(
+            name,
+            () => spp.increaseOutput(5),
+            `${name} managed to increase the spp output`,
+            `${name} failed to increase the spp output`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 35)
+        assert(sppDetails[1].toNumber() == 20)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Stop the contract
 
         console.log(`${name} is trying to stop the contract...`)
 
         await callAPI(
             name,
-            () => vault.stop(),
+            () => spp.stop(),
             `${name} managed to stop the contract`,
             `${name} failed to stop the contract`
         )
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
     }
 }
 
-const testSellAndStop = async () => {
-    console.log('>> Test sell and stop')
-    const [accAdmin, accAlice, accBob, trcl] = await setup()
+const testAndStop = async () => {
+    console.log('>> Test and stop')
+    const accAdmin = await setup()
     const ready = new Signal()
 
-    await getAndLogAllBalances(accAdmin, accAlice, accBob, trcl)
+    await getAndLogBalance(accAdmin, 'Admin')
 
     console.log('Deploying the contract...')
 
@@ -154,7 +216,7 @@ const testSellAndStop = async () => {
     const ctcAdmin = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await userConnectAndStop('Admin', accAdmin, ctcAdmin, trcl, ready)),
+        thread(await userConnectAndStop('Admin', accAdmin, ctcAdmin, ready)),
         backend.Admin(ctcAdmin, {
             log: ((...args) => {
                 console.log(...args)
@@ -162,23 +224,15 @@ const testSellAndStop = async () => {
             }),
             onReady: async (contract) => {
                 console.log(`Contract deployed ${JSON.stringify(contract)}`)
-                const [adminAlgo, adminTrcl] = await getBalances(accAdmin, trcl)
-                assert(adminTrcl == 1)
+                const adminAlgo = await stdlib.balanceOf(accAdmin)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
-                console.log(`Admin has ${fmtToken(adminTrcl, trcl)}`)
-            },
-            tok: trcl.id,
-            price: stdlib.parseCurrency(10)
+            }
         })
     ])
 
     console.log('Contract stopped.')
-    const [adminAlgo, adminTrcl, aliceAlgo, aliceTrcl, bobAlgo, bobTrcl] = await getAndLogAllBalances(accAdmin, accAlice, accBob, trcl)
-
-    assert(adminTrcl == 1)
-    assert(parseFloat(adminAlgo) > 99)
-    assert(aliceTrcl == 0 && bobTrcl == 0)
-    assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
+    const adminAlgo = await getAndLogBalance(accAdmin, 'Admin')
+    assert(parseFloat(adminAlgo) < 100)
 }
 
-await testSellAndStop()
+await testAndStop()
