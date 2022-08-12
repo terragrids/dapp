@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import LoadingSpinner from 'components/loading-spinner'
 import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
 import ModalDialog from 'components/modal-dialog'
@@ -18,16 +19,19 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const [terracells, setTerracells] = useState<Terracell[] | null>(null)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
-    const [selectedId, setSelectedId] = useState<number>()
+    const [selectedId, setSelectedId] = useState('')
 
     useEffect(() => {
         const fetchSolarPowerPlantAndTerracells = async () => {
             setError(null)
             setSolarPowerPlant(null)
             setTerracells(null)
+            setIsDetailOpen(false)
 
-            const sppResponse = await fetch(endpoints.solarPowerPlant)
-            const terracellResponse = await fetch(endpoints.terracellNfts())
+            const [sppResponse, terracellResponse] = await Promise.all([
+                fetch(endpoints.solarPowerPlant),
+                fetch(endpoints.terracells())
+            ])
 
             if (sppResponse.ok && terracellResponse.ok) {
                 const data = await sppResponse.json()
@@ -41,11 +45,11 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
                     }))
                 )
             } else {
-                setError('error!!')
+                setError(strings.errorFechingSpp)
             }
         }
-        fetchSolarPowerPlantAndTerracells()
-    }, [])
+        if (visible) fetchSolarPowerPlantAndTerracells()
+    }, [visible])
 
     const availableTrclCount = useMemo(() => {
         if (!solarPowerPlant) return 0
@@ -53,7 +57,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
         return solarPowerPlant.totalTrcl - solarPowerPlant.activeTrcl
     }, [solarPowerPlant])
 
-    const onSelectTerracell = (id: number) => {
+    const onSelectTerracell = (id: string) => {
         setSelectedId(id)
         setIsDetailOpen(true)
     }
@@ -71,32 +75,28 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             )}
             {isDetailOpen && terracells ? (
                 <TerracellDetail
-                    terracell={terracells.find(teracell => teracell.id === selectedId)}
+                    terracell={terracells.find(terracell => terracell.id === selectedId)}
                     onClose={() => setIsDetailOpen(false)}
                     visible={isDetailOpen}
                 />
             ) : (
                 <div className={styles.container}>
-                    {/* TODO : change structure of html elements */}
-                    {/* <div className={styles.section}> */}
                     <ul className={styles.terracells}>
                         {terracells?.map(terracell => (
                             <TerraCell key={terracell.id} terracell={terracell} onSelectTerracell={onSelectTerracell} />
                         ))}
                     </ul>
-                    {/* </div> */}
                     {error && <div className={styles.error}>{error}</div>}
                 </div>
             )}
             {solarPowerPlant && !error && !isDetailOpen && (
                 <footer>
                     <span>
-                        {strings.capacity} $TRCS {solarPowerPlant.totalTrcl}
+                        {strings.capacity} {solarPowerPlant.capacity} TRW
                     </span>
                     <span>
                         {strings.totalOutput} {solarPowerPlant.output} TRW
                     </span>
-                    {/* <p>ACTIVE $TRCL {solarPowerPlant.activeTrcl}</p>So this is not needed anymore? */}
                 </footer>
             )}
         </ModalDialog>
@@ -105,7 +105,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
 
 type TerraCellProps = {
     terracell: Terracell
-    onSelectTerracell: (id: number) => void
+    onSelectTerracell: (id: string) => void
 }
 const TerraCell = ({ terracell, onSelectTerracell }: TerraCellProps) => {
     const [isMouseOver, setIsMouseOver] = useState(false)
