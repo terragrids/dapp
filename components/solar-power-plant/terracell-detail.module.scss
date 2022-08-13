@@ -61,6 +61,15 @@
                 display: inline;
             }
         }
+
+        .buttonWrapper {
+            width: 70%;
+            margin: 0 auto;
+
+            button {
+                width: 100%;
+            }
+        }
     }
     .image {
         width: 100%;
@@ -69,12 +78,6 @@
             justify-content: center;
         }
     }
-}
-.default {
-    background-color: transparent;
-    border: 1px solid $color-white;
-    width: 70%;
-    margin: auto;
 }
 
 .error {

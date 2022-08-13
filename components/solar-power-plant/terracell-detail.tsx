@@ -35,13 +35,15 @@ const TerracellDetail = ({ terracell, onClose }: TerracellDetailProps) => {
                                 Type: <dd>{terracell.id}</dd>
                             </dt>
                         </dl>
-                        <Button
-                            className={styles.default}
-                            disabled={false}
-                            label={strings.buy}
-                            loading={false}
-                            onClick={onClose}
-                        />
+                        <div className={styles.buttonWrapper}>
+                            <Button
+                                disabled={false}
+                                label={strings.buy}
+                                loading={false}
+                                onClick={onClose}
+                                type={'outline'}
+                            />
+                        </div>
                     </div>
                     <div className={styles.image}>
                         <picture>
