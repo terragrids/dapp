@@ -23,11 +23,18 @@ export const strings = {
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
-    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorCreatingNftSaleContract: 'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingNftSaleContract: 'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
-    errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingTerracellSaleContract:
+        'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingNftSaleContract:
+        'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract:
+        'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingNftSaleContract:
+        'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
+    errorBuyingNft:
+        'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
+    errorAccountNfts:
+        'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',

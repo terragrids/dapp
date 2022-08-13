@@ -7,7 +7,7 @@ export const main = Reach.App(() => {
     const A = Participant('Admin', {
         ...hasConsoleLogger,
         onReady: Fun(true, Null),
-        onSold: Fun(true, Null),
+        onSoldOrWithdrawn: Fun(true, Null),
         tok: Token,
         price: UInt
     });
@@ -68,12 +68,9 @@ export const main = Reach.App(() => {
 
     transfer(paid).to(A);
     transfer(1, tok).to(buyer);
-    commit();
 
-    A.interact.log("The token has been sold");
-    A.interact.onSold();
-
-    A.publish();
+    A.interact.log("The token has been sold or withdrawn");
+    A.interact.onSoldOrWithdrawn();
 
     if (done) {
         commit();

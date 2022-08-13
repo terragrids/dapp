@@ -258,7 +258,7 @@ const testSellAndBuyAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
             },
-            onSold: async () => {
+            onSoldOrWithdrawn: async () => {
                 sold.notify()
             },
             tok: gil.id,
@@ -309,7 +309,7 @@ const testSellAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
             },
-            onSold: async () => {
+            onSoldOrWithdrawn: async () => {
                 // do nothing
             },
             tok: gil.id,
@@ -366,7 +366,7 @@ const testSellAndNonAdminStopAndBuy = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
             },
-            onSold: async () => {
+            onSoldOrWithdrawn: async () => {
                 sold.notify()
             },
             tok: gil.id,

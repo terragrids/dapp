@@ -50,7 +50,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                         const { image } = await ipfsResponse.json()
                         setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
                     }
-                } catch (e) { }
+                } catch (e) {}
             } else {
                 setError(strings.errorFetchingTerraland)
             }
@@ -116,11 +116,11 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
         setError(null)
 
         try {
-            await buy(terraland.id, terraland.contractId, terraland.contractInfo)
+            await buy(terraland.contractInfo)
             setTerraland({ ...terraland, contractId: undefined, contractInfo: undefined })
             onClose()
         } catch (e) {
-            setError(strings.errorDeletingNftSaleContract)
+            setError(strings.errorBuyingNft)
         } finally {
             setWaiting(false)
         }
@@ -129,7 +129,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     return (
         <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
             <div className={styles.container}>
-                {terraland && !error &&
+                {terraland && !error && (
                     <>
                         <div className={styles.section}>
                             {/* TODO: replace with Image */}
@@ -155,40 +155,40 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                                     ))}
                                 </ul>
                             </div>
-                            {terraland.contractId &&
-                                <div className={styles.section}>
-                                    Contract ID : {terraland.contractId}
-                                </div>
-                            }
+                            {terraland.contractId && (
+                                <div className={styles.section}>Contract ID : {terraland.contractId}</div>
+                            )}
                         </div>
                     </>
-                }
-                {!terraland && !error && <div className={styles.loader}><LoadingSpinner /></div>}
+                )}
+                {!terraland && !error && (
+                    <div className={styles.loader}>
+                        <LoadingSpinner />
+                    </div>
+                )}
                 {error && <div className={styles.error}>{error}</div>}
 
-                {userCapability === UserCapabilities.CAN_SELL && terraland &&
+                {userCapability === UserCapabilities.CAN_SELL && terraland && (
                     <Button
                         className={styles.button}
                         label={`${strings.sellFor} ${assetPrice} $${unit}`}
                         loading={waiting}
-                        onClick={onSell} />
-                }
+                        onClick={onSell}
+                    />
+                )}
 
-                {userCapability === UserCapabilities.CAN_WITHDRAW && terraland &&
-                    <Button
-                        className={styles.button}
-                        label={strings.withdraw}
-                        loading={waiting}
-                        onClick={onWithdraw} />
-                }
+                {userCapability === UserCapabilities.CAN_WITHDRAW && terraland && (
+                    <Button className={styles.button} label={strings.withdraw} loading={waiting} onClick={onWithdraw} />
+                )}
 
-                {userCapability === UserCapabilities.CAN_BUY && terraland &&
+                {userCapability === UserCapabilities.CAN_BUY && terraland && (
                     <Button
                         className={styles.button}
                         label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
                         loading={waiting}
-                        onClick={onBuy} />
-                }
+                        onClick={onBuy}
+                    />
+                )}
             </div>
         </ModalDialog>
     )
