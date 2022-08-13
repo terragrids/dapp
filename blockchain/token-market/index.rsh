@@ -7,6 +7,7 @@ export const main = Reach.App(() => {
     const A = Participant('Admin', {
         ...hasConsoleLogger,
         onReady: Fun(true, Null),
+        onSold: Fun(true, Null),
         tok: Token,
         price: UInt
     });
@@ -14,6 +15,12 @@ export const main = Reach.App(() => {
     const M = API('Market', {
         buy: Fun([], Transaction),
         getToken: Fun([], Token),
+        stop: Fun([], Bool)
+    });
+
+    const T = API('Tracker', {
+        getToken: Fun([], Token),
+        getPrice: Fun([], UInt),
         stop: Fun([], Bool)
     });
 
@@ -33,10 +40,10 @@ export const main = Reach.App(() => {
     A.interact.onReady(getContract());
     A.interact.log("The token is on the market");
 
-    const [done, buyer, paid] =
-        parallelReduce([false, A, 0])
+    const [done, sold,  buyer, paid] =
+        parallelReduce([false, false, A, 0])
             .invariant(balance() == paid && balance(tok) == 1)
-            .while(!done)
+            .while(!done && !sold)
             .api(M.stop,
                 (() => { assume(this == A); }),
                 (() => 0),
@@ -44,18 +51,18 @@ export const main = Reach.App(() => {
                     const isAdmin = this == A;
                     require(isAdmin);
                     k(isAdmin);
-                    return [true, buyer, paid]
+                    return [true, false, buyer, paid]
                 }))
             .api(M.getToken,
                 (k => {
                     k(tok);
-                    return [false, buyer, paid]
+                    return [false, false, buyer, paid]
                 }))
             .api(M.buy,
                 () => price,
                 (k => {
                     k([this, price, tok]);
-                    return [true, this, price + paid];
+                    return [false, true, this, price + paid];
                 }))
             .timeout(false);
 
@@ -63,7 +70,49 @@ export const main = Reach.App(() => {
     transfer(1, tok).to(buyer);
     commit();
 
-    A.interact.log("The market is closing down...");
+    A.interact.log("The token has been sold");
+    A.interact.onSold();
+
+    A.publish();
+
+    if (done) {
+        commit();
+        exit();
+    }
+
+    A.interact.log("Tracking token....");
+
+    require(balance() == 0);
+    require(balance(tok) == 0);
+
+    const [finished] =
+        parallelReduce([false])
+            .invariant(balance() == 0 && balance(tok) == 0)
+            .while(!finished)
+            .api(T.stop,
+                (() => { assume(this == A); }),
+                (() => 0),
+                (k => {
+                    const isAdmin = this == A;
+                    require(isAdmin);
+                    k(isAdmin);
+                    return [true]
+                }))
+            .api(T.getToken,
+                (k => {
+                    k(tok);
+                    return [false]
+                }))
+            .api(T.getPrice,
+                (k => {
+                    k(price);
+                    return [false]
+                }))
+            .timeout(false);
+
+    commit();
+
+    A.interact.log("The tracker is closing down...");
 
     exit();
 });
