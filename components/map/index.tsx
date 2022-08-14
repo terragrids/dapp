@@ -78,15 +78,14 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         const mouse_x = mouseRef.current.x - x - xPos
         const mouse_y = mouseRef.current.y - y - yPos
 
-        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
-        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
+        if (!isInsideMap(mouse_x, mouse_y)) return
 
-        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
-            const renderX = x + (hoverPlotX - hoverPlotY) * Plot.PLOT_HALF_WIDTH
-            const renderY = y + (hoverPlotX + hoverPlotY) * Plot.PLOT_HALF_HEIGHT
+        const { positionX, positionY } = getPlotPosition(mouse_x, mouse_y)
 
-            renderPlotHover(ctx)(renderX, renderY + Plot.PLOT_HEIGHT)
-        }
+        const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
+        const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
+
+        renderPlotHover(ctx)(renderX, renderY + Plot.PLOT_HEIGHT)
     }
 
     const render = (ctx: CanvasRenderingContext2D) => {
