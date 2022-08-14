@@ -1,0 +1,144 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/screens.scss';
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: $main-content-width / 2;
+    width: 800px;
+    max-width: $main-content-width;
+    padding: 0;
+
+    @media (max-width: $screen-medium) {
+        min-width: $main-content-width / 2.5;
+        width: 100%;
+    }
+
+    @media (max-width: $screen-small) {
+        min-width: $main-content-width / 3;
+    }
+}
+
+.loader {
+    @extend .container;
+    padding-bottom: 40px;
+}
+
+.listDialog,
+.openDetail {
+    section {
+        padding: 0;
+        margin: 0;
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+
+            @media (max-width: $screen-small) {
+                flex-direction: column;
+            }
+
+            span {
+                font-size: 80%;
+                text-transform: uppercase;
+
+                @media (max-width: $screen-small) {
+                    &:first-child {
+                        margin-bottom: 5px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.openDetail {
+    header {
+        width: 57px;
+        position: absolute;
+        align-self: flex-end;
+        z-index: $z-index-modal + 1;
+
+        h1 {
+            display: none;
+        }
+    }
+
+    footer {
+        display: none;
+    }
+}
+
+.section {
+    width: 100%;
+}
+
+.terracells {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: auto;
+    gap: 30px 30px;
+    width: 100%;
+    height: 250px;
+    overflow-y: auto;
+    padding: 0 60px;
+
+    @media (max-width: $screen-medium) {
+        padding: 0 30px;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: $screen-small) {
+        padding: 0;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 30px 0px;
+    }
+
+    .cell {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: 10px;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        picture {
+            display: flex;
+            justify-content: center;
+
+            img {
+                place-self: center;
+            }
+        }
+
+        .overlay {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+}
+
+.button {
+    min-width: 200px;
+}
+
+.error {
+    color: $color-red;
+    padding-bottom: 40px;
+    font-size: 16px;
+}

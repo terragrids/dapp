@@ -25,7 +25,9 @@
     border-radius: $dialog-border-radius;
 
     @media (max-width: $screen-small) {
-        max-width: 95vw;
+        max-width: none;
+        width: 95%;
+        margin: 0 15px;
         max-height: 95vh;
     }
 }
@@ -44,6 +46,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
+
+    h1 {
+        font-size: 14px;
+    }
+
+    small {
+        display: block;
+        text-transform: none;
+    }
+
+    div {
+        align-self: baseline;
+    }
 }
 
 .title {
