@@ -19,6 +19,8 @@ export class Nft {
     }
 }
 
+export type Symbols = 'TRCL' | 'TRLD' | 'TRAS'
+
 export type Holder = {
     address: string
     amount: number
@@ -37,10 +39,18 @@ export type Terraland = {
     assetPrice?: number
     sellerAddress?: string
 }
+
+export type SolarPowerPlant = {
+    capacity: number
+    output: number
+    totalTrcl: number
+    activeTrcl: number
+}
+
 export type Terracell = {
     id: string
     name: string
-    symbol: string
+    symbol: Symbols
     url: string
     offchainUrl: string
     power: number

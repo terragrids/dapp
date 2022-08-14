@@ -12,6 +12,7 @@ export const strings = {
     mint: 'Mint',
     mintNft: 'Mint a new NFT',
     mintingTerracell: 'Minting a new $TRCL token',
+    solarPowerPlant: 'Solar Power Plant',
     sell: 'Sell',
     sellFor: 'Sell for',
     withdraw: 'Withdraw',
@@ -23,11 +24,16 @@ export const strings = {
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
-    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorCreatingNftSaleContract: 'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingNftSaleContract: 'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
-    errorAccountNfts: 'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingTerracellSaleContract:
+        'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingNftSaleContract:
+        'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract:
+        'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingNftSaleContract:
+        'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
+    errorAccountNfts:
+        'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
@@ -45,6 +51,10 @@ export const strings = {
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
+    errorFechingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
     positionX: 'Position X',
-    positionY: 'Position Y'
+    positionY: 'Position Y',
+    availableToBuy: 'Available to buy',
+    capacity: 'Capacity',
+    back: '< Back'
 }
