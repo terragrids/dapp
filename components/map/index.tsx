@@ -168,6 +168,33 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         }
     }
 
+    const onTouch = (ctx: CanvasRenderingContext2D, e: TouchEvent) => {
+        if (headerHeight === undefined) return
+
+        const touch = e.touches[0] || e.changedTouches[0]
+
+        const { e: xPos, f: yPos } = ctx.getTransform()
+
+        const touch_x = touch.clientX - startPositionRef.current.x - xPos
+        const touch_y = touch.clientY - startPositionRef.current.y - yPos - headerHeight
+
+        const hoverPlotX = Math.floor(touch_y / Plot.PLOT_HEIGHT + touch_x / Plot.PLOT_WIDTH) - 1
+        const hoverPlotY = Math.floor(-touch_x / Plot.PLOT_WIDTH + touch_y / Plot.PLOT_HEIGHT)
+
+        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
+            const index = hoverPlotY * GRID_SIZE + hoverPlotX
+            const target = mapPlots.find(el => el.index === index)
+
+            if (!target) return
+
+            if (index === 0) {
+                onSelectSolarPowerPlant()
+            } else if (index < GRID_SIZE * GRID_SIZE) {
+                onSelectPlot(target)
+            }
+        }
+    }
+
     useEffect(() => {
         const load = async () => {
             const res = await fetch(endpoints.terralands())
@@ -199,6 +226,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             onWheel={onWheel}
             onMouseMove={onMouseMove}
             onClick={onClick}
+            onTouch={onTouch}
             attributes={{ width, height }}
         />
     )
