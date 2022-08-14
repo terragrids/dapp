@@ -8,6 +8,7 @@ export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
+export const DEFAULT_MAP_SCALE = 1
 
 // TODO: FIGURE OUT HOW THIS IS DETERMINED
 export const MAGIC_NUMBER_TO_ADJUST = 80
@@ -61,6 +62,58 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
     const y = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
 
     return { x, y }
+}
+
+/**
+ *
+ * @param startPosition position where map start rendered
+ * @param inputX mouse/touch input position x (ie. clientX)
+ * @param inputY mouse/touch input position x (ie. clientY)
+ * @returns positionX, positionY: plot position x, y axis
+ */
+export const getPlotPosition = (
+    startPosition: Position2D,
+    inputX: number,
+    inputY: number
+): { positionX: number; positionY: number } => {
+    const positionX =
+        Math.floor((inputY - startPosition.y) / Plot.PLOT_HEIGHT + (inputX - startPosition.x) / Plot.PLOT_WIDTH) - 1
+    const positionY = Math.floor(
+        (inputY - startPosition.y) / Plot.PLOT_HEIGHT - (inputX - startPosition.x) / Plot.PLOT_WIDTH
+    )
+
+    return { positionX, positionY }
+}
+
+/**
+ * @dev ref: https://roblouie.com/article/617/transforming-mouse-coordinates-to-canvas-coordinates/
+ * @param context canvas context 2d
+ * @param inputX mouse/touch input position x (ie. clientX)
+ * @param inputY mouse/touch input position x (ie. clientY)
+ * @returns {x, y} x and y position of inputX/Y which map scale and position are taken into account
+ */
+export const getTransformedPoint = (context: CanvasRenderingContext2D, inputX: number, inputY: number) => {
+    const transform = context.getTransform()
+    const invertedScaleX = DEFAULT_MAP_SCALE / transform.a
+    const invertedScaleY = DEFAULT_MAP_SCALE / transform.d
+
+    const transformedX = invertedScaleX * inputX - invertedScaleX * transform.e
+    const transformedY = invertedScaleY * inputY - invertedScaleY * transform.f
+
+    return { x: transformedX, y: transformedY }
+}
+
+/**
+ *
+ * @param startPosition position where map start rendered
+ * @param inputX mouse/touch input position x (ie. clientX)
+ * @param inputY mouse/touch input position x (ie. clientY)
+ * @returns if inputs are inside the map or not
+ */
+export const isInsideMap = (startPosition: Position2D, inputX: number, inputY: number) => {
+    const { positionX, positionY } = getPlotPosition(startPosition, inputX, inputY)
+
+    return positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE
 }
 
 // ref: https://github.com/rtatol/isometric-map/blob/master/js/isomap.js

@@ -6,10 +6,18 @@ export type CanvasProps = {
     onWheel: (ctx: CanvasRenderingContext2D, e: WheelEvent) => void
     onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
     onClick: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
+    onTouch: (ctx: CanvasRenderingContext2D, e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
-const Canvas = ({ drawOnCanvas, onWheel, onMouseMove, onClick, attributes: { width, height } }: CanvasProps) => {
+const Canvas = ({
+    drawOnCanvas,
+    onWheel,
+    onMouseMove,
+    onClick,
+    onTouch,
+    attributes: { width, height }
+}: CanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -51,17 +59,20 @@ const Canvas = ({ drawOnCanvas, onWheel, onMouseMove, onClick, attributes: { wid
         const onWheelListener = (e: WheelEvent) => onWheel(context, e)
         const onMouseMoveListener = (e: MouseEvent) => onMouseMove(context, e)
         const onClickListener = (e: MouseEvent) => onClick(context, e)
+        const onTouchListener = (e: TouchEvent) => onTouch(context, e)
 
         canvas.addEventListener('wheel', onWheelListener)
         canvas.addEventListener('mousemove', onMouseMoveListener)
         canvas.addEventListener('click', onClickListener)
+        canvas.addEventListener('touchend', onTouchListener)
 
         return () => {
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
             canvas.removeEventListener('click', onClickListener)
+            canvas.removeEventListener('touchend', onTouchListener)
         }
-    }, [onClick, onMouseMove, onWheel])
+    }, [onClick, onMouseMove, onWheel, onTouch])
 
     return <canvas ref={canvasRef} {...{ width, height }} />
 }
