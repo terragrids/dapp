@@ -14,7 +14,7 @@ export default function Button({
     return (
         <button
             className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${
-                type === 'default' ? styles.default : styles.outline
+                type === 'outline' ? styles.outline : styles.default
             }`}
             onClick={onClick}
             disabled={disabled || loading || checked}>

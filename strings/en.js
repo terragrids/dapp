@@ -32,6 +32,8 @@ export const strings = {
         'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingNftSaleContract:
         'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
+    errorBuyingNft:
+        'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
     errorAccountNfts:
         'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',

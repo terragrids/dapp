@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Button from 'components/button'
 import React from 'react'
 import { strings } from 'strings/en'
@@ -36,13 +37,7 @@ const TerracellDetail = ({ terracell, onClose }: TerracellDetailProps) => {
                             </dt>
                         </dl>
                         <div className={styles.buttonWrapper}>
-                            <Button
-                                disabled={false}
-                                label={strings.buy}
-                                loading={false}
-                                onClick={onClose}
-                                type={'outline'}
-                            />
+                            <Button disabled={false} label={strings.buy} loading={false} onClick={onClose} />
                         </div>
                     </div>
                     <div className={styles.image}>
