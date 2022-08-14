@@ -63,6 +63,19 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
     return { x, y }
 }
 
+/**
+ *
+ * @param inputX mouse/touch input position x (ie. clientX)
+ * @param inputY mouse/touch input position x (ie. clientY)
+ * @returns positionX, positionY: plot position x, y axis
+ */
+export const getPlotPosition = (inputX: number, inputY: number): { positionX: number; positionY: number } => {
+    const positionX = Math.floor(inputY / Plot.PLOT_HEIGHT + inputX / Plot.PLOT_WIDTH) - 1
+    const positionY = Math.floor(-inputX / Plot.PLOT_WIDTH + inputY / Plot.PLOT_HEIGHT)
+
+    return { positionX, positionY }
+}
+
 // ref: https://github.com/rtatol/isometric-map/blob/master/js/isomap.js
 export const drawGrid = (context: CanvasRenderingContext2D, startPosition: Position2D) => {
     for (let i = 0; i < GRID_SIZE; i++) {

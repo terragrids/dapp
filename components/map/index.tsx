@@ -5,6 +5,7 @@ import {
     convertToMapPlot,
     drawGrid,
     getOptimalScale,
+    getPlotPosition,
     getSppPlot,
     getStartPosition,
     GRID_SIZE,
@@ -151,11 +152,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         const mouse_x = e.clientX - startPositionRef.current.x - xPos
         const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
 
-        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
-        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
+        const { positionX, positionY } = getPlotPosition(mouse_x, mouse_y)
 
-        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
-            const index = hoverPlotY * GRID_SIZE + hoverPlotX
+        if (positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE) {
+            const index = positionY * GRID_SIZE + positionX
             const target = mapPlots.find(el => el.index === index)
 
             if (!target) return
@@ -172,17 +172,15 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         if (headerHeight === undefined) return
 
         const touch = e.touches[0] || e.changedTouches[0]
-
         const { e: xPos, f: yPos } = ctx.getTransform()
 
         const touch_x = touch.clientX - startPositionRef.current.x - xPos
         const touch_y = touch.clientY - startPositionRef.current.y - yPos - headerHeight
 
-        const hoverPlotX = Math.floor(touch_y / Plot.PLOT_HEIGHT + touch_x / Plot.PLOT_WIDTH) - 1
-        const hoverPlotY = Math.floor(-touch_x / Plot.PLOT_WIDTH + touch_y / Plot.PLOT_HEIGHT)
+        const { positionX, positionY } = getPlotPosition(touch_x, touch_y)
 
-        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
-            const index = hoverPlotY * GRID_SIZE + hoverPlotX
+        if (positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE) {
+            const index = positionY * GRID_SIZE + positionX
             const target = mapPlots.find(el => el.index === index)
 
             if (!target) return
