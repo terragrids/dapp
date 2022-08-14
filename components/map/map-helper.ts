@@ -76,6 +76,18 @@ export const getPlotPosition = (inputX: number, inputY: number): { positionX: nu
     return { positionX, positionY }
 }
 
+/**
+ *
+ * @param inputX mouse/touch input position x (ie. clientX)
+ * @param inputY mouse/touch input position x (ie. clientY)
+ * @returns if inputs are inside the map or not
+ */
+export const isInsideMap = (inputX: number, inputY: number) => {
+    const { positionX, positionY } = getPlotPosition(inputX, inputY)
+
+    return positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE
+}
+
 // ref: https://github.com/rtatol/isometric-map/blob/master/js/isomap.js
 export const drawGrid = (context: CanvasRenderingContext2D, startPosition: Position2D) => {
     for (let i = 0; i < GRID_SIZE; i++) {

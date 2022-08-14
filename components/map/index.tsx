@@ -9,6 +9,7 @@ import {
     getSppPlot,
     getStartPosition,
     GRID_SIZE,
+    isInsideMap,
     MAGIC_NUMBER_TO_ADJUST,
     ORIGINAL_MAP_WIDTH
 } from './map-helper'
@@ -152,19 +153,19 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         const mouse_x = e.clientX - startPositionRef.current.x - xPos
         const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
 
+        if (!isInsideMap(mouse_x, mouse_y)) return
+
         const { positionX, positionY } = getPlotPosition(mouse_x, mouse_y)
 
-        if (positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE) {
-            const index = positionY * GRID_SIZE + positionX
-            const target = mapPlots.find(el => el.index === index)
+        const index = positionY * GRID_SIZE + positionX
+        const target = mapPlots.find(el => el.index === index)
 
-            if (!target) return
+        if (!target) return
 
-            if (index === 0) {
-                onSelectSolarPowerPlant()
-            } else if (index < GRID_SIZE * GRID_SIZE) {
-                onSelectPlot(target)
-            }
+        if (index === 0) {
+            onSelectSolarPowerPlant()
+        } else if (index < GRID_SIZE * GRID_SIZE) {
+            onSelectPlot(target)
         }
     }
 
@@ -177,19 +178,19 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         const touch_x = touch.clientX - startPositionRef.current.x - xPos
         const touch_y = touch.clientY - startPositionRef.current.y - yPos - headerHeight
 
+        if (!isInsideMap(touch_x, touch_y)) return
+
         const { positionX, positionY } = getPlotPosition(touch_x, touch_y)
 
-        if (positionX >= 0 && positionY >= 0 && positionX < GRID_SIZE && positionY < GRID_SIZE) {
-            const index = positionY * GRID_SIZE + positionX
-            const target = mapPlots.find(el => el.index === index)
+        const index = positionY * GRID_SIZE + positionX
+        const target = mapPlots.find(el => el.index === index)
 
-            if (!target) return
+        if (!target) return
 
-            if (index === 0) {
-                onSelectSolarPowerPlant()
-            } else if (index < GRID_SIZE * GRID_SIZE) {
-                onSelectPlot(target)
-            }
+        if (index === 0) {
+            onSelectSolarPowerPlant()
+        } else if (index < GRID_SIZE * GRID_SIZE) {
+            onSelectPlot(target)
         }
     }
 
