@@ -3,11 +3,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { endpoints } from 'utils/api-config'
 import {
     convertToMapPlot,
+    DEFAULT_MAP_SCALE,
     drawGrid,
     getOptimalScale,
     getPlotPosition,
     getSppPlot,
     getStartPosition,
+    getTransformedPoint,
     GRID_SIZE,
     isInsideMap,
     MAGIC_NUMBER_TO_ADJUST,
@@ -24,7 +26,6 @@ export type MapProps = {
 }
 
 // TO LOCK THE SIZE OF THE MAP TO 1x
-const DEFAULT_MAP_SCALE = 1
 // const ZOOM_SENSITIVITY = 0.0001
 // const MAX_SCALE = 2
 // const MIN_SCALE = 0.8
@@ -73,14 +74,11 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             }
         }
 
-        const { e: xPos, f: yPos } = ctx.getTransform()
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, mouseRef.current.x, mouseRef.current.y)
 
-        const mouse_x = mouseRef.current.x - x - xPos
-        const mouse_y = mouseRef.current.y - y - yPos
+        if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
-        if (!isInsideMap(mouse_x, mouse_y)) return
-
-        const { positionX, positionY } = getPlotPosition(mouse_x, mouse_y)
+        const { positionX, positionY } = getPlotPosition(startPositionRef.current, mouseX, mouseY)
 
         const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
         const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
@@ -147,16 +145,14 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
         if (headerHeight === undefined) return
 
-        const { e: xPos, f: yPos } = ctx.getTransform()
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, e.clientX, e.clientY - headerHeight)
 
-        const mouse_x = e.clientX - startPositionRef.current.x - xPos
-        const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
+        if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
-        if (!isInsideMap(mouse_x, mouse_y)) return
-
-        const { positionX, positionY } = getPlotPosition(mouse_x, mouse_y)
+        const { positionX, positionY } = getPlotPosition(startPositionRef.current, mouseX, mouseY)
 
         const index = positionY * GRID_SIZE + positionX
+
         const target = mapPlots.find(el => el.index === index)
 
         if (!target) return
@@ -172,14 +168,12 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         if (headerHeight === undefined) return
 
         const touch = e.touches[0] || e.changedTouches[0]
-        const { e: xPos, f: yPos } = ctx.getTransform()
 
-        const touch_x = touch.clientX - startPositionRef.current.x - xPos
-        const touch_y = touch.clientY - startPositionRef.current.y - yPos - headerHeight
+        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - headerHeight)
 
-        if (!isInsideMap(touch_x, touch_y)) return
+        if (!isInsideMap(startPositionRef.current, touchX, touchY)) return
 
-        const { positionX, positionY } = getPlotPosition(touch_x, touch_y)
+        const { positionX, positionY } = getPlotPosition(startPositionRef.current, touchX, touchY)
 
         const index = positionY * GRID_SIZE + positionX
         const target = mapPlots.find(el => el.index === index)
