@@ -66,7 +66,7 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
 
 /**
  *
- * @param startPosition position where map start rendered
+ * @param startPosition map render reference point
  * @param inputX mouse/touch input position x (ie. clientX)
  * @param inputY mouse/touch input position x (ie. clientY)
  * @returns positionX, positionY: plot position x, y axis
@@ -89,7 +89,7 @@ export const getPlotPosition = (
  * @dev ref: https://roblouie.com/article/617/transforming-mouse-coordinates-to-canvas-coordinates/
  * @param context canvas context 2d
  * @param inputX mouse/touch input position x (ie. clientX)
- * @param inputY mouse/touch input position x (ie. clientY)
+ * @param inputY mouse/touch input position y (ie. clientY)
  * @returns {x, y} x and y position of inputX/Y which map scale and position are taken into account
  */
 export const getTransformedPoint = (context: CanvasRenderingContext2D, inputX: number, inputY: number) => {
@@ -105,9 +105,9 @@ export const getTransformedPoint = (context: CanvasRenderingContext2D, inputX: n
 
 /**
  *
- * @param startPosition position where map start rendered
+ * @param startPosition map render reference point
  * @param inputX mouse/touch input position x (ie. clientX)
- * @param inputY mouse/touch input position x (ie. clientY)
+ * @param inputY mouse/touch input position y (ie. clientY)
  * @returns if inputs are inside the map or not
  */
 export const isInsideMap = (startPosition: Position2D, inputX: number, inputY: number) => {
