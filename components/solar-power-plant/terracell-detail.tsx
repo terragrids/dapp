@@ -19,34 +19,37 @@ const TerracellDetail = ({ terracell, onClose }: TerracellDetailProps) => {
                 {strings.back}
             </span>
             <div className={styles.container}>
-                <div className={styles.content}>
-                    <div className={styles.stack}>
-                        <h2>{terracell.name}</h2>
-                        <dl>
-                            <dt>
-                                Owner: <dd>{terracell.id}</dd>
-                            </dt>
-                            <dt>
-                                Price: <dd>{terracell.id} $ALGO</dd>
-                            </dt>
-                            <dt>
-                                Output: <dd>{terracell.power} TRW</dd>
-                            </dt>
-                            <dt>
-                                Type: <dd>{terracell.id}</dd>
-                            </dt>
-                        </dl>
-                        <div className={styles.buttonWrapper}>
-                            <Button disabled={false} label={strings.buy} loading={false} onClick={onClose} />
-                        </div>
-                    </div>
-                    <div className={styles.image}>
-                        <picture>
-                            <source srcSet={terracell.offchainUrl} type={'image/*'} />
-                            <img src={terracell.offchainUrl} alt={terracell.name} width={'190px'} height={'auto'} />
-                        </picture>
+                {/* <div className={styles.content}> */}
+                {/* <div className={styles.image}> */}
+                <picture>
+                    <source srcSet={terracell.offchainUrl} type={'image/*'} />
+                    <img src={terracell.offchainUrl} alt={terracell.name} height={'auto'} />
+                </picture>
+                {/* </div> */}
+                <div className={styles.stack}>
+                    <dl>
+                        <dt>Name</dt>
+                        <dd>{terracell.name}</dd>
+                        <dt>Owner</dt>
+                        <dd>{terracell.id}</dd>
+                        <dt>Price</dt>
+                        <dd>{terracell.id} $ALGO</dd>
+                        <dt>Output</dt>
+                        <dd>{terracell.power} TRW</dd>
+                        <dt>Type</dt>
+                        <dd>{terracell.id}</dd>
+                    </dl>
+                    <div className={styles.buttonWrapper}>
+                        <Button
+                            disabled={false}
+                            label={`${strings.buy}`}
+                            type={'outline'}
+                            loading={false}
+                            onClick={onClose}
+                        />
                     </div>
                 </div>
+                {/* </div> */}
             </div>
         </>
     )

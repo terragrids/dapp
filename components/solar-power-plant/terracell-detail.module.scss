@@ -6,34 +6,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: 20px;
+
+    min-width: 400px;
+    width: 100%;
+    padding: 0 30px 20px 30px;
 
     span {
         z-index: $z-index-modal + 1;
     }
-}
 
-.section {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.back {
-    padding: 20px;
-    display: block;
-    width: 91px;
-    cursor: pointer;
-}
-
-.content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px;
-    min-width: 600px;
-    width: 100%;
-    padding: 0 30px;
+    picture {
+        margin-bottom: 20px;
+    }
 
     .stack {
         display: flex;
@@ -48,20 +32,6 @@
             text-transform: uppercase;
         }
 
-        dl {
-            margin-bottom: 20px;
-
-            width: 100px;
-            padding-left: 50px;
-
-            dt {
-                min-width: 260px;
-            }
-            dd {
-                display: inline;
-            }
-        }
-
         .buttonWrapper {
             width: 70%;
             margin: 0 auto;
@@ -71,8 +41,28 @@
             }
         }
     }
-    .image {
+
+    .section {
+        display: flex;
+        flex-direction: column;
         width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .back {
+        padding: 20px;
+        display: block;
+        width: 91px;
+        cursor: pointer;
+    }
+
+    .content {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+    }
+    .image {
+        // width: 100%;
         picture {
             display: flex;
             justify-content: center;

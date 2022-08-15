@@ -13,6 +13,23 @@
     right: 0;
     background-color: $color-black-60;
     z-index: $z-index-modal;
+
+    dl {
+        display: grid;
+        margin-bottom: 20px;
+        grid-template-columns: 1fr 1fr;
+        line-height: 2.5;
+        font-size: 80%;
+
+        dt {
+            grid-column-start: 1;
+            text-transform: uppercase;
+        }
+        dd {
+            grid-column-start: 2;
+            text-align: right;
+        }
+    }
 }
 
 .dialog {

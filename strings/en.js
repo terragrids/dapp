@@ -20,7 +20,7 @@ export const strings = {
     buyFor: 'Buy for',
     change: 'Change',
     close: 'Close',
-    terralandInformation: 'Terraland information',
+    terralandInformation: 'Terraland ($TRLD)',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',

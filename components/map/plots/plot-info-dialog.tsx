@@ -28,6 +28,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const user = useContext<User>(UserContext)
     const { sell, buy, withdraw, unit } = useNftSeller()
     const assetPrice = 10
+    const [terralandName, setTerralandName] = useState('')
 
     useEffect(() => {
         async function fetchTerraland() {
@@ -43,6 +44,8 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                     ...asset,
                     name: removeSuffix(asset.name, TRDL_SUFFIX)
                 })
+
+                setTerralandName(removeSuffix(asset.name, TRDL_SUFFIX))
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
@@ -127,7 +130,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     }
 
     return (
-        <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
+        <ModalDialog visible={visible} title={strings.terralandInformation} subtitle={terralandName} onClose={onClose}>
             <div className={styles.container}>
                 {terraland && !error && (
                     <>
@@ -139,12 +142,26 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                             </picture>
                         </div>
                         <div className={styles.section}>
-                            <p>Name: {terraland.name}</p>
-                            <p>Id : {terraland.id}</p>
-                            <p>
-                                Position : ({terraland.positionX},{terraland.positionY})
-                            </p>
-                            <div className={styles.section}>
+                            <dl>
+                                <dt>Name</dt>
+                                <dd>{terraland.name}</dd>
+                                <dt>Description</dt>
+                                <dd>{'No property in responsose'}</dd>
+                                <dt>Position</dt>
+                                <dd>
+                                    ({terraland.positionX},{terraland.positionY})
+                                </dd>
+                                <dt>Asset Id</dt>
+                                <dd>{terraland.id}</dd>
+                                <dt>Holder</dt>
+                                {terraland.holders.map(holder => (
+                                    <dd key={holder.address + holder.amount}>{shortenAddress(holder.address)}</dd>
+                                ))}
+                                <dt>Contract</dt>
+                                <dd>{'No property in responsose'}</dd>
+                            </dl>
+
+                            {/* <div className={styles.section}>
                                 <h4>Holders</h4>
                                 <ul>
                                     {terraland.holders.map(holder => (
@@ -154,7 +171,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
+                            </div> */}
                             {terraland.contractId && (
                                 <div className={styles.section}>Contract ID : {terraland.contractId}</div>
                             )}
@@ -178,12 +195,19 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 )}
 
                 {userCapability === UserCapabilities.CAN_WITHDRAW && terraland && (
-                    <Button className={styles.button} label={strings.withdraw} loading={waiting} onClick={onWithdraw} />
+                    <Button
+                        type={'outline'}
+                        className={styles.button}
+                        label={strings.withdraw}
+                        loading={waiting}
+                        onClick={onWithdraw}
+                    />
                 )}
 
                 {userCapability === UserCapabilities.CAN_BUY && terraland && (
                     <Button
                         className={styles.button}
+                        type={'outline'}
                         label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
                         loading={waiting}
                         onClick={onBuy}
