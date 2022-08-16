@@ -1,5 +1,6 @@
 import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
 import React, { useRef, useEffect } from 'react'
+import styles from './index.module.scss'
 
 export type CanvasProps = {
     drawOnCanvas: (ctx: CanvasRenderingContext2D) => void
@@ -92,7 +93,7 @@ const Canvas = ({
         }
     }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp])
 
-    return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} />
+    return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
 }
 
 export default Canvas
