@@ -40,21 +40,6 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-        ctx.beginPath()
-        ctx.setLineDash([])
-        ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
-        ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
-        ctx.lineWidth = 2
-        ctx.moveTo(x, y)
-        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y - Plot.PLOT_HEIGHT / 2)
-        ctx.lineTo(x + Plot.PLOT_WIDTH, y)
-        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y + Plot.PLOT_HEIGHT / 2)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-        ctx.fill()
-    }
-
     const renderPlots = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
         if (mapPlots.length === 0) return
 
