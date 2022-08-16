@@ -46,6 +46,7 @@ export const strings = {
     name: 'Name',
     description: 'Description',
     nominalPower: 'Nominal power (TRW)',
+    power: 'Power',
     totalOutput: 'Total output',
     landPlots: 'Land plots',
     totalBuildings: 'Total buildings',
