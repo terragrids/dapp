@@ -26,10 +26,9 @@ export type MapProps = {
     onSelectSolarPowerPlant: () => void
 }
 
-// TO LOCK THE SIZE OF THE MAP TO 1x
-// const ZOOM_SENSITIVITY = 0.0001
-// const MAX_SCALE = 2
-// const MIN_SCALE = 0.8
+const ZOOM_SENSITIVITY = 0.0001
+const MAX_SCALE = 2
+const MIN_SCALE = 0.8
 
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
 const DEFAULT_DELTA_X = 1
@@ -104,22 +103,22 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         drawGrid(ctx, { x, y })
         renderPlots(ctx)(x, y)
     }
-    // TO LOCK THE SIZE OF THE MAP TO 1x
-    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-    //     const currentScale = ctx.getTransform().a
-    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        const currentScale = ctx.getTransform().a
+        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
+        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-    //     ctx.translate(e.offsetX, e.offsetY)
-    //     ctx.scale(scale, scale)
-    //     ctx.translate(-e.offsetX, -e.offsetY)
-    // }
+        const scale = DEFAULT_MAP_SCALE + zoomAmount
+
+        ctx.translate(e.offsetX, e.offsetY)
+        ctx.scale(scale, scale)
+        ctx.translate(-e.offsetX, -e.offsetY)
+    }
 
     const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
@@ -129,8 +128,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        // TO LOCK THE SIZE OF THE MAP TO 1x
-        // onScrollY(ctx, e)
+        onScrollY(ctx, e)
         onScrollX(ctx, e)
     }
 
