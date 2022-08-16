@@ -6,6 +6,7 @@ import { endpoints } from '../utils/api-config'
 import { UserContext } from '../context/user-context'
 import { Nft } from 'types/nft'
 import { User } from 'hooks/use-user'
+import LoadingSpinner from './loading-spinner.js'
 
 export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) => {
     const user = useContext<User>(UserContext)
@@ -21,12 +22,14 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         accountNfts: Array<Asset>
         errorMessage: string
         totalOutput: number
+        loading: boolean
     }
 
     const [state, setState] = useState<State>({
         accountNfts: [],
         errorMessage: '',
-        totalOutput: 0
+        totalOutput: 0,
+        loading: false
     })
 
     let subtitle = ''
@@ -50,18 +53,27 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
     useEffect(() => {
         const fetchNfts = async () => {
             try {
+                setState(state => ({
+                    ...state,
+                    accountNfts: [],
+                    totalOutput: 0,
+                    loading: true
+                }))
+
                 const response = await fetch(endpoints.accountNftsByType(user.walletAddress, selectedSymbol))
                 const accountNfts = await response.json()
 
                 setState(state => ({
                     ...state,
                     accountNfts: accountNfts.assets,
-                    totalOutput: accountNfts.totalOutput
+                    totalOutput: accountNfts.totalOutput,
+                    loading: false
                 }))
             } catch (e) {
                 setState(state => ({
                     ...state,
-                    errorMessage: strings.errorAccountNfts
+                    errorMessage: strings.errorAccountNfts,
+                    loading: false
                 }))
             }
         }
@@ -78,18 +90,26 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
             subtitle={subtitle}
             onClose={onClose}
             className={styles.listDialog}>
-            <ul>
-                {state.accountNfts.map(asset => (
-                    <li key={asset.id}>
-                        <div className={styles.thumbPlaceholder}></div>
-                        <h2>
-                            {asset.name}
-                            <small>{`${strings.output}: ${asset.output} TRW`}</small>
-                        </h2>
-                    </li>
-                ))}
-            </ul>
-            {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
+            <div className={styles.content}>
+                {state.loading && <LoadingSpinner />}
+                {!state.loading && state.accountNfts.length === 0 && (
+                    <div>{strings.formatString(strings.youHaveNoNfts, title)}</div>
+                )}
+                {!state.loading && (
+                    <ul>
+                        {state.accountNfts.map(asset => (
+                            <li key={asset.id}>
+                                <div className={styles.thumbPlaceholder}></div>
+                                <h2>
+                                    {asset.name}
+                                    <small>{`${strings.output}: ${asset.output} TRW`}</small>
+                                </h2>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
+            </div>
         </ModalDialog>
     ) : (
         ''
