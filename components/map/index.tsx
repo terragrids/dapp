@@ -91,10 +91,12 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
         const { x, y } = startPositionRef.current
 
-        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
-            // if map width is bigger than canvas width, increase the range to be cleared
-            // otherwise the area initially not rendered on screen will not be cleared
-            // when scrolling horizontally
+        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width || initialScaleRef.current < DEFAULT_MAP_SCALE) {
+            // If map width is bigger than canvas width
+            //  or map scale is set smaller than DEFAULT_MAP_SCALE,
+            // increase the range to be cleared.
+            // Otherwise the area initially not rendered on screen or full screen will not be cleared
+            //  when scrolling horizontally
             ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
         } else {
             ctx.clearRect(0, 0, width, height)
