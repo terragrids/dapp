@@ -3,6 +3,7 @@ import Plot, { Position2D } from './plots/plot'
 import SPP from 'public/images/map-tile-strip-lake.png'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
+import GRASS from 'public/images/grasstile.png'
 
 import variables from './index.module.scss'
 
@@ -27,13 +28,23 @@ export const SOLAR_POWER_PLANT: PlotType = {
     holders: []
 }
 
-// TODO: remove below `BIG_PLOT`, `POSITION_ALL` and `getBigs` when all plots are fetched from API
+// TODO: remove below `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
 export const BIG_PLOT: PlotType = {
     id: 'BIG',
     name: 'BIG POWER PLANT',
     symbol: 'TRCL',
     url: '',
     offchainUrl: BIG.src,
+    positionX: 3,
+    positionY: 2,
+    holders: []
+}
+export const GRASS_PLOT: PlotType = {
+    id: 'GRASS',
+    name: 'GRASS PLOT',
+    symbol: 'TRCL',
+    url: '',
+    offchainUrl: GRASS.src,
     positionX: 3,
     positionY: 2,
     holders: []
@@ -56,7 +67,16 @@ export const getBigs = (plots: MapPlotType[]): MapPlotType[] => {
         }))
     return bigs.map(big => convertToMapPlot(big))
 }
-// TODO: remove above `BIG_PLOT`, `POSITION_ALL` and `getBigs` when all plots are fetched from API
+export const getGrassPlots = (): MapPlotType[] => {
+    const grassPlots: PlotType[] = POSITION_ALL.flat().map(el => ({
+        ...GRASS_PLOT,
+        id: `${el.x}${el.y}`,
+        positionX: el.x,
+        positionY: el.y
+    }))
+    return grassPlots.map(big => convertToMapPlot(big))
+}
+// TODO: remove above `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
 
 export const getSppPlot = () => {
     return convertToMapPlot(SOLAR_POWER_PLANT)
