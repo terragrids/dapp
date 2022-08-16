@@ -28,6 +28,7 @@ export type Holder = {
 export type Terraland = {
     id: string
     name: string
+    description?: string
     symbol: string
     url: string
     offchainUrl: string
