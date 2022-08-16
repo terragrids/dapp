@@ -18,7 +18,7 @@ import {
     ORIGINAL_MAP_WIDTH,
     renderHoveredPlot
 } from './map-helper'
-import Plot from './plots/plot'
+import Plot, { Position2D } from './plots/plot'
 
 export type MapProps = {
     width: number | undefined
@@ -41,7 +41,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const renderPlots = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+    const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
         if (mapPlots.length === 0) return
 
         for (let plotX = 0; plotX < GRID_SIZE; ++plotX) {
