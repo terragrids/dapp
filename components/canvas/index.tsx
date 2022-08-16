@@ -7,6 +7,8 @@ export type CanvasProps = {
     onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
     onClick: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
     onTouch: (ctx: CanvasRenderingContext2D, e: TouchEvent) => void
+    onKeyDown: (e: KeyboardEvent) => void
+    onKeyUp: (e: KeyboardEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
@@ -16,6 +18,8 @@ const Canvas = ({
     onMouseMove,
     onClick,
     onTouch,
+    onKeyDown,
+    onKeyUp,
     attributes: { width, height }
 }: CanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -55,6 +59,7 @@ const Canvas = ({
         if (BASE_SCREEN_SIZE >= width && currentScale > optimalScale) {
             context.scale(optimalScale, optimalScale)
         }
+        canvasRef.current.focus()
     }, [width])
 
     useEffect(() => {
@@ -74,16 +79,20 @@ const Canvas = ({
         canvas.addEventListener('mousemove', onMouseMoveListener)
         canvas.addEventListener('click', onClickListener)
         canvas.addEventListener('touchend', onTouchListener)
+        canvas.addEventListener('keydown', onKeyDown)
+        canvas.addEventListener('keyup', onKeyUp)
 
         return () => {
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
             canvas.removeEventListener('click', onClickListener)
             canvas.removeEventListener('touchend', onTouchListener)
+            canvas.removeEventListener('keydown', onKeyDown)
+            canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch])
+    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp])
 
-    return <canvas ref={canvasRef} {...{ width, height }} />
+    return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} />
 }
 
 export default Canvas

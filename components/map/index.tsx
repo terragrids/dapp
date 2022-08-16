@@ -38,6 +38,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
+    const zoomEnabled = useRef(false)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
@@ -122,18 +123,26 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         ctx.translate(-e.offsetX, -e.offsetY)
     }
 
-    const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
+    const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        if (zoomEnabled.current) {
+            onWheelZoom(ctx, e)
+        } else {
+            const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
+            const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
 
-        // Only allows x axis move
-        ctx.translate(moveAmount, 0)
+            ctx.translate(moveAmountX, moveAmountY)
+        }
     }
 
-    const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
-        const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+            zoomEnabled.current = true
+        }
+    }
 
-        ctx.translate(moveAmountX, moveAmountY)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const onKeyUp = (e: KeyboardEvent) => {
+        zoomEnabled.current = false
     }
 
     const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
@@ -223,6 +232,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             onMouseMove={onMouseMove}
             onClick={onClick}
             onTouch={onTouch}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             attributes={{ width, height }}
         />
     )
