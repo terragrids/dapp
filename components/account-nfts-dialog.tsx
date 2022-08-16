@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useContext } from 'react'
 import { strings } from 'strings/en.js'
 import ModalDialog from './modal-dialog.js'
@@ -15,20 +16,19 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         name: string
         symbol: string
         url: string
-        output: 10
+        offchainUrl: string
+        power: 10
     }
 
     type State = {
         accountNfts: Array<Asset>
         errorMessage: string
-        totalOutput: number
         loading: boolean
     }
 
     const [state, setState] = useState<State>({
         accountNfts: [],
         errorMessage: '',
-        totalOutput: 0,
         loading: false
     })
 
@@ -37,29 +37,22 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
 
     switch (selectedSymbol) {
         case 'TRCL':
-            subtitle = `${strings.totalOutput} ${state.totalOutput} TRW`
-            title = Nft.TRCL.name
+            subtitle = strings.yourSolarPvCells
+            title = `${Nft.TRCL.name} (${Nft.TRCL.currencySymbol})`
             break
         case 'TRLD':
-            subtitle = `${strings.landPlots} ${state.totalOutput}`
-            title = Nft.TRLD.name
+            subtitle = strings.yourPlotsOfLand
+            title = `${Nft.TRLD.name} (${Nft.TRLD.currencySymbol})`
             break
         case 'TRAS':
-            subtitle = `${strings.totalBuildings} ${state.totalOutput}`
-            title = Nft.TRAS.name
+            subtitle = strings.yourBuildings
+            title = `${Nft.TRAS.name} (${Nft.TRAS.currencySymbol})`
             break
     }
 
     useEffect(() => {
         const fetchNfts = async () => {
             try {
-                setState(state => ({
-                    ...state,
-                    accountNfts: [],
-                    totalOutput: 0,
-                    loading: true
-                }))
-
                 const response = await fetch(endpoints.accountNftsByType(user.walletAddress, selectedSymbol))
                 const accountNfts = await response.json()
 
@@ -83,7 +76,15 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         }
     }, [selectedSymbol, visible, user])
 
-    return visible ? (
+    useEffect(() => {
+        setState(state => ({
+            ...state,
+            errorMessage: '',
+            loading: true
+        }))
+    }, [visible])
+
+    return (
         <ModalDialog
             visible={visible}
             title={title}
@@ -99,10 +100,14 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
                     <ul>
                         {state.accountNfts.map(asset => (
                             <li key={asset.id}>
-                                <div className={styles.thumbPlaceholder}></div>
+                                {/* TODO: replace with Image */}
+                                <picture className={styles.thumbnail}>
+                                    <source srcSet={asset.offchainUrl} type={'image/*'} />
+                                    <img src={asset.offchainUrl} alt={asset.name} />
+                                </picture>
                                 <h2>
                                     {asset.name}
-                                    <small>{`${strings.output}: ${asset.output} TRW`}</small>
+                                    <small>{`${strings.output}: ${asset.power} TRW`}</small>
                                 </h2>
                             </li>
                         ))}
@@ -111,8 +116,6 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
                 {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
             </div>
         </ModalDialog>
-    ) : (
-        ''
     )
 }
 

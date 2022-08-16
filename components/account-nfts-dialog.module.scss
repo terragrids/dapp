@@ -61,11 +61,17 @@
     }
 }
 
-.thumbPlaceholder {
-    width: 105px;
-    height: 95px;
-    background-color: gray;
-    border-radius: $dialog-border-radius;
+.thumbnail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
 }
 
 .error {
