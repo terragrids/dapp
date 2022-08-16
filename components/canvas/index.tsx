@@ -21,7 +21,7 @@ const Canvas = ({
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
-        if (!canvasRef.current || !width) return
+        if (!canvasRef.current) return
 
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -29,13 +29,6 @@ const Canvas = ({
         if (!context) return
 
         let animationFrameId: number
-
-        const currentScale = context.getTransform().a
-        const scale = getOptimalScale(Number(width))
-
-        if (BASE_SCREEN_SIZE >= width && currentScale > scale) {
-            context.scale(scale, scale)
-        }
 
         const render = () => {
             drawOnCanvas(context)
@@ -46,7 +39,23 @@ const Canvas = ({
         return () => {
             cancelAnimationFrame(animationFrameId)
         }
-    }, [drawOnCanvas, width])
+    }, [drawOnCanvas])
+
+    useEffect(() => {
+        if (!canvasRef.current || !width) return
+
+        const canvas = canvasRef.current
+        const context = canvas.getContext('2d')
+
+        if (!context) return
+
+        const currentScale = context.getTransform().a
+        const optimalScale = getOptimalScale(Number(width))
+
+        if (BASE_SCREEN_SIZE >= width && currentScale > optimalScale) {
+            context.scale(optimalScale, optimalScale)
+        }
+    }, [width])
 
     useEffect(() => {
         if (!canvasRef.current) return
