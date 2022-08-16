@@ -31,8 +31,8 @@ const MAX_SCALE = 2
 const MIN_SCALE = 0.8
 
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA_X = 1
-const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
+const DEFAULT_DELTA = 1
+const SCROLL_SENSITIVITY = 0.05
 
 const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
@@ -106,7 +106,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         renderPlots(ctx)(x, y)
     }
 
-    const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+    const onWheelZoom = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
         const currentScale = ctx.getTransform().a
         const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
@@ -130,8 +130,10 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        onScrollY(ctx, e)
-        onScrollX(ctx, e)
+        const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
+        const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
+
+        ctx.translate(moveAmountX, moveAmountY)
     }
 
     const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
