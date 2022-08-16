@@ -41,6 +41,17 @@ export default class Plot {
         return { x: renderX, y: renderY }
     }
 
+    private isLargeImage(): boolean {
+        const { scaleX, scaleY } = this.getImageScale()
+        return scaleX > 1 && scaleY > 1
+    }
+
+    private getImageScale(): { scaleX: number; scaleY: number } {
+        const scaleX = Math.floor(this.image.width / Plot.PLOT_WIDTH)
+        const scaleY = Math.floor(this.image.height / Plot.PLOT_HEIGHT)
+        return { scaleX, scaleY }
+    }
+
     draw(offset: number): void {
         const offsetY = offset - this.image.height
         this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
