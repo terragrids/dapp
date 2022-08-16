@@ -154,10 +154,9 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        if (headerHeight === undefined) return
-
-        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, e.clientX, e.clientY - headerHeight)
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, mouseRef.current.x, mouseRef.current.y)
 
         if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
