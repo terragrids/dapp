@@ -47,6 +47,10 @@
         margin: 0 15px;
         max-height: 95vh;
     }
+
+    @media (min-width: $screen-medium) {
+        min-width: 322px;
+    }
 }
 
 .content {

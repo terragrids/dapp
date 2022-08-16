@@ -58,5 +58,7 @@ export const strings = {
     positionY: 'Position Y',
     availableToBuy: 'Available to buy',
     capacity: 'Capacity',
-    back: '< Back'
+    back: '< Back',
+    assetID: 'Asset ID',
+    price: 'Price'
 }

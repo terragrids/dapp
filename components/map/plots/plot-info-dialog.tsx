@@ -40,6 +40,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
             if (response.ok) {
                 const { asset } = await response.json()
+
                 setTerraland({
                     ...asset,
                     name: removeSuffix(asset.name, TRDL_SUFFIX)
@@ -49,6 +50,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
+
                     if (ipfsResponse.ok) {
                         const { image } = await ipfsResponse.json()
                         setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
@@ -143,38 +145,25 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                         </div>
                         <div className={styles.section}>
                             <dl>
-                                <dt>Name</dt>
+                                <dt>{strings.name}</dt>
                                 <dd>{terraland.name}</dd>
-                                <dt>Description</dt>
+                                <dt>{strings.description}</dt>
                                 <dd>{'No property in responsose'}</dd>
                                 <dt>Position</dt>
                                 <dd>
                                     ({terraland.positionX},{terraland.positionY})
                                 </dd>
-                                <dt>Asset Id</dt>
+                                <dt>{strings.assetID}</dt>
                                 <dd>{terraland.id}</dd>
                                 <dt>Holder</dt>
-                                {terraland.holders.map(holder => (
-                                    <dd key={holder.address + holder.amount}>{shortenAddress(holder.address)}</dd>
-                                ))}
-                                <dt>Contract</dt>
-                                <dd>{'No property in responsose'}</dd>
+                                <dd>{shortenAddress(terraland.holders[0].address)}</dd>
+                                {terraland.contractId && (
+                                    <>
+                                        <dt>Contract</dt>
+                                        <dd>{terraland.contractId}</dd>
+                                    </>
+                                )}
                             </dl>
-
-                            {/* <div className={styles.section}>
-                                <h4>Holders</h4>
-                                <ul>
-                                    {terraland.holders.map(holder => (
-                                        <li style={{ listStyle: 'none' }} key={holder.address + holder.amount}>
-                                            <p>- address : {shortenAddress(holder.address)}</p>
-                                            <p>- amount: {holder.amount}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div> */}
-                            {terraland.contractId && (
-                                <div className={styles.section}>Contract ID : {terraland.contractId}</div>
-                            )}
                         </div>
                     </>
                 )}
@@ -187,6 +176,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
                 {userCapability === UserCapabilities.CAN_SELL && terraland && (
                     <Button
+                        type={'outline'}
                         className={styles.button}
                         label={`${strings.sellFor} ${assetPrice} $${unit}`}
                         loading={waiting}

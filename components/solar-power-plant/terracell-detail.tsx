@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Button from 'components/button'
+import { string } from 'prop-types'
 import React from 'react'
 import { strings } from 'strings/en'
 import { Terracell } from 'types/nft'
@@ -28,16 +29,16 @@ const TerracellDetail = ({ terracell, onClose }: TerracellDetailProps) => {
                 {/* </div> */}
                 <div className={styles.stack}>
                     <dl>
-                        <dt>Name</dt>
+                        <dt>{strings.name}</dt>
                         <dd>{terracell.name}</dd>
-                        <dt>Owner</dt>
-                        <dd>{terracell.id}</dd>
-                        <dt>Price</dt>
-                        <dd>{terracell.id} $ALGO</dd>
-                        <dt>Output</dt>
+                        <dt>{strings.description}</dt>
+                        <dd>{'tbc'}</dd>
+                        <dt>{strings.output}</dt>
                         <dd>{terracell.power} TRW</dd>
-                        <dt>Type</dt>
+                        <dt>{strings.assetID}</dt>
                         <dd>{terracell.id}</dd>
+                        <dt>{strings.price}</dt>
+                        <dd>{terracell.id} $ALGO</dd>
                     </dl>
                     <div className={styles.buttonWrapper}>
                         <Button
