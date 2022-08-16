@@ -1,6 +1,9 @@
 import Plot, { Position2D } from './plots/plot'
 // TODO: should change image once design for SPP is ready
 import SPP from 'public/images/map-tile-strip-lake.png'
+// TODO: should remove when larger images are fetched from api
+import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
+
 import variables from './index.module.scss'
 
 export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
@@ -24,9 +27,41 @@ export const SOLAR_POWER_PLANT: PlotType = {
     holders: []
 }
 
+// TODO: remove below `BIG_PLOT`, `POSITION_ALL` and `getBigs` when all plots are fetched from API
+export const BIG_PLOT: PlotType = {
+    id: 'BIG',
+    name: 'BIG POWER PLANT',
+    symbol: 'TRCL',
+    url: '',
+    offchainUrl: BIG.src,
+    positionX: 3,
+    positionY: 2,
+    holders: []
+}
+const POSITION_ALL: Position2D[][] = [...Array(GRID_SIZE).keys()].map(x => {
+    return [...Array(GRID_SIZE).keys()].map(y => ({
+        x: x,
+        y: y
+    }))
+})
+export const getBigs = (plots: MapPlotType[]): MapPlotType[] => {
+    const targets = plots.map(plot => ({ x: plot.positionX, y: plot.positionY }))
+
+    const bigs: PlotType[] = POSITION_ALL.flat()
+        .filter(pos => targets.findIndex(t => t.x === pos.x && t.y === pos.y) === -1)
+        .map(el => ({
+            ...BIG_PLOT,
+            positionX: el.x,
+            positionY: el.y
+        }))
+    return bigs.map(big => convertToMapPlot(big))
+}
+// TODO: remove above `BIG_PLOT`, `POSITION_ALL` and `getBigs` when all plots are fetched from API
+
 export const getSppPlot = () => {
     return convertToMapPlot(SOLAR_POWER_PLANT)
 }
+
 export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
 }
