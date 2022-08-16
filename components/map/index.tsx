@@ -21,7 +21,6 @@ import Plot from './plots/plot'
 export type MapProps = {
     width: number | undefined
     height: number | undefined
-    headerHeight: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
     onSelectSolarPowerPlant: () => void
 }
@@ -34,7 +33,7 @@ const MIN_SCALE = 0.8
 const DEFAULT_DELTA = 1
 const SCROLL_SENSITIVITY = 0.05
 
-const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
+const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
@@ -156,7 +155,9 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, mouseRef.current.x, mouseRef.current.y)
+        const rect = ctx.canvas.getBoundingClientRect()
+
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, e.clientX - rect.left, e.clientY - rect.top)
 
         if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
@@ -176,11 +177,11 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     }
 
     const onTouch = (ctx: CanvasRenderingContext2D, e: TouchEvent) => {
-        if (headerHeight === undefined) return
+        const rect = ctx.canvas.getBoundingClientRect()
 
         const touch = e.touches[0] || e.changedTouches[0]
 
-        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - headerHeight)
+        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - rect.top)
 
         if (!isInsideMap(startPositionRef.current, touchX, touchY)) return
 
