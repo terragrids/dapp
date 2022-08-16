@@ -16,7 +16,7 @@ import {
     isInsideMap,
     MAGIC_NUMBER_TO_ADJUST,
     ORIGINAL_MAP_WIDTH,
-    renderPlotHover
+    renderHoveredPlot
 } from './map-helper'
 import Plot from './plots/plot'
 
@@ -69,7 +69,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
         const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
 
-        renderPlotHover(ctx)(renderX, renderY + Plot.PLOT_HEIGHT)
+        renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT)
     }
 
     function render(ctx: CanvasRenderingContext2D) {
