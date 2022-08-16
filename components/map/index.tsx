@@ -97,7 +97,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             // increase the range to be cleared.
             // Otherwise the area initially not rendered on screen or full screen will not be cleared
             //  when scrolling horizontally
-            ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
+            ctx.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
         } else {
             ctx.clearRect(0, 0, width, height)
         }
