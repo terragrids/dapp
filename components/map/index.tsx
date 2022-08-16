@@ -75,8 +75,6 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     function render(ctx: CanvasRenderingContext2D) {
         if (!width || !height) return
 
-        const { x, y } = startPositionRef.current
-
         if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
             // if map width is bigger than canvas width, increase the range to be cleared
             // otherwise the area initially not rendered on screen will not be cleared
@@ -86,8 +84,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             ctx.clearRect(0, 0, width, height)
         }
 
-        drawGrid(ctx, { x, y })
-        renderPlots(ctx)(x, y)
+        drawGrid(ctx, startPositionRef.current)
+        renderPlots(ctx, startPositionRef.current)
     }
     // TO LOCK THE SIZE OF THE MAP TO 1x
     // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
