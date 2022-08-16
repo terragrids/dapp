@@ -1,25 +1,16 @@
 import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 export type CanvasProps = {
-    drawOnCanvas: (ctx: CanvasRenderingContext2D) => void
-    onWheel: (ctx: CanvasRenderingContext2D, e: WheelEvent) => void
-    onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
-    onClick: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
-    onTouch: (ctx: CanvasRenderingContext2D, e: TouchEvent) => void
+    canvasRef: React.RefObject<HTMLCanvasElement>
+    onMouseMove: (e: MouseEvent) => void
+    onWheel: (e: WheelEvent) => void
+    onClick: (e: MouseEvent) => void
+    onTouch: (e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
-const Canvas = ({
-    drawOnCanvas,
-    onWheel,
-    onMouseMove,
-    onClick,
-    onTouch,
-    attributes: { width, height }
-}: CanvasProps) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-
+const Canvas = ({ canvasRef, onMouseMove, onWheel, onClick, onTouch, attributes: { width, height } }: CanvasProps) => {
     useEffect(() => {
         if (!canvasRef.current || !width) return
 
@@ -28,25 +19,13 @@ const Canvas = ({
 
         if (!context) return
 
-        let animationFrameId: number
-
         const currentScale = context.getTransform().a
         const scale = getOptimalScale(Number(width))
 
         if (BASE_SCREEN_SIZE >= width && currentScale > scale) {
             context.scale(scale, scale)
         }
-
-        const render = () => {
-            drawOnCanvas(context)
-            animationFrameId = requestAnimationFrame(render)
-        }
-        render()
-
-        return () => {
-            cancelAnimationFrame(animationFrameId)
-        }
-    }, [drawOnCanvas, width])
+    }, [width, canvasRef])
 
     useEffect(() => {
         if (!canvasRef.current) return
@@ -56,10 +35,10 @@ const Canvas = ({
 
         if (!context) return
 
-        const onWheelListener = (e: WheelEvent) => onWheel(context, e)
-        const onMouseMoveListener = (e: MouseEvent) => onMouseMove(context, e)
-        const onClickListener = (e: MouseEvent) => onClick(context, e)
-        const onTouchListener = (e: TouchEvent) => onTouch(context, e)
+        const onWheelListener = (e: WheelEvent) => onWheel(e)
+        const onMouseMoveListener = (e: MouseEvent) => onMouseMove(e)
+        const onClickListener = (e: MouseEvent) => onClick(e)
+        const onTouchListener = (e: TouchEvent) => onTouch(e)
 
         canvas.addEventListener('wheel', onWheelListener)
         canvas.addEventListener('mousemove', onMouseMoveListener)
@@ -72,7 +51,7 @@ const Canvas = ({
             canvas.removeEventListener('click', onClickListener)
             canvas.removeEventListener('touchend', onTouchListener)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch])
+    }, [onClick, onMouseMove, onWheel, onTouch, canvasRef])
 
     return <canvas ref={canvasRef} {...{ width, height }} />
 }
