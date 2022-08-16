@@ -1,4 +1,6 @@
-export const strings = {
+import LocalizedStrings from 'react-localization'
+
+const enStrings = {
     siteTitle: 'Terragrids',
     siteDescription: 'Web client for Terragrids',
     helloExplorer: 'Hello, Terragrids explorer!',
@@ -34,8 +36,7 @@ export const strings = {
         'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
     errorBuyingNft:
         'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
-    errorAccountNfts:
-        'Unable to retrieve your NFT totals. Either something went wrong, or you cancelled the transaction.',
+    errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
     yourWallet: 'Your wallet',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
@@ -46,9 +47,11 @@ export const strings = {
     name: 'Name',
     description: 'Description',
     nominalPower: 'Nominal power (TRW)',
+    power: 'Power',
     totalOutput: 'Total output',
-    landPlots: 'Land plots',
-    totalBuildings: 'Total buildings',
+    yourSolarPvCells: 'Your solar PV cells',
+    yourPlotsOfLand: 'Your plots of land',
+    yourBuildings: 'Your buildings',
     output: 'Output',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
@@ -58,5 +61,10 @@ export const strings = {
     positionY: 'Position Y',
     availableToBuy: 'Available to buy',
     capacity: 'Capacity',
-    back: '< Back'
+    back: '< Back',
+    youHaveNoNfts: 'You have no {0} in your wallet'
 }
+
+export const strings = new LocalizedStrings({
+    en: enStrings
+})

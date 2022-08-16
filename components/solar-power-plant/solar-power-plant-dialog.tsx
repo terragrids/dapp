@@ -125,7 +125,7 @@ const TerraCell = ({ terracell, onSelectTerracell }: TerraCellProps) => {
                 <div className={styles.overlay}>
                     <small>
                         {terracell.name} <br />
-                        power: {terracell.power}
+                        {strings.power} {terracell.power} TRW
                     </small>
                 </div>
             )}
