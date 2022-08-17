@@ -139,8 +139,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onKeyUp = (e: KeyboardEvent) => {
+    const onKeyUp = () => {
         zoomEnabled.current = false
     }
 
