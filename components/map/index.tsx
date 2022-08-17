@@ -152,7 +152,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
         const rect = ctx.canvas.getBoundingClientRect()
 
