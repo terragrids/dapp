@@ -54,7 +54,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const availableTrclCount = useMemo(() => {
         if (!solarPowerPlant) return 0
 
-        return solarPowerPlant.totalTrcl - solarPowerPlant.activeTrcl
+        return solarPowerPlant.totalTerracells - solarPowerPlant.activeTerracells
     }, [solarPowerPlant])
 
     const onSelectTerracell = (id: string) => {
