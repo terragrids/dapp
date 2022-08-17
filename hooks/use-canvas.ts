@@ -17,6 +17,9 @@ export const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) => {
         }
         render()
 
+        // focus canvas so that scroll zoom(keydown/up listeners) works by default
+        canvasRef.current.focus()
+
         return () => {
             window.cancelAnimationFrame(animationFrameId)
         }
