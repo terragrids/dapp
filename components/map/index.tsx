@@ -5,7 +5,6 @@ import {
     convertToMapPlot,
     DEFAULT_MAP_SCALE,
     drawGrid,
-    getBigs,
     getOptimalScale,
     getPlotPosition,
     getSppPlot,
