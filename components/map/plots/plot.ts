@@ -20,6 +20,9 @@ export default class Plot {
 
     static readonly PLOT_TYPE_EMPTY = 0
 
+    static readonly PLOT_THICKNESS = 5
+    static readonly PLOT_HALF_THICKNESS = this.PLOT_THICKNESS / 2
+
     mapStartPosition: Position2D
     coord: Position2D
     image: HTMLImageElement
@@ -36,13 +39,40 @@ export default class Plot {
     }
 
     private calculateRenderPosition(plotCoord: Position2D): Position2D {
+        const adjustY = this.isLargeImage()
+            ? Plot.PLOT_HEIGHT + Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_THICKNESS
+            : Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS
+
         const renderX = this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH
-        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT
+        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT + adjustY
         return { x: renderX, y: renderY }
+    }
+
+    private isLargeImage(): boolean {
+        const { scaleX, scaleY } = this.getImageScale()
+        return scaleX > 1 && scaleY > 1
+    }
+
+    private getImageScale(): { scaleX: number; scaleY: number } {
+        const scaleX = Math.floor(this.image.width / Plot.PLOT_WIDTH)
+        const scaleY = Math.floor(this.image.height / Plot.PLOT_HEIGHT)
+        return { scaleX, scaleY }
     }
 
     draw(offset: number): void {
         const offsetY = offset - this.image.height
-        this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
+
+        if (this.isLargeImage()) {
+            const { scaleX, scaleY } = this.getImageScale()
+            this.ctx.drawImage(
+                this.image,
+                this.renderPosition.x,
+                this.renderPosition.y + offsetY,
+                this.image.width / scaleX,
+                this.image.height / scaleY
+            )
+        } else {
+            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
+        }
     }
 }

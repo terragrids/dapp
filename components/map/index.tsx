@@ -20,24 +20,23 @@ import Plot from './plots/plot'
 export type MapProps = {
     width: number | undefined
     height: number | undefined
-    headerHeight: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
     onSelectSolarPowerPlant: () => void
 }
 
-// TO LOCK THE SIZE OF THE MAP TO 1x
-// const ZOOM_SENSITIVITY = 0.0001
-// const MAX_SCALE = 2
-// const MIN_SCALE = 0.8
+const ZOOM_SENSITIVITY = 0.0001
+const MAX_SCALE = 2
+const MIN_SCALE = 0.8
 
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA_X = 1
-const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
+const DEFAULT_DELTA = 1
+const SCROLL_SENSITIVITY = 0.05
 
-const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
+const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const mouseRef = useRef({ x: -1, y: -1 })
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
+    const zoomEnabled = useRef(false)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
@@ -91,11 +90,13 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
         const { x, y } = startPositionRef.current
 
-        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
-            // if map width is bigger than canvas width, increase the range to be cleared
-            // otherwise the area initially not rendered on screen will not be cleared
-            // when scrolling horizontally
-            ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
+        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width || initialScaleRef.current < DEFAULT_MAP_SCALE) {
+            // If map width is bigger than canvas width
+            //  or map scale is set smaller than DEFAULT_MAP_SCALE,
+            // increase the range to be cleared.
+            // Otherwise the area initially not rendered on screen or full screen will not be cleared
+            //  when scrolling horizontally
+            ctx.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
         } else {
             ctx.clearRect(0, 0, width, height)
         }
@@ -103,34 +104,42 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         drawGrid(ctx, { x, y })
         renderPlots(ctx)(x, y)
     }
-    // TO LOCK THE SIZE OF THE MAP TO 1x
-    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-    //     const currentScale = ctx.getTransform().a
-    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+    const onWheelZoom = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
+        const currentScale = ctx.getTransform().a
+        const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
-    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
+        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+        // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+        if (currentScale >= MAX_SCALE && zoomAmount > 0) return
+        if (currentScale <= MIN_SCALE && zoomAmount < 0) return
 
-    //     ctx.translate(e.offsetX, e.offsetY)
-    //     ctx.scale(scale, scale)
-    //     ctx.translate(-e.offsetX, -e.offsetY)
-    // }
+        const scale = DEFAULT_MAP_SCALE + zoomAmount
 
-    const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
-
-        // Only allows x axis move
-        ctx.translate(moveAmount, 0)
+        ctx.translate(e.offsetX, e.offsetY)
+        ctx.scale(scale, scale)
+        ctx.translate(-e.offsetX, -e.offsetY)
     }
 
     const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        // TO LOCK THE SIZE OF THE MAP TO 1x
-        // onScrollY(ctx, e)
-        onScrollX(ctx, e)
+        if (zoomEnabled.current) {
+            onWheelZoom(ctx, e)
+        } else {
+            const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
+            const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
+
+            ctx.translate(moveAmountX, moveAmountY)
+        }
+    }
+
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+            zoomEnabled.current = true
+        }
+    }
+
+    const onKeyUp = () => {
+        zoomEnabled.current = false
     }
 
     const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
@@ -143,9 +152,9 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     }
 
     const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        if (headerHeight === undefined) return
+        const rect = ctx.canvas.getBoundingClientRect()
 
-        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, e.clientX, e.clientY - headerHeight)
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, e.clientX - rect.left, e.clientY - rect.top)
 
         if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
@@ -165,11 +174,11 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     }
 
     const onTouch = (ctx: CanvasRenderingContext2D, e: TouchEvent) => {
-        if (headerHeight === undefined) return
+        const rect = ctx.canvas.getBoundingClientRect()
 
         const touch = e.touches[0] || e.changedTouches[0]
 
-        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - headerHeight)
+        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - rect.top)
 
         if (!isInsideMap(startPositionRef.current, touchX, touchY)) return
 
@@ -197,6 +206,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
+            // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
             setMapPlots([spp, ...plots])
         }
         load()
@@ -219,6 +229,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             onMouseMove={onMouseMove}
             onClick={onClick}
             onTouch={onTouch}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             attributes={{ width, height }}
         />
     )
