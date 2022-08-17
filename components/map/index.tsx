@@ -5,9 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { endpoints } from 'utils/api-config'
 import {
     convertToMapPlot,
-    DEFAULT_MAP_SCALE,
     drawGrid,
-    getOptimalScale,
     getPlotPosition,
     getSppPlot,
     getStartPosition,
@@ -15,7 +13,6 @@ import {
     GRID_SIZE,
     isInsideMap,
     MAGIC_NUMBER_TO_ADJUST,
-    ORIGINAL_MAP_WIDTH,
     renderHoveredPlot
 } from './map-helper'
 import Plot, { Position2D } from './plots/plot'
@@ -28,9 +25,8 @@ export type MapProps = {
 }
 
 const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
-    const canvasRef = useCanvas(render)
+    const canvasRef = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
-    const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const { mouseRef, onWheel, onMouseMove, onClick, onTouch, onKeyDown, onKeyUp } = useCanvasController(
@@ -70,19 +66,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     }
 
     function render(ctx: CanvasRenderingContext2D) {
-        if (!width || !height) return
-
-        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width || initialScaleRef.current < DEFAULT_MAP_SCALE) {
-            // If map width is bigger than canvas width
-            //  or map scale is set smaller than DEFAULT_MAP_SCALE,
-            // increase the range to be cleared.
-            // Otherwise the area initially not rendered on screen or full screen will not be cleared
-            //  when scrolling horizontally
-            ctx.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
-        } else {
-            ctx.clearRect(0, 0, width, height)
-        }
-
         drawGrid(ctx, startPositionRef.current)
         renderPlots(ctx, startPositionRef.current)
     }
@@ -122,9 +105,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
 
         const { x, y } = getStartPosition(width, height)
         startPositionRef.current = { x, y }
-
-        const optimalScale = getOptimalScale(width)
-        initialScaleRef.current = optimalScale
     }, [width, height])
 
     return (
