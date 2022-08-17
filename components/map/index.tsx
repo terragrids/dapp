@@ -31,10 +31,9 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     const canvasRef = useCanvas(render)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
-    const zoomEnabled = useRef(false)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const { mouseRef, onClick, onMouseMove, onTouch, onWheel } = useCanvasController(
+    const { mouseRef, onWheel, onMouseMove, onClick, onTouch, onKeyDown, onKeyUp } = useCanvasController(
         canvasRef.current,
         startPositionRef.current
     )
@@ -87,10 +86,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         drawGrid(ctx, startPositionRef.current)
         renderPlots(ctx, startPositionRef.current)
     }
-    // TO LOCK THE SIZE OF THE MAP TO 1x
-    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-    //     const currentScale = ctx.getTransform().a
-    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
     const handleClickOrTouch = (positionX: number, positionY: number) => {
         const index = positionY * GRID_SIZE + positionX
@@ -104,16 +99,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         } else if (index < GRID_SIZE * GRID_SIZE) {
             onSelectPlot(target)
         }
-    }
-
-    const onKeyDown = (e: KeyboardEvent) => {
-        if (e.ctrlKey || e.metaKey) {
-            zoomEnabled.current = true
-        }
-    }
-
-    const onKeyUp = () => {
-        zoomEnabled.current = false
     }
 
     useEffect(() => {

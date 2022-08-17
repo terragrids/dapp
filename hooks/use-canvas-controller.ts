@@ -13,6 +13,7 @@ const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosition: Position2D) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
+    const zoomEnabled = useRef(false)
 
     useEffect(() => {
         if (!canvas) return
@@ -116,6 +117,16 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         [context, startPosition]
     )
 
+    const onKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+            zoomEnabled.current = true
+        }
+    }, [])
+
+    const onKeyUp = useCallback(() => {
+        zoomEnabled.current = false
+    }, [])
+
     return {
         mouseRef,
         onScrollX,
@@ -123,6 +134,8 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         onWheel,
         onMouseMove,
         onClick,
-        onTouch
+        onTouch,
+        onKeyDown,
+        onKeyUp
     }
 }
