@@ -1,5 +1,5 @@
 import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styles from './index.module.scss'
 
 export type CanvasProps = {
