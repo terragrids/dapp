@@ -1,8 +1,8 @@
 @import 'styles/colors.scss';
 @import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .listDialog {
-    padding: 0;
     color: $color-white;
 
     header {
@@ -52,9 +52,28 @@
     }
 }
 
-.thumbPlaceholder {
-    width: 105px;
-    height: 95px;
-    background-color: gray;
-    border-radius: $dialog-border-radius;
+.content {
+    padding: 20px;
+    width: 600px;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
+}
+
+.thumbnail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.error {
+    color: $color-red;
 }

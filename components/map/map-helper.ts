@@ -1,6 +1,10 @@
 import Plot, { Position2D } from './plots/plot'
 // TODO: should change image once design for SPP is ready
 import SPP from 'public/images/map-tile-strip-lake.png'
+// TODO: should remove when larger images are fetched from api
+import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
+import GRASS from 'public/images/grasstile.png'
+
 import variables from './index.module.scss'
 
 export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
@@ -24,9 +28,60 @@ export const SOLAR_POWER_PLANT: PlotType = {
     holders: []
 }
 
+// TODO: remove below `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
+export const BIG_PLOT: PlotType = {
+    id: 'BIG',
+    name: 'BIG POWER PLANT',
+    symbol: 'TRCL',
+    url: '',
+    offchainUrl: BIG.src,
+    positionX: 3,
+    positionY: 2,
+    holders: []
+}
+export const GRASS_PLOT: PlotType = {
+    id: 'GRASS',
+    name: 'GRASS PLOT',
+    symbol: 'TRCL',
+    url: '',
+    offchainUrl: GRASS.src,
+    positionX: 3,
+    positionY: 2,
+    holders: []
+}
+const POSITION_ALL: Position2D[][] = [...Array(GRID_SIZE).keys()].map(x => {
+    return [...Array(GRID_SIZE).keys()].map(y => ({
+        x: x,
+        y: y
+    }))
+})
+export const getBigs = (plots: MapPlotType[]): MapPlotType[] => {
+    const targets = plots.map(plot => ({ x: plot.positionX, y: plot.positionY }))
+
+    const bigs: PlotType[] = POSITION_ALL.flat()
+        .filter(pos => targets.findIndex(t => t.x === pos.x && t.y === pos.y) === -1)
+        .map(el => ({
+            ...BIG_PLOT,
+            positionX: el.x,
+            positionY: el.y
+        }))
+    return bigs.map(big => convertToMapPlot(big))
+}
+export const getGrassPlots = (): MapPlotType[] => {
+    const grassPlots: PlotType[] = POSITION_ALL.flat().map(el => ({
+        ...GRASS_PLOT,
+        id: `${el.x}${el.y}`,
+        positionX: el.x,
+        positionY: el.y
+    }))
+    return grassPlots.map(big => convertToMapPlot(big))
+}
+// TODO: remove above `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
+
 export const getSppPlot = () => {
     return convertToMapPlot(SOLAR_POWER_PLANT)
 }
+
 export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
 }
@@ -66,7 +121,7 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
 
 /**
  *
- * @param startPosition position where map start rendered
+ * @param startPosition map render reference point
  * @param inputX mouse/touch input position x (ie. clientX)
  * @param inputY mouse/touch input position x (ie. clientY)
  * @returns positionX, positionY: plot position x, y axis
@@ -89,7 +144,7 @@ export const getPlotPosition = (
  * @dev ref: https://roblouie.com/article/617/transforming-mouse-coordinates-to-canvas-coordinates/
  * @param context canvas context 2d
  * @param inputX mouse/touch input position x (ie. clientX)
- * @param inputY mouse/touch input position x (ie. clientY)
+ * @param inputY mouse/touch input position y (ie. clientY)
  * @returns {x, y} x and y position of inputX/Y which map scale and position are taken into account
  */
 export const getTransformedPoint = (context: CanvasRenderingContext2D, inputX: number, inputY: number) => {
@@ -105,9 +160,9 @@ export const getTransformedPoint = (context: CanvasRenderingContext2D, inputX: n
 
 /**
  *
- * @param startPosition position where map start rendered
+ * @param startPosition map render reference point
  * @param inputX mouse/touch input position x (ie. clientX)
- * @param inputY mouse/touch input position x (ie. clientY)
+ * @param inputY mouse/touch input position y (ie. clientY)
  * @returns if inputs are inside the map or not
  */
 export const isInsideMap = (startPosition: Position2D, inputX: number, inputY: number) => {

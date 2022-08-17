@@ -23,7 +23,6 @@ import Plot, { Position2D } from './plots/plot'
 export type MapProps = {
     width: number | undefined
     height: number | undefined
-    headerHeight: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
     onSelectSolarPowerPlant: () => void
 }
@@ -32,6 +31,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     const canvasRef = useCanvas(render)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
+    const zoomEnabled = useRef(false)
+    const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const { mouseRef, onClick, onMouseMove, onTouch, onWheel } = useCanvasController(
         canvasRef.current,
@@ -75,11 +76,15 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     function render(ctx: CanvasRenderingContext2D) {
         if (!width || !height) return
 
-        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width) {
-            // if map width is bigger than canvas width, increase the range to be cleared
-            // otherwise the area initially not rendered on screen will not be cleared
-            // when scrolling horizontally
-            ctx.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 2)
+        const { x, y } = startPositionRef.current
+
+        if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width || initialScaleRef.current < DEFAULT_MAP_SCALE) {
+            // If map width is bigger than canvas width
+            //  or map scale is set smaller than DEFAULT_MAP_SCALE,
+            // increase the range to be cleared.
+            // Otherwise the area initially not rendered on screen or full screen will not be cleared
+            //  when scrolling horizontally
+            ctx.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
         } else {
             ctx.clearRect(0, 0, width, height)
         }
@@ -106,6 +111,29 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         }
     }
 
+    const onTouch = (ctx: CanvasRenderingContext2D, e: TouchEvent) => {
+        const rect = ctx.canvas.getBoundingClientRect()
+
+        const touch = e.touches[0] || e.changedTouches[0]
+
+        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - rect.top)
+
+        if (!isInsideMap(startPositionRef.current, touchX, touchY)) return
+
+        const { positionX, positionY } = getPlotPosition(startPositionRef.current, touchX, touchY)
+
+        const index = positionY * GRID_SIZE + positionX
+        const target = mapPlots.find(el => el.index === index)
+
+        if (!target) return
+
+        if (index === 0) {
+            onSelectSolarPowerPlant()
+        } else if (index < GRID_SIZE * GRID_SIZE) {
+            onSelectPlot(target)
+        }
+    }
+
     useEffect(() => {
         const load = async () => {
             const res = await fetch(endpoints.terralands())
@@ -116,6 +144,7 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
+            // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
             setMapPlots([spp, ...plots])
         }
         load()
@@ -138,6 +167,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
             onWheel={onWheel}
             onClick={onClick(handleClickOrTouch)}
             onTouch={onTouch(handleClickOrTouch)}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             attributes={{ width, height }}
         />
     )

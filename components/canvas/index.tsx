@@ -1,5 +1,6 @@
 import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
-import React, { useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
+import styles from './index.module.scss'
 
 export type CanvasProps = {
     canvasRef: React.RefObject<HTMLCanvasElement>
@@ -7,12 +8,24 @@ export type CanvasProps = {
     onWheel: (e: WheelEvent) => void
     onClick: (e: MouseEvent) => void
     onTouch: (e: TouchEvent) => void
+    onKeyDown: (e: KeyboardEvent) => void
+    onKeyUp: (e: KeyboardEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
-const Canvas = ({ canvasRef, onMouseMove, onWheel, onClick, onTouch, attributes: { width, height } }: CanvasProps) => {
+const Canvas = ({
+    onWheel,
+    onMouseMove,
+    onClick,
+    onTouch,
+    onKeyDown,
+    onKeyUp,
+    attributes: { width, height }
+}: CanvasProps) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+
     useEffect(() => {
-        if (!canvasRef.current || !width) return
+        if (!canvasRef.current) return
 
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
@@ -44,16 +57,20 @@ const Canvas = ({ canvasRef, onMouseMove, onWheel, onClick, onTouch, attributes:
         canvas.addEventListener('mousemove', onMouseMoveListener)
         canvas.addEventListener('click', onClickListener)
         canvas.addEventListener('touchend', onTouchListener)
+        canvas.addEventListener('keydown', onKeyDown)
+        canvas.addEventListener('keyup', onKeyUp)
 
         return () => {
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
             canvas.removeEventListener('click', onClickListener)
             canvas.removeEventListener('touchend', onTouchListener)
+            canvas.removeEventListener('keydown', onKeyDown)
+            canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch, canvasRef])
+    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, canvasRef])
 
-    return <canvas ref={canvasRef} {...{ width, height }} />
+    return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
 }
 
 export default Canvas
