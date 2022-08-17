@@ -9,7 +9,8 @@ export const main = Reach.App(() => {
         onReady: Fun(true, Null),
         onSoldOrWithdrawn: Fun(true, Null),
         tok: Token,
-        price: UInt
+        price: UInt,
+        sppContractInfo: Contract
     });
 
     const M = API('Market', {
@@ -24,12 +25,16 @@ export const main = Reach.App(() => {
         stop: Fun([], Bool)
     });
 
+    const SPP = {
+        increaseCapacity: Fun([UInt], UInt)
+    };
+
     init();
 
     A.only(() => {
-        const [tok, price] = declassify([interact.tok, interact.price]);
+        const [tok, price, sppContractInfo] = declassify([interact.tok, interact.price, interact.sppContractInfo]);
     });
-    A.publish(tok, price);
+    A.publish(tok, price, sppContractInfo);
     commit();
 
     const amount = 1;
@@ -37,7 +42,18 @@ export const main = Reach.App(() => {
     A.pay([[amount, tok]]);
     assert(balance(tok) == amount, "Balance of NFT is wrong");
 
-    A.interact.onReady(getContract());
+    const spp = remote(sppContractInfo, SPP);
+    const cap = spp.increaseCapacity(20)
+
+    commit()
+
+    A.only(() => {
+        const capacity = cap
+    });
+
+    A.publish(capacity)
+
+    A.interact.onReady(getContract(), sppContractInfo);
     A.interact.log("The token is on the market");
 
     const [done, sold,  buyer, paid] =

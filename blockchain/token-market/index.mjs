@@ -3,6 +3,7 @@
 import { loadStdlib } from '@reach-sh/stdlib'
 import assert from 'assert'
 import * as backend from './build/index.main.mjs'
+import * as sppBackend from './build/spp.main.mjs'
 
 // Load Reach stdlib
 const stdlib = loadStdlib()
@@ -232,41 +233,90 @@ const testSellAndBuyAndStop = async () => {
     console.log('\n>> Test sell, buy, track and stop')
 
     const [accAdmin, accAlice, accBob, gil] = await setup()
+    const sppReady = new Signal()
     const ready = new Signal()
     const sold = new Signal()
 
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
-    console.log('Deploying the contract...')
+    console.log('Deploying the SPP contract...')
 
-    // Deploy the dapp
-    const ctcAdmin = accAdmin.contract(backend)
+    // Deploy the spp backend
+    const ctcSpp = accAdmin.contract(sppBackend)
+    const spp = ctcSpp.a.SolarPowerPlant
+
+    let sppContractInfo
+
+    sppBackend.Admin(ctcSpp, {
+        log: (...args) => {
+            console.log(...args)
+            ready.notify()
+        },
+        onReady: async contract => {
+            console.log(`SPP Contract deployed ${JSON.stringify(contract)}`)
+            sppContractInfo = contract
+            sppReady.notify()
+        }
+    })
+
+    console.log('Waiting for the SPP contract...')
+
+    await sppReady.wait()
+
+    let sppInfo = await callAPI(
+        'Admin',
+        () => spp.get(),
+        'Admin managed to fetch information about the spp',
+        'Admin failed to fetch information about the spp'
+    )
+
+    console.log(`SPP info: ${sppInfo}`)
+
+    console.log('Deploying the Token Market contract...')
+
+    // Deploy the token market backend
+    const ctcTokenMarket = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await userConnectAndBuy('Alice', accAlice, ctcAdmin, gil, ready)),
-        thread(await userConnectAndBuy('Bob', accBob, ctcAdmin, gil, ready)),
-        thread(await userConnectToTrackerAndStop('Admin', accAdmin, ctcAdmin, gil, sold)),
-        backend.Admin(ctcAdmin, {
+        thread(await userConnectAndBuy('Alice', accAlice, ctcTokenMarket, gil, ready)),
+        thread(await userConnectAndBuy('Bob', accBob, ctcTokenMarket, gil, ready)),
+        thread(await userConnectToTrackerAndStop('Admin', accAdmin, ctcTokenMarket, gil, sold)),
+        backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
                 ready.notify()
             },
-            onReady: async contract => {
-                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+            onReady: async (contract, sppContract) => {
+                console.log(
+                    `Token Market Contract deployed ${JSON.stringify(contract)} with SPP contract ${JSON.stringify(
+                        sppContract
+                    )}`
+                )
                 const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
                 assert(adminGil == 0)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+
+                sppInfo = await callAPI(
+                    'Admin',
+                    () => spp.get(),
+                    'Admin managed to fetch information about the spp',
+                    'Admin failed to fetch information about the spp'
+                )
+
+                console.log(`SPP info: ${sppInfo}`)
             },
             onSoldOrWithdrawn: async () => {
                 sold.notify()
             },
             tok: gil.id,
-            price: stdlib.parseCurrency(tokenPrice)
+            price: stdlib.parseCurrency(tokenPrice),
+            sppContractInfo
         })
     ])
 
-    console.log('Contract stopped.')
+    console.log('Token Market Contract stopped.')
+
     const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(
         accAdmin,
         accAlice,
@@ -281,6 +331,8 @@ const testSellAndBuyAndStop = async () => {
         (parseFloat(aliceAlgo) < 90 && parseFloat(bobAlgo) > 90) ||
             (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90)
     )
+
+    await callAPI('Admin', () => spp.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
 const testSellAndStop = async () => {
@@ -389,5 +441,5 @@ const testSellAndNonAdminStopAndBuy = async () => {
 }
 
 await testSellAndBuyAndStop()
-await testSellAndStop()
-await testSellAndNonAdminStopAndBuy()
+// await testSellAndStop()
+// await testSellAndNonAdminStopAndBuy()
