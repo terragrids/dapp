@@ -7,8 +7,8 @@ const MAX_SCALE = 2
 const MIN_SCALE = 0.8
 
 // Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA_X = 1
-const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
+const DEFAULT_DELTA = 1
+const SCROLL_SENSITIVITY = 0.05
 
 export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosition: Position2D) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
@@ -27,19 +27,21 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         }
     }, [canvas])
 
-    const onScrollX = useCallback(
-        (e: WheelEvent) => {
+    const onMouseMove = useCallback(
+        (e: MouseEvent) => {
             if (!context) return
 
-            const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
+            const rect = context.canvas.getBoundingClientRect()
 
-            // Only allows x axis move
-            context.translate(moveAmount, 0)
+            mouseRef.current = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            }
         },
         [context]
     )
 
-    const onScrollY = useCallback(
+    const onWheelZoom = useCallback(
         (e: WheelEvent) => {
             if (!context) return
 
@@ -60,26 +62,20 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         [context]
     )
 
-    const onMouseMove = useCallback(
-        (e: MouseEvent) => {
-            if (!context) return
-
-            const rect = context.canvas.getBoundingClientRect()
-
-            mouseRef.current = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            }
-        },
-        [context]
-    )
-
     const onWheel = useCallback(
         (e: WheelEvent) => {
-            onScrollX(e)
-            onScrollY(e)
+            if (!context) return
+
+            if (zoomEnabled.current) {
+                onWheelZoom(e)
+            } else {
+                const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
+                const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
+
+                context.translate(moveAmountX, moveAmountY)
+            }
         },
-        [onScrollX, onScrollY]
+        [context, onWheelZoom]
     )
 
     const onClick = useCallback(
@@ -129,8 +125,6 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
     return {
         mouseRef,
-        onScrollX,
-        onScrollY,
         onWheel,
         onMouseMove,
         onClick,
