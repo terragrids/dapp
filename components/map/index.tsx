@@ -207,8 +207,8 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
             const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
-            const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
-            setMapPlots([spp, ...plots, ...bigs])
+            // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
+            setMapPlots([spp, ...plots])
         }
         load()
     }, [])
