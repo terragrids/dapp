@@ -14,6 +14,7 @@ export type CanvasProps = {
 }
 
 const Canvas = ({
+    canvasRef,
     onWheel,
     onMouseMove,
     onClick,
@@ -22,10 +23,8 @@ const Canvas = ({
     onKeyUp,
     attributes: { width, height }
 }: CanvasProps) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-
     useEffect(() => {
-        if (!canvasRef.current) return
+        if (!canvasRef.current || !width) return
 
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')

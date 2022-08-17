@@ -27,7 +27,7 @@ export type MapProps = {
     onSelectSolarPowerPlant: () => void
 }
 
-const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
+const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
     const canvasRef = useCanvas(render)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
@@ -36,11 +36,8 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
 
     const { mouseRef, onClick, onMouseMove, onTouch, onWheel } = useCanvasController(
         canvasRef.current,
-        startPositionRef.current,
-        headerHeight
+        startPositionRef.current
     )
-
-    const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
     const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
         if (mapPlots.length === 0) return
@@ -76,8 +73,6 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
     function render(ctx: CanvasRenderingContext2D) {
         if (!width || !height) return
 
-        const { x, y } = startPositionRef.current
-
         if (ORIGINAL_MAP_WIDTH * initialScaleRef.current > width || initialScaleRef.current < DEFAULT_MAP_SCALE) {
             // If map width is bigger than canvas width
             //  or map scale is set smaller than DEFAULT_MAP_SCALE,
@@ -111,27 +106,14 @@ const Map = ({ width, height, headerHeight, onSelectPlot, onSelectSolarPowerPlan
         }
     }
 
-    const onTouch = (ctx: CanvasRenderingContext2D, e: TouchEvent) => {
-        const rect = ctx.canvas.getBoundingClientRect()
-
-        const touch = e.touches[0] || e.changedTouches[0]
-
-        const { x: touchX, y: touchY } = getTransformedPoint(ctx, touch.clientX, touch.clientY - rect.top)
-
-        if (!isInsideMap(startPositionRef.current, touchX, touchY)) return
-
-        const { positionX, positionY } = getPlotPosition(startPositionRef.current, touchX, touchY)
-
-        const index = positionY * GRID_SIZE + positionX
-        const target = mapPlots.find(el => el.index === index)
-
-        if (!target) return
-
-        if (index === 0) {
-            onSelectSolarPowerPlant()
-        } else if (index < GRID_SIZE * GRID_SIZE) {
-            onSelectPlot(target)
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.ctrlKey || e.metaKey) {
+            zoomEnabled.current = true
         }
+    }
+
+    const onKeyUp = () => {
+        zoomEnabled.current = false
     }
 
     useEffect(() => {

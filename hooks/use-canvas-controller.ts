@@ -10,11 +10,7 @@ const MIN_SCALE = 0.8
 const DEFAULT_DELTA_X = 1
 const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
 
-export const useCanvasController = (
-    canvas: HTMLCanvasElement | null,
-    startPosition: Position2D,
-    headerHeight: number | undefined
-) => {
+export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosition: Position2D) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
 
@@ -88,9 +84,9 @@ export const useCanvasController = (
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
             if (!context) return
-            if (headerHeight === undefined) return
+            const rect = context.canvas.getBoundingClientRect()
 
-            const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - headerHeight)
+            const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - rect.top)
 
             if (!isInsideMap(startPosition, mouseX, mouseY)) return
 
@@ -98,17 +94,18 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, headerHeight]
+        [context, startPosition]
     )
 
     const onTouch = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: TouchEvent) => {
             if (!context) return
-            if (headerHeight === undefined) return
+
+            const rect = context.canvas.getBoundingClientRect()
 
             const touch = e.touches[0] || e.changedTouches[0]
 
-            const { x: touchX, y: touchY } = getTransformedPoint(context, touch.clientX, touch.clientY - headerHeight)
+            const { x: touchX, y: touchY } = getTransformedPoint(context, touch.clientX, touch.clientY - rect.top)
 
             if (!isInsideMap(startPosition, touchX, touchY)) return
 
@@ -116,7 +113,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, headerHeight]
+        [context, startPosition]
     )
 
     return {
