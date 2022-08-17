@@ -41,6 +41,9 @@ const Canvas = ({
         }
         render()
 
+        // focus canvas so that scroll zoom(keydown/up listeners) works by default
+        canvasRef.current.focus()
+
         return () => {
             cancelAnimationFrame(animationFrameId)
         }
@@ -60,9 +63,6 @@ const Canvas = ({
         if (BASE_SCREEN_SIZE >= width && currentScale > optimalScale) {
             context.scale(optimalScale, optimalScale)
         }
-
-        // focus canvas so that scroll zoom(keydown/up listeners) works by default
-        canvasRef.current.focus()
     }, [width])
 
     useEffect(() => {
