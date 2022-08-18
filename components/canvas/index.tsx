@@ -11,6 +11,7 @@ export type CanvasProps = {
     onKeyDown: (e: KeyboardEvent) => void
     onKeyUp: (e: KeyboardEvent) => void
     startPan: (e: MouseEvent) => void
+    startTouch: (e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
@@ -23,6 +24,7 @@ const Canvas = ({
     onKeyDown,
     onKeyUp,
     startPan,
+    startTouch,
     attributes: { width, height }
 }: CanvasProps) => {
     useEffect(() => {
@@ -59,6 +61,7 @@ const Canvas = ({
         canvas.addEventListener('mousemove', onMouseMoveListener)
         canvas.addEventListener('mousedown', onMouseDownListener)
         canvas.addEventListener('click', onClickListener)
+        canvas.addEventListener('touchstart', startTouch)
         canvas.addEventListener('touchend', onTouchListener)
         canvas.addEventListener('keydown', onKeyDown)
         canvas.addEventListener('keyup', onKeyUp)
@@ -72,7 +75,7 @@ const Canvas = ({
             canvas.removeEventListener('keydown', onKeyDown)
             canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, canvasRef])
+    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, startTouch, canvasRef])
 
     return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
 }
