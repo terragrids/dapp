@@ -45,9 +45,9 @@ export default function usePan(): [Position2D, (e: MouseEvent) => void] {
     return [panState, startPan]
 }
 
-function diffPoints(p1: Position2D, p2: Position2D) {
+export function diffPoints(p1: Position2D, p2: Position2D) {
     return { x: p1.x - p2.x, y: p1.y - p2.y }
 }
-function addPoints(p1: Position2D, p2: Position2D) {
+export function addPoints(p1: Position2D, p2: Position2D) {
     return { x: p1.x + p2.x, y: p1.y + p2.y }
 }
