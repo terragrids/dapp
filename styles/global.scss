@@ -12,6 +12,10 @@ body {
     line-height: 1.6;
     background-color: $color-mine-shaft;
     color: $color-alto;
+    // To allow scroll vertical refresh of the window
+    // Set `none` for canvas element
+    // About touch-action see: https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action
+    touch-action: pan-y;
 }
 
 * {
