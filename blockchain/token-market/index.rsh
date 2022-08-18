@@ -26,7 +26,7 @@ export const main = Reach.App(() => {
     });
 
     const SPP = {
-        increaseCapacity: Fun([UInt], UInt)
+        SolarPowerPlant_increaseCapacity: Fun([UInt], UInt)
     };
 
     init();
@@ -43,7 +43,7 @@ export const main = Reach.App(() => {
     assert(balance(tok) == amount, "Balance of NFT is wrong");
 
     const spp = remote(sppContractInfo, SPP);
-    const cap = spp.increaseCapacity(20)
+    const cap = spp.SolarPowerPlant_increaseCapacity(20)
 
     commit()
 
