@@ -1,7 +1,9 @@
 'reach 0.1';
 'use strict';
 
-const Transaction = Tuple(Address, UInt, Token);
+const Power = UInt
+const Price = UInt
+const Transaction = Tuple(Address, Price, Token, Power);
 
 export const main = Reach.App(() => {
     const A = Participant('Admin', {
@@ -10,6 +12,7 @@ export const main = Reach.App(() => {
         onSoldOrWithdrawn: Fun(true, Null),
         tok: Token,
         price: UInt,
+        power: UInt,
         sppContractInfo: Contract
     });
 
@@ -26,15 +29,16 @@ export const main = Reach.App(() => {
     });
 
     const SPP = {
-        SolarPowerPlant_increaseCapacity: Fun([UInt], UInt)
+        SolarPowerPlant_increaseCapacity: Fun([UInt], UInt),
+        SolarPowerPlant_increaseOutput: Fun([UInt], UInt)
     };
 
     init();
 
     A.only(() => {
-        const [tok, price, sppContractInfo] = declassify([interact.tok, interact.price, interact.sppContractInfo]);
+        const [tok, price, power, sppContractInfo] = declassify([interact.tok, interact.price, interact.power, interact.sppContractInfo]);
     });
-    A.publish(tok, price, sppContractInfo);
+    A.publish(tok, price, power, sppContractInfo);
     commit();
 
     const amount = 1;
@@ -43,7 +47,7 @@ export const main = Reach.App(() => {
     assert(balance(tok) == amount, "Balance of NFT is wrong");
 
     const spp = remote(sppContractInfo, SPP);
-    const cap = spp.SolarPowerPlant_increaseCapacity(20)
+    const cap = spp.SolarPowerPlant_increaseCapacity(power)
 
     commit()
 
@@ -77,7 +81,8 @@ export const main = Reach.App(() => {
             .api(M.buy,
                 () => price,
                 (k => {
-                    k([this, price, tok]);
+                    const output = spp.SolarPowerPlant_increaseOutput(power)
+                    k([this, price, tok, output]);
                     return [false, true, this, price + paid];
                 }))
             .timeout(false);
