@@ -1,6 +1,7 @@
 import { DEFAULT_MAP_SCALE, getPlotPosition, getTransformedPoint, isInsideMap } from 'components/map/map-helper'
 import { Position2D } from 'components/map/plots/plot'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import usePan from './use-pan'
 
 const ZOOM_SENSITIVITY = 0.0001
 const MAX_SCALE = 2
@@ -14,6 +15,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
+    const [panOffset, startPan] = usePan()
 
     useEffect(() => {
         if (!canvas) return
@@ -125,11 +127,13 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
     return {
         mouseRef,
+        panOffset,
         onWheel,
         onMouseMove,
         onClick,
         onTouch,
         onKeyDown,
-        onKeyUp
+        onKeyUp,
+        startPan
     }
 }
