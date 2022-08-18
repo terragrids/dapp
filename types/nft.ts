@@ -28,6 +28,7 @@ export type Holder = {
 export type Terraland = {
     id: string
     name: string
+    description?: string
     symbol: string
     url: string
     offchainUrl: string
@@ -43,8 +44,8 @@ export type Terraland = {
 export type SolarPowerPlant = {
     capacity: number
     output: number
-    totalTrcl: number
-    activeTrcl: number
+    totalTerracells: number
+    activeTerracells: number
 }
 
 export type Terracell = {

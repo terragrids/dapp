@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useContext } from 'react'
 import { strings } from 'strings/en.js'
 import ModalDialog from './modal-dialog.js'
@@ -6,6 +7,7 @@ import { endpoints } from '../utils/api-config'
 import { UserContext } from '../context/user-context'
 import { Nft } from 'types/nft'
 import { User } from 'hooks/use-user'
+import LoadingSpinner from './loading-spinner.js'
 
 export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) => {
     const user = useContext<User>(UserContext)
@@ -14,19 +16,20 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         name: string
         symbol: string
         url: string
-        output: 10
+        offchainUrl: string
+        power: 10
     }
 
     type State = {
         accountNfts: Array<Asset>
         errorMessage: string
-        totalOutput: number
+        loading: boolean
     }
 
     const [state, setState] = useState<State>({
         accountNfts: [],
         errorMessage: '',
-        totalOutput: 0
+        loading: false
     })
 
     let subtitle = ''
@@ -34,16 +37,16 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
 
     switch (selectedSymbol) {
         case 'TRCL':
-            subtitle = `${strings.totalOutput} ${state.totalOutput} TRW`
-            title = Nft.TRCL.name
+            subtitle = strings.yourSolarPvCells
+            title = `${Nft.TRCL.name} (${Nft.TRCL.currencySymbol})`
             break
         case 'TRLD':
-            subtitle = `${strings.landPlots} ${state.totalOutput}`
-            title = Nft.TRLD.name
+            subtitle = strings.yourPlotsOfLand
+            title = `${Nft.TRLD.name} (${Nft.TRLD.currencySymbol})`
             break
         case 'TRAS':
-            subtitle = `${strings.totalBuildings} ${state.totalOutput}`
-            title = Nft.TRAS.name
+            subtitle = strings.yourBuildings
+            title = `${Nft.TRAS.name} (${Nft.TRAS.currencySymbol})`
             break
     }
 
@@ -56,12 +59,14 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
                 setState(state => ({
                     ...state,
                     accountNfts: accountNfts.assets,
-                    totalOutput: accountNfts.totalOutput
+                    totalOutput: accountNfts.totalOutput,
+                    loading: false
                 }))
             } catch (e) {
                 setState(state => ({
                     ...state,
-                    errorMessage: strings.errorAccountNfts
+                    errorMessage: strings.errorAccountNfts,
+                    loading: false
                 }))
             }
         }
@@ -71,28 +76,46 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         }
     }, [selectedSymbol, visible, user])
 
-    return visible ? (
+    useEffect(() => {
+        setState(state => ({
+            ...state,
+            errorMessage: '',
+            loading: true
+        }))
+    }, [visible])
+
+    return (
         <ModalDialog
             visible={visible}
             title={title}
             subtitle={subtitle}
             onClose={onClose}
             className={styles.listDialog}>
-            <ul>
-                {state.accountNfts.map(asset => (
-                    <li key={asset.id}>
-                        <div className={styles.thumbPlaceholder}></div>
-                        <h2>
-                            {asset.name}
-                            <small>{`${strings.output}: ${asset.output} TRW`}</small>
-                        </h2>
-                    </li>
-                ))}
-            </ul>
-            {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
+            <div className={styles.content}>
+                {state.loading && <LoadingSpinner />}
+                {!state.loading && state.accountNfts.length === 0 && (
+                    <div>{strings.formatString(strings.youHaveNoNfts, title)}</div>
+                )}
+                {!state.loading && (
+                    <ul>
+                        {state.accountNfts.map(asset => (
+                            <li key={asset.id}>
+                                {/* TODO: replace with Image */}
+                                <picture className={styles.thumbnail}>
+                                    <source srcSet={asset.offchainUrl} type={'image/*'} />
+                                    <img src={asset.offchainUrl} alt={asset.name} />
+                                </picture>
+                                <h2>
+                                    {asset.name}
+                                    <small>{`${strings.output}: ${asset.power} TRW`}</small>
+                                </h2>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                {state.errorMessage && <div className={styles.error}>{state.errorMessage}</div>}
+            </div>
         </ModalDialog>
-    ) : (
-        ''
     )
 }
 

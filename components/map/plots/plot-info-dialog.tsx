@@ -52,8 +52,12 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
 
                     if (ipfsResponse.ok) {
-                        const { image } = await ipfsResponse.json()
+                        const { image, description } = await ipfsResponse.json()
                         setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
+                        setTerraland(trld => ({
+                            ...(trld as Terraland),
+                            description: description.text as string
+                        }))
                     }
                 } catch (e) {}
             } else {
@@ -148,7 +152,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                                 <dt>{strings.name}</dt>
                                 <dd>{terraland.name}</dd>
                                 <dt>{strings.description}</dt>
-                                <dd>{'No property in responsose'}</dd>
+                                <dd>{terraland.description}</dd>
                                 <dt>Position</dt>
                                 <dd>
                                     ({terraland.positionX},{terraland.positionY})
