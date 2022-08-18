@@ -3,8 +3,9 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 })
 
-export default function usePan(): [Position2D, (e: MouseEvent) => void] {
+export default function usePan(): [Position2D, (e: MouseEvent) => void, boolean] {
     const [panState, setPanState] = useState<Position2D>(ORIGIN)
+    const [isPanned, setIsPanned] = useState(false)
 
     const lastPointRef = useRef<Position2D>(ORIGIN)
     const lastOffsetRef = useRef<Position2D>(ORIGIN)
@@ -25,6 +26,7 @@ export default function usePan(): [Position2D, (e: MouseEvent) => void] {
     }, [])
 
     useEffect(() => {
+        setIsPanned(true)
         lastOffsetRef.current = panState
     }, [panState])
 
@@ -37,12 +39,14 @@ export default function usePan(): [Position2D, (e: MouseEvent) => void] {
         (e: MouseEvent) => {
             document.addEventListener('mousemove', pan)
             document.addEventListener('mouseup', endPan)
+
+            setIsPanned(false)
             lastPointRef.current = { x: e.pageX, y: e.pageY }
         },
         [pan, endPan]
     )
 
-    return [panState, startPan]
+    return [panState, startPan, isPanned]
 }
 
 export function diffPoints(p1: Position2D, p2: Position2D) {

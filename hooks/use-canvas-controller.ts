@@ -16,7 +16,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
-    const [panOffset, startPan] = usePan()
+    const [panOffset, startPan, isPanned] = usePan()
     const [touchOffset, startTouch] = useTouch()
 
     useEffect(() => {
@@ -84,7 +84,8 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context) return
+            if (!context || isPanned) return
+
             const rect = context.canvas.getBoundingClientRect()
 
             const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - rect.top)
@@ -95,7 +96,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
             return func(positionX, positionY)
         },
-        [context, startPosition]
+        [context, startPosition, isPanned]
     )
 
     const onTouch = useCallback(
