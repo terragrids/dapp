@@ -19,7 +19,7 @@ export const useCanvas = (
                 // increase the range to be cleared.
                 // Otherwise the area initially not rendered on screen or full screen will not be cleared
                 //  when scrolling horizontally
-                context.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
+                context.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 3)
             } else {
                 context.clearRect(0, 0, width, height)
             }
