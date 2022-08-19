@@ -14,6 +14,7 @@ export const main = Reach.App(() => {
         get: Fun([], SolarPowerPlant),
         setCapacity: Fun([UInt], UInt),
         increaseCapacity: Fun([UInt], UInt),
+        decreaseCapacity: Fun([UInt], UInt),
         setOutput: Fun([UInt], UInt),
         increaseOutput: Fun([UInt], UInt)
     });
@@ -41,8 +42,9 @@ export const main = Reach.App(() => {
                 }))
             .api(V.increaseCapacity,
                 ((amount, k) => {
-                    k(capacity + amount);
-                    return [false, capacity + amount, output]
+                    const newCapacity = capacity + amount;
+                    k(newCapacity);
+                    return [false, newCapacity, output]
                 }))
             .api(V.setOutput,
                 ((amount, k) => {
@@ -51,8 +53,21 @@ export const main = Reach.App(() => {
                 }))
             .api(V.increaseOutput,
                 ((amount, k) => {
-                    k(output + amount);
-                    return [false, capacity, output + amount]
+                    const newOutput = output + amount;
+                    k(newOutput);
+                    return [false, capacity, newOutput]
+                }))
+            .api(V.decreaseCapacity,
+                ((amount, k) => {
+                    if (amount > capacity) {
+                        k(0);
+                        return [false, 0, output]
+                    }
+                    else {
+                        const newCapacity = capacity - amount;
+                        k(newCapacity);
+                        return [false, newCapacity, output]
+                    }
                 }))
             .api(V.stop,
                 (() => { assume(this == A); }),

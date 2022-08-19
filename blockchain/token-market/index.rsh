@@ -30,7 +30,8 @@ export const main = Reach.App(() => {
 
     const SPP = {
         SolarPowerPlant_increaseCapacity: Fun([UInt], UInt),
-        SolarPowerPlant_increaseOutput: Fun([UInt], UInt)
+        SolarPowerPlant_decreaseCapacity: Fun([UInt], UInt),
+        SolarPowerPlant_increaseOutput: Fun([UInt], UInt),
     };
 
     init();
@@ -48,22 +49,15 @@ export const main = Reach.App(() => {
 
     const spp = remote(sppContractInfo, SPP);
     const cap = spp.SolarPowerPlant_increaseCapacity(power)
-
-    commit()
-
-    A.only(() => {
-        const capacity = cap
-    });
-
-    A.publish(capacity)
+    void(cap)
 
     A.interact.onReady(getContract(), sppContractInfo);
     A.interact.log("The token is on the market");
 
-    const [done, sold,  buyer, paid] =
+    const [withdrawn, sold,  buyer, paid] =
         parallelReduce([false, false, A, 0])
             .invariant(balance() == paid && balance(tok) == 1)
-            .while(!done && !sold)
+            .while(!withdrawn && !sold)
             .api(M.stop,
                 (() => { assume(this == A); }),
                 (() => 0),
@@ -90,14 +84,17 @@ export const main = Reach.App(() => {
     transfer(paid).to(A);
     transfer(1, tok).to(buyer);
 
-    A.interact.log("The token has been sold or withdrawn");
     A.interact.onSoldOrWithdrawn();
 
-    if (done) {
+    if (withdrawn) {
+        A.interact.log("The token has been withdrawn");
+        // TODO reintroduce the line below when this is solved: https://github.com/reach-sh/reach-lang/discussions/1354
+        // const _ = spp.SolarPowerPlant_decreaseCapacity(power)
         commit();
         exit();
     }
 
+    A.interact.log("The token has been sold");
     A.interact.log("Tracking token....");
 
     require(balance() == 0);

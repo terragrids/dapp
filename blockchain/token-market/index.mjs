@@ -291,7 +291,6 @@ const testSellAndBuyAndStop = async () => {
         backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
             onReady: async (contract, sppContract) => {
                 console.log(
@@ -316,6 +315,8 @@ const testSellAndBuyAndStop = async () => {
                 // Check that the SPP power capacity has increased to 15 after putting the NFT up for sale
                 assert(sppInfo[0].toNumber() === 15) // capacity
                 assert(sppInfo[1].toNumber() === 0) // output
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
                 sold.notify()
@@ -364,6 +365,7 @@ const testSellAndStop = async () => {
     console.log('\n>> Test sell and stop')
     const [accAdmin, accAlice, accBob, gil] = await setup()
     const ready = new Signal()
+    const withdrawn = new Signal()
 
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
@@ -380,7 +382,6 @@ const testSellAndStop = async () => {
         backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
             onReady: async (contract, sppContract) => {
                 console.log(
@@ -405,9 +406,11 @@ const testSellAndStop = async () => {
                 // Check that the SPP power capacity has increased after putting the NFT up for sale
                 assert(sppInfo[0].toNumber() === 7) // capacity
                 assert(sppInfo[1].toNumber() === 0) // output
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
-                // do nothing
+                withdrawn.notify()
             },
             power: 7,
             tok: gil.id,
@@ -415,6 +418,8 @@ const testSellAndStop = async () => {
             sppContractInfo
         })
     ])
+
+    await withdrawn.wait()
 
     console.log('Token Market Contract stopped.')
 
@@ -478,7 +483,6 @@ const testSellAndNonAdminStopAndBuy = async () => {
         backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
             onReady: async (contract, sppContract) => {
                 console.log(
@@ -503,6 +507,8 @@ const testSellAndNonAdminStopAndBuy = async () => {
                 // Check that the SPP power capacity has not increased after putting the NFT up for sale
                 assert(sppInfo[0].toNumber() === 0) // capacity
                 assert(sppInfo[1].toNumber() === 0) // output
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
                 sold.notify()

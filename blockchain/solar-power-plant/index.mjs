@@ -14,17 +14,23 @@ if (stdlib.connector !== 'ALGO') {
 export class Signal {
     constructor() {
         const me = this
-        this.p = new Promise((resolve) => { me.r = resolve })
+        this.p = new Promise(resolve => {
+            me.r = resolve
+        })
     }
-    wait() { return this.p }
-    notify() { this.r(true) }
+    wait() {
+        return this.p
+    }
+    notify() {
+        this.r(true)
+    }
 }
 
 const timeout = ms => new Promise(resolve => setTimeout(resolve, ms))
-const thread = async (f) => await f()
+const thread = async f => await f()
 
-const algo = (x) => stdlib.formatCurrency(x, 4)
-const fmt = (x) => `${algo(x)} ALGO`
+const algo = x => stdlib.formatCurrency(x, 4)
+const fmt = x => `${algo(x)} ALGO`
 
 const callAPI = async (name, f, successMsg, failureMsg) => {
     console.log(`${name} is calling the API`)
@@ -33,8 +39,8 @@ const callAPI = async (name, f, successMsg, failureMsg) => {
     try {
         result = await f()
         console.log(successMsg)
-    }
-    catch (e) {
+    } catch (e) {
+        console.log(e)
         console.log(failureMsg)
     }
     return result
@@ -89,7 +95,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
         await callAPI(
             name,
             () => spp.setCapacity(10),
-            `${name} managed to set the spp capacity`,
+            `${name} managed to set the spp capacit`,
             `${name} failed to set the spp capacity`
         )
 
@@ -117,6 +123,84 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             () => spp.increaseCapacity(25),
             `${name} managed to increase the spp capacity`,
             `${name} failed to increase the spp capacity`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 35)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Decrease capacity more the current
+
+        await callAPI(
+            name,
+            () => spp.decreaseCapacity(45),
+            `${name} managed to decrease the spp capacity`,
+            `${name} failed to decrease the spp capacity`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 0)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Increase capacity
+
+        await callAPI(
+            name,
+            () => spp.increaseCapacity(55),
+            `${name} managed to increase the spp capacity`,
+            `${name} failed to increase the spp capacity`
+        )
+
+        sppDetails = await callAPI(
+            name,
+            () => spp.get(),
+            `${name} managed to get the spp`,
+            `${name} failed to get the spp`
+        )
+
+        console.log(`${name} sees that spp has `, {
+            capacity: sppDetails[0].toNumber(),
+            output: sppDetails[1].toNumber()
+        })
+
+        assert(sppDetails[0].toNumber() == 55)
+        assert(sppDetails[1].toNumber() == 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Decrease capacity less the current
+
+        await callAPI(
+            name,
+            () => spp.decreaseCapacity(20),
+            `${name} managed to decrease the spp capacity`,
+            `${name} failed to decrease the spp capacity`
         )
 
         sppDetails = await callAPI(
@@ -218,11 +302,11 @@ const testAndStop = async () => {
     await Promise.all([
         thread(await userConnectAndStop('Admin', accAdmin, ctcAdmin, ready)),
         backend.Admin(ctcAdmin, {
-            log: ((...args) => {
+            log: (...args) => {
                 console.log(...args)
                 ready.notify()
-            }),
-            onReady: async (contract) => {
+            },
+            onReady: async contract => {
                 console.log(`Contract deployed ${JSON.stringify(contract)}`)
                 const adminAlgo = await stdlib.balanceOf(accAdmin)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
