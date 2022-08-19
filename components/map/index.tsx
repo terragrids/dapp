@@ -25,11 +25,15 @@ export type MapProps = {
 }
 
 const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
-    const canvasRef = useCanvas(render, width, height)
+    const [canvasRef, initialScale] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(canvasRef.current, startPositionRef.current)
+    const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(
+        canvasRef.current,
+        startPositionRef.current,
+        initialScale
+    )
 
     const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
         if (mapPlots.length === 0) return

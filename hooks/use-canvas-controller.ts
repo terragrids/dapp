@@ -12,7 +12,11 @@ const MIN_SCALE = 0.8
 const DEFAULT_DELTA = 1
 const SCROLL_SENSITIVITY = 0.05
 
-export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosition: Position2D) => {
+export const useCanvasController = (
+    canvas: HTMLCanvasElement | null,
+    startPosition: Position2D,
+    initialScale: number
+) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
@@ -60,9 +64,9 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
             const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
             // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-            // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+            // When reaching MIN_SCALE or initialScale, it only allows zoom IN (= positive zoomAmount)
             if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-            if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+            if (currentScale <= Math.min(MIN_SCALE, initialScale) && zoomAmount < 0) return
 
             const scale = DEFAULT_MAP_SCALE + zoomAmount
 
@@ -70,7 +74,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
             context.scale(scale, scale)
             context.translate(-e.offsetX, -e.offsetY)
         },
-        [context]
+        [context, initialScale]
     )
 
     const onWheel = useCallback(
