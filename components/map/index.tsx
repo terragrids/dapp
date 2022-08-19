@@ -29,19 +29,8 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const {
-        mouseRef,
-        panOffset,
-        touchOffset,
-        onWheel,
-        onMouseMove,
-        onClick,
-        onTouch,
-        onKeyDown,
-        onKeyUp,
-        startPan,
-        startTouch
-    } = useCanvasController(canvasRef.current, startPositionRef.current)
+    const { mouseRef, onWheel, onMouseMove, onClick, onTouch, onKeyDown, onKeyUp, startPan, startTouch } =
+        useCanvasController(canvasRef.current, startPositionRef.current)
 
     const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
         if (mapPlots.length === 0) return
@@ -115,17 +104,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         const { x, y } = getStartPosition(width, height)
         startPositionRef.current = { x, y }
     }, [width, height])
-
-    useEffect(() => {
-        if (!canvasRef.current) return
-
-        const context = canvasRef.current.getContext('2d')
-
-        if (!context) return
-
-        context.translate(panOffset.x, panOffset.y)
-        context.translate(touchOffset.x, touchOffset.y)
-    }, [canvasRef, panOffset, touchOffset])
 
     return (
         <Canvas

@@ -31,6 +31,13 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         }
     }, [canvas])
 
+    useEffect(() => {
+        if (!context) return
+
+        context.translate(panOffset.x, panOffset.y)
+        context.translate(touchOffset.x, touchOffset.y)
+    }, [context, panOffset, touchOffset])
+
     const onMouseMove = useCallback(
         (e: MouseEvent) => {
             if (!context) return
@@ -130,8 +137,6 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
     return {
         mouseRef,
-        panOffset,
-        touchOffset,
         onWheel,
         onMouseMove,
         onClick,
