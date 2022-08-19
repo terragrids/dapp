@@ -100,7 +100,18 @@ const deploySpp = async account => {
 
     // Deploy the spp backend
     const ctcSpp = account.contract(sppBackend)
-    const spp = ctcSpp.a.SolarPowerPlant
+    const sppApi = ctcSpp.a.SolarPowerPlant
+    const sppView = ctcSpp.v.SPPView
+
+    const logSppAndAssert = async (expCapacity, expOutput) => {
+        const capacity = (await sppView.capacity())[1].toNumber()
+        const output = (await sppView.output())[1].toNumber()
+
+        console.log('SPP info', { capacity, output })
+
+        assert(capacity == expCapacity)
+        assert(output == expOutput)
+    }
 
     let sppContractInfo
 
@@ -119,16 +130,9 @@ const deploySpp = async account => {
 
     await sppReady.wait()
 
-    let sppInfo = await callAPI(
-        'Admin',
-        () => spp.get(),
-        'Admin managed to fetch information about the spp',
-        'Admin failed to fetch information about the spp'
-    )
+    logSppAndAssert(0, 0)
 
-    console.log(`SPP info: ${sppInfo}`)
-
-    return { sppContractInfo, spp }
+    return { sppContractInfo, sppApi, logSppAndAssert }
 }
 
 const getAndLogAllBalances = async (accAdmin, accAlice, accBob, gil) => {
@@ -277,7 +281,7 @@ const testSellAndBuyAndStop = async () => {
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
     // Deploy the spp backend
-    const { sppContractInfo, spp } = await deploySpp(accAdmin)
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
     console.log('Deploying the Token Market contract...')
 
@@ -303,18 +307,7 @@ const testSellAndBuyAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                const sppInfo = await callAPI(
-                    'Admin',
-                    () => spp.get(),
-                    'Admin managed to fetch information about the spp',
-                    'Admin failed to fetch information about the spp'
-                )
-
-                console.log(`SPP info: ${sppInfo}`)
-
-                // Check that the SPP power capacity has increased to 15 after putting the NFT up for sale
-                assert(sppInfo[0].toNumber() === 15) // capacity
-                assert(sppInfo[1].toNumber() === 0) // output
+                logSppAndAssert(15, 0)
 
                 ready.notify()
             },
@@ -345,20 +338,9 @@ const testSellAndBuyAndStop = async () => {
             (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90)
     )
 
-    const sppInfo = await callAPI(
-        'Admin',
-        () => spp.get(),
-        'Admin managed to fetch information about the spp',
-        'Admin failed to fetch information about the spp'
-    )
+    logSppAndAssert(15, 15)
 
-    console.log(`SPP info: ${sppInfo}`)
-
-    // Check that the SPP power output has increased to 15 after selling the NFT
-    assert(sppInfo[0].toNumber() === 15) // capacity
-    assert(sppInfo[1].toNumber() === 15) // output
-
-    await callAPI('Admin', () => spp.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to stop the spp')
 }
 
 const testSellAndStop = async () => {
@@ -370,7 +352,7 @@ const testSellAndStop = async () => {
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
     // Deploy the spp backend
-    const { sppContractInfo, spp } = await deploySpp(accAdmin)
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
     console.log('Deploying the Token Market contract...')
 
@@ -394,18 +376,7 @@ const testSellAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                const sppInfo = await callAPI(
-                    'Admin',
-                    () => spp.get(),
-                    'Admin managed to fetch information about the spp',
-                    'Admin failed to fetch information about the spp'
-                )
-
-                console.log(`SPP info: ${sppInfo}`)
-
-                // Check that the SPP power capacity has increased after putting the NFT up for sale
-                assert(sppInfo[0].toNumber() === 7) // capacity
-                assert(sppInfo[1].toNumber() === 0) // output
+                logSppAndAssert(7, 0)
 
                 ready.notify()
             },
@@ -435,20 +406,9 @@ const testSellAndStop = async () => {
     assert(aliceGil == 0 && bobGil == 0)
     assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
 
-    const sppInfo = await callAPI(
-        'Admin',
-        () => spp.get(),
-        'Admin managed to fetch information about the spp',
-        'Admin failed to fetch information about the spp'
-    )
+    logSppAndAssert(7, 0)
 
-    console.log(`SPP info: ${sppInfo}`)
-
-    // Check that the SPP power output has not increased
-    assert(sppInfo[0].toNumber() === 7) // capacity
-    assert(sppInfo[1].toNumber() === 0) // output
-
-    await callAPI('Admin', () => spp.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
 const testSellAndNonAdminStopAndBuy = async () => {
@@ -462,7 +422,7 @@ const testSellAndNonAdminStopAndBuy = async () => {
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
     // Deploy the spp backend
-    const { sppContractInfo, spp } = await deploySpp(accAdmin)
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
     console.log('Deploying the Token Market contract...')
 
@@ -495,18 +455,7 @@ const testSellAndNonAdminStopAndBuy = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                const sppInfo = await callAPI(
-                    'Admin',
-                    () => spp.get(),
-                    'Admin managed to fetch information about the spp',
-                    'Admin failed to fetch information about the spp'
-                )
-
-                console.log(`SPP info: ${sppInfo}`)
-
-                // Check that the SPP power capacity has not increased after putting the NFT up for sale
-                assert(sppInfo[0].toNumber() === 0) // capacity
-                assert(sppInfo[1].toNumber() === 0) // output
+                logSppAndAssert(0, 0)
 
                 ready.notify()
             },
@@ -534,20 +483,9 @@ const testSellAndNonAdminStopAndBuy = async () => {
     assert(aliceGil == 1 && bobGil == 0)
     assert(parseFloat(aliceAlgo) < 99 && parseFloat(bobAlgo) > 99)
 
-    const sppInfo = await callAPI(
-        'Admin',
-        () => spp.get(),
-        'Admin managed to fetch information about the spp',
-        'Admin failed to fetch information about the spp'
-    )
+    logSppAndAssert(0, 0)
 
-    console.log(`SPP info: ${sppInfo}`)
-
-    // Check that the SPP power output has not increased
-    assert(sppInfo[0].toNumber() === 0) // capacity
-    assert(sppInfo[1].toNumber() === 0) // output
-
-    await callAPI('Admin', () => spp.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
 await testSellAndBuyAndStop()
