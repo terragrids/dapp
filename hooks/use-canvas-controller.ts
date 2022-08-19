@@ -1,6 +1,8 @@
 import { DEFAULT_MAP_SCALE, getPlotPosition, getTransformedPoint, isInsideMap } from 'components/map/map-helper'
 import { Position2D } from 'components/map/plots/plot'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import usePan from './use-pan'
+import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
 const MAX_SCALE = 2
@@ -10,10 +12,16 @@ const MIN_SCALE = 0.8
 const DEFAULT_DELTA = 1
 const SCROLL_SENSITIVITY = 0.05
 
-export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosition: Position2D) => {
+export const useCanvasController = (
+    canvas: HTMLCanvasElement | null,
+    startPosition: Position2D,
+    initialScale: number
+) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
+    const [panOffset, startPan, isPanned] = usePan()
+    const [touchOffset, isTouchPanned, startTouch] = useTouch()
 
     useEffect(() => {
         if (!canvas) return
@@ -26,6 +34,13 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
             setContext(null)
         }
     }, [canvas])
+
+    useEffect(() => {
+        if (!context) return
+
+        context.translate(panOffset.x, panOffset.y)
+        context.translate(touchOffset.x, touchOffset.y)
+    }, [context, panOffset, touchOffset])
 
     const onMouseMove = useCallback(
         (e: MouseEvent) => {
@@ -49,9 +64,9 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
             const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
 
             // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-            // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
+            // When reaching MIN_SCALE or initialScale, it only allows zoom IN (= positive zoomAmount)
             if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-            if (currentScale <= MIN_SCALE && zoomAmount < 0) return
+            if (currentScale <= Math.min(MIN_SCALE, initialScale) && zoomAmount < 0) return
 
             const scale = DEFAULT_MAP_SCALE + zoomAmount
 
@@ -59,7 +74,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
             context.scale(scale, scale)
             context.translate(-e.offsetX, -e.offsetY)
         },
-        [context]
+        [context, initialScale]
     )
 
     const onWheel = useCallback(
@@ -80,7 +95,8 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context) return
+            if (!context || isPanned || isTouchPanned) return
+
             const rect = context.canvas.getBoundingClientRect()
 
             const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - rect.top)
@@ -91,12 +107,12 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
             return func(positionX, positionY)
         },
-        [context, startPosition]
+        [context, startPosition, isPanned, isTouchPanned]
     )
 
     const onTouch = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: TouchEvent) => {
-            if (!context) return
+            if (!context || isTouchPanned) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -110,7 +126,7 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
 
             return func(positionX, positionY)
         },
-        [context, startPosition]
+        [context, startPosition, isTouchPanned]
     )
 
     const onKeyDown = useCallback((e: KeyboardEvent) => {
@@ -130,6 +146,8 @@ export const useCanvasController = (canvas: HTMLCanvasElement | null, startPosit
         onClick,
         onTouch,
         onKeyDown,
-        onKeyUp
+        onKeyUp,
+        startPan,
+        startTouch
     }
 }

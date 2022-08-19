@@ -10,6 +10,8 @@ export type CanvasProps = {
     onTouch: (e: TouchEvent) => void
     onKeyDown: (e: KeyboardEvent) => void
     onKeyUp: (e: KeyboardEvent) => void
+    startPan: (e: MouseEvent) => void
+    startTouch: (e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
@@ -21,6 +23,8 @@ const Canvas = ({
     onTouch,
     onKeyDown,
     onKeyUp,
+    startPan,
+    startTouch,
     attributes: { width, height }
 }: CanvasProps) => {
     useEffect(() => {
@@ -49,12 +53,15 @@ const Canvas = ({
 
         const onWheelListener = (e: WheelEvent) => onWheel(e)
         const onMouseMoveListener = (e: MouseEvent) => onMouseMove(e)
+        const onMouseDownListener = (e: MouseEvent) => startPan(e)
         const onClickListener = (e: MouseEvent) => onClick(e)
         const onTouchListener = (e: TouchEvent) => onTouch(e)
 
         canvas.addEventListener('wheel', onWheelListener)
         canvas.addEventListener('mousemove', onMouseMoveListener)
+        canvas.addEventListener('mousedown', onMouseDownListener)
         canvas.addEventListener('click', onClickListener)
+        canvas.addEventListener('touchstart', startTouch)
         canvas.addEventListener('touchend', onTouchListener)
         canvas.addEventListener('keydown', onKeyDown)
         canvas.addEventListener('keyup', onKeyUp)
@@ -62,12 +69,13 @@ const Canvas = ({
         return () => {
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
+            canvas.removeEventListener('mousedown', onMouseDownListener)
             canvas.removeEventListener('click', onClickListener)
             canvas.removeEventListener('touchend', onTouchListener)
             canvas.removeEventListener('keydown', onKeyDown)
             canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, canvasRef])
+    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, startTouch, canvasRef])
 
     return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
 }

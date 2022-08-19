@@ -1,11 +1,11 @@
 import { DEFAULT_MAP_SCALE, getOptimalScale, ORIGINAL_MAP_WIDTH } from 'components/map/map-helper'
-import { useCallback, useEffect, useRef } from 'react'
+import { RefObject, useCallback, useEffect, useRef } from 'react'
 
 export const useCanvas = (
     draw: (ctx: CanvasRenderingContext2D) => void,
     width: number | undefined,
     height: number | undefined
-) => {
+): [RefObject<HTMLCanvasElement>, number] => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
 
@@ -19,7 +19,7 @@ export const useCanvas = (
                 // increase the range to be cleared.
                 // Otherwise the area initially not rendered on screen or full screen will not be cleared
                 //  when scrolling horizontally
-                context.clearRect(-width, 0, (width / initialScaleRef.current) * 2, height * 2)
+                context.clearRect(-width, -height, (width / initialScaleRef.current) * 2, height * 3)
             } else {
                 context.clearRect(0, 0, width, height)
             }
@@ -57,5 +57,5 @@ export const useCanvas = (
         initialScaleRef.current = optimalScale
     }, [width])
 
-    return canvasRef
+    return [canvasRef, initialScaleRef.current]
 }
