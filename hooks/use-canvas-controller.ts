@@ -21,7 +21,7 @@ export const useCanvasController = (
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
     const [panOffset, startPan, isPanned] = usePan()
-    const [touchOffset, startTouch] = useTouch()
+    const [touchOffset, isTouchPanned, startTouch] = useTouch()
 
     useEffect(() => {
         if (!canvas) return
@@ -95,7 +95,7 @@ export const useCanvasController = (
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context || isPanned) return
+            if (!context || isPanned || isTouchPanned) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -107,12 +107,12 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, isPanned]
+        [context, startPosition, isPanned, isTouchPanned]
     )
 
     const onTouch = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: TouchEvent) => {
-            if (!context) return
+            if (!context || isTouchPanned) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -126,7 +126,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition]
+        [context, startPosition, isTouchPanned]
     )
 
     const onKeyDown = useCallback((e: KeyboardEvent) => {

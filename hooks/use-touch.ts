@@ -4,8 +4,10 @@ import { addPoints, diffPoints } from './use-pan'
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 })
 
-export default function useTouch(): [Position2D, (e: TouchEvent) => void] {
+export default function useTouch(): [Position2D, number, (e: TouchEvent) => void] {
     const [offset, setOffset] = useState<Position2D>(ORIGIN)
+    const [isPanned, setIsPanned] = useState(false)
+
     // const [scale, setScale] = useState(DEFAULT_MAP_SCALE)
 
     const lastPointRef = useRef<Position2D>(ORIGIN)
@@ -38,6 +40,8 @@ export default function useTouch(): [Position2D, (e: TouchEvent) => void] {
     )
 
     useEffect(() => {
+        setIsPanned(true)
+
         lastOffsetRef.current = offset
     }, [offset])
 
@@ -50,11 +54,12 @@ export default function useTouch(): [Position2D, (e: TouchEvent) => void] {
         (e: TouchEvent) => {
             document.addEventListener('touchmove', handleTouchMove)
             document.addEventListener('touchend', endTouch)
+            setIsPanned(false)
 
             lastPointRef.current = { x: e.touches[0].pageX, y: e.touches[0].pageY }
         },
         [handleTouchMove, endTouch]
     )
 
-    return [offset, startTouch]
+    return [offset, isPanned, startTouch]
 }
