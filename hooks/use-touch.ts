@@ -4,7 +4,7 @@ import { addPoints, diffPoints } from './use-pan'
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 })
 
-export default function useTouch(): [Position2D, number, (e: TouchEvent) => void] {
+export default function useTouch(): [Position2D, boolean, (e: TouchEvent) => void] {
     const [offset, setOffset] = useState<Position2D>(ORIGIN)
     const [isPanned, setIsPanned] = useState(false)
 
