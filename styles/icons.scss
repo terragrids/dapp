@@ -1,53 +1,57 @@
 @font-face {
-  font-family: 'terragrids';
-  src: url('/fonts/terragrids.eot?q7qokf');
-  src: url('/fonts/terragrids.eot?q7qokf#iefix') format('embedded-opentype'),
-    url('/fonts/terragrids.ttf?q7qokf') format('truetype'), url('/fonts/terragrids.woff?q7qokf') format('woff'),
-    url('/fonts/terragrids.svg?q7qokf#terragrids') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
+    font-family: 'terragrids';
+    src: url('/fonts/terragrids.eot?q7qokf');
+    src: url('/fonts/terragrids.eot?q7qokf#iefix') format('embedded-opentype'),
+        url('/fonts/terragrids.ttf?q7qokf') format('truetype'), url('/fonts/terragrids.woff?q7qokf') format('woff'),
+        url('/fonts/terragrids.svg?q7qokf#terragrids') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
 
 [class^='icon-'],
 [class*=' icon-'] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'terragrids' !important;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'terragrids' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-twitter:before {
-  content: '\e901';
+    content: '\e901';
 }
 
 .icon-github:before {
-  content: '\e900';
+    content: '\e900';
 }
 
 .icon-discord:before {
-  content: "\e902";
+    content: '\e902';
 }
 
 .icon-menu:before {
-  content: '\e92b';
+    content: '\e92b';
 }
 
 .icon-cross:before {
-  content: '\e935';
+    content: '\e935';
 }
 
 .icon-chevron-right-circle:before {
-  content: '\e965';
+    content: '\e965';
 }
 
 .icon-check:before {
-  content: "\e934";
+    content: '\e934';
+}
+
+.icon-arrow-up::before {
+    content: '\1431';
 }

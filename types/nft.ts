@@ -35,7 +35,7 @@ export type TerraNft = {
     offchainUrl: string
     holders: Array<Holder>
     contractId?: string
-    contractInfo?: string
+    contractInfo?: any // TODO: check the type
     assetPrice?: number
     sellerAddress?: string
 }
