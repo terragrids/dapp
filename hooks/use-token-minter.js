@@ -1,7 +1,6 @@
 import { ReachContext } from 'context/reach-context.js'
 import { UserContext } from 'context/user-context.js'
 import { useContext } from 'react'
-import { Nft } from 'types/nft'
 import { endpoints } from 'utils/api-config.js'
 
 export function useTokenMinter() {
@@ -12,11 +11,6 @@ export function useTokenMinter() {
         const hashBuffer = Buffer.from(metadataHash, 'base64')
         const hashArray = new Uint8Array(hashBuffer)
         try {
-            let spp
-            if (symbol === Nft.TRCL.symbol) {
-                spp = await fetch(endpoints.solarPowerPlant)
-            }
-
             const launchTokenResponse = await stdlib.launchToken(walletAccount, name, symbol, {
                 supply: 1,
                 decimals: 0,
@@ -24,14 +18,14 @@ export function useTokenMinter() {
                 metadataHash: hashArray
             })
 
-            if (spp) {
-                if (spp.contractInfo) {
-                    // TODO Attach to the contract
-                } else {
-                    // Deploy the contract
+            // Deploy the SPP contract if it's not done yet
+            const response = await fetch(endpoints.solarPowerPlant)
+            if (response.status === 200) {
+                const { contractInfo } = await response.json()
+                if (!contractInfo) {
                     try {
                         const sppContract = walletAccount.contract(sppBackend)
-                        sppContract.current.p.Admin({
+                        sppContract.p.Admin({
                             log: () => {
                                 /* add logs */
                             },
@@ -50,11 +44,7 @@ export function useTokenMinter() {
                                 } catch (e) {}
                             }
                         })
-                    } catch (e) {
-                        fail()
-                    } finally {
-                        tokenMarketContract.current = null
-                    }
+                    } catch (e) {}
                 }
             }
 
