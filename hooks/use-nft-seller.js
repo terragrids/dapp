@@ -4,9 +4,9 @@ import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 
 export function useNftSeller() {
-    const { backend, stdlib } = useContext(ReachContext)
+    const { tokenMarketBackend, stdlib } = useContext(ReachContext)
     const { walletAccount, walletAddress } = useContext(UserContext)
-    const contract = useRef()
+    const tokenMarketContract = useRef()
     const unit = 'ALGO'
 
     const saveContractInfo = useCallback(
@@ -99,8 +99,8 @@ export function useNftSeller() {
             })
 
             try {
-                contract.current = walletAccount.contract(backend)
-                contract.current.p.Admin({
+                tokenMarketContract.current = walletAccount.contract(tokenMarketBackend)
+                tokenMarketContract.current.p.Admin({
                     log: () => {
                         /* add logs */
                     },
@@ -126,44 +126,44 @@ export function useNftSeller() {
             } catch (e) {
                 fail()
             } finally {
-                contract.current = null
+                tokenMarketContract.current = null
             }
             return promise
         },
-        [backend, saveContractInfo, stdlib, walletAccount]
+        [tokenMarketBackend, saveContractInfo, stdlib, walletAccount]
     )
 
     const buy = useCallback(
         async contractInfo => {
             if (contractInfo && walletAccount) {
                 const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64'))
-                contract.current = walletAccount.contract(backend, infoObject)
-                const token = await contract.current.a.Market.getToken()
+                tokenMarketContract.current = walletAccount.contract(tokenMarketBackend, infoObject)
+                const token = await tokenMarketContract.current.a.Market.getToken()
                 await walletAccount.tokenAccept(token.toNumber())
-                await contract.current.a.Market.buy()
-                contract.current = null
+                await tokenMarketContract.current.a.Market.buy()
+                tokenMarketContract.current = null
             }
         },
-        [backend, walletAccount]
+        [tokenMarketBackend, walletAccount]
     )
 
     const withdraw = useCallback(
         async (tokenId, applicationId, contractInfo) => {
             if (contractInfo && walletAccount) {
                 const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64'))
-                contract.current = walletAccount.contract(backend, infoObject)
+                tokenMarketContract.current = walletAccount.contract(tokenMarketBackend, infoObject)
                 try {
                     // If the NFT is still up for sale, we stop the market
-                    await contract.current.a.Market.stop()
+                    await tokenMarketContract.current.a.Market.stop()
                 } catch (e) {
                     // If the NFT is already sold, we stop the tracker
-                    await contract.current.a.Tracker.stop()
+                    await tokenMarketContract.current.a.Tracker.stop()
                 }
-                contract.current = null
+                tokenMarketContract.current = null
                 await deleteContractInfo({ tokenId, applicationId })
             }
         },
-        [backend, deleteContractInfo, walletAccount]
+        [tokenMarketBackend, deleteContractInfo, walletAccount]
     )
 
     return { sell, buy, withdraw, unit }

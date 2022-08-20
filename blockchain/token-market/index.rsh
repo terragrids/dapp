@@ -54,7 +54,7 @@ export const main = Reach.App(() => {
     A.interact.onReady(getContract(), sppContractInfo);
     A.interact.log("The token is on the market");
 
-    const [withdrawn, sold,  buyer, paid] =
+    const [withdrawn, sold, buyer, paid] =
         parallelReduce([false, false, A, 0])
             .invariant(balance() == paid && balance(tok) == 1)
             .while(!withdrawn && !sold)
