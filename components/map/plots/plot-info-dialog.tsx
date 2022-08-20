@@ -160,7 +160,8 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                                 <dt>{strings.assetID}</dt>
                                 <dd>{terraland.id}</dd>
                                 <dt>Holder</dt>
-                                <dd>{shortenAddress(terraland.holders[0].address)}</dd>
+                                    <dd>{maskWalletAddress(terraland.holders[0].address)}</dd>
+                                </div>
                                 {terraland.contractId && (
                                     <>
                                         <dt>Contract</dt>
