@@ -1,3 +1,6 @@
+// *********************
+// TODO: REMOVE ONCE REPLACED BY terracell-dialog
+// *********************
 /* eslint-disable @next/next/no-img-element */
 import Button from 'components/button'
 import React from 'react'
