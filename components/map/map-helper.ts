@@ -209,3 +209,18 @@ export const drawLine = (context: CanvasRenderingContext2D, x: number, y: number
     context.strokeStyle = '#3a3a3a'
     context.stroke()
 }
+
+export const renderHoveredPlot = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+    ctx.beginPath()
+    ctx.setLineDash([])
+    ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
+    ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
+    ctx.lineWidth = 2
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y - Plot.PLOT_HALF_HEIGHT)
+    ctx.lineTo(x + Plot.PLOT_WIDTH, y)
+    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y + Plot.PLOT_HALF_HEIGHT)
+    ctx.lineTo(x, y)
+    ctx.stroke()
+    ctx.fill()
+}
