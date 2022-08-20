@@ -40,8 +40,6 @@ export default function useTouch(): [Position2D, boolean, (e: TouchEvent) => voi
     )
 
     useEffect(() => {
-        setIsPanned(true)
-
         lastOffsetRef.current = offset
     }, [offset])
 
