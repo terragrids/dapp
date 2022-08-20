@@ -9,7 +9,6 @@ export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
-const terracell = id => `/api/terracells/${id}`
 const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
 const nfts = '/api/nfts'
 const nft = id => `/api/nfts/${id}`
@@ -23,7 +22,6 @@ const solarPowerPlant = 'api/spp'
 export const endpoints = {
     accountTerracells,
     terracells,
-    terracell,
     terracellContract,
     nfts,
     nft,
