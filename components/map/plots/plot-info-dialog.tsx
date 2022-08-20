@@ -25,6 +25,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
     const [error, setError] = useState<string | null>()
     const [waiting, setWaiting] = useState<boolean>(false)
+    const [sppContractInfo, setSppContractInfo] = useState<string>()
     const user = useContext<User>(UserContext)
     const { sell, buy, withdraw, unit } = useNftSeller()
     const assetPrice = 10
@@ -35,10 +36,16 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
             setError(null)
             setTerraland(null)
 
-            const response = await fetch(endpoints.nft(nftId))
+            const [sppResponse, nftResponse] = await Promise.all([
+                fetch(endpoints.solarPowerPlant),
+                fetch(endpoints.nft(nftId))
+            ])
 
-            if (response.ok) {
-                const { asset } = await response.json()
+            if (sppResponse.ok && nftResponse.ok) {
+                const { contractInfo } = await sppResponse.json()
+                setSppContractInfo(contractInfo)
+
+                const { asset } = await nftResponse.json()
                 setTerraland({
                     ...asset,
                     name: removeSuffix(asset.name, TRDL_SUFFIX)
@@ -84,7 +91,8 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
         try {
             const { applicationId, contractInfo } = await sell({
                 tokenId: terraland.id,
-                price: assetPrice
+                price: assetPrice,
+                sppContractInfo
             })
             setTerraland({ ...terraland, contractId: applicationId, contractInfo })
             onClose()

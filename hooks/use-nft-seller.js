@@ -39,9 +39,10 @@ export function useNftSeller() {
                     })
                 })
 
-                const { contractVerified } = await response.json()
+                // TODO decide what to do with contract verification
+                // const { contractVerified } = await response.json()
 
-                if (response.status === 201 && contractVerified) {
+                if (response.status === 201) {
                     succeed({ applicationId, contractInfo })
                 } else if (retries > 0) {
                     retries--
@@ -91,7 +92,7 @@ export function useNftSeller() {
     }, [])
 
     const sell = useCallback(
-        async ({ tokenId, price }) => {
+        async ({ tokenId, price, sppContractInfo, power = 0 }) => {
             let succeed, fail
             var promise = new Promise(function (resolve, reject) {
                 succeed = resolve
@@ -121,7 +122,9 @@ export function useNftSeller() {
                         // do nothing
                     },
                     tok: tokenId,
-                    price: stdlib.parseCurrency(price)
+                    price: stdlib.parseCurrency(price),
+                    power,
+                    sppContractInfo: JSON.parse(Buffer.from(sppContractInfo, 'base64'))
                 })
             } catch (e) {
                 fail()
