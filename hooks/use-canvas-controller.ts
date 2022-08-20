@@ -95,7 +95,7 @@ export const useCanvasController = (
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context || isPanned || isTouchPanned) return
+            if (!context || isPanned) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -107,7 +107,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, isPanned, isTouchPanned]
+        [context, startPosition, isPanned]
     )
 
     const onTouch = useCallback(

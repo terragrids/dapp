@@ -22,7 +22,8 @@ const enStrings = {
     buyFor: 'Buy for',
     change: 'Change',
     close: 'Close',
-    terralandInformation: 'Terraland information',
+    terralandInformation: 'Terraland ($TRLD)',
+    terracellInformation: 'Terracell ($TRCL)',
     terracellOnTheMarket: 'This terracell is on the market',
     contractId: 'Contract ID',
     transactionFailed: 'Your transaction failed or has been cancelled.',
@@ -48,6 +49,7 @@ const enStrings = {
     description: 'Description',
     nominalPower: 'Nominal power (TRW)',
     power: 'Power',
+    holder: 'Holder',
     totalOutput: 'Total output',
     yourSolarPvCells: 'Your solar PV cells',
     yourPlotsOfLand: 'Your plots of land',
@@ -62,7 +64,12 @@ const enStrings = {
     availableToBuy: 'Available to buy',
     capacity: 'Capacity',
     back: '< Back',
-    youHaveNoNfts: 'You have no {0} in your wallet'
+    assetID: 'Asset ID',
+    price: 'Price',
+    position: 'Position',
+    contract: 'Contract',
+    youHaveNoNfts: 'You have no {0} in your wallet',
+    noDescription: 'No description'
 }
 
 export const strings = new LocalizedStrings({

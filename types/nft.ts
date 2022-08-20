@@ -25,20 +25,28 @@ export type Holder = {
     address: string
     amount: number
 }
-export type Terraland = {
+
+export type TerraNft = {
     id: string
     name: string
     description?: string
     symbol: string
     url: string
     offchainUrl: string
-    positionX: number
-    positionY: number
     holders: Array<Holder>
     contractId?: string
-    contractInfo?: string
+    contractInfo?: any // TODO: check the type
     assetPrice?: number
     sellerAddress?: string
+}
+
+export type Terraland = TerraNft & {
+    positionX: number
+    positionY: number
+}
+
+export type Terracell = TerraNft & {
+    power: number
 }
 
 export type SolarPowerPlant = {
@@ -46,13 +54,4 @@ export type SolarPowerPlant = {
     output: number
     totalTerracells: number
     activeTerracells: number
-}
-
-export type Terracell = {
-    id: string
-    name: string
-    symbol: Symbols
-    url: string
-    offchainUrl: string
-    power: number
 }

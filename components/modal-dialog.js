@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default function ModalDialog({ visible, title, children, onClose, subtitle, className }) {
     return visible ? (
         <div className={styles.container}>
-            <div className={`${styles.dialog} ${className}`}>
+            <div className={`${styles.dialog} ${className ? className : ''}`}>
                 {(title || onClose) && (
                     <header className={styles.header}>
                         <h1 className={styles.title}>

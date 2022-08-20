@@ -12,6 +12,7 @@
     text-transform: uppercase;
     color: $color-white;
     transition: opacity 0.2s;
+    font-family: 'Saira', sans-serif;
 
     @media (hover: hover) {
         &:hover {
@@ -38,4 +39,15 @@
 .outline {
     background-color: transparent;
     border: 1px solid $color-white;
+    font-size: 13px;
+    text-transform: none;
+    min-height: auto;
+    padding: 10px 0;
+}
+
+.outline:hover,
+.outline:focus {
+    background-color: $color-white;
+    color: $color-abbey;
+    opacity: 1;
 }
