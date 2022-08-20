@@ -7,18 +7,21 @@ import { endpoints } from 'utils/api-config'
 import LoadingSpinner from './loading-spinner'
 import TerracellDialog from './terracell-dialog'
 import styles from './terracell-list.module.scss'
+import { strings } from 'strings/en'
+import { removeSuffix, TRCL_SUFFIX } from './map/plots/plot-helpers'
 
 export default function TerracellList() {
     const [terracells, setTerracells] = useState<Terracell[]>()
-    const [selectedTerracell, setSelectedTerracell] = useState<Terracell | null>(null)
+    const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
     const user = useContext<User>(UserContext)
 
     const updateTerracells = useCallback(async () => {
         const response = await fetch(endpoints.terracells())
         const { assets } = await response.json()
-        setTerracells(assets)
+        setTerracells(assets.map((asset: Terracell) => ({ ...asset, name: removeSuffix(asset.name, TRCL_SUFFIX) })))
     }, [])
 
+    // TODO: Do we need this?
     const updateUserTerracells = useCallback(
         // TODO: chenge type
         async (shouldKeepFetching: any) => {
@@ -50,32 +53,59 @@ export default function TerracellList() {
                 ...trcl,
                 owned: user.terracells?.some(t => t.id === trcl.id)
             }))
-            setTerracells(parsed)
+            setTerracells(parsed.map(asset => ({ ...asset, name: removeSuffix(asset.name, TRCL_SUFFIX) })))
         }
     }, [user, terracells, prevUser])
 
     return (
         <div className={styles.container}>
-            <h2>Hello</h2>
             {!terracells && <LoadingSpinner />}
             {terracells && (
-                <ul className={styles.list}>
+                <ul className={styles.terracells}>
                     {terracells.map(terracell => (
-                        <li
+                        <TerraCellItem
                             key={terracell.id}
-                            // Check terracell.owned by holder number
-                            className={terracell.holders?.length > 0 ? styles.owned : ''}
-                            onClick={() => setSelectedTerracell(terracell)}>
-                            {terracell.name}
-                        </li>
+                            terracell={terracell}
+                            onSelectTerracell={id => setSelectedTerracellId(id)}
+                        />
                     ))}
                 </ul>
             )}
             <TerracellDialog
-                id={selectedTerracell?.id || undefined}
-                visible={!!selectedTerracell}
-                onClose={() => setSelectedTerracell(null)}
+                id={selectedTerracellId || undefined}
+                visible={!!selectedTerracellId}
+                onClose={() => setSelectedTerracellId(null)}
             />
         </div>
+    )
+}
+
+type TerraCellItemProps = {
+    terracell: Terracell
+    onSelectTerracell: (id: string) => void
+}
+const TerraCellItem = ({ terracell, onSelectTerracell }: TerraCellItemProps) => {
+    const [isMouseOver, setIsMouseOver] = useState(false)
+
+    return (
+        <li
+            className={styles.cell}
+            onMouseOver={() => setIsMouseOver(true)}
+            onMouseOut={() => setIsMouseOver(false)}
+            onClick={() => onSelectTerracell(terracell.id)}>
+            {/* TODO: replace with Image */}
+            <picture>
+                <source srcSet={terracell.offchainUrl} type={'image/*'} />
+                <img src={terracell.offchainUrl} alt={terracell.name} width={106} height={'auto'} />
+            </picture>
+            {isMouseOver && (
+                <div className={styles.overlay}>
+                    <small>
+                        {terracell.name} <br />
+                        {strings.power} {terracell.power} TRW
+                    </small>
+                </div>
+            )}
+        </li>
     )
 }

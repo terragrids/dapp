@@ -28,7 +28,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
     const [error, setError] = useState<string | null>(null)
     const user = useContext<User>(UserContext)
     const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
-    const [terracellName, setTerracellName] = useState('')
+    const [showFullDescription, setShowFullDescription] = useState(false)
 
     const { sell, buy, withdraw, unit } = useNftSeller()
 
@@ -38,9 +38,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
             const terracell = await fetch(endpoints.terracell(id))
             const { asset } = await terracell.json()
 
-            const terracellName = removeSuffix(asset.name, TRDL_SUFFIX)
-            setTerracell({ ...asset, name: terracellName })
-            setTerracellName(terracellName)
+            setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
 
             const ipfsMetadataHash = getIpfsHash(asset.url)
 
@@ -127,8 +125,16 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         }
     }
 
+    function toggleDescription() {
+        setShowFullDescription(show => !show)
+    }
+
     return (
-        <ModalDialog visible={visible} title={strings.terracellInformation} subtitle={terracellName} onClose={onClose}>
+        <ModalDialog
+            visible={visible}
+            title={strings.terracellInformation}
+            subtitle={terracell?.name || ''}
+            onClose={onClose}>
             <div className={styles.container}>
                 {!terracell && <LoadingSpinner />}
                 {terracell && (
@@ -145,37 +151,49 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                         <div className={styles.info}>
                             <dl className={styles.dList}>
-                                <div className={styles.dListItem}>
+                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
                                     <dt>{strings.name}</dt>
                                     <dd>{terracell.name}</dd>
                                 </div>
 
-                                <div className={styles.dListItem}>
-                                    <dt>{strings.description}</dt>
+                                <div
+                                    className={showFullDescription ? styles.expand : styles.dListItem}
+                                    onClick={toggleDescription}>
+                                    <dt className={showFullDescription ? styles.dt : ''}>
+                                        {strings.description}
+                                        {showFullDescription && (
+                                            <div className={styles.close}>
+                                                {/* TODO: Might better change the icon */}
+                                                <i className={`${styles.close} icon-arrow-up`} />
+                                            </div>
+                                        )}
+                                    </dt>
                                     <dd>
-                                        {terracell.description
+                                        {showFullDescription
+                                            ? terracell.description || strings.noDescription
+                                            : terracell.description
                                             ? truncate(`${terracell.description}`, MAX_CHARS_TO_DISPLAY)
                                             : strings.noDescription}
                                     </dd>
                                 </div>
 
-                                <div className={styles.dListItem}>
+                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
                                     <dt>{strings.output}</dt>
                                     <dd>{terracell.power || 0} TRW</dd>
                                 </div>
 
-                                <div className={styles.dListItem}>
+                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
                                     <dt>{strings.assetID}</dt>
                                     <dd>{terracell.id}</dd>
                                 </div>
 
-                                <div className={styles.dListItem}>
+                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
                                     <dt>{strings.holder}</dt>
                                     <dd>{maskWalletAddress(terracell.holders[0].address)}</dd>
                                 </div>
 
                                 {terracell.contractId && (
-                                    <div className={styles.dListItem}>
+                                    <div className={showFullDescription ? styles.hide : styles.dListItem}>
                                         <dt>{strings.contractId}</dt>
                                         <dd>{terracell.contractId}</dd>
                                     </div>
@@ -185,12 +203,12 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                         {error && <div className={styles.error}>{error}</div>}
 
                         {userCapability !== null && (
-                            <div>
+                            <div className={styles.buttonWrapper}>
                                 {userCapability === UserCapabilities.CAN_SELL && terracell && (
                                     <Button
                                         type={'outline'}
                                         className={styles.button}
-                                        label={`${strings.sellFor} ${terracell.assetPrice} $${unit}`}
+                                        label={`${strings.sellFor} ${terracell.assetPrice || 0} $${unit}`}
                                         loading={loading}
                                         onClick={onSell}
                                     />
@@ -210,7 +228,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                     <Button
                                         className={styles.button}
                                         type={'outline'}
-                                        label={`${strings.buyFor} ${terracell.assetPrice} $${unit}`}
+                                        label={`${strings.buyFor} ${terracell.assetPrice || 0} $${unit}`}
                                         loading={loading}
                                         onClick={onBuy}
                                     />
