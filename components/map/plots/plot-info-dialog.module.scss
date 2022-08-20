@@ -5,8 +5,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: 20px;
-    max-width: 600px;
+    width: calc(100% + 40px); // remove side padding of content class in modal-dialog
+    max-width: 700px;
+    max-height: 850px;
+    transform: translateX(-20px); // adjust position due to width property
 }
 
 .section {
@@ -17,7 +19,50 @@
 
     picture {
         display: flex;
+
         justify-content: center;
+    }
+}
+
+.imageSection {
+    @extend .section;
+    padding: 0 20px;
+}
+
+.textSection {
+    @extend .section;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.dList {
+    display: grid;
+    grid-template-columns: 1fr;
+    line-height: 2.5;
+    font-size: 80%;
+
+    .dListItem {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 20px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $color-brand;
+        }
+
+        dt {
+            max-width: 200px;
+        }
+
+        dd {
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            pointer-events: none;
+        }
     }
 }
 

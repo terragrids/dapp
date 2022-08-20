@@ -4,11 +4,11 @@ import styles from './plot-info-dialog.module.scss'
 import React, { useContext, useEffect, useState } from 'react'
 import Button from 'components/button'
 import { strings } from 'strings/en'
-import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './plot-helpers'
+import { removeSuffix, TRDL_SUFFIX } from './plot-helpers'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { ipfsUrlToGatewayUrl, maskWalletAddress, truncate } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
@@ -140,33 +140,47 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
             <div className={styles.container}>
                 {terraland && !error && (
                     <>
-                        <div className={styles.section}>
+                        <div className={styles.imageSection}>
                             {/* TODO: replace with Image */}
                             <picture>
                                 <source srcSet={terraland.offchainUrl} type={'image/*'} />
                                 <img src={ipfsImageUrl ? ipfsImageUrl : terraland.offchainUrl} alt={terraland.name} />
                             </picture>
                         </div>
-                        <div className={styles.section}>
-                            <dl>
-                                <dt>{strings.name}</dt>
-                                <dd>{terraland.name}</dd>
-                                <dt>{strings.description}</dt>
-                                <dd>{terraland.description}</dd>
-                                <dt>Position</dt>
-                                <dd>
-                                    ({terraland.positionX},{terraland.positionY})
-                                </dd>
-                                <dt>{strings.assetID}</dt>
-                                <dd>{terraland.id}</dd>
-                                <dt>Holder</dt>
+                        <div className={styles.textSection}>
+                            <dl className={styles.dList}>
+                                <div className={styles.dListItem}>
+                                    <dt>{strings.name}</dt>
+                                    <dd>{terraland.name}</dd>
+                                </div>
+
+                                <div className={styles.dListItem}>
+                                    <dt>{strings.description}</dt>
+                                    <dd>{truncate(`${terraland.description}`, 15)}</dd>
+                                </div>
+
+                                <div className={styles.dListItem}>
+                                    <dt>Position</dt>
+                                    <dd>
+                                        ({terraland.positionX},{terraland.positionY})
+                                    </dd>
+                                </div>
+
+                                <div className={styles.dListItem}>
+                                    <dt>{strings.assetID}</dt>
+                                    <dd>{terraland.id}</dd>
+                                </div>
+
+                                <div className={styles.dListItem}>
+                                    <dt>Holder</dt>
                                     <dd>{maskWalletAddress(terraland.holders[0].address)}</dd>
                                 </div>
+
                                 {terraland.contractId && (
-                                    <>
+                                    <div className={styles.dListItem}>
                                         <dt>Contract</dt>
                                         <dd>{terraland.contractId}</dd>
-                                    </>
+                                    </div>
                                 )}
                             </dl>
                         </div>
