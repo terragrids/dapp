@@ -3,6 +3,7 @@
 import { loadStdlib } from '@reach-sh/stdlib'
 import assert from 'assert'
 import * as backend from './build/index.main.mjs'
+import * as sppBackend from './build/spp.main.mjs'
 
 // Load Reach stdlib
 const stdlib = loadStdlib()
@@ -90,6 +91,48 @@ const setup = async () => {
     await accBob.tokenAccept(gil.id)
 
     return [accAdmin, accAlice, accBob, gil]
+}
+
+const deploySpp = async account => {
+    console.log('Deploying the SPP contract...')
+
+    const sppReady = new Signal()
+
+    // Deploy the spp backend
+    const ctcSpp = account.contract(sppBackend)
+    const sppApi = ctcSpp.a.SolarPowerPlant
+    const sppView = ctcSpp.v.SPPView
+
+    const logSppAndAssert = async (expCapacity, expOutput) => {
+        const capacity = (await sppView.capacity())[1].toNumber()
+        const output = (await sppView.output())[1].toNumber()
+
+        console.log('SPP info', { capacity, output })
+
+        assert(capacity == expCapacity)
+        assert(output == expOutput)
+    }
+
+    let sppContractInfo
+
+    sppBackend.Admin(ctcSpp, {
+        log: (...args) => {
+            console.log(...args)
+        },
+        onReady: async contract => {
+            console.log(`SPP Contract deployed ${JSON.stringify(contract)}`)
+            sppContractInfo = contract
+            sppReady.notify()
+        }
+    })
+
+    console.log('Waiting for the SPP contract...')
+
+    await sppReady.wait()
+
+    logSppAndAssert(0, 0)
+
+    return { sppContractInfo, sppApi, logSppAndAssert }
 }
 
 const getAndLogAllBalances = async (accAdmin, accAlice, accBob, gil) => {
@@ -237,36 +280,49 @@ const testSellAndBuyAndStop = async () => {
 
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
-    console.log('Deploying the contract...')
+    // Deploy the spp backend
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
-    // Deploy the dapp
-    const ctcAdmin = accAdmin.contract(backend)
+    console.log('Deploying the Token Market contract...')
+
+    // Deploy the token market backend
+    const ctcTokenMarket = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await userConnectAndBuy('Alice', accAlice, ctcAdmin, gil, ready)),
-        thread(await userConnectAndBuy('Bob', accBob, ctcAdmin, gil, ready)),
-        thread(await userConnectToTrackerAndStop('Admin', accAdmin, ctcAdmin, gil, sold)),
-        backend.Admin(ctcAdmin, {
+        thread(await userConnectAndBuy('Alice', accAlice, ctcTokenMarket, gil, ready)),
+        thread(await userConnectAndBuy('Bob', accBob, ctcTokenMarket, gil, ready)),
+        thread(await userConnectToTrackerAndStop('Admin', accAdmin, ctcTokenMarket, gil, sold)),
+        backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
-            onReady: async contract => {
-                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+            onReady: async (contract, sppContract) => {
+                console.log(
+                    `Token Market Contract deployed ${JSON.stringify(contract)} with SPP contract ${JSON.stringify(
+                        sppContract
+                    )}`
+                )
                 const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
                 assert(adminGil == 0)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+
+                logSppAndAssert(15, 0)
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
                 sold.notify()
             },
             tok: gil.id,
-            price: stdlib.parseCurrency(tokenPrice)
+            price: stdlib.parseCurrency(tokenPrice),
+            power: 15,
+            sppContractInfo
         })
     ])
 
-    console.log('Contract stopped.')
+    console.log('Token Market Contract stopped.')
+
     const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(
         accAdmin,
         accAlice,
@@ -281,43 +337,63 @@ const testSellAndBuyAndStop = async () => {
         (parseFloat(aliceAlgo) < 90 && parseFloat(bobAlgo) > 90) ||
             (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90)
     )
+
+    logSppAndAssert(15, 15)
+
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to stop the spp')
 }
 
 const testSellAndStop = async () => {
     console.log('\n>> Test sell and stop')
     const [accAdmin, accAlice, accBob, gil] = await setup()
     const ready = new Signal()
+    const withdrawn = new Signal()
 
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
-    console.log('Deploying the contract...')
+    // Deploy the spp backend
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
-    // Deploy the dapp
-    const ctcAdmin = accAdmin.contract(backend)
+    console.log('Deploying the Token Market contract...')
+
+    // Deploy the token market backend
+    const ctcTokenMarket = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await userConnectAndStop('Admin', accAdmin, ctcAdmin, gil, ready)),
-        backend.Admin(ctcAdmin, {
+        thread(await userConnectAndStop('Admin', accAdmin, ctcTokenMarket, gil, ready)),
+        backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
-            onReady: async contract => {
-                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+            onReady: async (contract, sppContract) => {
+                console.log(
+                    `Token Market Contract deployed ${JSON.stringify(contract)} with SPP contract ${JSON.stringify(
+                        sppContract
+                    )}`
+                )
                 const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
                 assert(adminGil == 0)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+
+                logSppAndAssert(7, 0)
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
-                // do nothing
+                withdrawn.notify()
             },
+            power: 7,
             tok: gil.id,
-            price: stdlib.parseCurrency(10)
+            price: stdlib.parseCurrency(10),
+            sppContractInfo
         })
     ])
 
-    console.log('Contract stopped.')
+    await withdrawn.wait()
+
+    console.log('Token Market Contract stopped.')
+
     const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(
         accAdmin,
         accAlice,
@@ -329,6 +405,10 @@ const testSellAndStop = async () => {
     assert(parseFloat(adminAlgo) > 99)
     assert(aliceGil == 0 && bobGil == 0)
     assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
+
+    logSppAndAssert(7, 0)
+
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
 const testSellAndNonAdminStopAndBuy = async () => {
@@ -341,40 +421,56 @@ const testSellAndNonAdminStopAndBuy = async () => {
 
     await getAndLogAllBalances(accAdmin, accAlice, accBob, gil)
 
-    console.log('Deploying the contract...')
+    // Deploy the spp backend
+    const { sppContractInfo, sppApi, logSppAndAssert } = await deploySpp(accAdmin)
 
-    // Deploy the dapp
-    const ctcAdmin = accAdmin.contract(backend)
+    console.log('Deploying the Token Market contract...')
+
+    // Deploy the token market backend
+    const ctcTokenMarket = accAdmin.contract(backend)
 
     await Promise.all([
-        thread(await userConnectAndStop('Bob', accBob, ctcAdmin, gil, ready)),
-        threadWithDelay(await userConnectAndBuy('Alice', accAlice, ctcAdmin, gil, ready), 10),
-        threadWithNotify(await userConnectToTrackerAndStop('Bob', accBob, ctcAdmin, gil, sold), nonAdminStopAttempted),
-        threadWithWait(
-            await userConnectToTrackerAndStop('Admin', accAdmin, ctcAdmin, gil, sold),
+        thread(await userConnectAndStop('Bob', accBob, ctcTokenMarket, gil, ready)),
+        threadWithDelay(await userConnectAndBuy('Alice', accAlice, ctcTokenMarket, gil, ready), 10),
+        threadWithNotify(
+            await userConnectToTrackerAndStop('Bob', accBob, ctcTokenMarket, gil, sold),
             nonAdminStopAttempted
         ),
-        backend.Admin(ctcAdmin, {
+        threadWithWait(
+            await userConnectToTrackerAndStop('Admin', accAdmin, ctcTokenMarket, gil, sold),
+            nonAdminStopAttempted
+        ),
+        backend.Admin(ctcTokenMarket, {
             log: (...args) => {
                 console.log(...args)
-                ready.notify()
             },
-            onReady: async contract => {
-                console.log(`Contract deployed ${JSON.stringify(contract)}`)
+            onReady: async (contract, sppContract) => {
+                console.log(
+                    `Token Market Contract deployed ${JSON.stringify(contract)} with SPP contract ${JSON.stringify(
+                        sppContract
+                    )}`
+                )
                 const [adminAlgo, adminGil] = await getBalances(accAdmin, gil)
                 assert(adminGil == 0)
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
+
+                logSppAndAssert(0, 0)
+
+                ready.notify()
             },
             onSoldOrWithdrawn: async () => {
                 sold.notify()
             },
+            power: 0,
             tok: gil.id,
-            price: stdlib.parseCurrency(10)
+            price: stdlib.parseCurrency(10),
+            sppContractInfo
         })
     ])
 
-    console.log('Contract stopped.')
+    console.log('Token Market Contract stopped.')
+
     const [adminAlgo, adminGil, aliceAlgo, aliceGil, bobAlgo, bobGil] = await getAndLogAllBalances(
         accAdmin,
         accAlice,
@@ -386,6 +482,10 @@ const testSellAndNonAdminStopAndBuy = async () => {
     assert(parseFloat(adminAlgo) > 100)
     assert(aliceGil == 1 && bobGil == 0)
     assert(parseFloat(aliceAlgo) < 99 && parseFloat(bobAlgo) > 99)
+
+    logSppAndAssert(0, 0)
+
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
 await testSellAndBuyAndStop()

@@ -1,14 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState, useContext } from 'react'
 import { useNftSeller } from 'hooks/use-nft-seller'
-import { endpoints, ipfsUrl } from 'utils/api-config'
+import { endpoints } from 'utils/api-config'
 import { strings } from 'strings/en'
 import Button from './button'
 import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from 'context/user-context'
-import { getIpfsHash } from 'utils/string-utils.js'
+import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
 import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
@@ -28,30 +28,45 @@ type TerracellDialogProps = {
 
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
     const [terracell, setTerracell] = useState<Terracell | null>()
-    const [nftImageUrl, setNftImageUrl] = useState('')
+    const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [sppContractInfo, setSppContractInfo] = useState<string>()
     const user = useContext<User>(UserContext)
     const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
+    const assetPrice = 10
 
     const { sell, buy, withdraw, unit } = useNftSeller()
 
     useEffect(() => {
         async function fetchTerracell() {
-            setNftImageUrl('')
-            const terracell = await fetch(endpoints.terracell(id))
-            const { asset } = await terracell.json()
+            const [sppResponse, nftResponse] = await Promise.all([
+                fetch(endpoints.solarPowerPlant),
+                fetch(endpoints.nft(id))
+            ])
 
-            // TODO: checkt power is in contract in production
-            setTerracell({ ...asset, power: asset.contract.power, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+            if (sppResponse.ok && nftResponse.ok) {
+                const { contractInfo } = await sppResponse.json()
+                setSppContractInfo(contractInfo)
 
-            const ipfsMetadataHash = getIpfsHash(asset.url)
+                const { asset } = await nftResponse.json()
 
-            if (ipfsMetadataHash) {
-                const metadata = await fetch(ipfsUrl(ipfsMetadataHash))
-                const { image } = await metadata.json()
-                const ipfsFileHash = getIpfsHash(image)
-                setNftImageUrl(ipfsUrl(ipfsFileHash))
+                setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+
+                try {
+                    const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
+
+                    if (ipfsResponse.ok) {
+                        const { image, description } = await ipfsResponse.json()
+                        setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
+                        setTerracell(trcl => ({
+                            ...(trcl as Terracell),
+                            description: description.text as string
+                        }))
+                    }
+                } catch (e) {}
+            } else {
+                setError(strings.errorFetchingTerraland)
             }
         }
         if (id) {
@@ -84,7 +99,9 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         try {
             const { applicationId, contractInfo } = await sell({
                 tokenId: terracell.id,
-                price: terracell.assetPrice
+                price: terracell.assetPrice || assetPrice,
+                power: terracell.power,
+                sppContractInfo
             })
             setTerracell({ ...terracell, contractId: applicationId, contractInfo })
             onClose()
@@ -141,14 +158,12 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                 {terracell && (
                     <>
                         {/* TODO: replace with Image */}
-                        {nftImageUrl && (
-                            <div className={styles.image}>
-                                <picture>
-                                    <source srcSet={nftImageUrl} type={'image/*'} />
-                                    <img src={nftImageUrl} alt={'image'} />
-                                </picture>
-                            </div>
-                        )}
+                        <div className={styles.image}>
+                            <picture>
+                                <source srcSet={terracell.offchainUrl} type={'image/*'} />
+                                <img src={ipfsImageUrl ? ipfsImageUrl : terracell.offchainUrl} alt={terracell.name} />
+                            </picture>
+                        </div>
 
                         <div className={styles.info}>
                             <NftInfo data={terracell} />
@@ -161,7 +176,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                     <Button
                                         type={'outline'}
                                         className={styles.button}
-                                        label={`${strings.sellFor} ${terracell.assetPrice || 0} $${unit}`}
+                                        label={`${strings.sellFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onSell}
                                     />
@@ -181,7 +196,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                     <Button
                                         className={styles.button}
                                         type={'outline'}
-                                        label={`${strings.buyFor} ${terracell.assetPrice || 0} $${unit}`}
+                                        label={`${strings.buyFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onBuy}
                                     />

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import LoadingSpinner from 'components/loading-spinner'
 import ModalDialog from 'components/modal-dialog'
+import { useSppViewer } from 'hooks/use-spp-viewer.js'
 import TerracellList from 'components/terracell-list'
 import React, { useEffect, useMemo, useState } from 'react'
 import { strings } from 'strings/en'
@@ -17,6 +18,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const [solarPowerPlant, setSolarPowerPlant] = useState<SolarPowerPlant | null>(null)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const { getSpp } = useSppViewer()
 
     useEffect(() => {
         const fetchSolarPowerPlantAndTerracells = async () => {
@@ -27,14 +29,15 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             const sppResponse = await fetch(endpoints.solarPowerPlant)
 
             if (sppResponse.ok) {
-                const data = await sppResponse.json()
-                setSolarPowerPlant(data)
+                const { contractInfo } = await sppResponse.json()
+                const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
+                setSolarPowerPlant(spp)
             } else {
                 setError(strings.errorFechingSpp)
             }
         }
         if (visible) fetchSolarPowerPlantAndTerracells()
-    }, [visible])
+    }, [getSpp, visible])
 
     const subtitle = useMemo(() => {
         if (!solarPowerPlant) return ''

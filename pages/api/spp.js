@@ -6,7 +6,10 @@ export default async function handler(req, res) {
         case 'GET':
             await callTerragridsApi(res, 'GET', 'spp')
             break
+        case 'PUT':
+            await callTerragridsApi(res, 'PUT', 'spp', req.body)
+            break
         default:
-            setMethodNotAllowedResponse(res, ['GET'])
+            setMethodNotAllowedResponse(res, ['GET', 'PUT'])
     }
 }

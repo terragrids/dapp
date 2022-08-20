@@ -9,13 +9,19 @@ export const main = Reach.App(() => {
         onReady: Fun(true, Null)
     });
 
-    const V = API('SolarPowerPlant', {
+    const SPP = API('SolarPowerPlant', {
         stop: Fun([], Bool),
         get: Fun([], SolarPowerPlant),
         setCapacity: Fun([UInt], UInt),
         increaseCapacity: Fun([UInt], UInt),
+        decreaseCapacity: Fun([UInt], UInt),
         setOutput: Fun([UInt], UInt),
         increaseOutput: Fun([UInt], UInt)
+    });
+
+    const SPPView = View('SPPView', {
+        capacity: UInt,
+        output: UInt 
     });
 
     init();
@@ -27,34 +33,52 @@ export const main = Reach.App(() => {
 
     const [done, capacity, output] =
         parallelReduce([false, 0, 0])
+            .define(() => {
+                SPPView.capacity.set(capacity)
+                SPPView.output.set(output)
+            })
             .invariant(balance() == 0)
             .while(!done)
-            .api(V.get,
+            .api(SPP.get,
                 (k => {
                     k([capacity, output]);
                     return [false, capacity, output]
                 }))
-            .api(V.setCapacity,
+            .api(SPP.setCapacity,
                 ((amount, k) => {
                     k(amount);
                     return [false, amount, output]
                 }))
-            .api(V.increaseCapacity,
+            .api(SPP.increaseCapacity,
                 ((amount, k) => {
-                    k(capacity + amount);
-                    return [false, capacity + amount, output]
+                    const newCapacity = capacity + amount;
+                    k(newCapacity);
+                    return [false, newCapacity, output]
                 }))
-            .api(V.setOutput,
+            .api(SPP.setOutput,
                 ((amount, k) => {
                     k(amount);
                     return [false, capacity, amount]
                 }))
-            .api(V.increaseOutput,
+            .api(SPP.increaseOutput,
                 ((amount, k) => {
-                    k(output + amount);
-                    return [false, capacity, output + amount]
+                    const newOutput = output + amount;
+                    k(newOutput);
+                    return [false, capacity, newOutput]
                 }))
-            .api(V.stop,
+            .api(SPP.decreaseCapacity,
+                ((amount, k) => {
+                    if (amount > capacity) {
+                        k(0);
+                        return [false, 0, output]
+                    }
+                    else {
+                        const newCapacity = capacity - amount;
+                        k(newCapacity);
+                        return [false, newCapacity, output]
+                    }
+                }))
+            .api(SPP.stop,
                 (() => { assume(this == A); }),
                 (() => 0),
                 (k => {

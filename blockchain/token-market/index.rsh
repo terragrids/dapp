@@ -1,7 +1,9 @@
 'reach 0.1';
 'use strict';
 
-const Transaction = Tuple(Address, UInt, Token);
+const Power = UInt
+const Price = UInt
+const Transaction = Tuple(Address, Price, Token, Power);
 
 export const main = Reach.App(() => {
     const A = Participant('Admin', {
@@ -9,7 +11,9 @@ export const main = Reach.App(() => {
         onReady: Fun(true, Null),
         onSoldOrWithdrawn: Fun(true, Null),
         tok: Token,
-        price: UInt
+        price: UInt,
+        power: UInt,
+        sppContractInfo: Contract
     });
 
     const M = API('Market', {
@@ -24,12 +28,18 @@ export const main = Reach.App(() => {
         stop: Fun([], Bool)
     });
 
+    const SPP = {
+        SolarPowerPlant_increaseCapacity: Fun([UInt], UInt),
+        SolarPowerPlant_decreaseCapacity: Fun([UInt], UInt),
+        SolarPowerPlant_increaseOutput: Fun([UInt], UInt),
+    };
+
     init();
 
     A.only(() => {
-        const [tok, price] = declassify([interact.tok, interact.price]);
+        const [tok, price, power, sppContractInfo] = declassify([interact.tok, interact.price, interact.power, interact.sppContractInfo]);
     });
-    A.publish(tok, price);
+    A.publish(tok, price, power, sppContractInfo);
     commit();
 
     const amount = 1;
@@ -37,13 +47,17 @@ export const main = Reach.App(() => {
     A.pay([[amount, tok]]);
     assert(balance(tok) == amount, "Balance of NFT is wrong");
 
-    A.interact.onReady(getContract());
+    const spp = remote(sppContractInfo, SPP);
+    const cap = spp.SolarPowerPlant_increaseCapacity(power)
+    void(cap)
+
+    A.interact.onReady(getContract(), sppContractInfo);
     A.interact.log("The token is on the market");
 
-    const [done, sold,  buyer, paid] =
+    const [withdrawn, sold, buyer, paid] =
         parallelReduce([false, false, A, 0])
             .invariant(balance() == paid && balance(tok) == 1)
-            .while(!done && !sold)
+            .while(!withdrawn && !sold)
             .api(M.stop,
                 (() => { assume(this == A); }),
                 (() => 0),
@@ -61,7 +75,8 @@ export const main = Reach.App(() => {
             .api(M.buy,
                 () => price,
                 (k => {
-                    k([this, price, tok]);
+                    const output = spp.SolarPowerPlant_increaseOutput(power)
+                    k([this, price, tok, output]);
                     return [false, true, this, price + paid];
                 }))
             .timeout(false);
@@ -69,14 +84,17 @@ export const main = Reach.App(() => {
     transfer(paid).to(A);
     transfer(1, tok).to(buyer);
 
-    A.interact.log("The token has been sold or withdrawn");
     A.interact.onSoldOrWithdrawn();
 
-    if (done) {
+    if (withdrawn) {
+        A.interact.log("The token has been withdrawn");
+        // TODO reintroduce the line below when this is solved: https://github.com/reach-sh/reach-lang/discussions/1354
+        // const _ = spp.SolarPowerPlant_decreaseCapacity(power)
         commit();
         exit();
     }
 
+    A.interact.log("The token has been sold");
     A.interact.log("Tracking token....");
 
     require(balance() == 0);
