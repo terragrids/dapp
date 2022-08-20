@@ -7,53 +7,49 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
     min-width: 400px;
+    width: 450px; // without this property, an error message makes the modal wider when it is rendered
     max-width: 600px;
 }
 
-.message {
-    padding: 0 10px 30px;
-}
-
-.info {
-    padding: 5px 10px;
-    background-color: $color-abbey;
-    border-radius: $dialog-border-radius;
-    font-size: 14px;
-}
-
-.contract {
-    padding: 20px;
-
-    header {
-        margin: 20px 0;
-    }
-}
-
-.action {
-    width: 100%;
-    margin-top: 50px;
-
-    button {
-        width: 100%;
-    }
-
-    label {
-        display: block;
-    }
-
-    input {
-        padding: 10px;
-        margin: 5px 0 10px 0;
-    }
-}
-
 .error {
+    width: 100%;
     padding: 20px;
     color: $color-red;
 }
 
 .image {
+    display: flex;
+    justify-content: center;
+    width: 100%;
     margin: 20px 0;
+
+    picture {
+        display: flex;
+        justify-content: center;
+        max-width: 150px; // TODO; need to check the max width
+        align-self: center;
+    }
+}
+
+.info {
+    width: calc(100% + 40px); // remove side padding of content class in modal-dialog
+    height: 200px;
+    overflow-y: scroll;
+    flex-grow: 1;
+}
+
+.buttonWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    .button {
+        min-width: 200px;
+    }
+}
+
+.accordion {
+    height: 0;
 }

@@ -4,7 +4,7 @@ import styles from './plot-info-dialog.module.scss'
 import React, { useContext, useEffect, useState } from 'react'
 import Button from 'components/button'
 import { strings } from 'strings/en'
-import { removeSuffix, shortenAddress, TRDL_SUFFIX } from './plot-helpers'
+import { removeSuffix, TRDL_SUFFIX } from './plot-helpers'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
@@ -12,6 +12,7 @@ import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
+import NftInfo from 'components/nft-info'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -28,6 +29,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const user = useContext<User>(UserContext)
     const { sell, buy, withdraw, unit } = useNftSeller()
     const assetPrice = 10
+    const [terralandName, setTerralandName] = useState('')
 
     useEffect(() => {
         async function fetchTerraland() {
@@ -39,13 +41,17 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
             if (response.ok) {
                 const { asset } = await response.json()
+
                 setTerraland({
                     ...asset,
                     name: removeSuffix(asset.name, TRDL_SUFFIX)
                 })
 
+                setTerralandName(removeSuffix(asset.name, TRDL_SUFFIX))
+
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
+
                     if (ipfsResponse.ok) {
                         const { image, description } = await ipfsResponse.json()
                         setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
@@ -131,38 +137,19 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     }
 
     return (
-        <ModalDialog visible={visible} title={strings.terralandInformation} onClose={onClose}>
+        <ModalDialog visible={visible} title={strings.terralandInformation} subtitle={terralandName} onClose={onClose}>
             <div className={styles.container}>
                 {terraland && !error && (
                     <>
-                        <div className={styles.section}>
+                        <div className={styles.image}>
                             {/* TODO: replace with Image */}
                             <picture>
                                 <source srcSet={terraland.offchainUrl} type={'image/*'} />
                                 <img src={ipfsImageUrl ? ipfsImageUrl : terraland.offchainUrl} alt={terraland.name} />
                             </picture>
                         </div>
-                        <div className={styles.section}>
-                            <p>Name: {terraland.name}</p>
-                            <p>Description : {terraland.description}</p>
-                            <p>Id : {terraland.id}</p>
-                            <p>
-                                Position : ({terraland.positionX},{terraland.positionY})
-                            </p>
-                            <div className={styles.section}>
-                                <h4>Holders</h4>
-                                <ul>
-                                    {terraland.holders.map(holder => (
-                                        <li style={{ listStyle: 'none' }} key={holder.address + holder.amount}>
-                                            <p>- address : {shortenAddress(holder.address)}</p>
-                                            <p>- amount: {holder.amount}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            {terraland.contractId && (
-                                <div className={styles.section}>Contract ID : {terraland.contractId}</div>
-                            )}
+                        <div className={styles.info}>
+                            <NftInfo data={terraland} />
                         </div>
                     </>
                 )}
@@ -175,6 +162,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
                 {userCapability === UserCapabilities.CAN_SELL && terraland && (
                     <Button
+                        type={'outline'}
                         className={styles.button}
                         label={`${strings.sellFor} ${assetPrice} $${unit}`}
                         loading={waiting}
@@ -183,12 +171,19 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 )}
 
                 {userCapability === UserCapabilities.CAN_WITHDRAW && terraland && (
-                    <Button className={styles.button} label={strings.withdraw} loading={waiting} onClick={onWithdraw} />
+                    <Button
+                        type={'outline'}
+                        className={styles.button}
+                        label={strings.withdraw}
+                        loading={waiting}
+                        onClick={onWithdraw}
+                    />
                 )}
 
                 {userCapability === UserCapabilities.CAN_BUY && terraland && (
                     <Button
                         className={styles.button}
+                        type={'outline'}
                         label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
                         loading={waiting}
                         onClick={onBuy}

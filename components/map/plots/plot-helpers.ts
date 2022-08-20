@@ -1,4 +1,5 @@
 export const TRDL_SUFFIX = '@arc3'
+export const TRCL_SUFFIX = '@arc3'
 
 export const removeSuffix = (str: string, suffix: string) => {
     return str.replace(suffix, '')
