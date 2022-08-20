@@ -1,54 +1,32 @@
 import { BASE_SCREEN_SIZE, getOptimalScale } from 'components/map/map-helper'
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styles from './index.module.scss'
 
 export type CanvasProps = {
-    drawOnCanvas: (ctx: CanvasRenderingContext2D) => void
-    onWheel: (ctx: CanvasRenderingContext2D, e: WheelEvent) => void
-    onMouseMove: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
-    onClick: (ctx: CanvasRenderingContext2D, e: MouseEvent) => void
-    onTouch: (ctx: CanvasRenderingContext2D, e: TouchEvent) => void
+    canvasRef: React.RefObject<HTMLCanvasElement>
+    onMouseMove: (e: MouseEvent) => void
+    onWheel: (e: WheelEvent) => void
+    onClick: (e: MouseEvent) => void
+    onTouch: (e: TouchEvent) => void
     onKeyDown: (e: KeyboardEvent) => void
     onKeyUp: (e: KeyboardEvent) => void
+    startPan: (e: MouseEvent) => void
+    startTouch: (e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
 }
 
 const Canvas = ({
-    drawOnCanvas,
+    canvasRef,
     onWheel,
     onMouseMove,
     onClick,
     onTouch,
     onKeyDown,
     onKeyUp,
+    startPan,
+    startTouch,
     attributes: { width, height }
 }: CanvasProps) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-
-    useEffect(() => {
-        if (!canvasRef.current) return
-
-        const canvas = canvasRef.current
-        const context = canvas.getContext('2d')
-
-        if (!context) return
-
-        let animationFrameId: number
-
-        const render = () => {
-            drawOnCanvas(context)
-            animationFrameId = requestAnimationFrame(render)
-        }
-        render()
-
-        // focus canvas so that scroll zoom(keydown/up listeners) works by default
-        canvasRef.current.focus()
-
-        return () => {
-            cancelAnimationFrame(animationFrameId)
-        }
-    }, [drawOnCanvas])
-
     useEffect(() => {
         if (!canvasRef.current || !width) return
 
@@ -58,12 +36,12 @@ const Canvas = ({
         if (!context) return
 
         const currentScale = context.getTransform().a
-        const optimalScale = getOptimalScale(Number(width))
+        const scale = getOptimalScale(Number(width))
 
-        if (BASE_SCREEN_SIZE >= width && currentScale > optimalScale) {
-            context.scale(optimalScale, optimalScale)
+        if (BASE_SCREEN_SIZE >= width && currentScale > scale) {
+            context.scale(scale, scale)
         }
-    }, [width])
+    }, [width, canvasRef])
 
     useEffect(() => {
         if (!canvasRef.current) return
@@ -73,14 +51,17 @@ const Canvas = ({
 
         if (!context) return
 
-        const onWheelListener = (e: WheelEvent) => onWheel(context, e)
-        const onMouseMoveListener = (e: MouseEvent) => onMouseMove(context, e)
-        const onClickListener = (e: MouseEvent) => onClick(context, e)
-        const onTouchListener = (e: TouchEvent) => onTouch(context, e)
+        const onWheelListener = (e: WheelEvent) => onWheel(e)
+        const onMouseMoveListener = (e: MouseEvent) => onMouseMove(e)
+        const onMouseDownListener = (e: MouseEvent) => startPan(e)
+        const onClickListener = (e: MouseEvent) => onClick(e)
+        const onTouchListener = (e: TouchEvent) => onTouch(e)
 
         canvas.addEventListener('wheel', onWheelListener)
         canvas.addEventListener('mousemove', onMouseMoveListener)
+        canvas.addEventListener('mousedown', onMouseDownListener)
         canvas.addEventListener('click', onClickListener)
+        canvas.addEventListener('touchstart', startTouch)
         canvas.addEventListener('touchend', onTouchListener)
         canvas.addEventListener('keydown', onKeyDown)
         canvas.addEventListener('keyup', onKeyUp)
@@ -88,12 +69,13 @@ const Canvas = ({
         return () => {
             canvas.removeEventListener('wheel', onWheelListener)
             canvas.removeEventListener('mousemove', onMouseMoveListener)
+            canvas.removeEventListener('mousedown', onMouseDownListener)
             canvas.removeEventListener('click', onClickListener)
             canvas.removeEventListener('touchend', onTouchListener)
             canvas.removeEventListener('keydown', onKeyDown)
             canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp])
+    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, startTouch, canvasRef])
 
     return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
 }
