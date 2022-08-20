@@ -1,8 +1,6 @@
-import { User } from 'hooks/use-user'
-import { useEffect, useState, useContext, useCallback } from 'react'
+/* eslint-disable @next/next/no-img-element */
+import { useEffect, useState, useCallback } from 'react'
 import { Terracell } from 'types/nft'
-import { UserContext } from 'context/user-context'
-import usePrevious from 'hooks/use-previous'
 import { endpoints } from 'utils/api-config'
 import LoadingSpinner from './loading-spinner'
 import TerracellDialog from './terracell-dialog'
@@ -21,7 +19,6 @@ import { removeSuffix, TRCL_SUFFIX } from './map/plots/plot-helpers'
 export default function TerracellList() {
     const [terracells, setTerracells] = useState<Terracell[]>()
     const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
-    const user = useContext<User>(UserContext)
 
     const updateTerracells = useCallback(async () => {
         const response = await fetch(endpoints.terracells())
@@ -29,42 +26,9 @@ export default function TerracellList() {
         setTerracells(assets.map((asset: Terracell) => ({ ...asset, name: removeSuffix(asset.name, TRCL_SUFFIX) })))
     }, [])
 
-    // TODO: Do we need this?
-    const updateUserTerracells = useCallback(
-        // TODO: chenge type
-        async (shouldKeepFetching: any) => {
-            if (!user || !user.update) return
-
-            const response = await fetch(endpoints.accountTerracells(user.walletAddress))
-            const { assets } = await response.json()
-
-            if (shouldKeepFetching(assets)) {
-                setTimeout(updateUserTerracells, 1000, shouldKeepFetching)
-            } else {
-                user.update({
-                    terracells: assets
-                })
-            }
-        },
-        [user]
-    )
-
     useEffect(() => {
         updateTerracells()
     }, [updateTerracells])
-
-    const prevUser = usePrevious(user)
-
-    // TODO: If we dont need the above, neither does this?
-    useEffect(() => {
-        if (user && user != prevUser && user.terracells && terracells) {
-            const parsed = terracells.map(trcl => ({
-                ...trcl,
-                owned: user.terracells?.some(t => t.id === trcl.id)
-            }))
-            setTerracells(parsed.map(asset => ({ ...asset, name: removeSuffix(asset.name, TRCL_SUFFIX) })))
-        }
-    }, [user, terracells, prevUser])
 
     return (
         <div className={styles.container}>

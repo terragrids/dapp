@@ -106,7 +106,6 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
             setTerracell({ ...terracell, contractId: applicationId, contractInfo })
             onClose()
         } catch (e) {
-            console.log(e)
             setError(strings.errorCreatingNftSaleContract)
             return
         } finally {
