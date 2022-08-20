@@ -21,6 +21,14 @@ type TerracellDialogProps = {
 
 const MAX_CHARS_TO_DISPLAY = 15
 
+/**
+ * TODO:
+ * - styles for small devices
+ * - check if functions (onSell, onWithdraw, and onBuy) are correct as they are just copied from plot-info-dialog.tsx
+ * - add animation or transition property to opening full description if necessary
+ * - change the icon-arrow-up icon as it doesnt look good
+ */
+
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
     const [terracell, setTerracell] = useState<Terracell | null>()
     const [nftImageUrl, setNftImageUrl] = useState('')

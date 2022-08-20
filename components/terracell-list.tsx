@@ -10,6 +10,14 @@ import styles from './terracell-list.module.scss'
 import { strings } from 'strings/en'
 import { removeSuffix, TRCL_SUFFIX } from './map/plots/plot-helpers'
 
+/**
+ * TODO:
+ * - styles for small devices
+ * - check if dialogue overlaping is fine (when TerracellDialog is opened)
+ *   if not ok then we need to change the structure so it wont overlap
+ *
+ */
+
 export default function TerracellList() {
     const [terracells, setTerracells] = useState<Terracell[]>()
     const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
@@ -47,6 +55,7 @@ export default function TerracellList() {
 
     const prevUser = usePrevious(user)
 
+    // TODO: If we dont need the above, neither does this?
     useEffect(() => {
         if (user && user != prevUser && user.terracells && terracells) {
             const parsed = terracells.map(trcl => ({
