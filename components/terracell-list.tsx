@@ -3,22 +3,16 @@ import { useEffect, useState, useCallback } from 'react'
 import { Terracell } from 'types/nft'
 import { endpoints } from 'utils/api-config'
 import LoadingSpinner from './loading-spinner'
-import TerracellDialog from './terracell-dialog'
 import styles from './terracell-list.module.scss'
 import { strings } from 'strings/en'
 import { removeSuffix, TRCL_SUFFIX } from './map/plots/plot-helpers'
 
-/**
- * TODO:
- * - styles for small devices
- * - check if dialogue overlaping is fine (when TerracellDialog is opened)
- *   if not ok then we need to change the structure so it wont overlap
- *
- */
+type TerracellListProps = {
+    setSelectedTerracellId: (id: string) => void
+}
 
-export default function TerracellList() {
+export default function TerracellList({ setSelectedTerracellId }: TerracellListProps) {
     const [terracells, setTerracells] = useState<Terracell[]>()
-    const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
 
     const updateTerracells = useCallback(async () => {
         const response = await fetch(endpoints.terracells())
@@ -44,11 +38,6 @@ export default function TerracellList() {
                     ))}
                 </ul>
             )}
-            <TerracellDialog
-                id={selectedTerracellId || undefined}
-                visible={!!selectedTerracellId}
-                onClose={() => setSelectedTerracellId(null)}
-            />
         </div>
     )
 }

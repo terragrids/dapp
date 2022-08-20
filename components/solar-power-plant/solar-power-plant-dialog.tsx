@@ -8,6 +8,7 @@ import { strings } from 'strings/en'
 import { SolarPowerPlant } from 'types/nft'
 import { endpoints } from 'utils/api-config'
 import styles from './solar-power-plant-dialog.module.scss'
+import TerracellDialog from 'components/terracell-dialog'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
@@ -18,6 +19,8 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const [solarPowerPlant, setSolarPowerPlant] = useState<SolarPowerPlant | null>(null)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
+
     const { getSpp } = useSppViewer()
 
     useEffect(() => {
@@ -30,6 +33,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
 
             if (sppResponse.ok) {
                 const { contractInfo } = await sppResponse.json()
+
                 const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
                 setSolarPowerPlant(spp)
             } else {
@@ -49,6 +53,15 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const title = isDetailOpen ? strings.back : strings.solarPowerPlant
     const currentClassName = isDetailOpen ? styles.openDetail : styles.listDialog
 
+    if (selectedTerracellId !== null)
+        return (
+            <TerracellDialog
+                id={selectedTerracellId}
+                visible={!!selectedTerracellId}
+                onClose={() => setSelectedTerracellId(null)}
+            />
+        )
+
     return (
         <ModalDialog visible={visible} title={title} onClose={onClose} subtitle={subtitle} className={currentClassName}>
             {!solarPowerPlant && !error && (
@@ -60,7 +73,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             {solarPowerPlant && !error && (
                 <>
                     <div className={styles.terracellList}>
-                        <TerracellList />
+                        <TerracellList setSelectedTerracellId={setSelectedTerracellId} />
                     </div>
                     <footer className={styles.footer}>
                         <span>
