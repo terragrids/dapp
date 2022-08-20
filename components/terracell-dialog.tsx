@@ -8,10 +8,11 @@ import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from 'context/user-context'
-import { getIpfsHash, maskWalletAddress, truncate } from 'utils/string-utils.js'
+import { getIpfsHash } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
 import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
+import NftInfo from './nft-info'
 
 type TerracellDialogProps = {
     id: string | undefined
@@ -19,14 +20,10 @@ type TerracellDialogProps = {
     onClose: () => void
 }
 
-const MAX_CHARS_TO_DISPLAY = 15
-
 /**
  * TODO:
- * - styles for small devices
  * - check if functions (onSell, onWithdraw, and onBuy) are correct as they are just copied from plot-info-dialog.tsx
  * - add animation or transition property to opening full description if necessary
- * - change the icon-arrow-up icon as it doesnt look good
  */
 
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
@@ -36,7 +33,6 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
     const [error, setError] = useState<string | null>(null)
     const user = useContext<User>(UserContext)
     const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
-    const [showFullDescription, setShowFullDescription] = useState(false)
 
     const { sell, buy, withdraw, unit } = useNftSeller()
 
@@ -46,7 +42,8 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
             const terracell = await fetch(endpoints.terracell(id))
             const { asset } = await terracell.json()
 
-            setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+            // TODO: checkt power is in contract in production
+            setTerracell({ ...asset, power: asset.contract.power, name: removeSuffix(asset.name, TRDL_SUFFIX) })
 
             const ipfsMetadataHash = getIpfsHash(asset.url)
 
@@ -133,10 +130,6 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         }
     }
 
-    function toggleDescription() {
-        setShowFullDescription(show => !show)
-    }
-
     return (
         <ModalDialog
             visible={visible}
@@ -158,55 +151,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                         )}
 
                         <div className={styles.info}>
-                            <dl className={styles.dList}>
-                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
-                                    <dt>{strings.name}</dt>
-                                    <dd>{terracell.name}</dd>
-                                </div>
-
-                                <div
-                                    className={showFullDescription ? styles.expand : styles.dListItem}
-                                    onClick={toggleDescription}>
-                                    <dt className={showFullDescription ? styles.dt : ''}>
-                                        {strings.description}
-                                        {showFullDescription && (
-                                            <div className={styles.close}>
-                                                {/* TODO: Might better change the icon */}
-                                                <i className={`${styles.close} icon-arrow-up`} />
-                                            </div>
-                                        )}
-                                    </dt>
-                                    <dd>
-                                        {showFullDescription
-                                            ? terracell.description || strings.noDescription
-                                            : terracell.description
-                                            ? truncate(`${terracell.description}`, MAX_CHARS_TO_DISPLAY)
-                                            : strings.noDescription}
-                                    </dd>
-                                </div>
-
-                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
-                                    <dt>{strings.output}</dt>
-                                    <dd>{terracell.power || 0} TRW</dd>
-                                </div>
-
-                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
-                                    <dt>{strings.assetID}</dt>
-                                    <dd>{terracell.id}</dd>
-                                </div>
-
-                                <div className={showFullDescription ? styles.hide : styles.dListItem}>
-                                    <dt>{strings.holder}</dt>
-                                    <dd>{maskWalletAddress(terracell.holders[0].address)}</dd>
-                                </div>
-
-                                {terracell.contractId && (
-                                    <div className={showFullDescription ? styles.hide : styles.dListItem}>
-                                        <dt>{strings.contractId}</dt>
-                                        <dd>{terracell.contractId}</dd>
-                                    </div>
-                                )}
-                            </dl>
+                            <NftInfo data={terracell} />
                         </div>
                         {error && <div className={styles.error}>{error}</div>}
 

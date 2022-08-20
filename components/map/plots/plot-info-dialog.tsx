@@ -8,10 +8,11 @@ import { removeSuffix, TRDL_SUFFIX } from './plot-helpers'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
-import { ipfsUrlToGatewayUrl, maskWalletAddress, truncate } from 'utils/string-utils.js'
+import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
+import NftInfo from 'components/nft-info'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -140,49 +141,15 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
             <div className={styles.container}>
                 {terraland && !error && (
                     <>
-                        <div className={styles.imageSection}>
+                        <div className={styles.image}>
                             {/* TODO: replace with Image */}
                             <picture>
                                 <source srcSet={terraland.offchainUrl} type={'image/*'} />
                                 <img src={ipfsImageUrl ? ipfsImageUrl : terraland.offchainUrl} alt={terraland.name} />
                             </picture>
                         </div>
-                        <div className={styles.textSection}>
-                            <dl className={styles.dList}>
-                                <div className={styles.dListItem}>
-                                    <dt>{strings.name}</dt>
-                                    <dd>{terraland.name}</dd>
-                                </div>
-
-                                <div className={styles.dListItem}>
-                                    <dt>{strings.description}</dt>
-                                    <dd>{truncate(`${terraland.description}`, 15)}</dd>
-                                </div>
-
-                                <div className={styles.dListItem}>
-                                    <dt>Position</dt>
-                                    <dd>
-                                        ({terraland.positionX},{terraland.positionY})
-                                    </dd>
-                                </div>
-
-                                <div className={styles.dListItem}>
-                                    <dt>{strings.assetID}</dt>
-                                    <dd>{terraland.id}</dd>
-                                </div>
-
-                                <div className={styles.dListItem}>
-                                    <dt>Holder</dt>
-                                    <dd>{maskWalletAddress(terraland.holders[0].address)}</dd>
-                                </div>
-
-                                {terraland.contractId && (
-                                    <div className={styles.dListItem}>
-                                        <dt>Contract</dt>
-                                        <dd>{terraland.contractId}</dd>
-                                    </div>
-                                )}
-                            </dl>
+                        <div className={styles.info}>
+                            <NftInfo data={terraland} />
                         </div>
                     </>
                 )}

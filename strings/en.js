@@ -66,6 +66,8 @@ const enStrings = {
     back: '< Back',
     assetID: 'Asset ID',
     price: 'Price',
+    position: 'Position',
+    contract: 'Contract',
     youHaveNoNfts: 'You have no {0} in your wallet',
     noDescription: 'No description'
 }
