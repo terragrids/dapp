@@ -10,7 +10,16 @@ import styles from './terracell-dialog.module.scss'
 import { UserContext } from '../context/user-context'
 import { getIpfsHash } from 'utils/string-utils.js'
 
-export default function TerracellDialog({ id, visible, onClose, onUpForSale, onPurchased, onWithdrawn, isAuthenticated, canSell }) {
+export default function TerracellDialog({
+    id,
+    visible,
+    onClose,
+    onUpForSale,
+    onPurchased,
+    onWithdrawn,
+    isAuthenticated,
+    canSell
+}) {
     const [terracell, setTerracell] = useState()
     const [nftImageUrl, setNftImageUrl] = useState()
     const [loading, setLoading] = useState(false)
@@ -190,57 +199,58 @@ export default function TerracellDialog({ id, visible, onClose, onUpForSale, onP
     }
 
     return (
-        <ModalDialog
-            visible={visible}
-            title={'Terracell'}
-            onClose={onClose}>
+        <ModalDialog visible={visible} title={'Terracell'} onClose={onClose}>
             <div className={styles.container}>
                 {!terracell && <LoadingSpinner />}
-                {terracell &&
+                {terracell && (
                     <>
                         <div className={styles.message}>{terracell.name}</div>
                         <pre className={styles.info}>{`id: ${terracell.id}`}</pre>
 
                         {/* TODO: replace with Image */}
-                        {nftImageUrl &&
+                        {nftImageUrl && (
                             <div className={styles.image}>
                                 <picture>
                                     <source srcSet={nftImageUrl} type={'image/*'} />
                                     <img src={nftImageUrl} alt={'image'} />
                                 </picture>
                             </div>
-                        }
+                        )}
 
-                        {terracell.contract &&
+                        {terracell.contract && (
                             <div className={styles.contract}>
                                 <header>{strings.terracellOnTheMarket}</header>
-                                <div className={styles.info}>
+                                <div className={styles.infoOld}>
                                     <pre>{strings.contractId}</pre>
                                     <pre>{terracell.contract.id}</pre>
                                 </div>
                             </div>
-                        }
-                        {canSell && !terracell.contract &&
+                        )}
+                        {canSell && !terracell.contract && (
                             <div className={styles.action}>
                                 <Button loading={loading} label={strings.sell} onClick={sellTerracell} />
                             </div>
-                        }
-                        {isAuthenticated && terracell.contract && terracell.contract.info && terracell.contract.sellerAddress === user.walletAddress &&
-                            <div className={styles.action}>
-                                <Button loading={loading} label={strings.withdraw} onClick={withdrawTerracell} />
-                            </div>
-                        }
-                        {isAuthenticated && terracell.contract && terracell.contract.info && terracell.contract.sellerAddress !== user.walletAddress &&
-                            <div className={styles.action}>
-                                <Button loading={loading} label={strings.buy} onClick={buyTerracell} />
-                            </div>
-                        }
-                        {errorMessage &&
-                            <div className={styles.error}>{errorMessage}</div>
-                        }
+                        )}
+                        {isAuthenticated &&
+                            terracell.contract &&
+                            terracell.contract.info &&
+                            terracell.contract.sellerAddress === user.walletAddress && (
+                                <div className={styles.action}>
+                                    <Button loading={loading} label={strings.withdraw} onClick={withdrawTerracell} />
+                                </div>
+                            )}
+                        {isAuthenticated &&
+                            terracell.contract &&
+                            terracell.contract.info &&
+                            terracell.contract.sellerAddress !== user.walletAddress && (
+                                <div className={styles.action}>
+                                    <Button loading={loading} label={strings.buy} onClick={buyTerracell} />
+                                </div>
+                            )}
+                        {errorMessage && <div className={styles.error}>{errorMessage}</div>}
                     </>
-                }
+                )}
             </div>
-        </ModalDialog >
+        </ModalDialog>
     )
 }
