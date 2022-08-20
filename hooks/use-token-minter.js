@@ -1,7 +1,7 @@
 import { ReachContext } from 'context/reach-context.js'
 import { UserContext } from 'context/user-context.js'
 import { useContext } from 'react'
-import { Nft } from 'types/nft.js'
+import { Nft } from 'types/nft'
 import { endpoints } from 'utils/api-config.js'
 
 export function useTokenMinter() {
