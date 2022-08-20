@@ -53,20 +53,21 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
                     <LoadingSpinner />
                 </div>
             )}
-            {solarPowerPlant && (
-                <div className={styles.loader}>
-                    <TerracellList />
-                </div>
-            )}
+
             {solarPowerPlant && !error && (
-                <footer>
-                    <span>
-                        {strings.capacity} {solarPowerPlant.capacity || 0} TRW
-                    </span>
-                    <span>
-                        {strings.totalOutput} {solarPowerPlant.output || 0} TRW
-                    </span>
-                </footer>
+                <>
+                    <div className={styles.terracellList}>
+                        <TerracellList />
+                    </div>
+                    <footer className={styles.footer}>
+                        <span>
+                            {strings.capacity} {solarPowerPlant.capacity || 0} TRW
+                        </span>
+                        <span>
+                            {strings.totalOutput} {solarPowerPlant.output || 0} TRW
+                        </span>
+                    </footer>
+                </>
             )}
         </ModalDialog>
     )
