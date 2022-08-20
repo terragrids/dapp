@@ -93,13 +93,13 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
                     {error && <div className={styles.error}>{error}</div>}
                 </div>
             )}
-            {solarPowerPlant && !error && !isDetailOpen && (
+            {!error && !isDetailOpen && (
                 <footer>
                     <span>
-                        {strings.capacity} {solarPowerPlant.capacity} TRW
+                        {strings.capacity} {solarPowerPlant ? solarPowerPlant.capacity : 0} TRW
                     </span>
                     <span>
-                        {strings.totalOutput} {solarPowerPlant.output} TRW
+                        {strings.totalOutput} {solarPowerPlant ? solarPowerPlant.output : 0} TRW
                     </span>
                 </footer>
             )}
