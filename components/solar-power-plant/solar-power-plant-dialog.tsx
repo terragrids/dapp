@@ -2,6 +2,7 @@
 import LoadingSpinner from 'components/loading-spinner'
 import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
 import ModalDialog from 'components/modal-dialog'
+import { useSppViewer } from 'hooks/use-spp-viewer.js'
 import React, { useEffect, useMemo, useState } from 'react'
 import { strings } from 'strings/en'
 import { SolarPowerPlant, Terracell } from 'types/nft'
@@ -20,6 +21,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [selectedId, setSelectedId] = useState('')
+    const { getSpp } = useSppViewer()
 
     useEffect(() => {
         const fetchSolarPowerPlantAndTerracells = async () => {
@@ -34,8 +36,10 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             ])
 
             if (sppResponse.ok && terracellResponse.ok) {
-                const data = await sppResponse.json()
-                setSolarPowerPlant(data)
+                const { contractInfo } = await sppResponse.json()
+                const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
+
+                setSolarPowerPlant(spp)
 
                 const { assets } = await terracellResponse.json()
                 setTerracells(
@@ -49,7 +53,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             }
         }
         if (visible) fetchSolarPowerPlantAndTerracells()
-    }, [visible])
+    }, [getSpp, visible])
 
     const availableTrclCount = useMemo(() => {
         if (!solarPowerPlant) return 0
