@@ -5,6 +5,7 @@ import usePan from './use-pan'
 import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
+const PINCH_ZOOM_SENSITIVITY = 0.02
 const MAX_SCALE = 2
 const MIN_SCALE = 0.8
 
@@ -21,7 +22,7 @@ export const useCanvasController = (
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
     const [panOffset, startPan, isPanned] = usePan()
-    const [touchOffset, isTouchPanned, startTouch] = useTouch()
+    const { offset: touchOffset, isPannedOrZoomed, zoomPosition, zoomAmount, startTouch } = useTouch()
 
     useEffect(() => {
         if (!canvas) return
@@ -42,6 +43,34 @@ export const useCanvasController = (
         context.translate(touchOffset.x, touchOffset.y)
     }, [context, panOffset, touchOffset])
 
+    useEffect(() => {
+        if (!context || !zoomAmount) return
+
+        const adjustedZoomAmount =
+            zoomAmount > 1 ? zoomAmount * PINCH_ZOOM_SENSITIVITY : -zoomAmount * PINCH_ZOOM_SENSITIVITY * 2
+
+        const currentScale = context.getTransform().a
+
+        // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
+        // When reaching MIN_SCALE or initialScale or initialScale, it only allows zoom IN (= positive zoomAmount)
+        if (currentScale >= MAX_SCALE && adjustedZoomAmount > 0) return
+        if (currentScale <= Math.min(MIN_SCALE, initialScale) && adjustedZoomAmount < 0) return
+
+        const scale = DEFAULT_MAP_SCALE + adjustedZoomAmount
+
+        const rect = context.canvas.getBoundingClientRect()
+
+        const offset = {
+            x: zoomPosition.x - rect.left,
+            y: zoomPosition.y - rect.top
+        }
+        const transformedPosition = getTransformedPoint(context, offset.x, offset.y)
+
+        context.translate(transformedPosition.x, transformedPosition.y)
+        context.scale(scale, scale)
+        context.translate(-transformedPosition.x, -transformedPosition.y)
+    }, [zoomPosition, zoomAmount, context, initialScale])
+
     const onMouseMove = useCallback(
         (e: MouseEvent) => {
             if (!context) return
@@ -60,11 +89,11 @@ export const useCanvasController = (
         (e: WheelEvent) => {
             if (!context) return
 
-            const currentScale = context.getTransform().a
             const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+            const currentScale = context.getTransform().a
 
             // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-            // When reaching MIN_SCALE or initialScale, it only allows zoom IN (= positive zoomAmount)
+            // When reaching MIN_SCALE or initialScale or initialScale, it only allows zoom IN (= positive zoomAmount)
             if (currentScale >= MAX_SCALE && zoomAmount > 0) return
             if (currentScale <= Math.min(MIN_SCALE, initialScale) && zoomAmount < 0) return
 
@@ -112,7 +141,7 @@ export const useCanvasController = (
 
     const onTouch = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: TouchEvent) => {
-            if (!context || isTouchPanned) return
+            if (!context || isPannedOrZoomed) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -126,7 +155,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, isTouchPanned]
+        [context, startPosition, isPannedOrZoomed]
     )
 
     const onKeyDown = useCallback((e: KeyboardEvent) => {
