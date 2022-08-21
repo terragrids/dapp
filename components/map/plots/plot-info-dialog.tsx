@@ -4,11 +4,10 @@ import styles from './plot-info-dialog.module.scss'
 import React, { useContext, useEffect, useState } from 'react'
 import Button from 'components/button'
 import { strings } from 'strings/en'
-import { removeSuffix, TRDL_SUFFIX } from './plot-helpers'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { formatTrdlName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
@@ -50,10 +49,10 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 const { asset } = await nftResponse.json()
                 setTerraland({
                     ...asset,
-                    name: removeSuffix(asset.name, TRDL_SUFFIX)
+                    name: formatTrdlName(asset.name)
                 })
 
-                setTerralandName(removeSuffix(asset.name, TRDL_SUFFIX))
+                setTerralandName(formatTrdlName(asset.name))
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))

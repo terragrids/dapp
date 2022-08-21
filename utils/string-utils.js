@@ -23,3 +23,9 @@ export function ipfsUrlToGatewayUrl(url) {
     const hash = getIpfsHash(url)
     return ipfsUrl(hash)
 }
+
+export const TRDL_SUFFIX = '@arc3'
+export const TRCL_SUFFIX = '@arc3'
+
+export const formatTrdlName = str => str.replace(TRDL_SUFFIX, '')
+export const formatTrclName = str => str.replace(TRCL_SUFFIX, '')

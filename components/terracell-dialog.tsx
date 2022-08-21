@@ -8,10 +8,9 @@ import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from 'context/user-context'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { formatTrclName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
-import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
 import NftInfo from './nft-info'
 
 type TerracellDialogProps = {
@@ -51,7 +50,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                 const { asset } = await nftResponse.json()
 
-                setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+                setTerracell({ ...asset, name: formatTrclName(asset.name) })
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
