@@ -4,13 +4,19 @@ The DApp web interface and Reach backend.
 
 ## Functionality
 
-The Terragrids DApp is still a prototype. When running it on a developer's machine, or accessing it at https://testnet.terragrids.org, it shows an isometric map, representing the Terragrids metaverse.
+The Terragrids DApp is still a prototype. When running it on a developer's machine, or accessing it at https://testnet.terragrids.org, it shows an isometric map, representing the Terragrids metaverse. Currently, all images in the frontend and NFTs are test images and will be replaced.
+
+<img width="1774" alt="image" src="https://user-images.githubusercontent.com/2437709/185810385-79999fe9-4004-46b5-947c-64ddb5a82f98.png">
 
 ### User menu
 
 A button at the top right allows users to connect to their Algo Wallet. At the moment, only MyAlgo Wallet is supported.
 
-Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`). If they click on one of them, they will see a list of currently owned NFTs in their Algo wallet.
+Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`). 
+
+https://user-images.githubusercontent.com/2437709/185810613-8d39729e-64af-434a-b752-37a206d5fbaa.mov
+
+If they click on one of them, they will see a list of currently owned NFTs in their Algo wallet.
 The list of Terragrids NFTs is fetched from the AlgoIndexer API through the Terragrids proxy API.
 
 Note, this list is currently not paginated, i.e. only the first page is fetched. Pagination is still to be implemented.
