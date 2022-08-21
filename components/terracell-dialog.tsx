@@ -8,10 +8,9 @@ import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from 'context/user-context'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
-import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
 import NftInfo from './nft-info'
 
 type TerracellDialogProps = {
@@ -20,12 +19,6 @@ type TerracellDialogProps = {
     onClose: () => void
 }
 
-/**
- * TODO:
- * - check if functions (onSell, onWithdraw, and onBuy) are correct as they are just copied from plot-info-dialog.tsx
- * - add animation or transition property to opening full description if necessary
- */
-
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
     const [terracell, setTerracell] = useState<Terracell | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
@@ -33,7 +26,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
     const [error, setError] = useState<string | null>(null)
     const [sppContractInfo, setSppContractInfo] = useState<string>()
     const user = useContext<User>(UserContext)
-    const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
+    const [userCapability, setUserCapability] = useState<UserCapabilities | null>(null)
     const assetPrice = 10
 
     const { sell, buy, withdraw, unit } = useNftSeller()
@@ -51,7 +44,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                 const { asset } = await nftResponse.json()
 
-                setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+                setTerracell({ ...asset, name: formatNftName(asset.name) })
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
@@ -151,7 +144,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         <ModalDialog
             visible={visible}
             title={strings.terracellInformation}
-            subtitle={terracell?.name || ''}
+            subtitle={terracell?.name || null}
             onClose={onClose}>
             <div className={styles.container}>
                 {!terracell && <LoadingSpinner />}

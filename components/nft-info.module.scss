@@ -10,6 +10,7 @@
         display: flex;
         justify-content: space-between;
         padding: 5px 20px;
+        transition: all ease 0.2s;
 
         &:hover {
             cursor: pointer;
@@ -35,15 +36,16 @@
         flex-direction: column;
         flex-grow: 1;
         padding: 0 20px;
-
-        &:hover {
-            cursor: pointer;
-        }
+        transition: all ease 0.2s;
 
         .dt {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         .dd {

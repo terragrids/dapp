@@ -23,3 +23,7 @@ export function ipfsUrlToGatewayUrl(url) {
     const hash = getIpfsHash(url)
     return ipfsUrl(hash)
 }
+
+export const NFT_SUFFIX = '@arc3'
+
+export const formatNftName = str => str.replace(NFT_SUFFIX, '')
