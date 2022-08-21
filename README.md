@@ -107,6 +107,24 @@ The trading contract will keep tracking the NFT, listening to further API calls.
 If a Terracell is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terracell is up for sale, it will be withdrawn from the market, but still visible in the SPP; if the Terracell is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
 If the Terracell has not been sold yet, the trading contract will also call the SPP smart contract to decrease the SPP Capacity by the Terracell nominal power (still to be implemented).
 
+## Algorand Greenhouse Hack #1
+This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
+
+**Backend**
+1. NFT Minting on Algorand using Reach
+2. NFT image uploading and metadata and image pinning on Pinata IPFS
+3. Reach Solar Power Plant Smart Contract to update and keep track of the SPP properties
+4. Reach Token Market Contract, started before the hackathon with a simple sell/purchase logic and extented during the hackathon to include 1/ NFT tracking after purchase and 2/ remote calls to the SPP smart contract to update SPP properties
+5. Storing Algorand Smart Contract ID offchain to attach from user accounts
+6. Node.js Proxy API to support most new features above
+
+**User Interface**
+1. The isometric map with user interactions
+2. The user menu with the list of NFTs belonging to the user's wallet
+3. The user dialogs to show the NFT details
+4. The NFT Minter dialog
+5. The Solar Power Plant dialog
+
 ## Test the DApp
 
 To test the [Terragrids on Testnet](https://testnet.terragrids.org), you need to get some `ALGO` into your testnet wallet using the [Algorand Dispenser](https://bank.testnet.algorand.network/).
