@@ -19,12 +19,6 @@ type TerracellDialogProps = {
     onClose: () => void
 }
 
-/**
- * TODO:
- * - check if functions (onSell, onWithdraw, and onBuy) are correct as they are just copied from plot-info-dialog.tsx
- * - add animation or transition property to opening full description if necessary
- */
-
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
     const [terracell, setTerracell] = useState<Terracell | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
@@ -150,7 +144,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         <ModalDialog
             visible={visible}
             title={strings.terracellInformation}
-            subtitle={terracell?.name || ''}
+            subtitle={terracell?.name || null}
             onClose={onClose}>
             <div className={styles.container}>
                 {!terracell && <LoadingSpinner />}
