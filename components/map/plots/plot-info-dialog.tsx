@@ -29,7 +29,6 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     const user = useContext<User>(UserContext)
     const { sell, buy, withdraw, unit } = useNftSeller()
     const assetPrice = 10
-    const [terralandName, setTerralandName] = useState('')
 
     useEffect(() => {
         async function fetchTerraland() {
@@ -51,8 +50,6 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                     ...asset,
                     name: formatTrdlName(asset.name)
                 })
-
-                setTerralandName(formatTrdlName(asset.name))
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
@@ -143,7 +140,11 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
     }
 
     return (
-        <ModalDialog visible={visible} title={strings.terralandInformation} subtitle={terralandName} onClose={onClose}>
+        <ModalDialog
+            visible={visible}
+            title={strings.terralandInformation}
+            subtitle={terraland?.name || null}
+            onClose={onClose}>
             <div className={styles.container}>
                 {terraland && !error && (
                     <>
