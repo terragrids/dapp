@@ -29,21 +29,21 @@
     }
 
     .cell {
-        width: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
         border-radius: $border-radius;
         padding: 25px;
+        margin: 0 auto;
 
         &:hover {
             cursor: pointer;
         }
 
         @media (max-width: $screen-small) {
-            padding-top: 0;
-            padding-bottom: 20px;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         picture {
@@ -64,6 +64,10 @@
             position: absolute;
             top: 0;
             left: 0;
+
+            @media (max-width: $screen-small) {
+                max-width: 150px;
+            }
         }
     }
 }

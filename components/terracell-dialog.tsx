@@ -26,7 +26,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
     const [error, setError] = useState<string | null>(null)
     const [sppContractInfo, setSppContractInfo] = useState<string>()
     const user = useContext<User>(UserContext)
-    const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
+    const [userCapability, setUserCapability] = useState<UserCapabilities | null>(null)
     const assetPrice = 10
 
     const { sell, buy, withdraw, unit } = useNftSeller()

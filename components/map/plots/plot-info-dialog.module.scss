@@ -1,7 +1,7 @@
 @import 'styles/colors.scss';
+@import 'styles/screens.scss';
 
 .container {
-    // display: flex;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9,6 +9,11 @@
     min-width: 400px;
     width: 400px;
     max-width: 600px;
+
+    @media (max-width: $screen-small) {
+        min-width: 90%;
+        width: 100%;
+    }
 }
 
 .section {
