@@ -37,7 +37,7 @@ export default function MainMenu({ visible, onSelectSymbol }) {
                         </li>
                         <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>{Nft.TRCL.currencySymbol}</li>
                         <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>{Nft.TRLD.currencySymbol}</li>
-                        <li onClick={() => openNftListDialog(Nft.TRAS.symbol)}>{Nft.TRAS.currencySymbol}</li>
+                        <li onClick={() => openNftListDialog(Nft.TRBD.symbol)}>{Nft.TRBD.currencySymbol}</li>
                     </ul>
 
                     <button className={styles.accent} onClick={openMintDialog}>

@@ -1,7 +1,7 @@
 export class Nft {
     static readonly TRCL = new Nft('TRCL', 'Terracell')
     static readonly TRLD = new Nft('TRLD', 'Terraland')
-    static readonly TRAS = new Nft('TRAS', 'Terrasset')
+    static readonly TRBD = new Nft('TRBD', 'Terrabuild')
 
     currencySymbol: string
 
@@ -15,11 +15,11 @@ export class Nft {
     }
 
     static list() {
-        return [Nft.TRCL, Nft.TRLD, Nft.TRAS]
+        return [Nft.TRCL, Nft.TRLD, Nft.TRBD]
     }
 }
 
-export type Symbols = 'TRCL' | 'TRLD' | 'TRAS'
+export type Symbols = 'TRCL' | 'TRLD' | 'TRBD'
 
 export type Holder = {
     address: string

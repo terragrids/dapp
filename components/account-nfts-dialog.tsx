@@ -44,9 +44,9 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
             subtitle = strings.yourPlotsOfLand
             title = `${Nft.TRLD.name} (${Nft.TRLD.currencySymbol})`
             break
-        case 'TRAS':
+        case 'TRBD':
             subtitle = strings.yourBuildings
-            title = `${Nft.TRAS.name} (${Nft.TRAS.currencySymbol})`
+            title = `${Nft.TRBD.name} (${Nft.TRBD.currencySymbol})`
             break
     }
 
