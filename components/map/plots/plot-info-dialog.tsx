@@ -7,7 +7,7 @@ import { strings } from 'strings/en'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { Terraland } from 'types/nft.js'
-import { formatTrdlName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
@@ -48,7 +48,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 const { asset } = await nftResponse.json()
                 setTerraland({
                     ...asset,
-                    name: formatTrdlName(asset.name)
+                    name: formatNftName(asset.name)
                 })
 
                 try {

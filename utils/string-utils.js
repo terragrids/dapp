@@ -24,8 +24,6 @@ export function ipfsUrlToGatewayUrl(url) {
     return ipfsUrl(hash)
 }
 
-export const TRDL_SUFFIX = '@arc3'
-export const TRCL_SUFFIX = '@arc3'
+export const NFT_SUFFIX = '@arc3'
 
-export const formatTrdlName = str => str.replace(TRDL_SUFFIX, '')
-export const formatTrclName = str => str.replace(TRCL_SUFFIX, '')
+export const formatNftName = str => str.replace(NFT_SUFFIX, '')

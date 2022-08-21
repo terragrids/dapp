@@ -5,7 +5,7 @@ import { endpoints } from 'utils/api-config'
 import LoadingSpinner from './loading-spinner'
 import styles from './terracell-list.module.scss'
 import { strings } from 'strings/en'
-import { formatTrclName } from 'utils/string-utils'
+import { formatNftName } from 'utils/string-utils'
 
 type TerracellListProps = {
     setSelectedTerracellId: (id: string) => void
@@ -17,7 +17,7 @@ export default function TerracellList({ setSelectedTerracellId }: TerracellListP
     const updateTerracells = useCallback(async () => {
         const response = await fetch(endpoints.terracells())
         const { assets } = await response.json()
-        setTerracells(assets.map((asset: Terracell) => ({ ...asset, name: formatTrclName(asset.name) })))
+        setTerracells(assets.map((asset: Terracell) => ({ ...asset, name: formatNftName(asset.name) })))
     }, [])
 
     useEffect(() => {
