@@ -33,6 +33,10 @@ When users submit an NFT for minting, first the image and the NFT metadata is up
 
 https://user-images.githubusercontent.com/2437709/185980778-f26c1e81-489e-4cf7-ae95-5f15e0284f81.mov
 
+Once minted, the NFT is on AlgoExplorer and Pinata IPFS.
+
+https://user-images.githubusercontent.com/2437709/185982775-f1177418-29fc-4fe2-bfc5-7d18027aac36.mov
+
 An offchain NoSQL DB is also updated with some frontend information of the minted NFT. This is mainly for improving the user experience when fetching and displaying the NFTs, but the real source of data is distributed and sits on Algorand and IPFS.
 
 If a new Terraland is minted, it will appear on the Terragrids map in the specified position. If a new Terracell NFT is minted, it will appear in the Solar Power Plant dialog. If a Terrabuild NFT is minted, it will appear in the build options dialog of a Terraland owned by a user (this particular feature is still to be implemented).
@@ -41,6 +45,8 @@ If a new Terraland is minted, it will appear on the Terragrids map in the specif
 
 Users can explore the Terragrids metaverse browsing an isometric map. The map is split into squared plot of lands, each identified by their position coordinates (X,Y). If a Terraland is minted in a particular position, its image will be displayed on the plot.
 Users can click on one Terraland to see more information about it. The plot in position (0,0) is a special one, and it is allocated to the Solar Power Plant.
+
+https://user-images.githubusercontent.com/2437709/185983403-7da5da21-117a-4f02-8300-c54e63654e84.mov
 
 ### Selling Terralands (`$TRLD`)
 
