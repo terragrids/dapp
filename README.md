@@ -90,6 +90,8 @@ The Solar Power Plant has a Capacity and an Output.
 -   The Capacity is determined by the total nominal output in TerraWatts (TRW) of all the Terracells that are currently up for sale
 -   The Output is determined by the total nominal output in TerraWatts (TRW) of all the Terracells that are currently owned by users that are not administrators, i.e. all the Terracells that have been purchased at least once by regular Terragrids users that are contributing to crowdfunding.
 
+https://user-images.githubusercontent.com/2437709/186000858-ad75a06c-1a7c-453a-a651-e5d1d7ac7610.mov
+
 If the SPP Output reaches its Capacity, it means that administrators need to mint more Terracell NFTs to increase its Capacity.
 
 The SPP Output can be increased only by users that purchase Terracells, i.e. users that are contributing to crowdfunding.
@@ -98,7 +100,11 @@ The SPP Output is an essential aspect of the metaverse. Users can buy and build 
 
 ### Solar Power Plant Smart Contract
 
-The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output. Since the SPP Capacity is increased by a Terracell nominal power when the Terracell is put on the market, and the SPP Output is increased by a Terracell nominal power when the Terracell is purchased by a user, each Terracell trading contract makes remote calls to the SPP contract to update Capacity and Output with transactional and atomic operations, i.e. only if selling and purchasing are successful the SPP is updated on the Algorand consensus network.
+The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output. 
+
+<img width="1243" alt="image" src="https://user-images.githubusercontent.com/2437709/186001241-2ae037e2-f1e0-4baf-a278-d9a89e858f70.png">
+
+Since the SPP Capacity is increased by a Terracell nominal power when the Terracell is put on the market, and the SPP Output is increased by a Terracell nominal power when the Terracell is purchased by a user, each Terracell trading contract makes remote calls to the SPP contract to update Capacity and Output with transactional and atomic operations, i.e. only if selling and purchasing are successful the SPP is updated on the Algorand consensus network.
 
 Having the SPP properties in a smart contract makes the DApp also more distributed.
 
