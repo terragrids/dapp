@@ -66,6 +66,12 @@ The new contract can be seen on AlgoExplorer.
 If a user's wallet does not own a Terraland NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
 Buying a Terraland will connect the user's wallet account to the trading Algorand contract for that NFT. The NFT is transferred from the contract account to the buyer's wallet account, and the price in ALGO is paid from the buyer's account to the Terragrids Treasury crowdfunding account. The contract will keep tracking the NFT, listening to further API calls.
 
+https://user-images.githubusercontent.com/2437709/185997014-dd1061e5-f03e-4f8b-be1c-890685a4c9d8.mov
+
+After purchasing a Terraland, the NFT is owned by the new wallet on AlgoExplorer.
+
+https://user-images.githubusercontent.com/2437709/185997756-b2191589-1774-428f-a108-1822b75ac651.mov
+
 ### Withdrawing Terralands (`$TRLD`)
 
 If a Terraland is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terraland is up for sale, it will be withdrawn from the market, but still visible in the map; if the Terraland is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
