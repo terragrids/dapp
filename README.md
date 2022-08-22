@@ -55,6 +55,8 @@ When users click on the Terraland, a dialog opens with information about the NFT
 If a user's wallet owns the Terraland NFT (which is always the case for administrators that have just minted a Terraland), they can put it up for sale for specified price in ALGO (at the moment, the price is fixed at 10 `$ALGO`).
 Selling a Terraland will deploy a new Algorand contract implemented with Reach. The NFT is transferred from the seller's account to the contract account and the contract will listen to API calls, using a Reach `paralellReduce`.
 
+https://user-images.githubusercontent.com/2437709/185984943-85dbf9f7-16a8-41a3-a0c2-df2d06399f87.mov
+
 ### Buying Terralands (`$TRLD`)
 
 If a user's wallet does not own a Terraland NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
