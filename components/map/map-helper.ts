@@ -1,6 +1,5 @@
 import Plot, { Position2D } from './plots/plot'
-// TODO: should change image once design for SPP is ready
-import SPP from 'public/images/map-tile-strip-lake.png'
+import SPP from 'public/images/sc_terragrids_iso_solar_plant_03_1200px.png'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
 import GRASS from 'public/images/grasstile.png'
