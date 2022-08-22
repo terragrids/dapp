@@ -17,7 +17,7 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         symbol: string
         url: string
         offchainUrl: string
-        power: 10
+        power: number
     }
 
     type State = {
