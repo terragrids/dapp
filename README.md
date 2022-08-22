@@ -70,6 +70,12 @@ Buying a Terraland will connect the user's wallet account to the trading Algoran
 
 If a Terraland is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terraland is up for sale, it will be withdrawn from the market, but still visible in the map; if the Terraland is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
 
+https://user-images.githubusercontent.com/2437709/185994898-a05a0be3-cc15-4379-977e-290705f9c2bd.mov
+
+After withdrawing, AlgoExplorer shows the contract as deleted.
+
+<img width="1253" alt="image" src="https://user-images.githubusercontent.com/2437709/185995110-283f8391-b260-4f0d-8a05-ce8b8aa3b361.png">
+
 ### Solar Power Plant
 
 When administrators (at the moment any user) mint a new Terracell (`$TRCL`), it will be displayed in the Terragrids Solar Power Plant (SPP). The SPP dialog can be opened from the map clicking on the plot of land at position (0,0).
