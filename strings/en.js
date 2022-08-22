@@ -70,7 +70,8 @@ const enStrings = {
     position: 'Position',
     contract: 'Contract',
     youHaveNoNfts: 'You have no {0} in your wallet',
-    noDescription: 'No description'
+    noDescription: 'No description',
+    connectToWalletToSeeSPP: 'You need to connect to a wallet to access the Solar Power Plant'
 }
 
 export const strings = new LocalizedStrings({
