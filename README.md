@@ -136,6 +136,8 @@ Buying a Terracell will connect the user's wallet account to the trading Algoran
 
 The trading contract will keep tracking the NFT, listening to further API calls.
 
+https://user-images.githubusercontent.com/2437709/186005539-9a27c521-75e4-43c3-973e-547fec271eb5.mov
+
 ### Withdrawing Terracells (`$TRCL`)
 
 If a Terracell is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terracell is up for sale, it will be withdrawn from the market, but still visible in the SPP; if the Terracell is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
