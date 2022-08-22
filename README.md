@@ -123,6 +123,8 @@ Transactionally:
 
 The contract will listen to API calls, using a Reach `paralellReduce`.
 
+https://user-images.githubusercontent.com/2437709/186003356-a70d34e2-c54f-421e-84bb-871f37f7d3cb.mov
+
 ### Buying Terracells (`$TRCL`)
 
 If a user's wallet does not own a Terracell NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
@@ -133,6 +135,8 @@ Buying a Terracell will connect the user's wallet account to the trading Algoran
 -   The SPP smart contract is called to increase the SPP Output by the Terracell nominal power.
 
 The trading contract will keep tracking the NFT, listening to further API calls.
+
+https://user-images.githubusercontent.com/2437709/186005539-9a27c521-75e4-43c3-973e-547fec271eb5.mov
 
 ### Withdrawing Terracells (`$TRCL`)
 
