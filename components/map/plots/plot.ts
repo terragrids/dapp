@@ -40,10 +40,17 @@ export default class Plot {
 
     private calculateRenderPosition(plotCoord: Position2D): Position2D {
         const adjustY = this.isLargeImage()
-            ? Plot.PLOT_HEIGHT + Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_THICKNESS
+            ? plotCoord.x === 0 && plotCoord.y === 0
+                ? this.image.height - this.mapStartPosition.y / 2 + Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_THICKNESS * 2
+                : this.image.height -
+                  this.mapStartPosition.y / 2 +
+                  Plot.PLOT_HALF_HEIGHT +
+                  Plot.PLOT_THICKNESS * 2 +
+                  Plot.PLOT_HALF_THICKNESS
             : Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS
 
-        const renderX = this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH
+        const renderX =
+            this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH - Plot.PLOT_HALF_THICKNESS
         const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT + adjustY
         return { x: renderX, y: renderY }
     }
@@ -63,7 +70,7 @@ export default class Plot {
         const offsetY = offset - this.image.height
 
         if (this.isLargeImage()) {
-            const { scaleX, scaleY } = this.getImageScale()
+            const { scaleX } = this.getImageScale()
             this.ctx.drawImage(
                 this.image,
                 this.renderPosition.x,
