@@ -57,6 +57,10 @@ Selling a Terraland will deploy a new Algorand contract implemented with Reach. 
 
 https://user-images.githubusercontent.com/2437709/185984943-85dbf9f7-16a8-41a3-a0c2-df2d06399f87.mov
 
+The new contract can be seen on AlgoExplorer.
+
+<img width="1270" alt="image" src="https://user-images.githubusercontent.com/2437709/185985515-bec5b6b5-e5cb-42d0-95c9-8f34e97e7094.png">
+
 ### Buying Terralands (`$TRLD`)
 
 If a user's wallet does not own a Terraland NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
