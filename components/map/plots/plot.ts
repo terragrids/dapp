@@ -69,7 +69,7 @@ export default class Plot {
                 this.renderPosition.x,
                 this.renderPosition.y + offsetY,
                 this.image.width / scaleX,
-                this.image.height / scaleY
+                this.image.height / scaleX
             )
         } else {
             this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
