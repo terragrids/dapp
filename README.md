@@ -110,6 +110,8 @@ Having the SPP properties in a smart contract makes the DApp also more distribut
 
 The SPP Capacity and Output properties are fetched using a Reach `View`. This allows the frontend to track this information without the users having to execute transactions and pay network fees.
 
+<img width="1037" alt="image" src="https://user-images.githubusercontent.com/2437709/186011018-77693a1b-28c4-4576-aeab-dc2d42247cdb.png">
+
 ### Selling Terracells (`$TRCL`)
 
 When users click on a Terracell, a dialog opens with information about the NFT. Users can click on the Asset ID to see the asset on AlgoExplorer (still to be implemented).
@@ -161,9 +163,9 @@ This is the list of new features that have been implemented during the Algorand 
 4. The NFT Minter dialog
 5. The Solar Power Plant dialog
 
-## Test the DApp
+## DApp architecture
 
-To test the [Terragrids on Testnet](https://testnet.terragrids.org), you need to get some `ALGO` into your testnet wallet using the [Algorand Dispenser](https://bank.testnet.algorand.network/).
+<img width="1037" alt="image" src="https://user-images.githubusercontent.com/2437709/186011263-7f2b0b70-872f-4f2e-bab6-e8dcb571261e.png">
 
 ## Proxy API
 
@@ -175,7 +177,7 @@ Lists on NFTs are fetched using a Terragrids Proxy API (i.e. https://testnet.ter
 
 ## Reach backend
 
-The source code for the Reach backend is located under `blockchain/`.
+The source code for the Reach backend is located under `blockchain/token-market` and .
 
 Make a copy of `.env.ref` in the root folder and rename it as `.env.local`.
 
@@ -234,6 +236,10 @@ For every commit or PR opened on the `dev` or `master` branch, the DApp is built
 For every commit on the `dev` or `master` branch, the DApp is built on AWS Amplify and deployed on AWS Cloudfront Lambda@Edge functions. The build steps are defined in `amplify.yml`.
 
 `dev` builds will be accessible at `https://testnet.terragrids.org` and running on Algorand testnet, while `master` builds will be accessible at `https://app.terragrids.org` and running on Algorand mainnet.
+
+## Test the DApp
+
+To test the [Terragrids on Testnet](https://testnet.terragrids.org), you need to get some `ALGO` into your testnet wallet using the [Algorand Dispenser](https://bank.testnet.algorand.network/).
 
 ## Make contributions
 
