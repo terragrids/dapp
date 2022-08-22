@@ -31,6 +31,8 @@ If users click on the Mint option, they will see an NFT Mint dialog. From there,
 
 When users submit an NFT for minting, first the image and the NFT metadata is uploaded and pinned to Pinata IPFS. A new ARC3 Algorand Standard Asset is minted and the IPFS URL of the NFT metadata is used as the ARC3 ASA URL.
 
+https://user-images.githubusercontent.com/2437709/185980778-f26c1e81-489e-4cf7-ae95-5f15e0284f81.mov
+
 An offchain NoSQL DB is also updated with some frontend information of the minted NFT. This is mainly for improving the user experience when fetching and displaying the NFTs, but the real source of data is distributed and sits on Algorand and IPFS.
 
 If a new Terraland is minted, it will appear on the Terragrids map in the specified position. If a new Terracell NFT is minted, it will appear in the Solar Power Plant dialog. If a Terrabuild NFT is minted, it will appear in the build options dialog of a Terraland owned by a user (this particular feature is still to be implemented).
