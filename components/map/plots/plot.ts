@@ -11,7 +11,7 @@ export type PlotPropsType = {
 }
 
 export default class Plot {
-    // THESE SHOULD BE CHANGED OR SET DYNAMICALLY
+    static readonly MAX_PLOT_HEIGHT = 114 // 1370px / 12 scaleX (= forest image)
     static readonly PLOT_WIDTH = 96
     static readonly PLOT_HEIGHT = 48
 
@@ -39,24 +39,9 @@ export default class Plot {
     }
 
     private calculateRenderPosition(plotCoord: Position2D): Position2D {
-        let adjustY: number
-        if (this.isLargeImage()) {
-            if (plotCoord.x === 0 && plotCoord.y === 0) {
-                adjustY =
-                    this.image.height -
-                    (Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HEIGHT - Plot.PLOT_THICKNESS - Plot.PLOT_HALF_THICKNESS)
-            } else {
-                const ratio = this.image.height / this.image.width
-                const extra = ratio > 1 ? Plot.PLOT_HEIGHT : 0
-                adjustY = this.image.height - Plot.PLOT_HEIGHT - Plot.PLOT_THICKNESS - Plot.PLOT_HALF_THICKNESS - extra
-            }
-        } else {
-            adjustY = Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS
-        }
-
         const renderX =
             this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH - Plot.PLOT_HALF_THICKNESS
-        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT + adjustY
+        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT
 
         return { x: renderX, y: renderY }
     }
@@ -72,20 +57,21 @@ export default class Plot {
         return { scaleX, scaleY }
     }
 
-    draw(offset: number): void {
-        const offsetY = offset - this.image.height
+    draw(): void {
+        const { scaleX } = this.getImageScale()
+        // add z axis offset depending on image height
+        const offsetZ = Plot.MAX_PLOT_HEIGHT - Math.floor(this.image.height / scaleX) - Plot.PLOT_HALF_HEIGHT
 
         if (this.isLargeImage()) {
-            const { scaleX } = this.getImageScale()
             this.ctx.drawImage(
                 this.image,
                 this.renderPosition.x,
-                this.renderPosition.y + offsetY,
+                this.renderPosition.y + offsetZ,
                 this.image.width / scaleX,
                 this.image.height / scaleX
             )
         } else {
-            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
+            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetZ)
         }
     }
 }

@@ -13,9 +13,6 @@ export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
 export const DEFAULT_MAP_SCALE = 1
 
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-export const MAGIC_NUMBER_TO_ADJUST = 80
-
 export const SOLAR_POWER_PLANT: PlotType = {
     id: 'SOLAR_POWER_PLANT',
     name: 'SOLAR POWER PLANT',
@@ -113,7 +110,7 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
     const scale = getOptimalScale(canvasWidth)
     const x = halfCanvasWidth / scale - offsetX
     // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
-    const y = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
+    const y = remainingHeight / 2 - offsetY
 
     return { x, y }
 }

@@ -12,7 +12,6 @@ import {
     getTransformedPoint,
     GRID_SIZE,
     isInsideMap,
-    MAGIC_NUMBER_TO_ADJUST,
     renderHoveredPlot
 } from './map-helper'
 import Plot, { Position2D } from './plots/plot'
@@ -50,7 +49,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
                     coord: { x: plotX, y: plotY },
                     ctx
                 })
-                plot.draw(MAGIC_NUMBER_TO_ADJUST)
+                plot.draw()
             }
         }
 
