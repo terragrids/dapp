@@ -63,6 +63,16 @@ export default class Plot {
         const offsetZ = Plot.MAX_PLOT_HEIGHT - Math.floor(this.image.height / scaleX) - Plot.PLOT_HALF_HEIGHT
 
         if (this.isLargeImage()) {
+            if (this.coord.x === 0 && this.coord.y === 0) {
+                return this.ctx.drawImage(
+                    this.image,
+                    this.renderPosition.x,
+                    this.renderPosition.y + Plot.PLOT_HALF_HEIGHT - (Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS),
+                    this.image.width / scaleX,
+                    this.image.height / scaleX
+                )
+            }
+
             this.ctx.drawImage(
                 this.image,
                 this.renderPosition.x,
