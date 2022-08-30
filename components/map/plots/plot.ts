@@ -11,7 +11,7 @@ export type PlotPropsType = {
 }
 
 export default class Plot {
-    // THESE SHOULD BE CHANGED OR SET DYNAMICALLY
+    static readonly MAX_PLOT_HEIGHT = 114 // 1370px / 12 scaleX (= forest image)
     static readonly PLOT_WIDTH = 96
     static readonly PLOT_HEIGHT = 48
 
@@ -39,12 +39,10 @@ export default class Plot {
     }
 
     private calculateRenderPosition(plotCoord: Position2D): Position2D {
-        const adjustY = this.isLargeImage()
-            ? Plot.PLOT_HEIGHT + Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_THICKNESS
-            : Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS
+        const renderX =
+            this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH - Plot.PLOT_HALF_THICKNESS
+        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT
 
-        const renderX = this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH
-        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT + adjustY
         return { x: renderX, y: renderY }
     }
 
@@ -59,20 +57,31 @@ export default class Plot {
         return { scaleX, scaleY }
     }
 
-    draw(offset: number): void {
-        const offsetY = offset - this.image.height
+    draw(): void {
+        const { scaleX } = this.getImageScale()
+        // add z axis offset depending on image height
+        const offsetZ = Plot.MAX_PLOT_HEIGHT - Math.floor(this.image.height / scaleX) - Plot.PLOT_HALF_HEIGHT
 
         if (this.isLargeImage()) {
-            const { scaleX, scaleY } = this.getImageScale()
+            if (this.coord.x === 0 && this.coord.y === 0) {
+                return this.ctx.drawImage(
+                    this.image,
+                    this.renderPosition.x,
+                    this.renderPosition.y + Plot.PLOT_HALF_HEIGHT - (Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS),
+                    this.image.width / scaleX,
+                    this.image.height / scaleX
+                )
+            }
+
             this.ctx.drawImage(
                 this.image,
                 this.renderPosition.x,
-                this.renderPosition.y + offsetY,
+                this.renderPosition.y + offsetZ,
                 this.image.width / scaleX,
-                this.image.height / scaleY
+                this.image.height / scaleX
             )
         } else {
-            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
+            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetZ)
         }
     }
 }

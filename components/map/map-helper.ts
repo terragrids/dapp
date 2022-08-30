@@ -1,6 +1,5 @@
 import Plot, { Position2D } from './plots/plot'
-// TODO: should change image once design for SPP is ready
-import SPP from 'public/images/map-tile-strip-lake.png'
+import SPP from 'public/images/sc_terragrids_iso_solar_plant_03_1200px.png'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
 import GRASS from 'public/images/grasstile.png'
@@ -13,9 +12,6 @@ export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
 export const DEFAULT_MAP_SCALE = 1
-
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-export const MAGIC_NUMBER_TO_ADJUST = 80
 
 export const SOLAR_POWER_PLANT: PlotType = {
     id: 'SOLAR_POWER_PLANT',
@@ -114,7 +110,7 @@ export const getStartPosition = (canvasWidth: number, canvasHeight: number) => {
     const scale = getOptimalScale(canvasWidth)
     const x = halfCanvasWidth / scale - offsetX
     // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
-    const y = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
+    const y = remainingHeight / 2 - offsetY
 
     return { x, y }
 }
