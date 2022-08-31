@@ -73,18 +73,22 @@ export const main = Reach.App(() => {
         })
         /**
          * Increases the SPP Capacity by the specified amount of TRW
-         * and Total by one Terracell.
+         * and Total by one Terracell if amount > 0.
          */
         .api(SPP.increaseCapacity, (amount, k) => {
+            const newTotal = amount > 0 ? total + 1 : total
             k(null)
-            return [false, capacity + amount, output, total + 1, active]
+            return [false, capacity + amount, output, newTotal, active]
         })
         /**
          * Decreases the SPP Capacity by the specified amount of TRW
-         * and Total by one Terracell.
+         * and Total by one Terracell if amount > 0.
          */
         .api(SPP.decreaseCapacity, (amount, k) => {
-            if (amount > capacity && total == 0) {
+            if (amount == 0) {
+                k(null)
+                return [false, capacity, output, total, active]
+            } else if (amount > capacity && total == 0) {
                 k(null)
                 return [false, 0, output, 0, active]
             } else if (amount > capacity && total > 0) {
@@ -107,11 +111,12 @@ export const main = Reach.App(() => {
         })
         /**
          * Increases the SPP Output by the specified amount of TRW
-         * and Active by one Terracell.
+         * and Active by one Terracell if amount > 0.
          */
         .api(SPP.increaseOutput, (amount, k) => {
+            const newActive = amount > 0 ? active + 1 : active
             k(null)
-            return [false, capacity, output + amount, total, active + 1]
+            return [false, capacity, output + amount, total, newActive]
         })
         /**
          * Sets the SPP Total to the specified amount of Terracells.

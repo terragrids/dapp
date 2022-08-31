@@ -116,6 +116,19 @@ const userConnectAndStop = async (name, account, contract, ready) => {
 
         await logSppAndAssert(name, sppView, 35, 0, 1, 0)
 
+        // Decrease capacity by 0
+
+        await callAPI(
+            name,
+            () => spp.decreaseCapacity(0),
+            `${name} managed to decrease the spp capacity`,
+            `${name} failed to decrease the spp capacity`
+        )
+
+        await logSppAndAssert(name, sppView, 35, 0, 1, 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
         // Decrease capacity more the current
@@ -144,11 +157,37 @@ const userConnectAndStop = async (name, account, contract, ready) => {
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
+        // Increase capacity by 0
+
+        await callAPI(
+            name,
+            () => spp.increaseCapacity(0),
+            `${name} managed to increase the spp capacity`,
+            `${name} failed to increase the spp capacity`
+        )
+
+        await logSppAndAssert(name, sppView, 55, 0, 1, 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
         // Decrease capacity less the current
 
         await callAPI(
             name,
             () => spp.decreaseCapacity(20),
+            `${name} managed to decrease the spp capacity`,
+            `${name} failed to decrease the spp capacity`
+        )
+
+        await logSppAndAssert(name, sppView, 35, 0, 0, 0)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Decrease capacity by 0
+
+        await callAPI(
+            name,
+            () => spp.decreaseCapacity(0),
             `${name} managed to decrease the spp capacity`,
             `${name} failed to decrease the spp capacity`
         )
@@ -175,6 +214,19 @@ const userConnectAndStop = async (name, account, contract, ready) => {
         await callAPI(
             name,
             () => spp.increaseOutput(5),
+            `${name} managed to increase the spp output`,
+            `${name} failed to increase the spp output`
+        )
+
+        await logSppAndAssert(name, sppView, 35, 20, 0, 1)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Increase output by 0
+
+        await callAPI(
+            name,
+            () => spp.increaseOutput(0),
             `${name} managed to increase the spp output`,
             `${name} failed to increase the spp output`
         )
