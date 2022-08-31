@@ -61,14 +61,18 @@ const getAndLogBalance = async (account, name) => {
     return algo(balance)
 }
 
-const logSppAndAssert = async (name, view, expCapacity, expOutput) => {
+const logSppAndAssert = async (name, view, expCapacity, expOutput, expTotal, expActive) => {
     const capacity = (await view.capacity())[1].toNumber()
     const output = (await view.output())[1].toNumber()
+    const total = (await view.total())[1].toNumber()
+    const active = (await view.active())[1].toNumber()
 
-    console.log(`${name} sees that spp has`, { capacity, output })
+    console.log(`${name} sees that spp has`, { capacity, output, total, active })
 
     assert(capacity == expCapacity)
     assert(output == expOutput)
+    assert(total == expTotal)
+    assert(active == expActive)
 }
 
 const userConnectAndStop = async (name, account, contract, ready) => {
@@ -84,7 +88,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
 
         // Initial state
 
-        await logSppAndAssert(name, sppView, 0, 0)
+        await logSppAndAssert(name, sppView, 0, 0, 0, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -93,11 +97,11 @@ const userConnectAndStop = async (name, account, contract, ready) => {
         await callAPI(
             name,
             () => spp.setCapacity(10),
-            `${name} managed to set the spp capacit`,
+            `${name} managed to set the spp capacity`,
             `${name} failed to set the spp capacity`
         )
 
-        await logSppAndAssert(name, sppView, 10, 0)
+        await logSppAndAssert(name, sppView, 10, 0, 0, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -110,7 +114,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to increase the spp capacity`
         )
 
-        await logSppAndAssert(name, sppView, 35, 0)
+        await logSppAndAssert(name, sppView, 35, 0, 1, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -123,7 +127,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to decrease the spp capacity`
         )
 
-        await logSppAndAssert(name, sppView, 0, 0)
+        await logSppAndAssert(name, sppView, 0, 0, 0, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -136,7 +140,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to increase the spp capacity`
         )
 
-        await logSppAndAssert(name, sppView, 55, 0)
+        await logSppAndAssert(name, sppView, 55, 0, 1, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -149,7 +153,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to decrease the spp capacity`
         )
 
-        await logSppAndAssert(name, sppView, 35, 0)
+        await logSppAndAssert(name, sppView, 35, 0, 0, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -162,7 +166,7 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to set the spp output`
         )
 
-        await logSppAndAssert(name, sppView, 35, 15)
+        await logSppAndAssert(name, sppView, 35, 15, 0, 0)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
@@ -175,7 +179,33 @@ const userConnectAndStop = async (name, account, contract, ready) => {
             `${name} failed to increase the spp output`
         )
 
-        await logSppAndAssert(name, sppView, 35, 20)
+        await logSppAndAssert(name, sppView, 35, 20, 0, 1)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Set total
+
+        await callAPI(
+            name,
+            () => spp.setTotal(8),
+            `${name} managed to set the spp total`,
+            `${name} failed to set the spp total`
+        )
+
+        await logSppAndAssert(name, sppView, 35, 20, 8, 1)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
+        // Set active
+
+        await callAPI(
+            name,
+            () => spp.setActive(12),
+            `${name} managed to set the spp active`,
+            `${name} failed to set the spp active`
+        )
+
+        await logSppAndAssert(name, sppView, 35, 20, 8, 12)
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
