@@ -52,7 +52,10 @@ export const main = Reach.App(() => {
     assert(balance(tok) == amount, 'Balance of NFT is wrong')
 
     const spp = remote(sppContractInfo, SPP)
-    spp.SolarPowerPlant_increaseCapacity(power)
+
+    if (power > 0) {
+        spp.SolarPowerPlant_increaseCapacity(power)
+    }
 
     A.interact.onReady(getContract(), sppContractInfo)
     A.interact.log('The token is on the market')
@@ -81,7 +84,9 @@ export const main = Reach.App(() => {
             M.buy,
             () => price,
             k => {
-                spp.SolarPowerPlant_increaseOutput(power)
+                if (power > 0) {
+                    spp.SolarPowerPlant_increaseOutput(power)
+                }
                 k([this, price, tok])
                 return [false, true, this, price + paid]
             }
@@ -95,8 +100,10 @@ export const main = Reach.App(() => {
 
     if (withdrawn) {
         A.interact.log('The token has been withdrawn')
-        // TODO reintroduce the line below when this is solved: https://github.com/reach-sh/reach-lang/discussions/1354
-        // spp.SolarPowerPlant_decreaseCapacity(power)
+        // TODO reintroduce the lines below when this is solved: https://github.com/reach-sh/reach-lang/discussions/1354
+        // if (power > 0) {
+        //     spp.SolarPowerPlant_decreaseCapacity(power)
+        // }
         commit()
         exit()
     }
