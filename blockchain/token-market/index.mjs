@@ -410,8 +410,7 @@ const testSellAndStop = async () => {
     assert(aliceGil == 0 && bobGil == 0)
     assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
 
-    // TODO this should be logSppAndAssert(0, 0, 0, 0) once this issue has been fixed: https://github.com/reach-sh/reach-lang/issues/1358
-    logSppAndAssert(7, 0, 1, 0)
+    logSppAndAssert(0, 0, 0, 0)
 
     await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }

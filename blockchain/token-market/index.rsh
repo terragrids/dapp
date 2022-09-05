@@ -100,10 +100,9 @@ export const main = Reach.App(() => {
 
     if (withdrawn) {
         A.interact.log('The token has been withdrawn')
-        // TODO reintroduce the lines below when this is solved: https://github.com/reach-sh/reach-lang/discussions/1354
-        // if (power > 0) {
-        //     spp.SolarPowerPlant_decreaseCapacity(power)
-        // }
+        if (power > 0) {
+            spp.SolarPowerPlant_decreaseCapacity(power)
+        }
         commit()
         exit()
     }
