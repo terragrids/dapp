@@ -12,7 +12,7 @@ export type User = {
     terracells?: null | Array<Terracell>
     authenticated?: boolean
     walletAddress?: null | string
-    isAdmin: boolean
+    isAdmin?: boolean
     update?: (user: User) => void
 }
 

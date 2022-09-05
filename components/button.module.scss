@@ -42,11 +42,11 @@
     font-size: 13px;
     text-transform: none;
     min-height: auto;
-    padding: 10px 0;
+    padding: 10px 20px;
 }
 
 .outline:hover,
-.outline:focus {
+.outline:active {
     background-color: $color-white;
     color: $color-abbey;
     opacity: 1;

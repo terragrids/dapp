@@ -11,6 +11,7 @@ import styles from './solar-power-plant-dialog.module.scss'
 import TerracellDialog from 'components/terracell-dialog'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
+import Button from 'components/button.js'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
@@ -22,7 +23,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
     const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
-    const { authenticated } = useContext<User>(UserContext)
+    const { authenticated, isAdmin } = useContext<User>(UserContext)
 
     const { getSpp } = useSppViewer()
 
@@ -75,7 +76,17 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
         <ModalDialog visible={visible} title={title} onClose={onClose} subtitle={subtitle} className={currentClassName}>
             {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
 
-            {authenticated && error && <div>{error}</div>}
+            {authenticated && error && (
+                <div className={styles.error}>
+                    <div>{error}</div>
+                    {!isAdmin && <div>{strings.refreshAndTryAgain}</div>}
+                    {isAdmin && (
+                        <div className={styles.button}>
+                            <Button type={'outline'} label={strings.openToSppAdminPanel} />
+                        </div>
+                    )}
+                </div>
+            )}
 
             {authenticated && !solarPowerPlant && !error && (
                 <div className={styles.loader}>

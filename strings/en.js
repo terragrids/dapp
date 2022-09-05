@@ -60,8 +60,9 @@ const enStrings = {
     errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
     errorFetchingTerracell: 'Unable to retrieve this Terracell. Please refresh the page and try again.',
     errorFetchingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
-    errorFetchingSppFromContract:
-        'Unable to retrieve the Solar Power Plant from the Smart Contract. Please refresh the page and try again.',
+    errorFetchingSppFromContract: 'Unable to retrieve the Solar Power Plant from the Smart Contract.',
+    refreshAndTryAgain: 'Please refresh the page and try again.',
+    openToSppAdminPanel: 'Open SPP Admin Panel',
     positionX: 'Position X',
     positionY: 'Position Y',
     availableToBuy: 'Available to buy',
