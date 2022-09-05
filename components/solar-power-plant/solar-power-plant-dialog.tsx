@@ -37,10 +37,14 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             if (sppResponse.ok) {
                 const { contractInfo } = await sppResponse.json()
 
-                const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
-                setSolarPowerPlant(spp)
+                try {
+                    const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
+                    setSolarPowerPlant(spp)
+                } catch (e) {
+                    setError(strings.errorFetchingSppFromContract)
+                }
             } else {
-                setError(strings.errorFechingSpp)
+                setError(strings.errorFetchingSpp)
             }
         }
         if (visible) fetchSolarPowerPlantAndTerracells()
@@ -69,15 +73,17 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
 
     return (
         <ModalDialog visible={visible} title={title} onClose={onClose} subtitle={subtitle} className={currentClassName}>
+            {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
+
+            {authenticated && error && <div>{error}</div>}
+
             {authenticated && !solarPowerPlant && !error && (
                 <div className={styles.loader}>
                     <LoadingSpinner />
                 </div>
             )}
 
-            {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
-
-            {solarPowerPlant && !error && (
+            {authenticated && solarPowerPlant && !error && (
                 <>
                     <div className={styles.terracellList}>
                         <TerracellList setSelectedTerracellId={setSelectedTerracellId} />

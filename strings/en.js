@@ -59,7 +59,9 @@ const enStrings = {
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
     errorFetchingTerracell: 'Unable to retrieve this Terracell. Please refresh the page and try again.',
-    errorFechingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
+    errorFetchingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
+    errorFetchingSppFromContract:
+        'Unable to retrieve the Solar Power Plant from the Smart Contract. Please refresh the page and try again.',
     positionX: 'Position X',
     positionY: 'Position Y',
     availableToBuy: 'Available to buy',
