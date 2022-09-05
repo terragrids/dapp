@@ -62,6 +62,7 @@ const enStrings = {
     errorFetchingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
     errorFetchingSppFromContract: 'Unable to retrieve the Solar Power Plant from the Smart Contract.',
     refreshAndTryAgain: 'Please refresh the page and try again.',
+    onlyAdminWalletsCanAccess: 'Only admin wallets can access this content.',
     openToSppAdminPanel: 'Open SPP Admin Panel',
     positionX: 'Position X',
     positionY: 'Position Y',

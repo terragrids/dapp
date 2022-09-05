@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import LoadingSpinner from 'components/loading-spinner'
 import ModalDialog from 'components/modal-dialog'
 import { useSppViewer } from 'hooks/use-spp-viewer.js'
