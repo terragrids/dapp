@@ -11,6 +11,7 @@ import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
+import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-plant-admin-panel'
 
 export default function Home() {
     const [walletPickerVisible, setWalletPickerVisible] = useState(false)
@@ -23,6 +24,7 @@ export default function Home() {
     const headerRef = useRef()
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
     const [sppVisible, setSppVisible] = useState(false)
+    const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
         width: undefined,
@@ -100,7 +102,14 @@ export default function Home() {
                 onClose={() => setPlotInfoVisible(false)}
                 nftId={selectedPlot ? selectedPlot.id : null}
             />
-            <SolarPowerPlantDialog visible={sppVisible} onClose={() => setSppVisible(false)} />
+            <SolarPowerPlantDialog
+                visible={sppVisible}
+                onClose={openSppAdminPanel => {
+                    setSppVisible(false)
+                    if (openSppAdminPanel) setSppAdminPanelVisible(true)
+                }}
+            />
+            <SolarPowerPlantAdminPanel visible={sppAdminPanelVisible} onClose={() => setSppAdminPanelVisible(false)} />
         </Layout>
     )
 }

@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { SolarPowerPlant } from 'types/nft'
 import { endpoints } from 'utils/api-config'
-import styles from './solar-power-plant-dialog.module.scss'
+import styles from './solar-power-plant-admin-panel.module.scss'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
 
@@ -14,9 +14,14 @@ type SolarPowerPlantAdminPanelProps = {
     onClose: () => void
 }
 
-const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantAdminPanelProps) => {
+type Error = {
+    message: string
+    description?: string
+}
+
+const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPanelProps) => {
     const [solarPowerPlant, setSolarPowerPlant] = useState<SolarPowerPlant | null>(null)
-    const [error, setError] = useState<string | null>()
+    const [error, setError] = useState<Error | null>()
     const { authenticated, isAdmin } = useContext<User>(UserContext)
 
     const { getSpp } = useSppViewer()
@@ -35,10 +40,13 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantAdminPanelPr
                     const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
                     setSolarPowerPlant(spp)
                 } catch (e) {
-                    setError(strings.errorFetchingSppFromContract)
+                    setError({
+                        message: strings.errorFetchingSppFromContract,
+                        description: e instanceof Error ? e.message : undefined
+                    })
                 }
             } else {
-                setError(strings.errorFetchingSpp)
+                setError({ message: strings.errorFetchingSpp })
             }
         }
         if (visible && isAdmin) fetchSolarPowerPlant()
@@ -58,22 +66,28 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantAdminPanelPr
 
             {authenticated && isAdmin && error && (
                 <div className={styles.error}>
-                    <div>{error}</div>
+                    <div>{error.message}</div>
+                    {error.description && (
+                        <>
+                            <header>{strings.description}</header>
+                            <pre>{error.description}</pre>
+                        </>
+                    )}
                 </div>
             )}
 
             {authenticated && isAdmin && solarPowerPlant && !error && (
-                <>
+                <div className={styles.content}>
                     <span>
                         {strings.capacity} {solarPowerPlant.capacity || 0} TRW
                     </span>
                     <span>
                         {strings.totalOutput} {solarPowerPlant.output || 0} TRW
                     </span>
-                </>
+                </div>
             )}
         </ModalDialog>
     )
 }
 
-export default SolarPowerPlantDialog
+export default SolarPowerPlantAdminPanel

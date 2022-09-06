@@ -14,7 +14,7 @@ import Button from 'components/button.js'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
-    onClose: () => void
+    onClose: (openSppAdminPanel?: boolean) => void
 }
 
 const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps) => {
@@ -50,6 +50,10 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
         if (visible) fetchSolarPowerPlantAndTerracells()
     }, [getSpp, visible])
 
+    function openSppAdminPanel() {
+        onClose(true)
+    }
+
     const subtitle = useMemo(() => {
         return ''
 
@@ -72,7 +76,12 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
         )
 
     return (
-        <ModalDialog visible={visible} title={title} onClose={onClose} subtitle={subtitle} className={currentClassName}>
+        <ModalDialog
+            visible={visible}
+            title={title}
+            onClose={() => onClose(false)}
+            subtitle={subtitle}
+            className={currentClassName}>
             {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
 
             {authenticated && error && (
@@ -81,7 +90,7 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
                     {!isAdmin && <div>{strings.refreshAndTryAgain}</div>}
                     {isAdmin && (
                         <div className={styles.button}>
-                            <Button type={'outline'} label={strings.openToSppAdminPanel} />
+                            <Button type={'outline'} label={strings.openSppAdminPanel} onClick={openSppAdminPanel} />
                         </div>
                     )}
                 </div>

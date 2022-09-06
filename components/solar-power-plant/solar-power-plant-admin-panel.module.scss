@@ -1,0 +1,75 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/screens.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: $main-content-width / 2;
+    width: 800px;
+    max-width: $main-content-width;
+    min-height: 250px;
+    padding: 0;
+
+    @media (max-width: $screen-medium) {
+        min-width: $main-content-width / 2.5;
+        width: 100%;
+    }
+
+    @media (max-width: $screen-small) {
+        min-width: $main-content-width / 3;
+    }
+}
+
+.loader {
+    @extend .container;
+    padding-bottom: 40px;
+}
+
+.section {
+    width: 100%;
+}
+
+.button {
+    padding-top: 40px;
+    text-align: center;
+}
+
+.error {
+    color: $color-red;
+    padding-bottom: 40px;
+    font-size: 16px;
+
+    header {
+        color: $color-alto;
+        font-size: 14px;
+        text-transform: uppercase;
+        margin-top: 20px;
+    }
+
+    pre {
+        color: $color-downy;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        white-space: pre-line;
+    }
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+
+    @media (max-width: $screen-small) {
+        flex-direction: column;
+
+        span {
+            text-align: center;
+
+            &:first-child {
+                margin-bottom: 10px;
+            }
+        }
+    }
+}
