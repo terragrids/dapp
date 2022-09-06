@@ -1,0 +1,79 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/screens.scss';
+
+.listDialog {
+    color: $color-white;
+
+    header {
+        padding: 20px;
+
+        div {
+            align-self: baseline;
+        }
+    }
+
+    h1 {
+        font-weight: bold;
+        display: block;
+    }
+
+    h2 {
+        font-size: 16px;
+        padding-left: 40px;
+
+        text-transform: uppercase;
+        small {
+            display: block;
+            font-weight: 100;
+            text-transform: none;
+        }
+    }
+
+    ul {
+        padding-bottom: 20px;
+    }
+
+    li {
+        padding: 3px 20px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        min-width: 425px;
+    }
+
+    li:hover,
+    li:focus {
+        background-color: $color-brand;
+    }
+
+    section {
+        padding: 0;
+    }
+}
+
+.content {
+    padding: 20px;
+    width: 600px;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
+}
+
+.thumbnail {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.error {
+    color: $color-red;
+}

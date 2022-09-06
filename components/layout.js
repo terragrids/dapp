@@ -8,15 +8,23 @@ import PropTypes from 'prop-types'
 import { UserContext } from '../context/user-context'
 import MainMenu from './main-menu'
 import { MenuEventContext } from '../context/menu-event-context'
+import { AccountNftsDialog } from './account-nfts-dialog'
 
 export default function Layout({ children, headerRef }) {
     const user = useContext(UserContext)
     const { setToggleMenuAction } = useContext(MenuEventContext)
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
+    const [accountNftsDialogVisible, setAccountNftsDialogVisible] = useState(false)
+    const [selectedSymbol, setSelectedSymbol] = useState({ undefined })
 
     useEffect(() => {
         setToggleMenuAction(() => setMainMenuVisible((b) => !b))
     }, [setToggleMenuAction])
+
+    const onSelectSymbol = (symbol) => {
+        setSelectedSymbol(symbol)
+        setAccountNftsDialogVisible(true)
+    }
 
     return (
         <>
@@ -28,9 +36,7 @@ export default function Layout({ children, headerRef }) {
                 <meta name={'twitter:card'} content={'summary_large_image'} />
             </Head>
             <header
-                className={`${styles.topbar} ${
-                    !user.authenticated ? styles.notconnected : styles.navbar
-                }`}
+                className={`${styles.topbar} ${!user.authenticated ? styles.notconnected : styles.navbar}`}
                 ref={headerRef}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
@@ -42,8 +48,18 @@ export default function Layout({ children, headerRef }) {
                 </div>
             </header>
             <main className={styles.content}>
-                {user.authenticated && <MainMenu visible={mainMenuVisible} />}
+                {user.authenticated && (
+                    <MainMenu
+                        visible={mainMenuVisible}
+                        onSelectSymbol={onSelectSymbol}
+                    />
+                )}
                 {children}
+                <AccountNftsDialog
+                    selectedSymbol={selectedSymbol}
+                    visible={accountNftsDialogVisible}
+                    onClose={() => setAccountNftsDialogVisible(false)}
+                />
             </main>
         </>
     )

@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import * as backend from '../blockchain/build/index.main.mjs'
+import * as tokenMarketBackend from '../blockchain/token-market/build/index.main.mjs'
+import * as sppBackend from '../blockchain/solar-power-plant/build/index.main.mjs'
 
 export function useReach() {
     const stdlib = useRef()
@@ -11,7 +12,10 @@ export function useReach() {
     useEffect(() => {
         async function loadLibs() {
             const reachStdlib = await import('@reach-sh/stdlib')
-            stdlib.current = reachStdlib.loadStdlib({ ...process.env, 'REACH_CONNECTOR_MODE': process.env.NEXT_PUBLIC_REACH_CONNECTOR_MODE })
+            stdlib.current = reachStdlib.loadStdlib({
+                ...process.env,
+                REACH_CONNECTOR_MODE: process.env.NEXT_PUBLIC_REACH_CONNECTOR_MODE
+            })
             myAlgoConnect.current = reachStdlib.ALGO_MyAlgoConnect
             walletConnect.current = reachStdlib.ALGO_WalletConnect
             setLoading(false)
@@ -20,7 +24,8 @@ export function useReach() {
     }, [])
 
     return {
-        backend,
+        tokenMarketBackend,
+        sppBackend,
         stdlib: stdlib.current,
         myAlgoConnect: myAlgoConnect.current,
         walletConnect: walletConnect.current,

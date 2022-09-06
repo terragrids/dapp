@@ -4,26 +4,31 @@
     },
     "cSpell.enableFiletypes": [
         "!css",
-        "!javascript",
         "!javascriptreact",
         "!json",
         "!scss",
         "!yaml",
         "!yml",
+        "javascript",
         "markdown"
     ],
     "cSpell.language": "en,en-GB,en-US",
     "javascript.suggest.completeFunctionCalls": true,
     "cSpell.words": [
+        "Algorand",
         "Ipfs",
+        "Terrabuild",
         "Terracell",
+        "terracells",
+        "Terragrids",
         "Terraland",
         "Terrasset",
-        "TRAS",
+        "TRBD",
         "TRCL",
         "TRLD"
     ],
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

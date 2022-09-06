@@ -17,25 +17,32 @@
 
 .dialog {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     max-width: 75vw;
     max-height: 85vh;
-    border-radius: $dialog-border-radius;
     background-color: $color-ebony-clay;
-    overflow-x: hidden;
-    overflow-y: auto;
+    border-radius: $dialog-border-radius;
 
     @media (max-width: $screen-small) {
-        max-width: 95vw;
+        max-width: none;
+        width: 95%;
+        margin: 0 15px;
         max-height: 95vh;
+    }
+
+    @media (min-width: $screen-medium) {
+        min-width: 322px;
     }
 }
 
 .content {
     position: relative;
     padding: 20px;
-    height: 100%;
-    overflow: hidden;
+    margin-bottom: 10px;
+    max-height: 85vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .header {
@@ -43,6 +50,19 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
+
+    h1 {
+        font-size: 14px;
+    }
+
+    small {
+        display: block;
+        text-transform: none;
+    }
+
+    div {
+        align-self: baseline;
+    }
 }
 
 .title {

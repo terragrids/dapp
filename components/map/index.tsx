@@ -1,51 +1,40 @@
 import Canvas from 'components/canvas'
+import { useCanvas } from 'hooks/use-canvas'
+import { useCanvasController } from 'hooks/use-canvas-controller'
 import React, { useEffect, useRef, useState } from 'react'
-import variables from './index.module.scss'
 import { endpoints } from 'utils/api-config'
-import { convertToMapPlot, getSppPlot, GRID_SIZE } from './map-helper'
-import Plot from './plots/plot'
+import {
+    convertToMapPlot,
+    drawGrid,
+    getPlotPosition,
+    getSppPlot,
+    getStartPosition,
+    getTransformedPoint,
+    GRID_SIZE,
+    isInsideMap,
+    renderHoveredPlot
+} from './map-helper'
+import Plot, { Position2D } from './plots/plot'
 
 export type MapProps = {
     width: number | undefined
     height: number | undefined
-    headerHeight: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
+    onSelectSolarPowerPlant: () => void
 }
 
-// TO LOCK THE SIZE OF THE MAP TO 1x
-// const DEFAULT_MAP_SCALE = 1
-// const ZOOM_SENSITIVITY = 0.0001
-// const MAX_SCALE = 2
-// const MIN_SCALE = 0.8
-
-// Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA_X = 1
-const HORIZONTAL_SCROLL_SENSITIVITY = 0.05
-
-// TODO: FIGURE OUT HOW THIS IS DETERMINED
-const MAGIC_NUMBER_TO_ADJUST = 80
-
-const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
-    const mouseRef = useRef({ x: -1, y: -1 })
+const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
+    const [canvasRef, initialScale] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
 
-    const renderPlotHover = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
-        ctx.beginPath()
-        ctx.setLineDash([])
-        ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
-        ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
-        ctx.lineWidth = 2
-        ctx.moveTo(x, y)
-        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y - Plot.PLOT_HEIGHT / 2)
-        ctx.lineTo(x + Plot.PLOT_WIDTH, y)
-        ctx.lineTo(x + Plot.PLOT_WIDTH / 2, y + Plot.PLOT_HEIGHT / 2)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-        ctx.fill()
-    }
+    const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(
+        canvasRef.current,
+        startPositionRef.current,
+        initialScale
+    )
 
-    const renderPlots = (ctx: CanvasRenderingContext2D) => (x: number, y: number) => {
+    const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
         if (mapPlots.length === 0) return
 
         for (let plotX = 0; plotX < GRID_SIZE; ++plotX) {
@@ -60,109 +49,38 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
                     coord: { x: plotX, y: plotY },
                     ctx
                 })
-                plot.draw(MAGIC_NUMBER_TO_ADJUST)
+                plot.draw()
             }
         }
 
-        const { e: xPos, f: yPos } = ctx.getTransform()
+        const { x: mouseX, y: mouseY } = getTransformedPoint(ctx, mouseRef.current.x, mouseRef.current.y)
 
-        const mouse_x = mouseRef.current.x - x - xPos
-        const mouse_y = mouseRef.current.y - y - yPos
+        if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
-        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
-        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
+        const { positionX, positionY } = getPlotPosition(startPositionRef.current, mouseX, mouseY)
 
-        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
-            const renderX = x + (hoverPlotX - hoverPlotY) * Plot.PLOT_HALF_WIDTH
-            const renderY = y + (hoverPlotX + hoverPlotY) * Plot.PLOT_HALF_HEIGHT
+        const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
+        const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
 
-            renderPlotHover(ctx)(renderX, renderY + Plot.PLOT_HEIGHT)
-        }
+        renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT)
     }
 
-    const renderBackground = (ctx: CanvasRenderingContext2D) => {
-        ctx.fillStyle = variables.backgroundColor
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    function render(ctx: CanvasRenderingContext2D) {
+        drawGrid(ctx, startPositionRef.current)
+        renderPlots(ctx, startPositionRef.current)
     }
 
-    const render = (ctx: CanvasRenderingContext2D) => {
-        if (!width || !height) return
+    const handleClickOrTouch = (positionX: number, positionY: number) => {
+        const index = positionY * GRID_SIZE + positionX
 
-        const offsetX = Plot.PLOT_WIDTH / 2
-        const offsetY = Plot.PLOT_HEIGHT
+        const target = mapPlots.find(el => el.index === index)
 
-        const remainingHeight = height - Plot.PLOT_HEIGHT * GRID_SIZE
+        if (!target) return
 
-        const plotStartX = width / 2 - offsetX
-        // MAGIC_NUMBER_TO_ADJUST is to adjust position when calling plot.drawplot()
-        const plotStartY = remainingHeight / 2 + offsetY - MAGIC_NUMBER_TO_ADJUST
-
-        startPositionRef.current = { x: plotStartX, y: plotStartY }
-
-        renderBackground(ctx)
-
-        renderPlots(ctx)(plotStartX, plotStartY)
-    }
-
-    // TO LOCK THE SIZE OF THE MAP TO 1x
-    // const onScrollY = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-    //     const currentScale = ctx.getTransform().a
-    //     const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
-
-    //     // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
-    //     // When reaching MIN_SCALE, it only allows zoom IN (= positive zoomAmount)
-    //     if (currentScale >= MAX_SCALE && zoomAmount > 0) return
-    //     if (currentScale <= MIN_SCALE && zoomAmount < 0) return
-
-    //     const scale = DEFAULT_MAP_SCALE + zoomAmount
-
-    //     ctx.translate(e.offsetX, e.offsetY)
-    //     ctx.scale(scale, scale)
-    //     ctx.translate(-e.offsetX, -e.offsetY)
-    // }
-
-    const onScrollX = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        const moveAmount = DEFAULT_DELTA_X * e.deltaX * HORIZONTAL_SCROLL_SENSITIVITY
-
-        // Only allows x axis move
-        ctx.translate(moveAmount, 0)
-    }
-
-    const onWheel = (ctx: CanvasRenderingContext2D, e: WheelEvent) => {
-        // TO LOCK THE SIZE OF THE MAP TO 1x
-        // onScrollY(ctx, e)
-        onScrollX(ctx, e)
-    }
-
-    const onMouseMove = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        const rect = ctx.canvas.getBoundingClientRect()
-
-        mouseRef.current = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        }
-    }
-
-    const onClick = (ctx: CanvasRenderingContext2D, e: MouseEvent) => {
-        if (headerHeight === undefined) return
-
-        const { e: xPos, f: yPos } = ctx.getTransform()
-
-        const mouse_x = e.clientX - startPositionRef.current.x - xPos
-        const mouse_y = e.clientY - startPositionRef.current.y - yPos - headerHeight
-
-        const hoverPlotX = Math.floor(mouse_y / Plot.PLOT_HEIGHT + mouse_x / Plot.PLOT_WIDTH) - 1
-        const hoverPlotY = Math.floor(-mouse_x / Plot.PLOT_WIDTH + mouse_y / Plot.PLOT_HEIGHT)
-
-        if (hoverPlotX >= 0 && hoverPlotY >= 0 && hoverPlotX < GRID_SIZE && hoverPlotY < GRID_SIZE) {
-            const index = hoverPlotY * GRID_SIZE + hoverPlotX
-            const target = mapPlots.find(el => el.index === index)
-
-            if (!target) return
-
-            if (index < mapPlots.length) {
-                onSelectPlot(target)
-            }
+        if (index === 0) {
+            onSelectSolarPowerPlant()
+        } else if (index < GRID_SIZE * GRID_SIZE) {
+            onSelectPlot(target)
         }
     }
 
@@ -173,21 +91,29 @@ const Map = ({ width, height, headerHeight, onSelectPlot }: MapProps) => {
 
             const { assets } = await res.json()
 
-            const maps = assets.map((asset: PlotType) => convertToMapPlot(asset))
+            const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
             const spp = getSppPlot()
-            setMapPlots([spp, ...maps])
+            // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
+            setMapPlots([spp, ...plots])
         }
         load()
     }, [])
 
+    useEffect(() => {
+        if (width === undefined || height === undefined) return
+
+        const { x, y } = getStartPosition(width, height)
+        startPositionRef.current = { x, y }
+    }, [width, height])
+
     return (
         <Canvas
-            drawOnCanvas={render}
-            onWheel={onWheel}
-            onMouseMove={onMouseMove}
-            onClick={onClick}
+            canvasRef={canvasRef}
+            onClick={onClick(handleClickOrTouch)}
+            onTouch={onTouch(handleClickOrTouch)}
             attributes={{ width, height }}
+            {...rest}
         />
     )
 }

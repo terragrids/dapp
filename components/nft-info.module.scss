@@ -1,0 +1,62 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+
+.dList {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    .dListItem {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 20px;
+        transition: all ease 0.2s;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $color-brand;
+        }
+
+        dt,
+        dd {
+            max-width: 200px;
+        }
+
+        dd {
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            pointer-events: none;
+        }
+    }
+
+    .expand {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 0 20px;
+        transition: all ease 0.2s;
+
+        .dt {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
+        .dd {
+            &:hover {
+                cursor: auto;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .hide {
+        display: none;
+    }
+}

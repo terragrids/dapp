@@ -8,24 +8,29 @@ export const terragridsApiBaseUrl =
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
-const terracells = next => `/api/terracells${next ? `?next=${next}` : ''}`
-const terracell = id => `/api/terracells/${id}`
+const terracells = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
 const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
 const nfts = '/api/nfts'
-const accountNfts = accountId => `/api/accounts/${accountId}/nfts`
+const nft = id => `/api/nfts/${id}`
+const accountNftsByType = (accountId, symbol) => `/api/accounts/${accountId}/nfts/${symbol}`
+const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicationId}`
 const fileUpload = '/api/files/upload'
 const ipfsFiles = '/api/ipfs/files'
 const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+const solarPowerPlant = 'api/spp'
+
 export const endpoints = {
     accountTerracells,
     terracells,
-    terracell,
     terracellContract,
     nfts,
+    nft,
     terralands,
-    accountNfts,
+    accountNftsByType,
+    nftContract,
     fileUpload,
-    ipfsFiles
+    ipfsFiles,
+    solarPowerPlant
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

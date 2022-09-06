@@ -1,41 +1,48 @@
 version: 1
 frontend:
-  phases:
-    preBuild:
-      commands:
-        - yum update -y
-        - amazon-linux-extras install docker
-        - wget https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)
-        - mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
-        - chmod -v +x /usr/local/bin/docker-compose
-        - make --version
-        - docker --version
-        - docker-compose --version
-        - node -v
-        - npm -v
-        - useradd -p tmppass tmpuser
-        - usermod -a -G docker tmpuser
-        - chown tmpuser .
-        - chmod u+w .
-        - chown tmpuser ./blockchain
-        - chmod u+w ./blockchain
-        - dockerd &
-        - su tmpuser -c "docker login -u $DOCKER_USER -p $DOCKER_ACCESS_TOKEN"
-        - su tmpuser -c "./reach run blockchain"
-        - node scripts/generate-app-approval.mjs 
-        - npm ci
-    build:
-      commands:
-        - echo "APP_ENV=$APP_ENV" >> .env
-        - echo "API_ENV=$API_ENV" >> .env
-        - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
-        - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
-        - npm run test
-        - npm run build
-  artifacts:
-    baseDirectory: .next
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+    phases:
+        preBuild:
+            commands:
+                - yum update -y
+                - amazon-linux-extras install docker
+                - wget https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)
+                - mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
+                - chmod -v +x /usr/local/bin/docker-compose
+                - make --version
+                - docker --version
+                - docker-compose --version
+                - node -v
+                - npm -v
+                - useradd -p tmppass tmpuser
+                - usermod -a -G docker tmpuser
+                - chown tmpuser .
+                - chmod u+w .
+                - chown tmpuser ./blockchain
+                - chmod u+w ./blockchain
+                - chown tmpuser ./blockchain/token-market
+                - chmod u+w ./blockchain/token-market
+                - chown tmpuser ./blockchain/solar-power-plant
+                - chmod u+w ./blockchain/solar-power-plant
+                - dockerd &
+                - su tmpuser -c "docker login -u $DOCKER_USER -p $DOCKER_ACCESS_TOKEN"
+                - su tmpuser -c "REACH_VERSION=da882525 ./reach run blockchain/solar-power-plant"
+                - su tmpuser -c "mkdir ./blockchain/token-market/build"
+                - su tmpuser -c "cp ./blockchain/solar-power-plant/build/index.main.mjs ./blockchain/token-market/build/spp.main.mjs"
+                - su tmpuser -c "REACH_VERSION=da882525 ./reach run blockchain/token-market"
+                - node scripts/generate-app-approval.mjs
+                - npm ci
+        build:
+            commands:
+                - echo "APP_ENV=$APP_ENV" >> .env
+                - echo "API_ENV=$API_ENV" >> .env
+                - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
+                - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
+                - npm run test
+                - npm run build
+    artifacts:
+        baseDirectory: .next
+        files:
+            - '**/*'
+    cache:
+        paths:
+            - node_modules/**/*

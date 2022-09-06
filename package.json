@@ -1,40 +1,42 @@
 {
-  "name": "terragrids-dapp",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "jest",
-    "sanitize": "scripts/sanitize-package-lock.sh",
-    "reach-compile": "./reach compile ./blockchain/index.rsh -o ./blockchain/build; node scripts/generate-app-approval.mjs",
-    "reach-run": "./reach run blockchain; node scripts/generate-app-approval.mjs",
-    "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
-  },
-  "dependencies": {
-    "@reach-sh/stdlib": "^0.1.11-rc.2",
-    "next": "^12.1.6",
-    "prop-types": "^15.8.1",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "uniqid": "^5.4.0"
-  },
-  "devDependencies": {
-    "@svgr/webpack": "^6.2.1",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.2.0",
-    "@types/node": "^18.0.4",
-    "@types/react": "^18.0.15",
-    "@types/uniqid": "^5.3.2",
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
-    "eslint": "^8.20.0",
-    "eslint-config-next": "^12.1.6",
-    "eslint-plugin-unicorn": "^43.0.2",
-    "jest": "^28.1.0",
-    "jest-environment-jsdom": "^28.1.0",
-    "sass": "^1.52.1",
-    "typescript": "^4.7.4"
-  }
+    "name": "terragrids-dapp",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "test": "jest",
+        "sanitize": "scripts/sanitize-package-lock.sh",
+        "reach-copy": "mkdir ./blockchain/token-market/build; cp ./blockchain/solar-power-plant/build/index.main.mjs ./blockchain/token-market/build/spp.main.mjs;",
+        "reach-compile": "./reach compile ./blockchain/solar-power-plant/index.rsh -o ./blockchain/solar-power-plant/build; npm run reach-copy; ./reach compile ./blockchain/token-market/index.rsh -o ./blockchain/token-market/build; node scripts/generate-app-approval.mjs",
+        "reach-run": "./reach run blockchain/solar-power-plant; npm run reach-copy; ./reach run blockchain/token-market;",
+        "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
+    },
+    "dependencies": {
+        "@reach-sh/stdlib": "^0.1.11-rc.9",
+        "next": "^12.1.6",
+        "prop-types": "^15.8.1",
+        "react": "^18.1.0",
+        "react-dom": "^18.1.0",
+        "react-localization": "^1.0.19",
+        "uniqid": "^5.4.0"
+    },
+    "devDependencies": {
+        "@svgr/webpack": "^6.2.1",
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.2.0",
+        "@types/node": "^18.0.4",
+        "@types/react": "^18.0.15",
+        "@types/uniqid": "^5.3.2",
+        "@typescript-eslint/eslint-plugin": "^5.30.7",
+        "@typescript-eslint/parser": "^5.30.7",
+        "eslint": "^8.20.0",
+        "eslint-config-next": "^12.1.6",
+        "eslint-plugin-unicorn": "^43.0.2",
+        "jest": "^28.1.0",
+        "jest-environment-jsdom": "^28.1.0",
+        "sass": "^1.52.1",
+        "typescript": "^4.7.4"
+    }
 }
