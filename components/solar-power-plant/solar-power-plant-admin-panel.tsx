@@ -8,6 +8,7 @@ import { endpoints } from 'utils/api-config'
 import styles from './solar-power-plant-admin-panel.module.scss'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
+import Button, { ButtonType } from 'components/button'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -52,6 +53,10 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
         if (visible && isAdmin) fetchSolarPowerPlant()
     }, [getSpp, isAdmin, visible])
 
+    function deployContract() {
+        // TODO
+    }
+
     return (
         <ModalDialog visible={visible} title={strings.solarPowerPlant} onClose={onClose}>
             {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
@@ -66,9 +71,16 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
 
             {authenticated && isAdmin && error && (
                 <div className={styles.error}>
-                    <div>{error.message}</div>
+                    <div className={styles.message}>{error.message}</div>
                     {error.description && (
                         <>
+                            <div className={styles.button}>
+                                <Button
+                                    label={strings.redeployContract}
+                                    type={ButtonType.OUTLINE}
+                                    onClick={deployContract}
+                                />
+                            </div>
                             <header>{strings.description}</header>
                             <pre>{error.description}</pre>
                         </>

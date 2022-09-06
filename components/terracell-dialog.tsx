@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react'
 import { useNftSeller } from 'hooks/use-nft-seller'
 import { endpoints } from 'utils/api-config'
 import { strings } from 'strings/en'
-import Button from './button'
+import Button, { ButtonType } from './button'
 import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
@@ -167,7 +167,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                             <div className={styles.buttonWrapper}>
                                 {userCapability === UserCapabilities.CAN_SELL && terracell && (
                                     <Button
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         className={styles.button}
                                         label={`${strings.sellFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
@@ -177,7 +177,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                                 {userCapability === UserCapabilities.CAN_WITHDRAW && terracell && (
                                     <Button
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         className={styles.button}
                                         label={strings.withdraw}
                                         loading={loading}
@@ -188,7 +188,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                 {userCapability === UserCapabilities.CAN_BUY && terracell && (
                                     <Button
                                         className={styles.button}
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         label={`${strings.buyFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onBuy}

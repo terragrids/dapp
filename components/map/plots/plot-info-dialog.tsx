@@ -2,7 +2,7 @@
 import ModalDialog from 'components/modal-dialog'
 import styles from './plot-info-dialog.module.scss'
 import React, { useContext, useEffect, useState } from 'react'
-import Button from 'components/button'
+import Button, { ButtonType } from 'components/button'
 import { strings } from 'strings/en'
 import { endpoints } from 'utils/api-config.js'
 import LoadingSpinner from 'components/loading-spinner.js'
@@ -174,7 +174,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
                 {userCapability === UserCapabilities.CAN_SELL && terraland && (
                     <Button
-                        type={'outline'}
+                        type={ButtonType.OUTLINE}
                         className={styles.button}
                         label={`${strings.sellFor} ${assetPrice} $${unit}`}
                         loading={waiting}
@@ -184,7 +184,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
                 {userCapability === UserCapabilities.CAN_WITHDRAW && terraland && (
                     <Button
-                        type={'outline'}
+                        type={ButtonType.OUTLINE}
                         className={styles.button}
                         label={strings.withdraw}
                         loading={waiting}
@@ -195,7 +195,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                 {userCapability === UserCapabilities.CAN_BUY && terraland && (
                     <Button
                         className={styles.button}
-                        type={'outline'}
+                        type={ButtonType.OUTLINE}
                         label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
                         loading={waiting}
                         onClick={onBuy}

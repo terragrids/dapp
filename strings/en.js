@@ -58,6 +58,7 @@ const enStrings = {
     positionY: 'Position Y',
     power: 'Power',
     price: 'Price',
+    redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',
     sell: 'Sell',
     sellFor: 'Sell for',

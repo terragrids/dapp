@@ -1,6 +1,20 @@
-import PropTypes from 'prop-types'
 import styles from './button.module.scss'
 import LoadingSpinner from './loading-spinner'
+
+export enum ButtonType {
+    FULL,
+    OUTLINE
+}
+
+type Props = {
+    label: string
+    type?: ButtonType
+    loading?: boolean
+    checked?: boolean
+    disabled?: boolean
+    className?: string
+    onClick?: () => void
+}
 
 export default function Button({
     label,
@@ -9,12 +23,12 @@ export default function Button({
     disabled = false,
     className = '',
     onClick,
-    type = 'default'
-}) {
+    type = ButtonType.FULL
+}: Props) {
     return (
         <button
             className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${
-                type === 'outline' ? styles.outline : styles.default
+                type === ButtonType.OUTLINE ? styles.outline : styles.default
             }`}
             onClick={onClick}
             disabled={disabled || loading || checked}>
@@ -23,9 +37,4 @@ export default function Button({
             {!loading && !checked && label}
         </button>
     )
-}
-
-Button.propTypes = {
-    label: PropTypes.string,
-    onClick: PropTypes.func
 }

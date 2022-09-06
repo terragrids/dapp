@@ -10,7 +10,7 @@ import styles from './solar-power-plant-dialog.module.scss'
 import TerracellDialog from 'components/terracell-dialog'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
-import Button from 'components/button.js'
+import Button, { ButtonType } from 'components/button'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
@@ -90,7 +90,11 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
                     {!isAdmin && <div>{strings.refreshAndTryAgain}</div>}
                     {isAdmin && (
                         <div className={styles.button}>
-                            <Button type={'outline'} label={strings.openSppAdminPanel} onClick={openSppAdminPanel} />
+                            <Button
+                                type={ButtonType.OUTLINE}
+                                label={strings.openSppAdminPanel}
+                                onClick={openSppAdminPanel}
+                            />
                         </div>
                     )}
                 </div>
