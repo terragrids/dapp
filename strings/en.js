@@ -66,6 +66,7 @@ const enStrings = {
     siteDescription: 'Web client for Terragrids',
     siteTitle: 'Terragrids',
     solarPowerPlant: 'Solar Power Plant',
+    sppAdminPanel: 'SPP Admin Panel',
     tapToPick: 'Tap to pick an image',
     terracellInformation: 'Terracell ($TRCL)',
     terracellOnTheMarket: 'This terracell is on the market',
