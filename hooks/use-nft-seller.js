@@ -1,5 +1,6 @@
 import { useContext, useRef, useCallback } from 'react'
 import { endpoints } from 'utils/api-config.js'
+import { createPromise } from 'utils/promise'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 
@@ -17,12 +18,7 @@ export function useNftSeller() {
             // 2. All request retries could fail, leaving the system in an inconsistent state, where a terracell is owned by a contract but the contract is not stored and associated with the terracell in the offchain db (this could be solved by running consistency checks in backend service workers)
 
             let retries = 30
-            let succeed, fail
-
-            var promise = new Promise(function (resolve, reject) {
-                succeed = resolve
-                fail = reject
-            })
+            const { promise, succeed, fail } = createPromise()
 
             async function postContract() {
                 const response = await fetch(endpoints.nftContract(tokenId, applicationId), {
@@ -62,12 +58,7 @@ export function useNftSeller() {
     const deleteContractInfo = useCallback(async ({ tokenId, applicationId }) => {
         // TODO Move this logic to a backend service worker.
         let retries = 30
-        let succeed, fail
-
-        var promise = new Promise(function (resolve, reject) {
-            succeed = resolve
-            fail = reject
-        })
+        const { promise, succeed, fail } = createPromise()
 
         async function deleteContract() {
             const response = await fetch(endpoints.nftContract(tokenId, applicationId), {
@@ -93,11 +84,7 @@ export function useNftSeller() {
 
     const sell = useCallback(
         async ({ tokenId, price, sppContractInfo, power = 0 }) => {
-            let succeed, fail
-            var promise = new Promise(function (resolve, reject) {
-                succeed = resolve
-                fail = reject
-            })
+            const { promise, succeed, fail } = createPromise()
 
             try {
                 tokenMarketContract.current = walletAccount.contract(tokenMarketBackend)
@@ -127,7 +114,7 @@ export function useNftSeller() {
                     sppContractInfo: JSON.parse(Buffer.from(sppContractInfo, 'base64'))
                 })
             } catch (e) {
-                fail()
+                fail(e)
             } finally {
                 tokenMarketContract.current = null
             }

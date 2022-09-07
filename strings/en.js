@@ -32,6 +32,7 @@ const enStrings = {
         'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingTerracellSaleContract:
         'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeployingSppContract: 'Unable to deploy the Solar Power Plant Smart Contract.',
     errorFetchingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
     errorFetchingSppFromContract: 'Unable to retrieve the Solar Power Plant from the Smart Contract.',
     errorFetchingTerracell: 'Unable to retrieve this Terracell. Please refresh the page and try again.',
