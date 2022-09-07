@@ -12,6 +12,7 @@ import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
 import NftInfo from 'components/nft-info'
+import { Contract } from 'types/contract.js'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -90,11 +91,12 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
         setError(null)
 
         try {
-            const { applicationId, contractInfo } = await sell({
+            const { applicationId, contractInfo }: Contract = (await sell({
                 tokenId: terraland.id,
                 price: assetPrice,
                 sppContractInfo
-            })
+            })) as Contract
+
             setTerraland({ ...terraland, contractId: applicationId, contractInfo })
             onClose()
         } catch (e) {
