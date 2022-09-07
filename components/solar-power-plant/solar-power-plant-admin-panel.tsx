@@ -3,13 +3,13 @@ import ModalDialog from 'components/modal-dialog'
 import { useSppViewer } from 'hooks/use-spp-viewer.js'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
-import { SolarPowerPlant } from 'types/nft'
 import { endpoints } from 'utils/api-config'
 import styles from './solar-power-plant-admin-panel.module.scss'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
 import Button, { ButtonType } from 'components/button'
 import { useSppDeployer } from 'hooks/use-spp-deployer.js'
+import { SolarPowerPlant } from 'types/spp.js'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean

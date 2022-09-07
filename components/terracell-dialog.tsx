@@ -12,6 +12,7 @@ import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
 import NftInfo from './nft-info'
+import { Contract } from 'types/contract.js'
 
 type TerracellDialogProps = {
     id: string | undefined
@@ -90,12 +91,13 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         setError(null)
 
         try {
-            const { applicationId, contractInfo } = await sell({
+            const { applicationId, contractInfo }: Contract = (await sell({
                 tokenId: terracell.id,
                 price: terracell.assetPrice || assetPrice,
                 power: terracell.power,
                 sppContractInfo
-            })
+            })) as Contract
+
             setTerracell({ ...terracell, contractId: applicationId, contractInfo })
             onClose()
         } catch (e) {

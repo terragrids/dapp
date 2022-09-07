@@ -4,13 +4,13 @@ import { useSppViewer } from 'hooks/use-spp-viewer.js'
 import TerracellList from 'components/terracell-list'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { strings } from 'strings/en'
-import { SolarPowerPlant } from 'types/nft'
 import { endpoints } from 'utils/api-config'
 import styles from './solar-power-plant-dialog.module.scss'
 import TerracellDialog from 'components/terracell-dialog'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user'
 import Button, { ButtonType } from 'components/button'
+import { SolarPowerPlant } from 'types/spp.js'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
