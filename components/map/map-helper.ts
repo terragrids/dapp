@@ -10,6 +10,7 @@ export const MINIMUM_MAP_SCALE = 1 / 2 // half of the original size
 export const BASE_SCREEN_SIZE = Number(variables.screenMedium.replace('px', ''))
 
 export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
+export const GRID_Y_OFFSET = 17
 export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
 export const DEFAULT_MAP_SCALE = 1
 
@@ -173,7 +174,7 @@ export const drawGrid = (context: CanvasRenderingContext2D, startPosition: Posit
         for (let j = 0; j < GRID_SIZE; j++) {
             // calculate coordinates (same as Plot class 'calculateRenderPosition' method)
             const coordX = startPosition.x + (i - j) * Plot.PLOT_HALF_WIDTH + Plot.PLOT_WIDTH
-            const coordY = startPosition.y + (i + j) * Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_HEIGHT
+            const coordY = startPosition.y + (i + j) * Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_HEIGHT + GRID_Y_OFFSET
             // draw single plot
             drawLine(context, coordX, coordY)
         }
@@ -185,6 +186,7 @@ export const drawLine = (context: CanvasRenderingContext2D, x: number, y: number
     context.setLineDash([1, 1])
 
     // move to start point
+    context.moveTo(x - Plot.PLOT_WIDTH / 2, y)
     context.moveTo(x - Plot.PLOT_WIDTH / 2, y)
 
     /**
