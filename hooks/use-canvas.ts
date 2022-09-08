@@ -1,13 +1,14 @@
 import { DEFAULT_MAP_SCALE, getOptimalScale, ORIGINAL_MAP_WIDTH } from 'components/map/map-helper'
-import { RefObject, useCallback, useEffect, useRef } from 'react'
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
 export const useCanvas = (
     draw: (ctx: CanvasRenderingContext2D) => void,
     width: number | undefined,
     height: number | undefined
-): [RefObject<HTMLCanvasElement>, number] => {
+): [RefObject<HTMLCanvasElement>, number, () => void] => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const initialScaleRef = useRef(DEFAULT_MAP_SCALE)
+    const [shouldRender, setShouldRender] = useState(true)
 
     const predraw = useCallback(
         (context: CanvasRenderingContext2D) => {
@@ -36,19 +37,54 @@ export const useCanvas = (
 
         let animationFrameId: number
         const render = () => {
-            predraw(context)
-            draw(context)
-            animationFrameId = window.requestAnimationFrame(render)
+            if (shouldRender) {
+                predraw(context)
+                draw(context)
+                animationFrameId = window.requestAnimationFrame(render)
+                setShouldRender(false)
+            }
         }
         render()
 
         // focus canvas so that scroll zoom(keydown/up listeners) works by default
         canvasRef.current.focus()
 
+        const onCanvasEvent = () => {
+            setShouldRender(true)
+        }
+
+        ;[
+            'mousemove',
+            'mousedown',
+            'click',
+            'wheel',
+            'touchmove',
+            'touchstart',
+            'touchend',
+            'keydown',
+            'keyup'
+        ].forEach(event => {
+            canvas.addEventListener(event, onCanvasEvent)
+        })
+
         return () => {
+            ;[
+                'mousemove',
+                'mousedown',
+                'click',
+                'wheel',
+                'touchmove',
+                'touchstart',
+                'touchend',
+                'keydown',
+                'keyup'
+            ].forEach(event => {
+                canvas.removeEventListener(event, onCanvasEvent)
+            })
+
             window.cancelAnimationFrame(animationFrameId)
         }
-    }, [draw, predraw])
+    }, [draw, predraw, shouldRender])
 
     useEffect(() => {
         if (width === undefined) return
@@ -57,5 +93,9 @@ export const useCanvas = (
         initialScaleRef.current = optimalScale
     }, [width])
 
-    return [canvasRef, initialScaleRef.current]
+    const renderCanvas = useCallback(() => {
+        setShouldRender(true)
+    }, [])
+
+    return [canvasRef, initialScaleRef.current, renderCanvas]
 }

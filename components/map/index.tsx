@@ -1,7 +1,9 @@
+import styles from './index.module.scss'
 import Canvas from 'components/canvas'
+import LoadingSpinner from 'components/loading-spinner.js'
 import { useCanvas } from 'hooks/use-canvas'
 import { useCanvasController } from 'hooks/use-canvas-controller'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { endpoints } from 'utils/api-config'
 import {
     convertToMapPlot,
@@ -24,9 +26,11 @@ export type MapProps = {
 }
 
 const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
-    const [canvasRef, initialScale] = useCanvas(render, width, height)
+    const [canvasRef, initialScale, renderCanvas] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
+    const [imageLoadingStarted, setImageLoadingStarted] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(
         canvasRef.current,
@@ -65,6 +69,29 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT)
     }
 
+    const loadPlotImages = useCallback(
+        async (plots: MapPlotType[]) => {
+            if (plots.length === 0 || imageLoadingStarted) return
+            let loadCount = 0
+
+            plots.forEach(plot => {
+                const image = new Image()
+                image.addEventListener('load', () => {
+                    loadCount++
+                    if (loadCount === plots.length) {
+                        // All plot images have been loaded, render them on canvas
+                        renderCanvas()
+                        setLoading(false)
+                    }
+                })
+                image.src = plot.image.src
+            })
+
+            setImageLoadingStarted(true)
+        },
+        [renderCanvas, imageLoadingStarted]
+    )
+
     function render(ctx: CanvasRenderingContext2D) {
         drawGrid(ctx, startPositionRef.current)
         renderPlots(ctx, startPositionRef.current)
@@ -95,10 +122,13 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
 
             const spp = getSppPlot()
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
-            setMapPlots([spp, ...plots])
+
+            const allPlots = [spp, ...plots]
+            setMapPlots(allPlots)
+            loadPlotImages(allPlots)
         }
-        load()
-    }, [])
+        mapPlots.length === 0 && load()
+    }, [loadPlotImages, mapPlots.length])
 
     useEffect(() => {
         if (width === undefined || height === undefined) return
@@ -108,13 +138,22 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     }, [width, height])
 
     return (
-        <Canvas
-            canvasRef={canvasRef}
-            onClick={onClick(handleClickOrTouch)}
-            onTouch={onTouch(handleClickOrTouch)}
-            attributes={{ width, height }}
-            {...rest}
-        />
+        <>
+            {loading && (
+                <div className={styles.loading}>
+                    <LoadingSpinner />
+                </div>
+            )}
+            {!loading && (
+                <Canvas
+                    canvasRef={canvasRef}
+                    onClick={onClick(handleClickOrTouch)}
+                    onTouch={onTouch(handleClickOrTouch)}
+                    attributes={{ width, height }}
+                    {...rest}
+                />
+            )}
+        </>
     )
 }
 
