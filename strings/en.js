@@ -1,6 +1,7 @@
 import LocalizedStrings from 'react-localization'
 
 const enStrings = {
+    activeTerracells: 'Active terracells',
     algoSigner: 'AlgoSigner',
     assetID: 'Asset ID',
     availableToBuy: 'Available to buy',
@@ -72,6 +73,7 @@ const enStrings = {
     terracellOnTheMarket: 'This terracell is on the market',
     terralandInformation: 'Terraland ($TRLD)',
     totalOutput: 'Total output',
+    totalTerracells: 'Total terracells',
     transactionFailed: 'Your transaction failed or has been cancelled.',
     type: 'Type',
     withdraw: 'Withdraw',

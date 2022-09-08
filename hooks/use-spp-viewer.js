@@ -14,11 +14,10 @@ export function useSppViewer() {
 
                 const capacity = (await sppContract.v.SPPView.capacity())[1].toNumber()
                 const output = (await sppContract.v.SPPView.output())[1].toNumber()
-                // TODO fetch terracell totals from view when available
-                const totalTerracells = 0
-                const activeTerracells = 0
+                const total = (await sppContract.v.SPPView.total())[1].toNumber()
+                const active = (await sppContract.v.SPPView.active())[1].toNumber()
 
-                return { capacity, output, totalTerracells, activeTerracells }
+                return { capacity, output, total, active }
             }
         },
         [sppBackend, walletAccount]

@@ -10,6 +10,7 @@ import { User } from 'hooks/use-user'
 import Button, { ButtonType } from 'components/button'
 import { useSppDeployer } from 'hooks/use-spp-deployer.js'
 import { SolarPowerPlant } from 'types/spp.js'
+import { InputField } from 'components/input-field'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -74,6 +75,22 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
         }
     }
 
+    function onCapacityChange(capacity: string) {
+        setSolarPowerPlant(spp => ({ ...spp, capacity: parseInt(capacity) } as SolarPowerPlant))
+    }
+
+    function onOutputChange(output: string) {
+        setSolarPowerPlant(spp => ({ ...spp, output: parseInt(output) } as SolarPowerPlant))
+    }
+
+    function onTotalChange(total: string) {
+        setSolarPowerPlant(spp => ({ ...spp, total: parseInt(total) } as SolarPowerPlant))
+    }
+
+    function onActiveChange(active: string) {
+        setSolarPowerPlant(spp => ({ ...spp, active: parseInt(active) } as SolarPowerPlant))
+    }
+
     return (
         <ModalDialog visible={visible} title={strings.solarPowerPlant} onClose={onClose}>
             {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
@@ -109,12 +126,42 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
 
             {authenticated && isAdmin && solarPowerPlant && !error && (
                 <div className={styles.content}>
-                    <span>
-                        {strings.capacity} {solarPowerPlant.capacity || 0} TRW
-                    </span>
-                    <span>
-                        {strings.totalOutput} {solarPowerPlant.output || 0} TRW
-                    </span>
+                    <div className={styles.section}>
+                        <InputField
+                            initialValue={solarPowerPlant.capacity.toString()}
+                            max={26}
+                            label={strings.capacity}
+                            type={'number'}
+                            onChange={onCapacityChange}
+                        />
+                    </div>
+                    <div className={styles.section}>
+                        <InputField
+                            initialValue={solarPowerPlant.output.toString()}
+                            max={26}
+                            label={strings.totalOutput}
+                            type={'number'}
+                            onChange={onOutputChange}
+                        />
+                    </div>
+                    <div className={styles.section}>
+                        <InputField
+                            initialValue={solarPowerPlant.total.toString()}
+                            max={26}
+                            label={strings.totalTerracells}
+                            type={'number'}
+                            onChange={onTotalChange}
+                        />
+                    </div>
+                    <div className={styles.section}>
+                        <InputField
+                            initialValue={solarPowerPlant.active.toString()}
+                            max={26}
+                            label={strings.activeTerracells}
+                            type={'number'}
+                            onChange={onActiveChange}
+                        />
+                    </div>
                 </div>
             )}
         </ModalDialog>

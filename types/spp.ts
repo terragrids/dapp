@@ -1,6 +1,6 @@
 export type SolarPowerPlant = {
     capacity: number
     output: number
-    totalTerracells: number
-    activeTerracells: number
+    total: number
+    active: number
 }
