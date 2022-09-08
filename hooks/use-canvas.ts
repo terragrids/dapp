@@ -53,16 +53,34 @@ export const useCanvas = (
             setShouldRender(true)
         }
 
-        ;['mousemove', 'mousedown', 'click', 'wheel', 'touchstart', 'touchend', 'keydown', 'keyup'].forEach(event => {
+        ;[
+            'mousemove',
+            'mousedown',
+            'click',
+            'wheel',
+            'touchmove',
+            'touchstart',
+            'touchend',
+            'keydown',
+            'keyup'
+        ].forEach(event => {
             canvas.addEventListener(event, onCanvasEvent)
         })
 
         return () => {
-            ;['mousemove', 'mousedown', 'click', 'wheel', 'touchstart', 'touchend', 'keydown', 'keyup'].forEach(
-                event => {
-                    canvas.removeEventListener(event, onCanvasEvent)
-                }
-            )
+            ;[
+                'mousemove',
+                'mousedown',
+                'click',
+                'wheel',
+                'touchmove',
+                'touchstart',
+                'touchend',
+                'keydown',
+                'keyup'
+            ].forEach(event => {
+                canvas.removeEventListener(event, onCanvasEvent)
+            })
 
             window.cancelAnimationFrame(animationFrameId)
         }
@@ -75,9 +93,9 @@ export const useCanvas = (
         initialScaleRef.current = optimalScale
     }, [width])
 
-    const init = useCallback(() => {
+    const renderCanvas = useCallback(() => {
         setShouldRender(true)
     }, [])
 
-    return [canvasRef, initialScaleRef.current, init]
+    return [canvasRef, initialScaleRef.current, renderCanvas]
 }
