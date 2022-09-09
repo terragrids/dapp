@@ -11,6 +11,7 @@ import Button, { ButtonType } from 'components/button'
 import { useSppDeployer } from 'hooks/use-spp-deployer.js'
 import { SolarPowerPlant } from 'types/spp.js'
 import { InputField } from 'components/input-field'
+import { useSppUpdater } from 'hooks/use-spp-updater.js'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -26,10 +27,12 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
     const [solarPowerPlant, setSolarPowerPlant] = useState<SolarPowerPlant | null>(null)
     const [error, setError] = useState<Error | null>()
     const [deploying, setDeploying] = useState<boolean>(false)
+    const [updating, setUpdating] = useState<boolean>(false)
     const [contractInfo, setContractInfo] = useState<string | null>()
     const { authenticated, isAdmin } = useContext<User>(UserContext)
     const { getSpp } = useSppViewer()
     const { deploySpp } = useSppDeployer()
+    const { setSppCapacity } = useSppUpdater()
 
     const fetchSolarPowerPlant = useCallback(async () => {
         setError(null)
@@ -89,6 +92,13 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
 
     function onActiveChange(active: string) {
         setSolarPowerPlant(spp => ({ ...spp, active: parseInt(active) } as SolarPowerPlant))
+    }
+
+    async function updateSpp() {
+        if (!solarPowerPlant || !contractInfo) return
+        setUpdating(true)
+        await setSppCapacity(contractInfo, solarPowerPlant.capacity)
+        setUpdating(false)
     }
 
     return (
@@ -162,6 +172,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                             onChange={onActiveChange}
                         />
                     </div>
+                    <Button label={strings.update} type={ButtonType.OUTLINE} loading={updating} onClick={updateSpp} />
                 </div>
             )}
         </ModalDialog>

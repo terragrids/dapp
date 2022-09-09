@@ -76,6 +76,7 @@ const enStrings = {
     totalTerracells: 'Total terracells',
     transactionFailed: 'Your transaction failed or has been cancelled.',
     type: 'Type',
+    update: 'Update',
     withdraw: 'Withdraw',
     youHaveNoNfts: 'You have no {0} in your wallet',
     yourBuildings: 'Your buildings',
