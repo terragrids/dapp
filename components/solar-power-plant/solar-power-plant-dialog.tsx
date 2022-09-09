@@ -37,6 +37,11 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
             if (sppResponse.ok) {
                 const { contractInfo } = await sppResponse.json()
 
+                if (!contractInfo) {
+                    setError(strings.errorFetchingSppFromContract)
+                    return
+                }
+
                 try {
                     const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
                     setSolarPowerPlant(spp)

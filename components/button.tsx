@@ -3,7 +3,8 @@ import LoadingSpinner from './loading-spinner'
 
 export enum ButtonType {
     FULL,
-    OUTLINE
+    OUTLINE,
+    OUTLINE_ALERT
 }
 
 type Props = {
@@ -25,11 +26,19 @@ export default function Button({
     onClick,
     type = ButtonType.FULL
 }: Props) {
+    const typeClass = () => {
+        switch (type) {
+            case ButtonType.OUTLINE:
+                return styles.outline
+            case ButtonType.OUTLINE_ALERT:
+                return styles.outlineAlert
+            default:
+                return styles.default
+        }
+    }
     return (
         <button
-            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${
-                type === ButtonType.OUTLINE ? styles.outline : styles.default
-            }`}
+            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${typeClass()}`}
             onClick={onClick}
             disabled={disabled || loading || checked}>
             {loading && <LoadingSpinner small />}

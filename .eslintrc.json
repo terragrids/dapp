@@ -18,6 +18,7 @@
         "@typescript-eslint/no-unused-vars": ["error"],
         "semi": ["error", "never"],
         "comma-dangle": ["error", "never"],
+        "no-dupe-keys": ["error"],
         "@typescript-eslint/member-delimiter-style": [
             "error",
             {

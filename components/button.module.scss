@@ -45,6 +45,12 @@
     padding: 10px 20px;
 }
 
+.outlineAlert {
+    @extend .outline;
+    color: $color-red;
+    border: 1px solid $color-red;
+}
+
 .outline:hover,
 .outline:active {
     background-color: $color-white;

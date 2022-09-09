@@ -30,10 +30,11 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
     const [error, setError] = useState<Error | null>()
     const [deploying, setDeploying] = useState<boolean>(false)
     const [updating, setUpdating] = useState<boolean>(false)
+    const [terminating, setTerminating] = useState<boolean>(false)
     const [contractInfo, setContractInfo] = useState<string | null>()
     const { authenticated, isAdmin } = useContext<User>(UserContext)
     const { getSpp } = useSppViewer()
-    const { deploySpp } = useSppDeployer()
+    const { deploySpp, terminateSpp } = useSppDeployer()
     const { setSppCapacity } = useSppUpdater()
 
     const fetchSolarPowerPlant = useCallback(async () => {
@@ -44,6 +45,15 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
 
         if (sppResponse.ok) {
             const sppJsonResponse = await sppResponse.json()
+
+            if (!sppJsonResponse.contractInfo) {
+                setError({
+                    message: strings.errorNoSppContract,
+                    description: strings.noContractPleaseRedeploy
+                })
+                return
+            }
+
             setContractInfo(sppJsonResponse.contractInfo)
 
             try {
@@ -96,11 +106,32 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
         setSolarPowerPlant(spp => ({ ...spp, active: parseInt(active) } as SolarPowerPlant))
     }
 
-    async function updateSpp() {
+    async function update() {
         if (!solarPowerPlant || !contractInfo) return
         setUpdating(true)
-        await setSppCapacity(contractInfo, solarPowerPlant.capacity)
+        try {
+            await setSppCapacity(contractInfo, solarPowerPlant.capacity)
+        } catch (e) {
+            setError({
+                message: strings.errorUpdatingSppContract,
+                description: e instanceof Error ? e.message : undefined
+            })
+        }
         setUpdating(false)
+    }
+
+    async function terminate() {
+        if (!solarPowerPlant || !contractInfo) return
+        setTerminating(true)
+        try {
+            await terminateSpp(contractInfo)
+        } catch (e) {
+            setError({
+                message: strings.errorTerminatingSppContract,
+                description: e instanceof Error ? e.message : undefined
+            })
+        }
+        setTerminating(false)
     }
 
     return (
@@ -185,7 +216,24 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                             onChange={onActiveChange}
                         />
                     </div>
-                    <Button label={strings.update} type={ButtonType.OUTLINE} loading={updating} onClick={updateSpp} />
+                    <div className={styles.button}>
+                        <Button
+                            label={strings.update}
+                            type={ButtonType.OUTLINE}
+                            loading={updating}
+                            disabled={terminating}
+                            onClick={update}
+                        />
+                    </div>
+                    <div className={styles.button}>
+                        <Button
+                            label={strings.terminate}
+                            type={ButtonType.OUTLINE_ALERT}
+                            loading={terminating}
+                            disabled={updating}
+                            onClick={terminate}
+                        />
+                    </div>
                 </div>
             )}
         </ModalDialog>

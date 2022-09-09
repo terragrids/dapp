@@ -1,6 +1,7 @@
 import { useContext, useCallback } from 'react'
 import { endpoints } from 'utils/api-config.js'
 import { createPromise } from 'utils/promise'
+import { getContractFromJsonString, getJsonStringFromContract } from 'utils/string-utils.js'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 
@@ -26,7 +27,7 @@ export function useSppDeployer() {
                             },
                             referrerPolicy: 'no-referrer',
                             body: JSON.stringify({
-                                contractInfo: Buffer.from(JSON.stringify(contract)).toString('base64')
+                                contractInfo: getJsonStringFromContract(contract)
                             })
                         })
                         if (response.ok) {
@@ -45,5 +46,26 @@ export function useSppDeployer() {
         return promise
     }, [sppBackend, walletAccount])
 
-    return { deploySpp }
+    const terminateSpp = useCallback(
+        async contractInfo => {
+            if (contractInfo && walletAccount) {
+                const infoObject = getContractFromJsonString(contractInfo)
+                const sppContract = walletAccount.contract(sppBackend, infoObject)
+                await sppContract.a.SolarPowerPlant.stop()
+                await fetch(endpoints.solarPowerPlant, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify({
+                        contractInfo: ''
+                    })
+                })
+            }
+        },
+        [sppBackend, walletAccount]
+    )
+
+    return { deploySpp, terminateSpp }
 }

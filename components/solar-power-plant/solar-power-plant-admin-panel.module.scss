@@ -30,7 +30,6 @@
 
 .section {
     padding-bottom: 20px;
-    width: 100%;
 
     pre {
         padding: 0 5px;
@@ -39,7 +38,9 @@
 }
 
 .button {
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
     text-align: center;
 }
 

@@ -29,6 +29,14 @@ export function getApplicationAlgoExplorerUrl(applicationId) {
     return `https://${prefix}algoexplorer.io/application/${applicationId}`
 }
 
+export function getContractFromJsonString(contractInfo) {
+    return JSON.parse(Buffer.from(contractInfo, 'base64'))
+}
+
+export function getJsonStringFromContract(contract) {
+    return Buffer.from(JSON.stringify(contract)).toString('base64')
+}
+
 export const NFT_SUFFIX = '@arc3'
 
 export const formatNftName = str => str.replace(NFT_SUFFIX, '')
