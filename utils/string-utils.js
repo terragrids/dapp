@@ -24,6 +24,11 @@ export function ipfsUrlToGatewayUrl(url) {
     return ipfsUrl(hash)
 }
 
+export function getApplicationAlgoExplorerUrl(applicationId) {
+    const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
+    return `https://${prefix}algoexplorer.io/application/${applicationId}`
+}
+
 export const NFT_SUFFIX = '@arc3'
 
 export const formatNftName = str => str.replace(NFT_SUFFIX, '')

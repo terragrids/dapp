@@ -12,6 +12,8 @@ import { useSppDeployer } from 'hooks/use-spp-deployer.js'
 import { SolarPowerPlant } from 'types/spp.js'
 import { InputField } from 'components/input-field'
 import { useSppUpdater } from 'hooks/use-spp-updater.js'
+import { Label } from 'components/label'
+import { getApplicationAlgoExplorerUrl } from 'utils/string-utils.js'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -136,6 +138,17 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
 
             {authenticated && isAdmin && solarPowerPlant && !error && (
                 <div className={styles.content}>
+                    <div className={styles.section}>
+                        <Label text={strings.contractId} />
+                        <pre>
+                            <a
+                                href={getApplicationAlgoExplorerUrl(solarPowerPlant.contractId)}
+                                target={'_blank'}
+                                rel={'noreferrer'}>
+                                {solarPowerPlant.contractId}
+                            </a>
+                        </pre>
+                    </div>
                     <div className={styles.section}>
                         <InputField
                             initialValue={solarPowerPlant.capacity.toString()}

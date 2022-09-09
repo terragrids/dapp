@@ -31,6 +31,11 @@
 .section {
     padding-bottom: 20px;
     width: 100%;
+
+    pre {
+        padding: 0 5px;
+        font-size: 16px;
+    }
 }
 
 .button {
