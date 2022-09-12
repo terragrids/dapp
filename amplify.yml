@@ -37,6 +37,7 @@ frontend:
                 - echo "API_ENV=$API_ENV" >> .env
                 - echo "NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER=$REACH_CONSENSUS_NETWORK_PROVIDER" >> .env
                 - echo "NEXT_PUBLIC_REACH_CONNECTOR_MODE=ALGO" >> .env
+                - echo "NEXT_PUBLIC_ADMIN_WALLETS=$ADMIN_WALLETS" >> .env
                 - npm run test
                 - npm run build
     artifacts:
