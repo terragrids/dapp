@@ -35,7 +35,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
     const { authenticated, isAdmin } = useContext<User>(UserContext)
     const { getSpp } = useSppViewer()
     const { deploySpp, terminateSpp } = useSppDeployer()
-    const { setSppCapacity } = useSppUpdater()
+    const { setSpp } = useSppUpdater()
 
     const fetchSolarPowerPlant = useCallback(async () => {
         setError(null)
@@ -110,7 +110,13 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
         if (!solarPowerPlant || !contractInfo) return
         setUpdating(true)
         try {
-            await setSppCapacity(contractInfo, solarPowerPlant.capacity)
+            await setSpp(
+                contractInfo,
+                solarPowerPlant.capacity,
+                solarPowerPlant.output,
+                solarPowerPlant.total,
+                solarPowerPlant.active
+            )
         } catch (e) {
             setError({
                 message: strings.errorUpdatingSppContract,

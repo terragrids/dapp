@@ -7,16 +7,16 @@ export function useSppUpdater() {
     const { sppBackend } = useContext(ReachContext)
     const { walletAccount } = useContext(UserContext)
 
-    const setSppCapacity = useCallback(
-        async (contractInfo, capacity) => {
+    const setSpp = useCallback(
+        async (contractInfo, capacity, output, totalTerracells, activeTerracells) => {
             if (contractInfo && walletAccount) {
                 const infoObject = getContractFromJsonString(contractInfo)
                 const sppContract = walletAccount.contract(sppBackend, infoObject)
-                await sppContract.a.SolarPowerPlant.setCapacity(capacity)
+                await sppContract.a.SolarPowerPlant.set(capacity, output, totalTerracells, activeTerracells)
             }
         },
         [sppBackend, walletAccount]
     )
 
-    return { setSppCapacity }
+    return { setSpp }
 }
