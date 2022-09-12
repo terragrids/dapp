@@ -13,7 +13,7 @@ import { SolarPowerPlant } from 'types/spp.js'
 import { InputField } from 'components/input-field'
 import { useSppUpdater } from 'hooks/use-spp-updater.js'
 import { Label } from 'components/label'
-import { getApplicationAlgoExplorerUrl } from 'utils/string-utils.js'
+import { ContractLink } from 'components/contract-link'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -159,7 +159,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                                 />
                             </div>
                             <header>{strings.contract}</header>
-                            <pre>{contractInfo ? Buffer.from(contractInfo, 'base64').toString('ascii') : null}</pre>
+                            {contractInfo && <ContractLink contractInfo={contractInfo} />}
                             <header>{strings.description}</header>
                             <pre>{error.description}</pre>
                         </>
@@ -171,14 +171,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                 <div className={styles.content}>
                     <div className={styles.section}>
                         <Label text={strings.contractId} />
-                        <pre>
-                            <a
-                                href={getApplicationAlgoExplorerUrl(solarPowerPlant.contractId)}
-                                target={'_blank'}
-                                rel={'noreferrer'}>
-                                {solarPowerPlant.contractId}
-                            </a>
-                        </pre>
+                        {contractInfo && <ContractLink contractInfo={contractInfo} />}
                     </div>
                     <div className={styles.section}>
                         <InputField

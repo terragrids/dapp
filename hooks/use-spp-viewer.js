@@ -25,5 +25,15 @@ export function useSppViewer() {
         [sppBackend, stdlib, walletAccount]
     )
 
-    return { getSpp }
+    const getContractId = useCallback(
+        contractInfo => {
+            if (contractInfo) {
+                const infoObject = getContractFromJsonString(contractInfo)
+                return stdlib.bigNumberToNumber(infoObject)
+            } else return null
+        },
+        [stdlib]
+    )
+
+    return { getSpp, getContractId }
 }
