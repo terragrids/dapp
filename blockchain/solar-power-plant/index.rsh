@@ -24,6 +24,7 @@ export const main = Reach.App(() => {
     const SPP = API('SolarPowerPlant', {
         stop: Fun([], Bool),
         get: Fun([], SolarPowerPlant),
+        set: Fun([UInt, UInt, UInt, UInt], Null),
         setCapacity: Fun([UInt], Null),
         increaseCapacity: Fun([UInt], Null),
         decreaseCapacity: Fun([UInt], Null),
@@ -63,6 +64,13 @@ export const main = Reach.App(() => {
         .api(SPP.get, k => {
             k([capacity, output, total, active])
             return [false, capacity, output, total, active]
+        })
+        /**
+         * Sets the SPP properties to the specified amounts.
+         */
+        .api(SPP.set, (newCapacity, newOutput, newTotal, newActive, k) => {
+            k(null)
+            return [false, newCapacity, newOutput, newTotal, newActive]
         })
         /**
          * Sets the SPP Capacity to the specified amount of TRW.

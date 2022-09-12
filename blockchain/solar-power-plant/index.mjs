@@ -261,6 +261,19 @@ const userConnectAndStop = async (name, account, contract, ready) => {
 
         console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
 
+        // Set all properties
+
+        await callAPI(
+            name,
+            () => spp.set(51, 52, 53, 54),
+            `${name} managed to set all spp properties`,
+            `${name} failed to set all spp properties`
+        )
+
+        await logSppAndAssert(name, sppView, 51, 52, 53, 54)
+
+        console.log(`${name} has ${fmt(await stdlib.balanceOf(account))}`)
+
         // Stop the contract
 
         console.log(`${name} is trying to stop the contract...`)
