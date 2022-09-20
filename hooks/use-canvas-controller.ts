@@ -43,7 +43,7 @@ export const useCanvasController = (
     }, [context, panOffset, touchOffset])
 
     const onMouseMove = useCallback(
-        (e: MouseEvent) => {
+        (func: (positionX: number, positionY: number, withinMap: boolean) => void) => (e: MouseEvent) => {
             if (!context) return
 
             const rect = context.canvas.getBoundingClientRect()
@@ -52,8 +52,13 @@ export const useCanvasController = (
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top
             }
+
+            const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - rect.top)
+            const withinMap = isInsideMap(startPosition, mouseX, mouseY)
+            const { positionX, positionY } = getPlotPosition(startPosition, mouseX, mouseY)
+            return func(positionX, positionY, withinMap)
         },
-        [context]
+        [context, startPosition]
     )
 
     const onWheelZoom = useCallback(

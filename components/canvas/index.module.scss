@@ -4,4 +4,9 @@
     // Without this, touch pan vertical doesn't not work properly
     // About touch-action see: https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action
     touch-action: none;
+    cursor: grab;
+
+    &.clickable {
+        cursor: pointer;
+    }
 }

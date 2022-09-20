@@ -34,8 +34,9 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     const [imageLoadingStarted, setImageLoadingStarted] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [clickable, setClickable] = useState(false)
 
-    const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(
+    const { mouseRef, onClick, onTouch, onMouseMove, ...rest } = useCanvasController(
         canvasRef.current,
         startPositionRef.current,
         initialScale
@@ -102,7 +103,6 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
 
     const handleClickOrTouch = (positionX: number, positionY: number) => {
         const index = positionY * GRID_SIZE + positionX
-
         const target = mapPlots.find(el => el.index === index)
 
         if (!target) return
@@ -111,6 +111,16 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
             onSelectSolarPowerPlant()
         } else if (index < GRID_SIZE * GRID_SIZE) {
             onSelectPlot(target)
+        }
+    }
+    const handleMouseMove = (positionX: number, positionY: number) => {
+        const index = positionY * GRID_SIZE + positionX
+        const target = mapPlots.find(el => el.index === index)
+
+        if (target) {
+            if (!clickable) setClickable(true)
+        } else {
+            if (clickable) setClickable(false)
         }
     }
 
@@ -161,7 +171,9 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
                     canvasRef={canvasRef}
                     onClick={onClick(handleClickOrTouch)}
                     onTouch={onTouch(handleClickOrTouch)}
+                    onMouseMove={onMouseMove(handleMouseMove)}
                     attributes={{ width, height }}
+                    clickable={clickable}
                     {...rest}
                 />
             )}
