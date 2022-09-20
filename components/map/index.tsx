@@ -17,6 +17,8 @@ import {
     renderHoveredPlot
 } from './map-helper'
 import Plot, { Position2D } from './plots/plot'
+import { strings } from 'strings/en.js'
+import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
 
 export type MapProps = {
     width: number | undefined
@@ -31,6 +33,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
     const [imageLoadingStarted, setImageLoadingStarted] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
 
     const { mouseRef, onClick, onTouch, ...rest } = useCanvasController(
         canvasRef.current,
@@ -114,7 +117,11 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     useEffect(() => {
         const load = async () => {
             const res = await fetch(endpoints.terralands())
-            if (!res.ok) return
+            if (!res.ok) {
+                setError(strings.errorFetchingMap)
+                setLoading(false)
+                return
+            }
 
             const { assets } = await res.json()
 
@@ -144,7 +151,12 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
                     <LoadingSpinner />
                 </div>
             )}
-            {!loading && (
+            {error && (
+                <div className={styles.error}>
+                    <ParagraphMaker text={error} />
+                </div>
+            )}
+            {!loading && !error && (
                 <Canvas
                     canvasRef={canvasRef}
                     onClick={onClick(handleClickOrTouch)}

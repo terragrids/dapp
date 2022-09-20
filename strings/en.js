@@ -44,6 +44,7 @@ const enStrings = {
     errorTerminatingSppContract: 'Unable to terminate the Solar Power Plant Smart Contract.',
     errorUpdatingSppContract: 'Unable to update the Solar Power Plant Smart Contract.',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
+    errorFetchingMap: 'Something went wrong when fetching the Terragrids map.\nPlease refresh the page and try again.',
     helloExplorer: 'Hello, Terragrids explorer!',
     holder: 'Holder',
     mint: 'Mint',

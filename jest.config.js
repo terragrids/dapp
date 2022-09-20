@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // jest.config.js
 const nextJest = require('next/jest')
 
