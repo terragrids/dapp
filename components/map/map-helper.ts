@@ -1,5 +1,7 @@
 import Plot, { Position2D } from './plots/plot'
-import SPP from 'public/images/sc_terragrids_iso_solar_plant_03_1200px.png'
+import SPP1 from 'public/images/solar_plant_square01.png'
+import SPP2 from 'public/images/solar_plant_square02.png'
+import SPP3 from 'public/images/solar_plant_square03.png'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
 import GRASS from 'public/images/grasstile.png'
@@ -13,17 +15,6 @@ export const GRID_SIZE = 10 // Math.sqrt of plotMap length (=100)
 export const GRID_Y_OFFSET = 17
 export const ORIGINAL_MAP_WIDTH = Plot.PLOT_WIDTH * GRID_SIZE
 export const DEFAULT_MAP_SCALE = 1
-
-export const SOLAR_POWER_PLANT: PlotType = {
-    id: 'SOLAR_POWER_PLANT',
-    name: 'SOLAR POWER PLANT',
-    symbol: 'TRCL',
-    url: '',
-    offchainUrl: SPP.src,
-    positionX: 0,
-    positionY: 0,
-    holders: []
-}
 
 // TODO: remove below `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
 export const BIG_PLOT: PlotType = {
@@ -75,8 +66,50 @@ export const getGrassPlots = (): MapPlotType[] => {
 }
 // TODO: remove above `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
 
-export const getSppPlot = () => {
-    return convertToMapPlot(SOLAR_POWER_PLANT)
+export const getSppPlots = () => {
+    const sppPlots = []
+    for (let i = 1; i < 5; i++) {
+        const coords = []
+        let imgSrc = ''
+
+        switch (i) {
+            case 1:
+                coords[0] = 0
+                coords[1] = 0
+                imgSrc = SPP2.src
+                break
+            case 2:
+                coords[0] = 1
+                coords[1] = 0
+                imgSrc = SPP1.src
+                break
+            case 3:
+                coords[0] = 0
+                coords[1] = 1
+                imgSrc = SPP3.src
+                break
+            case 4:
+                coords[0] = 1
+                coords[1] = 1
+                imgSrc = SPP1.src
+                break
+        }
+
+        const sppPlot: PlotType = {
+            id: `SOLAR_POWER_PLANT_${i}`,
+            name: 'SOLAR POWER PLANT',
+            symbol: 'SPP',
+            url: '',
+            offchainUrl: imgSrc,
+            positionX: coords[0],
+            positionY: coords[1],
+            holders: []
+        }
+
+        sppPlots.push(convertToMapPlot(sppPlot))
+    }
+
+    return sppPlots
 }
 
 export const positionToIndex = (position: Position2D) => {
@@ -183,7 +216,8 @@ export const drawGrid = (context: CanvasRenderingContext2D, startPosition: Posit
 
 export const drawLine = (context: CanvasRenderingContext2D, x: number, y: number) => {
     context.beginPath()
-    context.setLineDash([1, 1])
+    context.setLineDash([])
+    context.lineWidth = 1
 
     // move to start point
     context.moveTo(x - Plot.PLOT_WIDTH / 2, y)
@@ -213,12 +247,12 @@ export const renderHoveredPlot = (ctx: CanvasRenderingContext2D, x: number, y: n
     ctx.setLineDash([])
     ctx.strokeStyle = 'rgba(192, 57, 43, 0.8)'
     ctx.fillStyle = 'rgba(192, 57, 43, 0.4)'
-    ctx.lineWidth = 2
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y - Plot.PLOT_HALF_HEIGHT)
-    ctx.lineTo(x + Plot.PLOT_WIDTH, y)
-    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y + Plot.PLOT_HALF_HEIGHT)
-    ctx.lineTo(x, y)
+    ctx.lineWidth = 1
+    ctx.moveTo(x, y + 1)
+    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y - Plot.PLOT_HALF_HEIGHT + 1)
+    ctx.lineTo(x + Plot.PLOT_WIDTH, y + 1)
+    ctx.lineTo(x + Plot.PLOT_HALF_WIDTH, y + Plot.PLOT_HALF_HEIGHT + 1)
+    ctx.lineTo(x, y + 1)
     ctx.stroke()
     ctx.fill()
 }

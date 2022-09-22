@@ -9,7 +9,7 @@ import {
     convertToMapPlot,
     drawGrid,
     getPlotPosition,
-    getSppPlot,
+    getSppPlots,
     getStartPosition,
     getTransformedPoint,
     GRID_SIZE,
@@ -137,10 +137,10 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
 
             const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
 
-            const spp = getSppPlot()
+            const spp = getSppPlots()
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
 
-            const allPlots = [spp, ...plots]
+            const allPlots = [...spp, ...plots]
             setMapPlots(allPlots)
             loadPlotImages(allPlots)
         }

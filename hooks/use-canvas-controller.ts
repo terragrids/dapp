@@ -5,12 +5,8 @@ import usePan from './use-pan'
 import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
-const MAX_SCALE = 2
+const MAX_SCALE = 4
 const MIN_SCALE = 0.8
-
-// Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA = 1
-const SCROLL_SENSITIVITY = 0.05
 
 export const useCanvasController = (
     canvas: HTMLCanvasElement | null,
@@ -66,7 +62,7 @@ export const useCanvasController = (
             if (!context) return
 
             const currentScale = context.getTransform().a
-            const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
+            const zoomAmount = -(e.deltaY * ZOOM_SENSITIVITY)
 
             // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
             // When reaching MIN_SCALE or initialScale, it only allows zoom IN (= positive zoomAmount)
@@ -85,14 +81,8 @@ export const useCanvasController = (
     const onWheel = useCallback(
         (e: WheelEvent) => {
             if (!context) return
-
             if (zoomEnabled.current) {
                 onWheelZoom(e)
-            } else {
-                const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
-                const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
-
-                context.translate(moveAmountX, moveAmountY)
             }
         },
         [context, onWheelZoom]
