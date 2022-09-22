@@ -6,6 +6,7 @@ export const terragridsApiBaseUrl =
         : 'https://api.terragrids.org'
 
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
+export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
@@ -46,10 +47,11 @@ export async function callTerragridsApi(res, method, endpoint, data) {
                 response = await fetch(`${terragridsApiBaseUrl}/${endpoint}`)
                 break
             case 'POST':
-                response = await httpPost(`${terragridsApiBaseUrl}/${endpoint}`, data)
+            case 'PUT':
+                response = await httpRequest(method, `${terragridsApiBaseUrl}/${endpoint}`, data)
                 break
             case 'DELETE':
-                response = await httpDelete(`${terragridsApiBaseUrl}/${endpoint}`)
+                response = await httpRequest(method, `${terragridsApiBaseUrl}/${endpoint}`)
                 break
             default:
                 res.status(405).end()
@@ -75,21 +77,16 @@ export async function handleHttpRequest(res, run) {
     }
 }
 
-async function httpPost(url, data = {}) {
+async function httpRequest(method, url, data = {}) {
     return await fetch(url, {
-        method: 'POST',
+        method,
         cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json'
-        },
         referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
-    })
-}
-
-async function httpDelete(url) {
-    return await fetch(url, {
-        method: 'DELETE',
-        referrerPolicy: 'no-referrer'
+        ...(data && {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
     })
 }

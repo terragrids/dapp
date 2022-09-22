@@ -11,7 +11,7 @@ export type PlotPropsType = {
 }
 
 export default class Plot {
-    // THESE SHOULD BE CHANGED OR SET DYNAMICALLY
+    static readonly PLOT_OFFSET_Z = 114 // This is to align the images to the grid on the map
     static readonly PLOT_WIDTH = 96
     static readonly PLOT_HEIGHT = 48
 
@@ -20,7 +20,7 @@ export default class Plot {
 
     static readonly PLOT_TYPE_EMPTY = 0
 
-    static readonly PLOT_THICKNESS = 5
+    static readonly PLOT_THICKNESS = 4
     static readonly PLOT_HALF_THICKNESS = this.PLOT_THICKNESS / 2
 
     mapStartPosition: Position2D
@@ -39,40 +39,30 @@ export default class Plot {
     }
 
     private calculateRenderPosition(plotCoord: Position2D): Position2D {
-        const adjustY = this.isLargeImage()
-            ? Plot.PLOT_HEIGHT + Plot.PLOT_HALF_HEIGHT + Plot.PLOT_HALF_THICKNESS
-            : Plot.PLOT_THICKNESS + Plot.PLOT_HALF_THICKNESS
+        const renderX =
+            this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH - Plot.PLOT_HALF_THICKNESS + 2
+        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT - 1
 
-        const renderX = this.mapStartPosition.x + (plotCoord.x - plotCoord.y) * Plot.PLOT_HALF_WIDTH
-        const renderY = this.mapStartPosition.y + (plotCoord.x + plotCoord.y) * Plot.PLOT_HALF_HEIGHT + adjustY
         return { x: renderX, y: renderY }
     }
 
-    private isLargeImage(): boolean {
-        const { scaleX, scaleY } = this.getImageScale()
-        return scaleX > 1 && scaleY > 1
-    }
-
     private getImageScale(): { scaleX: number; scaleY: number } {
-        const scaleX = Math.floor(this.image.width / Plot.PLOT_WIDTH)
-        const scaleY = Math.floor(this.image.height / Plot.PLOT_HEIGHT)
+        const scaleX = (this.image.width / Plot.PLOT_WIDTH) * 0.995 // scaling factor to reduce gap between plots
+        const scaleY = this.image.height / Plot.PLOT_HEIGHT
         return { scaleX, scaleY }
     }
 
-    draw(offset: number): void {
-        const offsetY = offset - this.image.height
+    draw(): void {
+        const { scaleX } = this.getImageScale()
+        // add z axis offset depending on image height
+        const offsetZ = Plot.PLOT_OFFSET_Z - this.image.height / scaleX - Plot.PLOT_HALF_HEIGHT
 
-        if (this.isLargeImage()) {
-            const { scaleX, scaleY } = this.getImageScale()
-            this.ctx.drawImage(
-                this.image,
-                this.renderPosition.x,
-                this.renderPosition.y + offsetY,
-                this.image.width / scaleX,
-                this.image.height / scaleY
-            )
-        } else {
-            this.ctx.drawImage(this.image, this.renderPosition.x, this.renderPosition.y + offsetY)
-        }
+        this.ctx.drawImage(
+            this.image,
+            this.renderPosition.x,
+            this.renderPosition.y + offsetZ,
+            this.image.width / scaleX,
+            this.image.height / scaleX
+        )
     }
 }

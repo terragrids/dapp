@@ -1,64 +1,53 @@
 {
-  "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint",
-    "unicorn"
-  ],
-  "extends": [
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "rules": {
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint", "unicorn"],
+    "extends": [
+        "next/core-web-vitals",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
     ],
-    "@typescript-eslint/no-unused-vars": [
-      "error"
-    ],
-    "semi": [
-      "error",
-      "never"
-    ],
-    "comma-dangle": [
-      "error",
-      "never"
-    ],
-    "@typescript-eslint/member-delimiter-style": [
-      "error",
-      {
-        "multiline": {
-          "delimiter": "none",
-          "requireLast": false
-        },
-        "singleline": {
-          "delimiter": "semi",
-          "requireLast": false
-        }
-      }
-    ],
-    "no-console": "error",
-    "react/jsx-curly-brace-presence": [
-      "error",
-      {
-        "props": "always",
-        "children": "ignore"
-      }
-    ],
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error",
-    "unicorn/filename-case": [
-      "error",
-      {
-        "case": "kebabCase"
-      }
-    ]
-  },
-  "ignorePatterns": [
-    "*.rsh"
-  ]
+    "rules": {
+        "quotes": [
+            "error",
+            "single",
+            {
+                "avoidEscape": true
+            }
+        ],
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "semi": ["error", "never"],
+        "comma-dangle": ["error", "never"],
+        "no-dupe-keys": ["error"],
+        "@typescript-eslint/member-delimiter-style": [
+            "error",
+            {
+                "multiline": {
+                    "delimiter": "none",
+                    "requireLast": false
+                },
+                "singleline": {
+                    "delimiter": "semi",
+                    "requireLast": false
+                }
+            }
+        ],
+        "no-console": "error",
+        "react/jsx-curly-brace-presence": [
+            "error",
+            {
+                "props": "always",
+                "children": "ignore"
+            }
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "unicorn/filename-case": [
+            "error",
+            {
+                "case": "kebabCase"
+            }
+        ]
+    },
+    "ignorePatterns": ["*.rsh"]
 }

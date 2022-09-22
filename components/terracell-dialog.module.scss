@@ -10,6 +10,11 @@
     min-width: 400px;
     width: 450px; // without this property, an error message makes the modal wider when it is rendered
     max-width: 600px;
+
+    @media (max-width: $screen-small) {
+        min-width: 90%;
+        width: 100%;
+    }
 }
 
 .error {

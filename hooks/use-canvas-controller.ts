@@ -6,12 +6,8 @@ import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
 const PINCH_ZOOM_SENSITIVITY = 0.02
-const MAX_SCALE = 2
+const MAX_SCALE = 4
 const MIN_SCALE = 0.8
-
-// Set temporarily (Should be changed once the requirements for UI/UX are all determined)
-const DEFAULT_DELTA = 1
-const SCROLL_SENSITIVITY = 0.05
 
 export const useCanvasController = (
     canvas: HTMLCanvasElement | null,
@@ -39,7 +35,8 @@ export const useCanvasController = (
     useEffect(() => {
         if (!context) return
 
-        context.translate(panOffset.x, panOffset.y)
+        const zoom = context.getTransform().a
+        context.translate(panOffset.x / zoom, panOffset.y / zoom)
         context.translate(touchOffset.x, touchOffset.y)
     }, [context, panOffset, touchOffset])
 
@@ -72,7 +69,7 @@ export const useCanvasController = (
     }, [zoomPosition, zoomAmount, context, initialScale])
 
     const onMouseMove = useCallback(
-        (e: MouseEvent) => {
+        (func: (positionX: number, positionY: number, withinMap: boolean) => void) => (e: MouseEvent) => {
             if (!context) return
 
             const rect = context.canvas.getBoundingClientRect()
@@ -81,16 +78,21 @@ export const useCanvasController = (
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top
             }
+
+            const { x: mouseX, y: mouseY } = getTransformedPoint(context, e.clientX, e.clientY - rect.top)
+            const withinMap = isInsideMap(startPosition, mouseX, mouseY)
+            const { positionX, positionY } = getPlotPosition(startPosition, mouseX, mouseY)
+            return func(positionX, positionY, withinMap)
         },
-        [context]
+        [context, startPosition]
     )
 
     const onWheelZoom = useCallback(
         (e: WheelEvent) => {
             if (!context) return
 
-            const zoomAmount = e.deltaY * ZOOM_SENSITIVITY
             const currentScale = context.getTransform().a
+            const zoomAmount = -(e.deltaY * ZOOM_SENSITIVITY)
 
             // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
             // When reaching MIN_SCALE or initialScale or initialScale, it only allows zoom IN (= positive zoomAmount)
@@ -109,14 +111,8 @@ export const useCanvasController = (
     const onWheel = useCallback(
         (e: WheelEvent) => {
             if (!context) return
-
             if (zoomEnabled.current) {
                 onWheelZoom(e)
-            } else {
-                const moveAmountY = DEFAULT_DELTA * e.deltaY * SCROLL_SENSITIVITY
-                const moveAmountX = DEFAULT_DELTA * e.deltaX * SCROLL_SENSITIVITY
-
-                context.translate(moveAmountX, moveAmountY)
             }
         },
         [context, onWheelZoom]

@@ -28,27 +28,52 @@
     padding-bottom: 40px;
 }
 
-.terracellList {
-    @extend .container;
-}
-
 .section {
-    width: 100%;
+    padding-bottom: 20px;
+
+    pre {
+        padding: 0 5px;
+        font-size: 16px;
+    }
 }
 
 .button {
-    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
     text-align: center;
 }
 
 .error {
+    display: flex;
+    flex-direction: column;
     color: $color-red;
     padding-bottom: 40px;
     font-size: 16px;
+
+    .message {
+        text-align: center;
+    }
+
+    header {
+        color: $color-alto;
+        font-size: 14px;
+        text-transform: uppercase;
+        margin-top: 20px;
+    }
+
+    pre {
+        max-width: 800px;
+        color: $color-downy;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        white-space: pre-line;
+    }
 }
 
-.footer {
+.content {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 
     @media (max-width: $screen-small) {

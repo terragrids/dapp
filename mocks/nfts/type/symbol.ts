@@ -99,7 +99,7 @@ const TRCL_MOCK = {
     'next-token': '102025249'
 } as const
 
-const TRAS_MOCK = {
+const TRBD_MOCK = {
     assets: [],
     'next-token': '102025249'
 } as const
@@ -107,11 +107,11 @@ const TRAS_MOCK = {
 export const NFT_MOCKS = {
     trld: TRLD_MOCK,
     trcl: TRCL_MOCK,
-    tras: TRAS_MOCK
+    trbd: TRBD_MOCK
 }
 
 type NftMockKeys = keyof typeof NFT_MOCKS
 
 export const matchKey = (str: unknown): str is NftMockKeys => {
-    return str !== undefined && (str === 'trld' || str === 'trcl' || str === 'tras')
+    return str !== undefined && (str === 'trld' || str === 'trcl' || str === 'trbd')
 }

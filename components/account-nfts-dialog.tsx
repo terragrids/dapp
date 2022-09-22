@@ -17,7 +17,7 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
         symbol: string
         url: string
         offchainUrl: string
-        power: 10
+        power: number
     }
 
     type State = {
@@ -36,17 +36,17 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
     let title = ''
 
     switch (selectedSymbol) {
-        case 'TRCL':
+        case Nft.TRCL.symbol:
             subtitle = strings.yourSolarPvCells
             title = `${Nft.TRCL.name} (${Nft.TRCL.currencySymbol})`
             break
-        case 'TRLD':
+        case Nft.TRLD.symbol:
             subtitle = strings.yourPlotsOfLand
             title = `${Nft.TRLD.name} (${Nft.TRLD.currencySymbol})`
             break
-        case 'TRAS':
+        case Nft.TRBD.symbol:
             subtitle = strings.yourBuildings
-            title = `${Nft.TRAS.name} (${Nft.TRAS.currencySymbol})`
+            title = `${Nft.TRBD.name} (${Nft.TRBD.currencySymbol})`
             break
     }
 
@@ -107,7 +107,9 @@ export const AccountNftsDialog = ({ visible, onClose, selectedSymbol }: Props) =
                                 </picture>
                                 <h2>
                                     {asset.name}
-                                    <small>{`${strings.output}: ${asset.power} TRW`}</small>
+                                    {asset.symbol === Nft.TRCL.symbol && (
+                                        <small>{`${strings.output}: ${asset.power} TRW`}</small>
+                                    )}
                                 </h2>
                             </li>
                         ))}

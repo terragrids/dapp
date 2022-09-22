@@ -1,28 +1,39 @@
 import { useContext, useCallback } from 'react'
+import { getContractFromJsonString } from 'utils/string-utils.js'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 
 export function useSppViewer() {
-    const { sppBackend } = useContext(ReachContext)
+    const { sppBackend, stdlib } = useContext(ReachContext)
     const { walletAccount } = useContext(UserContext)
 
     const getSpp = useCallback(
         async contractInfo => {
             if (contractInfo && walletAccount) {
-                const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64'))
+                const infoObject = getContractFromJsonString(contractInfo)
                 const sppContract = walletAccount.contract(sppBackend, infoObject)
 
+                const contractId = stdlib.bigNumberToNumber(infoObject)
                 const capacity = (await sppContract.v.SPPView.capacity())[1].toNumber()
                 const output = (await sppContract.v.SPPView.output())[1].toNumber()
-                // TODO fetch terracell totals from view when available
-                const totalTerracells = 0
-                const activeTerracells = 0
+                const total = (await sppContract.v.SPPView.total())[1].toNumber()
+                const active = (await sppContract.v.SPPView.active())[1].toNumber()
 
-                return { capacity, output, totalTerracells, activeTerracells }
+                return { contractId, capacity, output, total, active }
             }
         },
-        [sppBackend, walletAccount]
+        [sppBackend, stdlib, walletAccount]
     )
 
-    return { getSpp }
+    const getContractId = useCallback(
+        contractInfo => {
+            if (contractInfo) {
+                const infoObject = getContractFromJsonString(contractInfo)
+                return stdlib.bigNumberToNumber(infoObject)
+            } else return null
+        },
+        [stdlib]
+    )
+
+    return { getSpp, getContractId }
 }

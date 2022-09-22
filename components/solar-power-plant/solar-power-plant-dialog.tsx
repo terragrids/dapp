@@ -1,23 +1,29 @@
-/* eslint-disable @next/next/no-img-element */
 import LoadingSpinner from 'components/loading-spinner'
 import ModalDialog from 'components/modal-dialog'
 import { useSppViewer } from 'hooks/use-spp-viewer.js'
 import TerracellList from 'components/terracell-list'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { strings } from 'strings/en'
-import { SolarPowerPlant } from 'types/nft'
 import { endpoints } from 'utils/api-config'
 import styles from './solar-power-plant-dialog.module.scss'
+import TerracellDialog from 'components/terracell-dialog'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user'
+import Button, { ButtonType } from 'components/button'
+import { SolarPowerPlant } from 'types/spp.js'
 
 type SolarPowerPlantDialogProps = {
     visible: boolean
-    onClose: () => void
+    onClose: (openSppAdminPanel?: boolean) => void
 }
 
 const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps) => {
     const [solarPowerPlant, setSolarPowerPlant] = useState<SolarPowerPlant | null>(null)
     const [error, setError] = useState<string | null>()
     const [isDetailOpen, setIsDetailOpen] = useState(false)
+    const [selectedTerracellId, setSelectedTerracellId] = useState<string | null>(null)
+    const { authenticated, isAdmin } = useContext<User>(UserContext)
+
     const { getSpp } = useSppViewer()
 
     useEffect(() => {
@@ -30,38 +36,87 @@ const SolarPowerPlantDialog = ({ visible, onClose }: SolarPowerPlantDialogProps)
 
             if (sppResponse.ok) {
                 const { contractInfo } = await sppResponse.json()
-                const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
-                setSolarPowerPlant(spp)
+
+                if (!contractInfo) {
+                    setError(strings.errorFetchingSppFromContract)
+                    return
+                }
+
+                try {
+                    const spp: SolarPowerPlant = (await getSpp(contractInfo)) as SolarPowerPlant
+                    setSolarPowerPlant(spp)
+                } catch (e) {
+                    setError(strings.errorFetchingSppFromContract)
+                }
             } else {
-                setError(strings.errorFechingSpp)
+                setError(strings.errorFetchingSpp)
             }
         }
         if (visible) fetchSolarPowerPlantAndTerracells()
     }, [getSpp, visible])
 
-    const subtitle = useMemo(() => {
-        if (!solarPowerPlant) return ''
+    function openSppAdminPanel() {
+        onClose(true)
+    }
 
-        const availableCount = solarPowerPlant.totalTerracells - solarPowerPlant.activeTerracells || 0
-        return `${availableCount} $TRCL ${strings.availableToBuy}`
-    }, [solarPowerPlant])
+    const subtitle = useMemo(() => {
+        return ''
+
+        // TODO add these lines below once the SPP contract returns the correct amount of Terracells
+        // if (!solarPowerPlant) return ''
+        // const availableCount = solarPowerPlant.totalTerracells - solarPowerPlant.activeTerracells || 0
+        // return `${availableCount} $TRCL ${strings.availableToBuy}`
+    }, [])
 
     const title = isDetailOpen ? strings.back : strings.solarPowerPlant
     const currentClassName = isDetailOpen ? styles.openDetail : styles.listDialog
 
+    if (selectedTerracellId !== null)
+        return (
+            <TerracellDialog
+                id={selectedTerracellId}
+                visible={!!selectedTerracellId}
+                onClose={() => setSelectedTerracellId(null)}
+            />
+        )
+
     return (
-        <ModalDialog visible={visible} title={title} onClose={onClose} subtitle={subtitle} className={currentClassName}>
-            {!solarPowerPlant && !error && (
+        <ModalDialog
+            visible={visible}
+            title={title}
+            onClose={() => onClose(false)}
+            subtitle={subtitle}
+            className={currentClassName}>
+            {!authenticated && <div>{strings.connectToWalletToSeeSPP}</div>}
+
+            {authenticated && error && (
+                <div className={styles.error}>
+                    <div>{error}</div>
+                    {!isAdmin && <div>{strings.refreshAndTryAgain}</div>}
+                    {isAdmin && (
+                        <div className={styles.button}>
+                            <Button
+                                type={ButtonType.OUTLINE}
+                                label={strings.openSppAdminPanel}
+                                onClick={openSppAdminPanel}
+                            />
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {authenticated && !solarPowerPlant && !error && (
                 <div className={styles.loader}>
                     <LoadingSpinner />
                 </div>
             )}
 
-            {solarPowerPlant && !error && (
+            {authenticated && solarPowerPlant && !error && (
                 <>
                     <div className={styles.terracellList}>
-                        <TerracellList />
+                        <TerracellList setSelectedTerracellId={setSelectedTerracellId} />
                     </div>
+
                     <footer className={styles.footer}>
                         <span>
                             {strings.capacity} {solarPowerPlant.capacity || 0} TRW

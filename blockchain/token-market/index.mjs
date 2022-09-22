@@ -103,14 +103,18 @@ const deploySpp = async account => {
     const sppApi = ctcSpp.a.SolarPowerPlant
     const sppView = ctcSpp.v.SPPView
 
-    const logSppAndAssert = async (expCapacity, expOutput) => {
+    const logSppAndAssert = async (expCapacity, expOutput, expTotal, expActive) => {
         const capacity = (await sppView.capacity())[1].toNumber()
         const output = (await sppView.output())[1].toNumber()
+        const total = (await sppView.total())[1].toNumber()
+        const active = (await sppView.active())[1].toNumber()
 
-        console.log('SPP info', { capacity, output })
+        console.log('SPP info', { capacity, output, total, active })
 
         assert(capacity == expCapacity)
         assert(output == expOutput)
+        assert(total == expTotal)
+        assert(active == expActive)
     }
 
     let sppContractInfo
@@ -130,7 +134,7 @@ const deploySpp = async account => {
 
     await sppReady.wait()
 
-    logSppAndAssert(0, 0)
+    logSppAndAssert(0, 0, 0, 0)
 
     return { sppContractInfo, sppApi, logSppAndAssert }
 }
@@ -307,7 +311,7 @@ const testSellAndBuyAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                logSppAndAssert(15, 0)
+                logSppAndAssert(15, 0, 1, 0)
 
                 ready.notify()
             },
@@ -338,7 +342,7 @@ const testSellAndBuyAndStop = async () => {
             (parseFloat(bobAlgo) < 90 && parseFloat(aliceAlgo) > 90)
     )
 
-    logSppAndAssert(15, 15)
+    logSppAndAssert(15, 15, 1, 1)
 
     await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to stop the spp')
 }
@@ -376,7 +380,7 @@ const testSellAndStop = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                logSppAndAssert(7, 0)
+                logSppAndAssert(7, 0, 1, 0)
 
                 ready.notify()
             },
@@ -406,12 +410,12 @@ const testSellAndStop = async () => {
     assert(aliceGil == 0 && bobGil == 0)
     assert(parseFloat(aliceAlgo) > 99 && parseFloat(bobAlgo) > 99)
 
-    logSppAndAssert(7, 0)
+    logSppAndAssert(0, 0, 0, 0)
 
     await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
 }
 
-const testSellAndNonAdminStopAndBuy = async () => {
+const testSellZeroPowerAndNonAdminStopAndBuy = async () => {
     console.log('\n>> Test sell and non-admin stop and buy')
 
     const [accAdmin, accAlice, accBob, gil] = await setup()
@@ -455,7 +459,7 @@ const testSellAndNonAdminStopAndBuy = async () => {
                 console.log(`Admin has ${fmt(adminAlgo)}`)
                 console.log(`Admin has ${fmtToken(adminGil, gil)}`)
 
-                logSppAndAssert(0, 0)
+                logSppAndAssert(0, 0, 0, 0)
 
                 ready.notify()
             },
@@ -483,11 +487,11 @@ const testSellAndNonAdminStopAndBuy = async () => {
     assert(aliceGil == 1 && bobGil == 0)
     assert(parseFloat(aliceAlgo) < 99 && parseFloat(bobAlgo) > 99)
 
-    logSppAndAssert(0, 0)
+    logSppAndAssert(0, 0, 0, 0)
 
-    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to fstop the spp')
+    await callAPI('Admin', () => sppApi.stop(), 'Admin managed to stop the spp', 'Admin failed to stop the spp')
 }
 
 await testSellAndBuyAndStop()
 await testSellAndStop()
-await testSellAndNonAdminStopAndBuy()
+await testSellZeroPowerAndNonAdminStopAndBuy()

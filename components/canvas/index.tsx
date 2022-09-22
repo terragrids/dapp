@@ -13,6 +13,7 @@ export type CanvasProps = {
     startPan: (e: MouseEvent) => void
     startTouch: (e: TouchEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
+    clickable: boolean
 }
 
 const Canvas = ({
@@ -25,7 +26,8 @@ const Canvas = ({
     onKeyUp,
     startPan,
     startTouch,
-    attributes: { width, height }
+    attributes: { width, height },
+    clickable
 }: CanvasProps) => {
     useEffect(() => {
         if (!canvasRef.current || !width) return
@@ -77,7 +79,14 @@ const Canvas = ({
         }
     }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, startTouch, canvasRef])
 
-    return <canvas ref={canvasRef} {...{ width, height }} tabIndex={0} className={styles.canvas} />
+    return (
+        <canvas
+            ref={canvasRef}
+            {...{ width, height }}
+            tabIndex={0}
+            className={`${styles.canvas} ${clickable ? styles.clickable : ''}`}
+        />
+    )
 }
 
 export default Canvas

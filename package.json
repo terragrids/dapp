@@ -14,7 +14,7 @@
         "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
     },
     "dependencies": {
-        "@reach-sh/stdlib": "^0.1.11-rc.6",
+        "@reach-sh/stdlib": "^0.1.11-rc.9",
         "next": "^12.1.6",
         "prop-types": "^15.8.1",
         "react": "^18.1.0",
@@ -33,6 +33,7 @@
         "@typescript-eslint/parser": "^5.30.7",
         "eslint": "^8.20.0",
         "eslint-config-next": "^12.1.6",
+        "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-unicorn": "^43.0.2",
         "jest": "^28.1.0",
         "jest-environment-jsdom": "^28.1.0",

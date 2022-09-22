@@ -42,11 +42,17 @@
     font-size: 13px;
     text-transform: none;
     min-height: auto;
-    padding: 10px 0;
+    padding: 10px 20px;
+}
+
+.outlineAlert {
+    @extend .outline;
+    color: $color-red;
+    border: 1px solid $color-red;
 }
 
 .outline:hover,
-.outline:focus {
+.outline:active {
     background-color: $color-white;
     color: $color-abbey;
     opacity: 1;

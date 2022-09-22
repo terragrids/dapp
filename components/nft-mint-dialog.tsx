@@ -1,4 +1,3 @@
-
 import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
 import usePrevious from 'hooks/use-previous.js'
 import { useTokenMinter } from 'hooks/use-token-minter'
@@ -7,7 +6,7 @@ import { strings } from 'strings/en.js'
 import { setTimeout } from 'timers'
 import { Nft } from 'types/nft'
 import { endpoints } from 'utils/api-config.js'
-import Button from './button.js'
+import Button from './button'
 import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
 import { InputField } from './input-field'
@@ -15,7 +14,11 @@ import ModalDialog from './modal-dialog.js'
 import styles from './nft-mint-dialog.module.scss'
 
 enum MintState {
-    IDLE, MINTING, SAVING, DONE, ERROR
+    IDLE,
+    MINTING,
+    SAVING,
+    DONE,
+    ERROR
 }
 type Asset = {
     id?: string
@@ -77,7 +80,8 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     function isValidNft() {
         let valid = !!asset.name && !!asset.symbol && !!asset.details.text
         if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.details.power && asset.details.power > 0
-        if (asset.symbol === Nft.TRLD.symbol) valid = valid && asset.details.positionX !== undefined && asset.details.positionY !== undefined
+        if (asset.symbol === Nft.TRLD.symbol)
+            valid = valid && asset.details.positionX !== undefined && asset.details.positionY !== undefined
         return valid
     }
 
@@ -91,7 +95,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     /**
-     * 1. Save NFT file on S3 and IPFS 
+     * 1. Save NFT file on S3 and IPFS
      */
     function onUpload() {
         if (!file) return
@@ -99,7 +103,8 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         switch (asset.symbol) {
             case Nft.TRCL.symbol:
                 setAsset(asset => ({
-                    ...asset, description: {
+                    ...asset,
+                    description: {
                         text: asset.details.text,
                         power: asset.details.power
                     }
@@ -107,16 +112,18 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 break
             case Nft.TRLD.symbol:
                 setAsset(asset => ({
-                    ...asset, description: {
+                    ...asset,
+                    description: {
                         text: asset.details.text,
                         positionX: asset.details.positionX,
                         positionY: asset.details.positionY
                     }
                 }))
                 break
-            case Nft.TRAS.symbol:
+            case Nft.TRBD.symbol:
                 setAsset(asset => ({
-                    ...asset, description: {
+                    ...asset,
+                    description: {
                         text: asset.details.text
                     }
                 }))
@@ -149,7 +156,15 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (uploadState === FileUploadState.PINNED && mintState === MintState.IDLE) {
             mintToken()
         }
-    }, [asset.symbol, fileProps.arc3Name, fileProps.ipfsMetadataHash, fileProps.ipfsMetadataUrl, mint, mintState, uploadState])
+    }, [
+        asset.symbol,
+        fileProps.arc3Name,
+        fileProps.ipfsMetadataHash,
+        fileProps.ipfsMetadataUrl,
+        mint,
+        mintState,
+        uploadState
+    ])
 
     /**
      * 3. Save token off-chain
@@ -166,8 +181,11 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     assetId: asset.id,
                     symbol: asset.symbol,
                     offchainUrl: fileProps.offChainUrl,
-                    ...asset.symbol === Nft.TRCL.symbol && { power: asset.details.power },
-                    ...asset.symbol === Nft.TRLD.symbol && { positionX: asset.details.positionX, positionY: asset.details.positionY }
+                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power }),
+                    ...(asset.symbol === Nft.TRLD.symbol && {
+                        positionX: asset.details.positionX,
+                        positionY: asset.details.positionY
+                    })
                 })
             })
 
@@ -177,7 +195,15 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (mintState === MintState.SAVING) {
             saveToken()
         }
-    }, [asset.details.positionX, asset.details.positionY, asset.details.power, asset.id, asset.symbol, fileProps.offChainUrl, mintState])
+    }, [
+        asset.details.positionX,
+        asset.details.positionY,
+        asset.details.power,
+        asset.id,
+        asset.symbol,
+        fileProps.offChainUrl,
+        mintState
+    ])
 
     /**
      * 4. All done, close dialog
@@ -205,17 +231,17 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }, [prevVisible, resetFileUploader, visible])
 
     return (
-        <ModalDialog
-            visible={visible}
-            title={strings.mintNft}
-            onClose={onClose} >
+        <ModalDialog visible={visible} title={strings.mintNft} onClose={onClose}>
             <div className={styles.container}>
-                <div className={styles.section}><ImageUploader onFileSelected={file => setFile(file)} /></div>
+                <div className={styles.section}>
+                    <ImageUploader onFileSelected={file => setFile(file)} />
+                </div>
                 <div className={styles.section}>
                     <DropDownSelector
                         label={strings.type}
                         options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
-                        onSelected={setNftSymbol} />
+                        onSelected={setNftSymbol}
+                    />
                 </div>
                 <div className={styles.section}>
                     <InputField max={26} label={strings.name} onChange={setNftName} />
@@ -223,30 +249,48 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                 <div className={styles.section}>
                     <InputField multiline max={512} label={strings.description} onChange={setNftDescription} />
                 </div>
-                {asset.symbol === Nft.TRCL.symbol &&
+                {asset.symbol === Nft.TRCL.symbol && (
                     <div className={styles.section}>
-                        <InputField type={'number'} initialValue={'10'} label={strings.nominalPower} onChange={setNftPower} />
+                        <InputField
+                            type={'number'}
+                            initialValue={'10'}
+                            label={strings.nominalPower}
+                            onChange={setNftPower}
+                        />
                     </div>
-                }
-                {asset.symbol === Nft.TRLD.symbol &&
+                )}
+                {asset.symbol === Nft.TRLD.symbol && (
                     <>
                         <div className={styles.section}>
-                            <InputField type={'number'} initialValue={'0'} label={strings.positionX} onChange={setNftPositionX} />
+                            <InputField
+                                type={'number'}
+                                initialValue={'0'}
+                                label={strings.positionX}
+                                onChange={setNftPositionX}
+                            />
                         </div>
                         <div className={styles.section}>
-                            <InputField type={'number'} initialValue={'0'} label={strings.positionY} onChange={setNftPositionY} />
+                            <InputField
+                                type={'number'}
+                                initialValue={'0'}
+                                label={strings.positionY}
+                                onChange={setNftPositionY}
+                            />
                         </div>
                     </>
-                }
+                )}
                 <Button
                     className={styles.button}
                     disabled={!file || !isValidNft()}
                     label={strings.mint}
                     loading={isInProgress()}
                     checked={mintState === MintState.DONE}
-                    onClick={onUpload} />
+                    onClick={onUpload}
+                />
 
-                {uploadState === FileUploadState.ERROR && <div className={styles.error}>{strings.errorUploadingFile}</div>}
+                {uploadState === FileUploadState.ERROR && (
+                    <div className={styles.error}>{strings.errorUploadingFile}</div>
+                )}
                 {mintState === MintState.ERROR && <div className={styles.error}>{strings.errorMinting}</div>}
             </div>
         </ModalDialog>
@@ -256,4 +300,4 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
 type Props = {
     visible: boolean
     onClose: () => void
-};
+}

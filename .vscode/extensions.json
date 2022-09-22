@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "reachsh.reach-ide",
+        "zengxingxin.sort-js-object-keys",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}

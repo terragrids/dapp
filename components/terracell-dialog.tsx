@@ -3,28 +3,22 @@ import { useEffect, useState, useContext } from 'react'
 import { useNftSeller } from 'hooks/use-nft-seller'
 import { endpoints } from 'utils/api-config'
 import { strings } from 'strings/en'
-import Button from './button'
+import Button, { ButtonType } from './button'
 import LoadingSpinner from './loading-spinner'
 import ModalDialog from './modal-dialog'
 import styles from './terracell-dialog.module.scss'
 import { UserContext } from 'context/user-context'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
-import { removeSuffix, TRDL_SUFFIX } from 'components/map/plots/plot-helpers'
 import NftInfo from './nft-info'
+import { Contract } from 'types/contract.js'
 
 type TerracellDialogProps = {
     id: string | undefined
     visible: boolean
     onClose: () => void
 }
-
-/**
- * TODO:
- * - check if functions (onSell, onWithdraw, and onBuy) are correct as they are just copied from plot-info-dialog.tsx
- * - add animation or transition property to opening full description if necessary
- */
 
 export default function TerracellDialog({ id, visible, onClose }: TerracellDialogProps) {
     const [terracell, setTerracell] = useState<Terracell | null>()
@@ -33,7 +27,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
     const [error, setError] = useState<string | null>(null)
     const [sppContractInfo, setSppContractInfo] = useState<string>()
     const user = useContext<User>(UserContext)
-    const [userCapability, setUserCapability] = useState<UserCapabilities | null>()
+    const [userCapability, setUserCapability] = useState<UserCapabilities | null>(null)
     const assetPrice = 10
 
     const { sell, buy, withdraw, unit } = useNftSeller()
@@ -51,7 +45,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                 const { asset } = await nftResponse.json()
 
-                setTerracell({ ...asset, name: removeSuffix(asset.name, TRDL_SUFFIX) })
+                setTerracell({ ...asset, name: formatNftName(asset.name) })
 
                 try {
                     const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(asset.url))
@@ -97,12 +91,13 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         setError(null)
 
         try {
-            const { applicationId, contractInfo } = await sell({
+            const { applicationId, contractInfo }: Contract = (await sell({
                 tokenId: terracell.id,
                 price: terracell.assetPrice || assetPrice,
                 power: terracell.power,
                 sppContractInfo
-            })
+            })) as Contract
+
             setTerracell({ ...terracell, contractId: applicationId, contractInfo })
             onClose()
         } catch (e) {
@@ -151,7 +146,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         <ModalDialog
             visible={visible}
             title={strings.terracellInformation}
-            subtitle={terracell?.name || ''}
+            subtitle={terracell?.name || null}
             onClose={onClose}>
             <div className={styles.container}>
                 {!terracell && <LoadingSpinner />}
@@ -174,7 +169,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                             <div className={styles.buttonWrapper}>
                                 {userCapability === UserCapabilities.CAN_SELL && terracell && (
                                     <Button
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         className={styles.button}
                                         label={`${strings.sellFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
@@ -184,7 +179,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
                                 {userCapability === UserCapabilities.CAN_WITHDRAW && terracell && (
                                     <Button
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         className={styles.button}
                                         label={strings.withdraw}
                                         loading={loading}
@@ -195,7 +190,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                 {userCapability === UserCapabilities.CAN_BUY && terracell && (
                                     <Button
                                         className={styles.button}
-                                        type={'outline'}
+                                        type={ButtonType.OUTLINE}
                                         label={`${strings.buyFor} ${terracell.assetPrice || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onBuy}

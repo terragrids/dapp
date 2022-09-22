@@ -1,5 +1,24 @@
 @import 'styles/screens.scss';
+@import 'styles/colors.scss';
 
 :export {
     screenMedium: $screen-medium;
+}
+
+.loading {
+    padding-top: 50px;
+
+    @media (max-width: $screen-small) {
+        padding-top: 150px;
+    }
+}
+
+.error {
+    max-width: 800px;
+    margin: 40px auto;
+    text-align: center;
+    color: $color-red;
+    @media (max-width: $screen-small) {
+        padding: 80px 10px 0;
+    }
 }
