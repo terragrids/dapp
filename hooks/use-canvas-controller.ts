@@ -34,7 +34,8 @@ export const useCanvasController = (
     useEffect(() => {
         if (!context) return
 
-        context.translate(panOffset.x, panOffset.y)
+        const zoom = context.getTransform().a
+        context.translate(panOffset.x / zoom, panOffset.y / zoom)
         context.translate(touchOffset.x, touchOffset.y)
     }, [context, panOffset, touchOffset])
 
