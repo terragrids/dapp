@@ -47,7 +47,7 @@ export default class Plot {
     }
 
     private getImageScale(): { scaleX: number; scaleY: number } {
-        const scaleX = this.image.width / Plot.PLOT_WIDTH
+        const scaleX = (this.image.width / Plot.PLOT_WIDTH) * 0.995 // scaling factor to reduce gap between plots
         const scaleY = this.image.height / Plot.PLOT_HEIGHT
         return { scaleX, scaleY }
     }
