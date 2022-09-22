@@ -6,6 +6,7 @@ export const terragridsApiBaseUrl =
         : 'https://api.terragrids.org'
 
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
+export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
 const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
 const terracells = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`

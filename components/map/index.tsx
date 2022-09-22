@@ -9,7 +9,6 @@ import {
     convertToMapPlot,
     drawGrid,
     getPlotPosition,
-    getSppPlots,
     getStartPosition,
     getTransformedPoint,
     GRID_SIZE,
@@ -19,6 +18,7 @@ import {
 import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
+import { getSppPlots, isSppPosition } from 'components/solar-power-plant/spp-helper'
 
 export type MapProps = {
     width: number | undefined
@@ -107,7 +107,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
 
         if (!target) return
 
-        if (index === 0) {
+        if (isSppPosition({ x: positionX, y: positionY })) {
             onSelectSolarPowerPlant()
         } else if (index < GRID_SIZE * GRID_SIZE) {
             onSelectPlot(target)

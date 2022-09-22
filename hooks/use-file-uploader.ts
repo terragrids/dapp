@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
-import { endpoints } from 'utils/api-config.js'
+import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { getQueryParameter } from 'utils/string-utils.js'
 import usePrevious from './use-previous.js'
 
 export enum FileUploadState {
-    IDLE, STARTED, ACCEPTED, UPLOADED, PINNED, ERROR
+    IDLE,
+    STARTED,
+    ACCEPTED,
+    UPLOADED,
+    PINNED,
+    ERROR
 }
 
 export function useFileUploader({ name, description }: Props) {
@@ -68,7 +73,7 @@ export function useFileUploader({ name, description }: Props) {
             method: 'PUT',
             headers: {
                 'Content-Type': fileProps.contentType,
-                ...cacheControl && { 'Cache-Control': cacheControl }
+                ...(cacheControl && { 'Cache-Control': cacheControl })
             },
             referrerPolicy: 'no-referrer',
             body: fileProps.file
@@ -77,7 +82,7 @@ export function useFileUploader({ name, description }: Props) {
         if (response.status === 200) {
             setFileProps(file => ({
                 ...file,
-                offChainUrl: `https://images.terragrids.org/${fileProps.id}`,
+                offChainUrl: terragridsImageUrl(fileProps.id),
                 uploadState: FileUploadState.UPLOADED
             }))
         } else {
@@ -130,10 +135,11 @@ export function useFileUploader({ name, description }: Props) {
      * Upload states (without shouldConfirm): idle -> started -> accepted -> uploaded
      */
     useEffect(() => {
-        if (prevUploadState === FileUploadState.STARTED && fileProps.uploadState === FileUploadState.ACCEPTED) uploadFile()
-        if (prevUploadState === FileUploadState.ACCEPTED && fileProps.uploadState === FileUploadState.UPLOADED) pinFileToIpfs()
+        if (prevUploadState === FileUploadState.STARTED && fileProps.uploadState === FileUploadState.ACCEPTED)
+            uploadFile()
+        if (prevUploadState === FileUploadState.ACCEPTED && fileProps.uploadState === FileUploadState.UPLOADED)
+            pinFileToIpfs()
     }, [prevUploadState, fileProps.uploadState, uploadFile, pinFileToIpfs])
-
 
     function upload(file: File) {
         setFileProps(image => ({
@@ -168,4 +174,4 @@ export function useFileUploader({ name, description }: Props) {
 type Props = {
     name: string
     description: object
-};
+}

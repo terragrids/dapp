@@ -1,7 +1,4 @@
 import Plot, { Position2D } from './plots/plot'
-import SPP1 from 'public/images/solar_plant_square01.png'
-import SPP2 from 'public/images/solar_plant_square02.png'
-import SPP3 from 'public/images/solar_plant_square03.png'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
 import GRASS from 'public/images/grasstile.png'
@@ -65,52 +62,6 @@ export const getGrassPlots = (): MapPlotType[] => {
     return grassPlots.map(big => convertToMapPlot(big))
 }
 // TODO: remove above `BIG_PLOT`, `GRASS_PLOT`, `POSITION_ALL`, `getBigs` and `getGrassPlots` when all plots are fetched from API
-
-export const getSppPlots = () => {
-    const sppPlots = []
-    for (let i = 1; i < 5; i++) {
-        const coords = []
-        let imgSrc = ''
-
-        switch (i) {
-            case 1:
-                coords[0] = 0
-                coords[1] = 0
-                imgSrc = SPP2.src
-                break
-            case 2:
-                coords[0] = 1
-                coords[1] = 0
-                imgSrc = SPP1.src
-                break
-            case 3:
-                coords[0] = 0
-                coords[1] = 1
-                imgSrc = SPP3.src
-                break
-            case 4:
-                coords[0] = 1
-                coords[1] = 1
-                imgSrc = SPP1.src
-                break
-        }
-
-        const sppPlot: PlotType = {
-            id: `SOLAR_POWER_PLANT_${i}`,
-            name: 'SOLAR POWER PLANT',
-            symbol: 'SPP',
-            url: '',
-            offchainUrl: imgSrc,
-            positionX: coords[0],
-            positionY: coords[1],
-            holders: []
-        }
-
-        sppPlots.push(convertToMapPlot(sppPlot))
-    }
-
-    return sppPlots
-}
 
 export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
