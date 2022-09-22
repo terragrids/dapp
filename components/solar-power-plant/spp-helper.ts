@@ -2,7 +2,7 @@ import { convertToMapPlot } from 'components/map/map-helper'
 import { Position2D } from 'components/map/plots/plot'
 import { terragridsImageUrl } from 'utils/api-config.js'
 
-const SPP_SIZE = 3
+export const SPP_SIZE = 3
 const SPP_PLOT_COUNT = SPP_SIZE * SPP_SIZE
 
 export const getSppPlots = () => {

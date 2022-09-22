@@ -18,7 +18,7 @@ import {
 import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
-import { getSppPlots, isSppPosition } from 'components/solar-power-plant/spp-helper'
+import { getSppPlots, isSppPosition, SPP_SIZE } from 'components/solar-power-plant/spp-helper'
 
 export type MapProps = {
     width: number | undefined
@@ -66,11 +66,23 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
         const { positionX, positionY } = getPlotPosition(startPositionRef.current, mouseX, mouseY)
+        const isSpp = isSppPosition({ x: positionX, y: positionY })
 
-        const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
-        const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
+        let renderX, renderY, width, height
+        if (isSpp) {
+            const offset = SPP_SIZE - 1
+            renderX = x - offset * Plot.PLOT_HALF_WIDTH
+            renderY = y + offset * Plot.PLOT_HALF_HEIGHT
+            width = Plot.PLOT_WIDTH * SPP_SIZE
+            height = Plot.PLOT_HEIGHT * SPP_SIZE
+        } else {
+            renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
+            renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
+            width = Plot.PLOT_WIDTH
+            height = Plot.PLOT_HEIGHT
+        }
 
-        renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT)
+        renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT, width, height)
     }
 
     const loadPlotImages = useCallback(
