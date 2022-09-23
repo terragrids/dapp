@@ -11,7 +11,7 @@ export default function useTouch(): {
     isPannedOrZoomed: boolean
     zoomPosition: Position2D
     zoomAmount: number
-    startTouch: (e: TouchEvent) => void
+    onTouchStart: (e: TouchEvent) => void
 } {
     const [offset, setOffset] = useState<Position2D>(ORIGIN)
     const [isPannedOrZoomed, setIsPannedOrZoomed] = useState(false)
@@ -63,17 +63,18 @@ export default function useTouch(): {
         lastOffsetRef.current = offset
     }, [offset])
 
-    const endTouch = useCallback(() => {
+    const onTouchEnd = useCallback(() => {
         isZooming.current = false
         document.removeEventListener('touchmove', handleTouchMove)
-        document.removeEventListener('touchend', endTouch)
+        document.removeEventListener('touchend', onTouchEnd)
+        setIsPannedOrZoomed(false)
     }, [handleTouchMove])
 
-    const startTouch = useCallback(
+    const onTouchStart = useCallback(
         (e: TouchEvent) => {
             document.addEventListener('touchmove', handleTouchMove)
-            document.addEventListener('touchend', endTouch)
-            setIsPannedOrZoomed(false)
+            document.addEventListener('touchend', onTouchEnd)
+            // setIsPannedOrZoomed(false)
 
             lastPointRef.current = { x: e.touches[0].pageX, y: e.touches[0].pageY }
 
@@ -82,10 +83,10 @@ export default function useTouch(): {
                 startTouchRef.current = getPageCoordinatesByTouches(e.targetTouches)
             }
         },
-        [handleTouchMove, endTouch]
+        [handleTouchMove, onTouchEnd]
     )
 
-    return { offset, isPannedOrZoomed, zoomPosition: zoom.position, zoomAmount: zoom.amount, startTouch }
+    return { offset, isPannedOrZoomed, zoomPosition: zoom.position, zoomAmount: zoom.amount, onTouchStart }
 }
 
 function distance(p1: Position2D, p2: Position2D) {

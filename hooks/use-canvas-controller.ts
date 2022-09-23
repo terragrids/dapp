@@ -5,7 +5,7 @@ import usePan from './use-pan'
 import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
-const PINCH_ZOOM_SENSITIVITY = 0.02
+const PINCH_ZOOM_SENSITIVITY = 0.2
 const MAX_SCALE = 4
 const MIN_SCALE = 0.8
 
@@ -17,8 +17,9 @@ export const useCanvasController = (
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
-    const [panOffset, startPan, isPanned] = usePan()
-    const { offset: touchOffset, isPannedOrZoomed, zoomPosition, zoomAmount, startTouch } = useTouch()
+    const [panOffset, onPanStart] = usePan()
+    const { offset: touchOffset, isPannedOrZoomed, zoomPosition, zoomAmount, onTouchStart } = useTouch()
+    const [deltaZoom, setDeltaZoom] = useState(0)
 
     useEffect(() => {
         if (!canvas) return
@@ -41,19 +42,25 @@ export const useCanvasController = (
     }, [context, panOffset, touchOffset])
 
     useEffect(() => {
-        if (!context || !zoomAmount) return
+        if (!context || !zoomAmount || !isPannedOrZoomed) return
 
-        const adjustedZoomAmount =
-            zoomAmount > 1 ? zoomAmount * PINCH_ZOOM_SENSITIVITY : -zoomAmount * PINCH_ZOOM_SENSITIVITY * 2
+        const newDeltaZoom = zoomAmount > 1 ? zoomAmount * PINCH_ZOOM_SENSITIVITY : -zoomAmount * PINCH_ZOOM_SENSITIVITY
+
+        if (deltaZoom === 0) {
+            setDeltaZoom(newDeltaZoom)
+            return
+        }
 
         const currentScale = context.getTransform().a
 
         // When reaching MAX_SCALE, it only allows zoom OUT (= negative zoomAmount)
         // When reaching MIN_SCALE or initialScale or initialScale, it only allows zoom IN (= positive zoomAmount)
-        if (currentScale >= MAX_SCALE && adjustedZoomAmount > 0) return
-        if (currentScale <= Math.min(MIN_SCALE, initialScale) && adjustedZoomAmount < 0) return
+        if (currentScale >= MAX_SCALE && newDeltaZoom > 0) return
+        if (currentScale <= Math.min(MIN_SCALE, initialScale) && newDeltaZoom < 0) return
 
-        const scale = DEFAULT_MAP_SCALE + adjustedZoomAmount
+        const scale = DEFAULT_MAP_SCALE + Math.abs(newDeltaZoom) - Math.abs(deltaZoom)
+
+        setDeltaZoom(newDeltaZoom)
 
         const rect = context.canvas.getBoundingClientRect()
 
@@ -66,7 +73,7 @@ export const useCanvasController = (
         context.translate(transformedPosition.x, transformedPosition.y)
         context.scale(scale, scale)
         context.translate(-transformedPosition.x, -transformedPosition.y)
-    }, [zoomPosition, zoomAmount, context, initialScale])
+    }, [zoomPosition, zoomAmount, context, initialScale, deltaZoom, isPannedOrZoomed])
 
     const onMouseMove = useCallback(
         (func: (positionX: number, positionY: number, withinMap: boolean) => void) => (e: MouseEvent) => {
@@ -120,7 +127,7 @@ export const useCanvasController = (
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context || isPanned) return
+            if (!context || isPannedOrZoomed) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -132,10 +139,18 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, isPanned]
+        [context, isPannedOrZoomed, startPosition]
     )
 
-    const onTouch = useCallback(
+    const handleTouchStart = useCallback(
+        (e: TouchEvent) => {
+            setDeltaZoom(0)
+            onTouchStart(e)
+        },
+        [onTouchStart]
+    )
+
+    const handleTouchEnd = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: TouchEvent) => {
             if (!context || isPannedOrZoomed) return
 
@@ -151,7 +166,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, startPosition, isPannedOrZoomed]
+        [context, isPannedOrZoomed, startPosition]
     )
 
     const onKeyDown = useCallback((e: KeyboardEvent) => {
@@ -169,10 +184,10 @@ export const useCanvasController = (
         onWheel,
         onMouseMove,
         onClick,
-        onTouch,
+        onTouchStart: handleTouchStart,
+        onTouchEnd: handleTouchEnd,
         onKeyDown,
         onKeyUp,
-        startPan,
-        startTouch
+        onPanStart
     }
 }
