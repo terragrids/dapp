@@ -36,7 +36,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
     const [error, setError] = useState('')
     const [clickable, setClickable] = useState(false)
 
-    const { mouseRef, onClick, onTouch, onMouseMove, ...rest } = useCanvasController(
+    const { mouseRef, onClick, onTouchEnd, onMouseMove, ...rest } = useCanvasController(
         canvasRef.current,
         startPositionRef.current,
         initialScale
@@ -182,7 +182,7 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
                 <Canvas
                     canvasRef={canvasRef}
                     onClick={onClick(handleClickOrTouch)}
-                    onTouch={onTouch(handleClickOrTouch)}
+                    onTouchEnd={onTouchEnd(handleClickOrTouch)}
                     onMouseMove={onMouseMove(handleMouseMove)}
                     attributes={{ width, height }}
                     clickable={clickable}

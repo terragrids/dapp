@@ -7,11 +7,11 @@ export type CanvasProps = {
     onMouseMove: (e: MouseEvent) => void
     onWheel: (e: WheelEvent) => void
     onClick: (e: MouseEvent) => void
-    onTouch: (e: TouchEvent) => void
+    onTouchStart: (e: TouchEvent) => void
+    onTouchEnd: (e: TouchEvent) => void
     onKeyDown: (e: KeyboardEvent) => void
     onKeyUp: (e: KeyboardEvent) => void
-    startPan: (e: MouseEvent) => void
-    startTouch: (e: TouchEvent) => void
+    onPanStart: (e: MouseEvent) => void
     attributes: React.CanvasHTMLAttributes<HTMLCanvasElement>
     clickable: boolean
 }
@@ -21,11 +21,11 @@ const Canvas = ({
     onWheel,
     onMouseMove,
     onClick,
-    onTouch,
+    onTouchStart,
+    onTouchEnd,
     onKeyDown,
     onKeyUp,
-    startPan,
-    startTouch,
+    onPanStart,
     attributes: { width, height },
     clickable
 }: CanvasProps) => {
@@ -55,16 +55,17 @@ const Canvas = ({
 
         const onWheelListener = (e: WheelEvent) => onWheel(e)
         const onMouseMoveListener = (e: MouseEvent) => onMouseMove(e)
-        const onMouseDownListener = (e: MouseEvent) => startPan(e)
+        const onMouseDownListener = (e: MouseEvent) => onPanStart(e)
         const onClickListener = (e: MouseEvent) => onClick(e)
-        const onTouchListener = (e: TouchEvent) => onTouch(e)
+        const onTouchStartListener = (e: TouchEvent) => onTouchStart(e)
+        const onTouchEndListener = (e: TouchEvent) => onTouchEnd(e)
 
         canvas.addEventListener('wheel', onWheelListener)
         canvas.addEventListener('mousemove', onMouseMoveListener)
         canvas.addEventListener('mousedown', onMouseDownListener)
         canvas.addEventListener('click', onClickListener)
-        canvas.addEventListener('touchstart', startTouch)
-        canvas.addEventListener('touchend', onTouchListener)
+        canvas.addEventListener('touchstart', onTouchStartListener)
+        canvas.addEventListener('touchend', onTouchEndListener)
         canvas.addEventListener('keydown', onKeyDown)
         canvas.addEventListener('keyup', onKeyUp)
 
@@ -73,11 +74,12 @@ const Canvas = ({
             canvas.removeEventListener('mousemove', onMouseMoveListener)
             canvas.removeEventListener('mousedown', onMouseDownListener)
             canvas.removeEventListener('click', onClickListener)
-            canvas.removeEventListener('touchend', onTouchListener)
+            canvas.removeEventListener('touchstart', onTouchStartListener)
+            canvas.removeEventListener('touchend', onTouchEndListener)
             canvas.removeEventListener('keydown', onKeyDown)
             canvas.removeEventListener('keyup', onKeyUp)
         }
-    }, [onClick, onMouseMove, onWheel, onTouch, onKeyDown, onKeyUp, startPan, startTouch, canvasRef])
+    }, [canvasRef, onClick, onKeyDown, onKeyUp, onMouseMove, onPanStart, onTouchEnd, onTouchStart, onWheel])
 
     return (
         <canvas

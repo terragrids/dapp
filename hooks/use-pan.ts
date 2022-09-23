@@ -35,7 +35,7 @@ export default function usePan(): [Position2D, (e: MouseEvent) => void, boolean]
         document.removeEventListener('mouseup', endPan)
     }, [pan])
 
-    const startPan = useCallback(
+    const onPanStart = useCallback(
         (e: MouseEvent) => {
             document.addEventListener('mousemove', pan)
             document.addEventListener('mouseup', endPan)
@@ -46,7 +46,7 @@ export default function usePan(): [Position2D, (e: MouseEvent) => void, boolean]
         [pan, endPan]
     )
 
-    return [panState, startPan, isPanned]
+    return [panState, onPanStart, isPanned]
 }
 
 export function diffPoints(p1: Position2D, p2: Position2D) {
