@@ -17,7 +17,7 @@ export const useCanvasController = (
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
     const mouseRef = useRef({ x: -1, y: -1 })
     const zoomEnabled = useRef(false)
-    const [panOffset, onPanStart] = usePan()
+    const [panOffset, onPanStart, isPanned] = usePan()
     const { offset: touchOffset, isPannedOrZoomed, zoomPosition, zoomAmount, onTouchStart } = useTouch()
     const [deltaZoom, setDeltaZoom] = useState(0)
 
@@ -127,7 +127,7 @@ export const useCanvasController = (
 
     const onClick = useCallback(
         (func: (positionX: number, positionY: number) => void) => (e: MouseEvent) => {
-            if (!context || isPannedOrZoomed) return
+            if (!context || isPanned) return
 
             const rect = context.canvas.getBoundingClientRect()
 
@@ -139,7 +139,7 @@ export const useCanvasController = (
 
             return func(positionX, positionY)
         },
-        [context, isPannedOrZoomed, startPosition]
+        [context, isPanned, startPosition]
     )
 
     const handleTouchStart = useCallback(
