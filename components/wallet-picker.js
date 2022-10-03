@@ -10,7 +10,6 @@ import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 import { endpoints } from '../utils/api-config'
-import { PeraWalletConnect } from '@perawallet/connect'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)
@@ -24,7 +23,7 @@ export default function WalletPicker({ visible, onClose }) {
     }
 
     async function connectPeraWallet() {
-        setWallet({ WalletConnect: reach.makePeraConnect(PeraWalletConnect) })
+        setWallet({ WalletConnect: reach.peraConnect })
         await connectWallet()
     }
 
@@ -42,11 +41,18 @@ export default function WalletPicker({ visible, onClose }) {
         try {
             setLoading(true)
 
-            const account = await reach.stdlib.getDefaultAccount()
+            let account
+            try {
+                account = await reach.stdlib.getDefaultAccount()
+            } catch (e) {
+                return
+            }
+
             const [balance, assetResponse] = await Promise.all([
                 reach.stdlib.balanceOf(account),
                 fetch(endpoints.accountTerracells(account.networkAccount.addr))
             ])
+
             const { assets } = await assetResponse.json()
 
             user.update({
