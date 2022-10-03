@@ -6,6 +6,7 @@ export function useReach() {
     const stdlib = useRef()
     const myAlgoConnect = useRef()
     const walletConnect = useRef()
+    const makePeraConnect = useRef()
 
     const [loading, setLoading] = useState(true)
 
@@ -18,6 +19,7 @@ export function useReach() {
             })
             myAlgoConnect.current = reachStdlib.ALGO_MyAlgoConnect
             walletConnect.current = reachStdlib.ALGO_WalletConnect
+            makePeraConnect.current = reachStdlib.ALGO_MakePeraConnect
             setLoading(false)
         }
         loadLibs()
@@ -29,6 +31,7 @@ export function useReach() {
         stdlib: stdlib.current,
         myAlgoConnect: myAlgoConnect.current,
         walletConnect: walletConnect.current,
+        makePeraConnect: makePeraConnect.current,
         loading
     }
 }

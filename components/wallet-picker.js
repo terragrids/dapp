@@ -10,6 +10,7 @@ import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 import { endpoints } from '../utils/api-config'
+import { PeraWalletConnect } from '@perawallet/connect'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)
@@ -22,11 +23,19 @@ export default function WalletPicker({ visible, onClose }) {
         await connectWallet()
     }
 
+    async function connectPeraWallet() {
+        setWallet({ WalletConnect: reach.makePeraConnect(PeraWalletConnect) })
+        await connectWallet()
+    }
+
     function setWallet(wallet) {
         setError()
-        reach.stdlib.setWalletFallback(reach.stdlib.walletFallback({
-            providerEnv: process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER, ...wallet
-        }))
+        reach.stdlib.setWalletFallback(
+            reach.stdlib.walletFallback({
+                providerEnv: process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER,
+                ...wallet
+            })
+        )
     }
 
     async function connectWallet() {
@@ -62,24 +71,32 @@ export default function WalletPicker({ visible, onClose }) {
     const showLoading = loading || reach.loading
 
     return (
-        <ModalDialog
-            visible={visible}
-            title={strings.connectWallet}
-            onClose={onClose}>
+        <ModalDialog visible={visible} title={strings.connectWallet} onClose={onClose}>
             <div className={styles.container}>
-                {showLoading &&
-                    <div className={styles.loading}><LoadingSpinner /></div>
-                }
-                {!showLoading &&
+                {showLoading && (
+                    <div className={styles.loading}>
+                        <LoadingSpinner />
+                    </div>
+                )}
+                {!showLoading && (
                     <ul>
-                        <li onClick={connectMyAlgoWallet}><MyAlgoWallet /><div className={styles.text}>{strings.myAlgoWallet}</div></li>
-                        <li className={styles.disabled}><PeraWallet /><div className={styles.text}>{strings.peraWallet} - {strings.comingSoon}</div></li>
-                        <li className={styles.disabled}><AlgoSignerWallet /><div className={styles.text}>{strings.algoSigner} - {strings.comingSoon}</div></li>
+                        <li onClick={connectMyAlgoWallet}>
+                            <MyAlgoWallet />
+                            <div className={styles.text}>{strings.myAlgoWallet}</div>
+                        </li>
+                        <li onClick={connectPeraWallet}>
+                            <PeraWallet />
+                            <div className={styles.text}>{strings.peraWallet}</div>
+                        </li>
+                        <li className={styles.disabled}>
+                            <AlgoSignerWallet />
+                            <div className={styles.text}>
+                                {strings.algoSigner} - {strings.comingSoon}
+                            </div>
+                        </li>
                     </ul>
-                }
-                {error &&
-                    <div className={styles.error}>{error}</div>
-                }
+                )}
+                {error && <div className={styles.error}>{error}</div>}
             </div>
         </ModalDialog>
     )
