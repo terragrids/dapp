@@ -14,6 +14,7 @@ export type User = {
     walletAddress?: null | string
     isAdmin?: boolean
     update?: (user: User) => void
+    disconnect?: () => void
 }
 
 export enum UserCapabilities {
@@ -32,12 +33,23 @@ export function useUser() {
         }))
     }, [])
 
+    const disconnect = useCallback(() => {
+        setUser(user => ({
+            ...user,
+            walletAccount: null,
+            walletBalance: '0',
+            terracells: null,
+            isAdmin: false
+        }))
+    }, [])
+
     const [user, setUser] = useState<User>({
         walletAccount: null,
         walletBalance: '0',
         terracells: null,
         isAdmin: false,
-        update: update
+        update,
+        disconnect
     })
 
     return {
