@@ -25,10 +25,10 @@ frontend:
                 - chmod u+w ./blockchain/solar-power-plant
                 - dockerd &
                 - su tmpuser -c "docker login -u $DOCKER_USER -p $DOCKER_ACCESS_TOKEN"
-                - su tmpuser -c "REACH_VERSION=4ca32459 ./reach run blockchain/solar-power-plant"
+                - su tmpuser -c "REACH_VERSION=da882525 ./reach run blockchain/solar-power-plant"
                 - su tmpuser -c "mkdir ./blockchain/token-market/build"
                 - su tmpuser -c "cp ./blockchain/solar-power-plant/build/index.main.mjs ./blockchain/token-market/build/spp.main.mjs"
-                - su tmpuser -c "REACH_VERSION=4ca32459 ./reach run blockchain/token-market"
+                - su tmpuser -c "REACH_VERSION=da882525 ./reach run blockchain/token-market"
                 - node scripts/generate-app-approval.mjs
                 - npm ci
         build:
