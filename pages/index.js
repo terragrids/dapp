@@ -3,15 +3,15 @@ import { useState, useContext, useEffect, useRef } from 'react'
 import { strings } from '../strings/en'
 import Layout from '../components/layout'
 import WalletPicker from '../components/wallet-picker'
-import { MenuEventContext } from '../context/menu-event-context'
 import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
 import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-plant-admin-panel'
+import { UserContext } from 'context/user-context.js'
 
 export default function Home() {
-    const { setConnectWalletAction, setMintAction, setOpenSppAdminPanelAction } = useContext(MenuEventContext)
+    const user = useContext(UserContext)
     const [walletPickerVisible, setWalletPickerVisible] = useState(false)
     const [nftMintVisible, setNftMintVisible] = useState(false)
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
@@ -49,20 +49,32 @@ export default function Home() {
         setSppVisible(true)
     }
 
-    useEffect(() => {
-        setConnectWalletAction(() => setWalletPickerVisible(true))
-    }, [setConnectWalletAction])
+    function onMint() {
+        setNftMintVisible(true)
+    }
 
-    useEffect(() => {
-        setMintAction(() => setNftMintVisible(true))
-    }, [setMintAction])
+    function onOpenSppAdminPanel() {
+        setSppAdminPanelVisible(true)
+    }
 
-    useEffect(() => {
-        setOpenSppAdminPanelAction(() => setSppAdminPanelVisible(true))
-    }, [setOpenSppAdminPanelAction])
+    function onConnectWallet() {
+        setWalletPickerVisible(true)
+    }
+
+    async function onDisconnectWallet() {
+        try {
+            if (window.algorand && window.algorand.disconnect) await window.algorand.disconnect()
+            if (user.authenticated) user.disconnect()
+        } catch (e) {}
+    }
 
     return (
-        <Layout headerRef={headerRef}>
+        <Layout
+            headerRef={headerRef}
+            onConnectWallet={onConnectWallet}
+            onDisconnectWallet={onDisconnectWallet}
+            onMint={onMint}
+            onOpenSppAdminPanel={onOpenSppAdminPanel}>
             <Head>
                 <title>{strings.siteTitle}</title>
             </Head>

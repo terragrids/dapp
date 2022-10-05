@@ -3,16 +3,26 @@ import { strings } from '../strings/en'
 import styles from './main-menu.module.scss'
 import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
-import { MenuEventContext } from '../context/menu-event-context'
 import PropTypes from 'prop-types'
 import { Nft } from 'types/nft'
 
-export default function MainMenu({ visible, onSelectSymbol }) {
-    const { onMint, onOpenSppAdminPanel, onToggleMenu } = useContext(MenuEventContext)
+export default function MainMenu({
+    visible,
+    onSelectSymbol,
+    onMint,
+    onDisconnectWallet,
+    onOpenSppAdminPanel,
+    onToggleMenu
+}) {
     const user = useContext(UserContext)
 
     const openMintDialog = () => {
         onMint()
+        onToggleMenu()
+    }
+
+    const disconnectWallet = () => {
+        onDisconnectWallet()
         onToggleMenu()
     }
 
@@ -53,13 +63,15 @@ export default function MainMenu({ visible, onSelectSymbol }) {
 
                     {user && user.isAdmin && (
                         <ul className={styles.admin}>
-                            <li className={styles.accent} onClick={() => openMintDialog()}>
+                            <li className={styles.accent} onClick={openMintDialog}>
                                 {strings.mint}
                             </li>
-                            <li onClick={() => openSppAdminPanel()}>{strings.sppAdminPanel}</li>
+                            <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
                         </ul>
                     )}
-                    <button className={`${styles.secondary} secondary`}>{strings.disconnect}</button>
+                    <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
+                        {strings.disconnect}
+                    </button>
                 </>
             )}
         </nav>
@@ -70,5 +82,9 @@ export default function MainMenu({ visible, onSelectSymbol }) {
 
 MainMenu.propTypes = {
     visible: PropTypes.bool,
-    onSelectSymbol: PropTypes.func
+    onSelectSymbol: PropTypes.func,
+    onMint: PropTypes.func,
+    onDisconnectWallet: PropTypes.func,
+    onOpenSppAdminPanel: PropTypes.func,
+    onToggleMenu: PropTypes.func
 }
