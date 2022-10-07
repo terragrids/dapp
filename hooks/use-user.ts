@@ -13,6 +13,7 @@ export type User = {
     authenticated?: boolean
     walletAddress?: null | string
     isAdmin?: boolean
+    token?: null | string
     update?: (user: User) => void
     disconnect?: () => void
 }
@@ -48,6 +49,7 @@ export function useUser() {
         walletBalance: '0',
         terracells: null,
         isAdmin: false,
+        token: null,
         update,
         disconnect
     })
