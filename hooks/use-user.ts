@@ -15,6 +15,7 @@ export type User = {
     isAdmin?: boolean
     token?: null | string
     update?: (user: User) => void
+    setToken?: (user: User) => void
     disconnect?: () => void
 }
 
@@ -34,13 +35,21 @@ export function useUser() {
         }))
     }, [])
 
+    const setToken = useCallback(({ token }: User) => {
+        setUser(user => ({
+            ...user,
+            ...(token && { token })
+        }))
+    }, [])
+
     const disconnect = useCallback(() => {
         setUser(user => ({
             ...user,
             walletAccount: null,
             walletBalance: '0',
             terracells: null,
-            isAdmin: false
+            isAdmin: false,
+            token: null
         }))
     }, [])
 
@@ -51,6 +60,7 @@ export function useUser() {
         isAdmin: false,
         token: null,
         update,
+        setToken,
         disconnect
     })
 
