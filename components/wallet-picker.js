@@ -20,6 +20,7 @@ export default function WalletPicker({ visible, onClose }) {
     async function connectMyAlgoWallet() {
         await setWallet({ MyAlgoConnect: reach.myAlgoConnect })
         await connectWallet()
+        await statelessAuthenticate()
     }
 
     async function connectPeraWallet() {
@@ -70,9 +71,7 @@ export default function WalletPicker({ visible, onClose }) {
         const account = await reach.stdlib.getDefaultAccount()
         const wallet = account.networkAccount.addr
         const algosdk = reach.stdlib.algosdk
-        const algoProvider = await reach.stdlib.getProvider()
-        console.log(algoProvider) // issue: signTxns postTxns does not expose
-        const algodClient = algoProvider.algodClient
+        // const algoProvider = await reach.stdlib.getProvider() // issue: signTxns postTxns does not expose
 
         const enc = new TextEncoder()
         const notePlainText = `https://testnet.terragrids.org/ ${Date.now() + 86400000}`
@@ -99,8 +98,7 @@ export default function WalletPicker({ visible, onClose }) {
             }
         ]
 
-        const signedTxns = await window.algorand.signTxns(txnToSign)
-        await window.algorand.postTxns(signedTxns)
+        const signedTxns = await window.algorand.signTxns(txnToSign) //ARCs14
         const token = Array.isArray(signedTxns[0]) ? Buffer.from(signedTxns[0]).toString('base64') : signedTxns[0]
         user.setToken({ token })
     }
