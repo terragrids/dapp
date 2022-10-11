@@ -102,6 +102,7 @@ export default function WalletPicker({ visible, onClose }) {
         const signedTxns = await window.algorand.signTxns(txnToSign)
         await window.algorand.postTxns(signedTxns)
         const token = Array.isArray(signedTxns[0]) ? Buffer.from(signedTxns[0]).toString('base64') : signedTxns[0]
+        user.setToken({ token })
     }
 
     useEffect(() => {
