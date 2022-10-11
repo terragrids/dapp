@@ -25,6 +25,7 @@ export default function WalletPicker({ visible, onClose }) {
     async function connectPeraWallet() {
         await setWallet({ WalletConnect: reach.walletConnect })
         await connectWallet()
+        await statelessAuthenticate()
     }
 
     async function setWallet(wallet) {
@@ -63,6 +64,44 @@ export default function WalletPicker({ visible, onClose }) {
             setError(strings.errorConnectingWallet)
             return
         }
+    }
+
+    async function statelessAuthenticate() {
+        const account = await reach.stdlib.getDefaultAccount()
+        const wallet = account.networkAccount.addr
+        const algosdk = reach.stdlib.algosdk
+        const algoProvider = await reach.stdlib.getProvider()
+        console.log(algoProvider) // issue: signTxns postTxns does not expose
+        const algodClient = algoProvider.algodClient
+
+        const enc = new TextEncoder()
+        const notePlainText = `https://testnet.terragrids.org/ ${Date.now() + 86400000}`
+        const note = enc.encode(notePlainText)
+        const authTransaction = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+            suggestedParams: {
+                fee: 0,
+                firstRound: 10,
+                flatFee: true,
+                genesisHash: 'SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
+                genesisID: 'testnet-v1.0',
+                lastRound: 10
+            },
+            from: wallet,
+            to: wallet,
+            amount: 0,
+            note
+        })
+        const txn = Buffer.from(algosdk.encodeUnsignedTransaction(authTransaction)).toString('base64')
+        const txnToSign = [
+            {
+                txn: txn,
+                message: 'This transaction is free and for authentication purposes.'
+            }
+        ]
+
+        const signedTxns = await window.algorand.signTxns(txnToSign)
+        await window.algorand.postTxns(signedTxns)
+        const token = Array.isArray(signedTxns[0]) ? Buffer.from(signedTxns[0]).toString('base64') : signedTxns[0]
     }
 
     useEffect(() => {
