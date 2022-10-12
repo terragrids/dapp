@@ -41,6 +41,8 @@ export function useUser() {
             terracells: null,
             isAdmin: false
         }))
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (window as any).algorand
     }, [])
 
     const [user, setUser] = useState<User>({
