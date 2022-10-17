@@ -10,6 +10,7 @@ import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 import { endpoints } from '../utils/api-config'
+import { getWalletNoteUrl } from 'utils/string-utils'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)
@@ -74,7 +75,7 @@ export default function WalletPicker({ visible, onClose }) {
         // const algoProvider = await reach.stdlib.getProvider() // issue: signTxns postTxns does not expose
 
         const enc = new TextEncoder()
-        const notePlainText = `https://testnet.terragrids.org/ ${Date.now() + 86400000}`
+        const notePlainText = `${getWalletNoteUrl()} ${Date.now() + 86400000}`
         const note = enc.encode(notePlainText)
         const authTransaction = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             suggestedParams: {
