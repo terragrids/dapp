@@ -30,8 +30,8 @@ export function getApplicationAlgoExplorerUrl(applicationId) {
 }
 
 export function getWalletNoteUrl() {
-    const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : 'app'
-    return `https://${prefix}terragrids.org/`
+    const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet' : 'app'
+    return `https://${prefix}.terragrids.org/`
 }
 
 export function getContractFromJsonString(contractInfo) {

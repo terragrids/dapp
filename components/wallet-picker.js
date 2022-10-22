@@ -21,13 +21,11 @@ export default function WalletPicker({ visible, onClose }) {
     async function connectMyAlgoWallet() {
         await setWallet({ MyAlgoConnect: reach.myAlgoConnect })
         await connectWallet()
-        await statelessAuthenticate()
     }
 
     async function connectPeraWallet() {
         await setWallet({ WalletConnect: reach.walletConnect })
         await connectWallet()
-        await statelessAuthenticate()
     }
 
     async function setWallet(wallet) {
@@ -68,6 +66,7 @@ export default function WalletPicker({ visible, onClose }) {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async function statelessAuthenticate() {
         const account = await reach.stdlib.getDefaultAccount()
         const wallet = account.networkAccount.addr
