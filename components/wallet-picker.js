@@ -10,6 +10,7 @@ import LoadingSpinner from './loading-spinner'
 import { ReachContext } from '../context/reach-context'
 import { UserContext } from '../context/user-context'
 import { endpoints } from '../utils/api-config'
+import { getWalletNoteUrl } from 'utils/string-utils'
 
 export default function WalletPicker({ visible, onClose }) {
     const [loading, setLoading] = useState(false)
@@ -63,6 +64,43 @@ export default function WalletPicker({ visible, onClose }) {
             setError(strings.errorConnectingWallet)
             return
         }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async function statelessAuthenticate() {
+        const account = await reach.stdlib.getDefaultAccount()
+        const wallet = account.networkAccount.addr
+        const algosdk = reach.stdlib.algosdk
+        // const algoProvider = await reach.stdlib.getProvider() // issue: signTxns postTxns does not expose
+
+        const enc = new TextEncoder()
+        const notePlainText = `${getWalletNoteUrl()} ${Date.now() + 86400000}`
+        const note = enc.encode(notePlainText)
+        const authTransaction = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+            suggestedParams: {
+                fee: 0,
+                firstRound: 10,
+                flatFee: true,
+                genesisHash: 'SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
+                genesisID: 'testnet-v1.0',
+                lastRound: 10
+            },
+            from: wallet,
+            to: wallet,
+            amount: 0,
+            note
+        })
+        const txn = Buffer.from(algosdk.encodeUnsignedTransaction(authTransaction)).toString('base64')
+        const txnToSign = [
+            {
+                txn: txn,
+                message: 'This transaction is free and for authentication purposes.'
+            }
+        ]
+
+        const signedTxns = await window.algorand.signTxns(txnToSign) //ARCs14
+        const token = Array.isArray(signedTxns[0]) ? Buffer.from(signedTxns[0]).toString('base64') : signedTxns[0]
+        user.setToken({ token })
     }
 
     useEffect(() => {

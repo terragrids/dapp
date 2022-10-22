@@ -13,7 +13,9 @@ export type User = {
     authenticated?: boolean
     walletAddress?: null | string
     isAdmin?: boolean
+    token?: null | string
     update?: (user: User) => void
+    setToken?: (user: User) => void
     disconnect?: () => void
 }
 
@@ -33,13 +35,21 @@ export function useUser() {
         }))
     }, [])
 
+    const setToken = useCallback(({ token }: User) => {
+        setUser(user => ({
+            ...user,
+            ...(token && { token })
+        }))
+    }, [])
+
     const disconnect = useCallback(() => {
         setUser(user => ({
             ...user,
             walletAccount: null,
             walletBalance: '0',
             terracells: null,
-            isAdmin: false
+            isAdmin: false,
+            token: null
         }))
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (window as any).algorand
@@ -50,7 +60,9 @@ export function useUser() {
         walletBalance: '0',
         terracells: null,
         isAdmin: false,
+        token: null,
         update,
+        setToken,
         disconnect
     })
 
