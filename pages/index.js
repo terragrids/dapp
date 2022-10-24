@@ -9,6 +9,7 @@ import Map from 'components/map'
 import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
 import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-plant-admin-panel'
 import { UserContext } from 'context/user-context.js'
+import MyProjectsDialog from 'components/projects/my-projects-dialog'
 
 export default function Home() {
     const user = useContext(UserContext)
@@ -17,6 +18,7 @@ export default function Home() {
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
     const [sppVisible, setSppVisible] = useState(false)
     const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
+    const [myProjectsVisible, setMyProjectsVisible] = useState(false)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
         width: undefined,
@@ -57,6 +59,10 @@ export default function Home() {
         setSppAdminPanelVisible(true)
     }
 
+    function onOpenMyProjects() {
+        setMyProjectsVisible(true)
+    }
+
     function onConnectWallet() {
         setWalletPickerVisible(true)
     }
@@ -74,7 +80,8 @@ export default function Home() {
             onConnectWallet={onConnectWallet}
             onDisconnectWallet={onDisconnectWallet}
             onMint={onMint}
-            onOpenSppAdminPanel={onOpenSppAdminPanel}>
+            onOpenSppAdminPanel={onOpenSppAdminPanel}
+            onOpenMyProjects={onOpenMyProjects}>
             <Head>
                 <title>{strings.siteTitle}</title>
             </Head>
@@ -101,6 +108,7 @@ export default function Home() {
                 }}
             />
             <SolarPowerPlantAdminPanel visible={sppAdminPanelVisible} onClose={() => setSppAdminPanelVisible(false)} />
+            <MyProjectsDialog visible={myProjectsVisible} onClose={() => setMyProjectsVisible(false)} />
         </Layout>
     )
 }

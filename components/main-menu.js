@@ -12,6 +12,7 @@ export default function MainMenu({
     onMint,
     onDisconnectWallet,
     onOpenSppAdminPanel,
+    onOpenMyProjects,
     onToggleMenu
 }) {
     const user = useContext(UserContext)
@@ -33,6 +34,11 @@ export default function MainMenu({
 
     const openNftListDialog = symbol => {
         onSelectSymbol(symbol)
+        onToggleMenu()
+    }
+
+    const openProjectDialog = () => {
+        onOpenMyProjects()
         onToggleMenu()
     }
 
@@ -61,14 +67,17 @@ export default function MainMenu({
                         </li>
                     </ul>
 
-                    {user && user.isAdmin && (
-                        <ul className={styles.admin}>
-                            <li className={styles.accent} onClick={openMintDialog}>
-                                {strings.mint}
-                            </li>
-                            <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
-                        </ul>
-                    )}
+                    <ul className={styles.actions}>
+                        <li onClick={openProjectDialog}>{strings.myProjects}</li>
+                        {user && user.isAdmin && (
+                            <>
+                                <li className={styles.accent} onClick={openMintDialog}>
+                                    {strings.mint}
+                                </li>
+                                <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
+                            </>
+                        )}
+                    </ul>
                     <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
                         {strings.disconnect}
                     </button>
