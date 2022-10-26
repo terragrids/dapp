@@ -13,6 +13,7 @@ export default function MainMenu({
     onDisconnectWallet,
     onOpenSppAdminPanel,
     onOpenMyProjects,
+    onCreateProject,
     onToggleMenu
 }) {
     const user = useContext(UserContext)
@@ -37,8 +38,13 @@ export default function MainMenu({
         onToggleMenu()
     }
 
-    const openProjectDialog = () => {
+    const openMyProjects = () => {
         onOpenMyProjects()
+        onToggleMenu()
+    }
+
+    const createProject = () => {
+        onCreateProject()
         onToggleMenu()
     }
 
@@ -68,7 +74,8 @@ export default function MainMenu({
                     </ul>
 
                     <ul className={styles.actions}>
-                        <li onClick={openProjectDialog}>{strings.myProjects}</li>
+                        <li onClick={openMyProjects}>{strings.myProjects}</li>
+                        <li onClick={createProject}>{strings.createProject}</li>
                         {user && user.isAdmin && (
                             <>
                                 <li className={styles.accent} onClick={openMintDialog}>

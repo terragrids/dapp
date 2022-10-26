@@ -16,7 +16,8 @@ export default function Layout({
     onDisconnectWallet,
     onMint,
     onOpenSppAdminPanel,
-    onOpenMyProjects
+    onOpenMyProjects,
+    onCreateProject
 }) {
     const user = useContext(UserContext)
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
@@ -66,6 +67,7 @@ export default function Layout({
                         onDisconnectWallet={onDisconnectWallet}
                         onOpenSppAdminPanel={onOpenSppAdminPanel}
                         onOpenMyProjects={onOpenMyProjects}
+                        onCreateProject={onCreateProject}
                         onToggleMenu={onToggleMenu}
                     />
                 )}
