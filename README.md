@@ -12,7 +12,7 @@ The Terragrids DApp is still a prototype. When running it on a developer's machi
 
 A button at the top right allows users to connect to their Algo Wallet. At the moment, only MyAlgo Wallet is supported.
 
-Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`). 
+Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
 
 https://user-images.githubusercontent.com/2437709/185812001-a75a3fab-1d61-48f9-be60-c45806abf6e6.mov
 
@@ -100,7 +100,7 @@ The SPP Output is an essential aspect of the metaverse. Users can buy and build 
 
 ### Solar Power Plant Smart Contract
 
-The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output. 
+The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output.
 
 <img width="1243" alt="image" src="https://user-images.githubusercontent.com/2437709/186001241-2ae037e2-f1e0-4baf-a278-d9a89e858f70.png">
 
@@ -123,7 +123,7 @@ Transactionally:
 -   The NFT is transferred from the seller's account to the contract account
 -   The SPP smart contract is called to increase the SPP Capacity by the Terracell nominal power.
 
-The contract will listen to API calls, using a Reach `paralellReduce`.
+The contract will listen to API calls, using a Reach `parallelReduce`.
 
 https://user-images.githubusercontent.com/2437709/186003356-a70d34e2-c54f-421e-84bb-871f37f7d3cb.mov
 
@@ -146,22 +146,41 @@ If a Terracell is up for sale, or sold but still tracked by its deployed smart c
 If the Terracell has not been sold yet, the trading contract will also call the SPP smart contract to decrease the SPP Capacity by the Terracell nominal power (still to be implemented).
 
 ## Algorand Greenhouse Hack #1
+
 This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
 
 **Backend**
+
 1. NFT Minting on Algorand using Reach
 2. NFT image uploading and metadata and image pinning on Pinata IPFS
 3. Reach Solar Power Plant Smart Contract to update and keep track of the SPP properties
-4. Reach Token Market Contract, started before the hackathon with a simple sell/purchase logic and extented during the hackathon to include 1/ NFT tracking after purchase and 2/ remote calls to the SPP smart contract to update SPP properties
+4. Reach Token Market Contract, started before the hackathon with a simple sell/purchase logic and extended during the hackathon to include 1/ NFT tracking after purchase and 2/ remote calls to the SPP smart contract to update SPP properties
 5. Storing Algorand Smart Contract ID offchain to attach from user accounts
 6. Node.js Proxy API to support most new features above
 
 **User Interface**
+
 1. The isometric map with user interactions
 2. The user menu with the list of NFTs belonging to the user's wallet
 3. The user dialogs to show the NFT details
 4. The NFT Minter dialog
 5. The Solar Power Plant dialog
+
+## Algorand Greenhouse Hack #2
+
+This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
+
+**Backend**
+
+1. Project Smart Contract developed in Reach to store creators' project details ([GitHub repo](https://github.com/terragrids/project-contract))
+2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details.
+3. Stateless authentication system - inspired by [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) draft - to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects.
+
+**Frontend**
+
+1. User interface to create and edit a project. Project details are stored on Pinata IPFS distributed system and IPFS URLs and metadata hashes are stored on the Project Smart Contract. When project details are updated, a new file is created on IPFS with the new data, and URL and metadata hash are updated on the Project Smart Contract through its API.
+2. User interface to see the list of available projects for a specified user and the details of individual projects.
+3. Stateless authentication support to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects.
 
 ## DApp architecture
 
