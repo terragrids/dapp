@@ -5,20 +5,28 @@ export const terragridsApiBaseUrl =
         ? 'https://api-dev.terragrids.org'
         : 'https://api.terragrids.org'
 
+export const projectsApiBaseUrl =
+    process.env.API_ENV === 'local'
+        ? 'http://localhost:3004'
+        : process.env.API_ENV === 'dev'
+        ? 'https://dev.api-project-contract.terragrids.org'
+        : 'https://api-project-contract.terragrids.org'
+
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
-const accountTerracells = accountId => `/api/accounts/${accountId}/terracells`
-const terracells = next => `/api/nfts/type/trcl${next ? `?next=${next}` : ''}`
-const terracellContract = (id, applicationId) => `/api/terracells/${id}/contracts/${applicationId}`
-const nfts = '/api/nfts'
-const nft = id => `/api/nfts/${id}`
-const accountNftsByType = (accountId, symbol) => `/api/accounts/${accountId}/nfts/${symbol}`
-const nftContract = (id, applicationId) => `/api/nfts/${id}/contracts/${applicationId}`
-const fileUpload = '/api/files/upload'
-const ipfsFiles = '/api/ipfs/files'
-const terralands = next => `/api/nfts/type/trld${next ? `?next=${next}` : ''}`
+const accountTerracells = accountId => `api/accounts/${accountId}/terracells`
+const terracells = next => `api/nfts/type/trcl${next ? `?next=${next}` : ''}`
+const terracellContract = (id, applicationId) => `api/terracells/${id}/contracts/${applicationId}`
+const nfts = 'api/nfts'
+const nft = id => `api/nfts/${id}`
+const accountNftsByType = (accountId, symbol) => `api/accounts/${accountId}/nfts/${symbol}`
+const nftContract = (id, applicationId) => `api/nfts/${id}/contracts/${applicationId}`
+const fileUpload = 'api/files/upload'
+const ipfsFiles = 'api/ipfs/files'
+const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
+const projects = accountId => `api/accounts/${accountId}/projects`
 
 export const endpoints = {
     accountTerracells,
@@ -31,7 +39,8 @@ export const endpoints = {
     nftContract,
     fileUpload,
     ipfsFiles,
-    solarPowerPlant
+    solarPowerPlant,
+    projects
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {
@@ -40,18 +49,26 @@ export function setMethodNotAllowedResponse(res, allowedList) {
 }
 
 export async function callTerragridsApi(res, method, endpoint, data) {
+    await callApi(res, terragridsApiBaseUrl, method, endpoint, data)
+}
+
+export async function callProjectsApi(res, method, endpoint, data) {
+    await callApi(res, projectsApiBaseUrl, method, endpoint, data)
+}
+
+async function callApi(res, baseUrl, method, endpoint, data) {
     await handleHttpRequest(res, async () => {
         let response
         switch (method) {
             case 'GET':
-                response = await fetch(`${terragridsApiBaseUrl}/${endpoint}`)
+                response = await fetch(`${baseUrl}/${endpoint}`)
                 break
             case 'POST':
             case 'PUT':
-                response = await httpRequest(method, `${terragridsApiBaseUrl}/${endpoint}`, data)
+                response = await httpRequest(method, `${baseUrl}/${endpoint}`, data)
                 break
             case 'DELETE':
-                response = await httpRequest(method, `${terragridsApiBaseUrl}/${endpoint}`)
+                response = await httpRequest(method, `${baseUrl}/${endpoint}`)
                 break
             default:
                 res.status(405).end()

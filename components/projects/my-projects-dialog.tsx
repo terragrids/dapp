@@ -1,6 +1,10 @@
 import ModalDialog from 'components/modal-dialog'
-import React, { useCallback, useEffect, useState } from 'react'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user.js'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
+import { Project } from 'types/project.js'
+import { endpoints } from 'utils/api-config.js'
 
 type MyProjectsDialogProps = {
     visible: boolean
@@ -13,11 +17,23 @@ type Error = {
 }
 
 const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
+    const user = useContext<User>(UserContext)
+    const [projects, setProjects] = useState<Array<Project>>([])
     const [error, setError] = useState<Error | null>()
 
     const fetchProjects = useCallback(async () => {
+        if (!user) return
         setError(null)
-    }, [])
+
+        const response = await fetch(endpoints.projects(user.walletAddress))
+
+        if (response.ok) {
+            const { projects } = await response.json()
+            setProjects(projects)
+        } else {
+            setError({ message: strings.errorFetchingProjects })
+        }
+    }, [user])
 
     useEffect(() => {
         if (visible) fetchProjects()
@@ -25,7 +41,9 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
 
     return (
         <ModalDialog visible={visible} title={strings.myProjects} onClose={onClose}>
-            {strings.myProjects}
+            {projects.map(project => (
+                <div key={project.id}>{project.id}</div>
+            ))}
             {error && <div>{error.message}</div>}
         </ModalDialog>
     )

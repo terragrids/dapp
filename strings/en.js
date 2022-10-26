@@ -36,6 +36,7 @@ const enStrings = {
     errorDeployingSppContract: 'Unable to deploy the Solar Power Plant Smart Contract.',
     errorFetchingMap: 'Something went wrong when fetching the Terragrids map.\nPlease refresh the page and try again.',
     errorFetchingSpp: 'Unable to retrieve the Solar Power Plant. Please refresh the page and try again.',
+    errorFetchingProjects: 'Unable to retrieve the projects. Please refresh the page and try again.',
     errorFetchingSppFromContract: 'Unable to retrieve the Solar Power Plant from the Smart Contract.',
     errorFetchingTerracell: 'Unable to retrieve this Terracell. Please refresh the page and try again.',
     errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
