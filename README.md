@@ -168,7 +168,7 @@ This is the list of new features that have been implemented during the Algorand 
 
 ## Algorand Greenhouse Hack #2
 
-This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
+This is the list of new features that have been implemented during the Algorand Greenhouse Hack #2:
 
 **Backend**
 
