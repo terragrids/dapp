@@ -222,7 +222,7 @@ The current version of the Terragrids implementation more in detail:
 1. If the authentication is successful, the `Verifier` deletes the message stored on DynamoDB for the specified `PKa`.
 1. `Verifier` returns authentication response.
 
-```
+```mermaid
 sequenceDiagram
     participant User
     participant Frontend
