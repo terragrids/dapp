@@ -12,7 +12,7 @@ The Terragrids DApp is still a prototype. When running it on a developer's machi
 
 A button at the top right allows users to connect to their Algo Wallet. At the moment, only MyAlgo Wallet is supported.
 
-Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`). 
+Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
 
 https://user-images.githubusercontent.com/2437709/185812001-a75a3fab-1d61-48f9-be60-c45806abf6e6.mov
 
@@ -100,7 +100,7 @@ The SPP Output is an essential aspect of the metaverse. Users can buy and build 
 
 ### Solar Power Plant Smart Contract
 
-The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output. 
+The SPP has its own Algorand smart contract deployed on Algorand to keep track of the SPP Capacity and Output.
 
 <img width="1243" alt="image" src="https://user-images.githubusercontent.com/2437709/186001241-2ae037e2-f1e0-4baf-a278-d9a89e858f70.png">
 
@@ -123,7 +123,7 @@ Transactionally:
 -   The NFT is transferred from the seller's account to the contract account
 -   The SPP smart contract is called to increase the SPP Capacity by the Terracell nominal power.
 
-The contract will listen to API calls, using a Reach `paralellReduce`.
+The contract will listen to API calls, using a Reach `parallelReduce`.
 
 https://user-images.githubusercontent.com/2437709/186003356-a70d34e2-c54f-421e-84bb-871f37f7d3cb.mov
 
@@ -146,22 +146,41 @@ If a Terracell is up for sale, or sold but still tracked by its deployed smart c
 If the Terracell has not been sold yet, the trading contract will also call the SPP smart contract to decrease the SPP Capacity by the Terracell nominal power (still to be implemented).
 
 ## Algorand Greenhouse Hack #1
+
 This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
 
 **Backend**
+
 1. NFT Minting on Algorand using Reach
 2. NFT image uploading and metadata and image pinning on Pinata IPFS
 3. Reach Solar Power Plant Smart Contract to update and keep track of the SPP properties
-4. Reach Token Market Contract, started before the hackathon with a simple sell/purchase logic and extented during the hackathon to include 1/ NFT tracking after purchase and 2/ remote calls to the SPP smart contract to update SPP properties
+4. Reach Token Market Contract, started before the hackathon with a simple sell/purchase logic and extended during the hackathon to include 1/ NFT tracking after purchase and 2/ remote calls to the SPP smart contract to update SPP properties
 5. Storing Algorand Smart Contract ID offchain to attach from user accounts
 6. Node.js Proxy API to support most new features above
 
 **User Interface**
+
 1. The isometric map with user interactions
 2. The user menu with the list of NFTs belonging to the user's wallet
 3. The user dialogs to show the NFT details
 4. The NFT Minter dialog
 5. The Solar Power Plant dialog
+
+## Algorand Greenhouse Hack #2
+
+This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
+
+**Backend**
+
+1. Project Smart Contract developed in Reach to store creators' project details ([GitHub repo](https://github.com/terragrids/project-contract))
+2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details.
+3. Stateless authentication system - inspired by [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) draft - to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects. See current implementation details [here](#stateless-authentication).
+
+**Frontend**
+
+1. User interface to create and edit a project. Project details are stored on Pinata IPFS distributed system and IPFS URLs and metadata hashes are stored on the Project Smart Contract. When project details are updated, a new file is created on IPFS with the new data, and URL and metadata hash are updated on the Project Smart Contract through its API.
+2. User interface to see the list of available projects for a specified user and the details of individual projects.
+3. Stateless authentication support to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects.
 
 ## DApp architecture
 
@@ -173,6 +192,141 @@ Lists on NFTs are fetched using a Terragrids Proxy API (i.e. https://testnet.ter
 
 ```
 [Terragrids Proxy API] -> [Terragrids API] --> [Algo Indexer + DynamoDB]
+```
+
+## Stateless Authentication
+
+A stateless authentication protocol is used to authenticate users using their public wallet address, i.e. the public key `PKa` of their Algorand account.
+
+This first implementation loosely follows the [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) proposed authentication standard, although the protocol is currently only implemented by Terragrids frontend and backend, without the changes proposed for Algorand wallets, which will increase the security bar by better preventing man-in-the-middle attacks.
+
+At high-level:
+
+1. Client initiates verification by sending their wallet address a `Verifier` backend, i.e. the system that needs to verify the identity of a User
+2. The `Verifier` generates an authentication (AUTH) payload and sends it to the client
+3. Client signs AUTH payload and sends back the signature to the `Verifier`
+4. The `Verifier` verifies signature against the AUTH payload and the public key
+
+The current version of the Terragrids implementation more in detail:
+
+1. `User` connects to their wallet.
+1. `Wallet` returns the connected `PKa`.
+1. `Frontend` connects to `Verifier` with `PKa`. This is done sending a `GET /auth?wallet=<PKa>` HTTP request to the `Verifier`.
+1. `Verifier` generates a unique message to be signed. The message changes for each authentication request to avoid replay attacks. See [authentication message](#authentication-message)
+1. `Verifier` stores the message indexed by `PKa` on DynamoDB to check it at verification time
+1. `Verifier` returns the message to `Frontend`
+1. `Frontend` creates a 0-fee transaction with the message returned by the `Verifier` and sends the transaction to `Wallet` for signing
+1. `User` approves on their wallet when prompted
+1. `Frontend` sends the base-64-signed transaction and the account `PKa` to `Verifier` in the `Authorization` header of the HTTP request that needs user authentication. The authentication scheme currently used is `Bearer` for simplicity, although this is specific to IETF RFC-6750 for OAuth 2.0-protected resources. See [signed authentication request](#signed-authentication-request).
+1. `Verifier` verifies the message checking the message stored on DynamoDB for the specified `PKa`.
+1. If the authentication is successful, the `Verifier` deletes the message stored on DynamoDB for the specified `PKa`.
+1. `Verifier` returns authentication response.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Wallet
+    participant Verifier
+    User-->>Frontend: Connect to Wallet
+    Frontend->>Wallet: Connect to Wallet
+    Wallet->>Frontend: Return PKa
+    Frontend->>Frontend: Check PKa has not been rekeyed
+    Frontend->>Verifier: GET /auth?wallet=<PKa>
+    Verifier->>Verifier: Create a new msg for PKa with nonce
+    Verifier->>Verifier: Store msg for later verification
+    Verifier->>Frontend: msg
+    Frontend->>Wallet: Sign 0 fee Txn with msg
+    User-->>Wallet: Confirm signature
+    Wallet->>Frontend: Return signed Txn
+    Frontend->>Verifier: POST /auth <PKa, Sig(msg)>
+    Verifier->>Verifier: Verify Sig(msg) with PKa and msg
+    Verifier->>Frontend: Return authentication response
+```
+
+### Authentication Message
+
+The `Verifier` backend asks Users to sign an Authentication Message with their secret keys. The Authentication Message has a JSON format that follows the following interface:
+
+```js
+interface AuthMessage {
+    /** The domain name of the service */
+    service: string;
+    /** Optional, description of the service */
+    desc?: string;
+    /** Algorand account to authenticate with */
+    authAcc: string;
+    /** Challenge generated server-side */
+    nonce: string;
+}
+```
+
+For example:
+
+```json
+{
+    "service": "api.terragrids.com",
+    "desc": "Terragrids systems",
+    "authAcc": "KTGP47G64KCXWJS64W7SGJNKTHE37TYDCI64USXI3XOYE6ZSH4LCI7NIDA",
+    "nonce": "1234abcde!%"
+}
+```
+
+The `nonce` field is unique for each authentication and is not used more than once to avoid replay attacks. It also includes an expiry date to limit the time for which it can be used.
+
+### Transaction Authentication Message
+
+A Transaction Authentication Message is an Authentication Message represented as an Algorand Transaction object. Such a transaction has the following characteristics:
+
+-   it is an Algorand Payment Transaction;
+-   it includes an Authentication Message into the transaction's note field;
+-   it is invalidated i.e. not executable on any official Algorand network
+
+The fields of a Payment Transaction object which represents a Transaction Authentication Message are as follows:
+
+```
+amount = 0;
+sender = *PKa*;
+receiver = *PKa*;
+firstValid/lastValid = 1;
+fee = 0;
+genesisId = “arc14-arc”;
+genesisHash = SHA-512/256 of the string “arc14-auth”;
+note = “arc14”+msgpacked_auth_message;
+```
+
+For example:
+
+```json
+{
+    "txn": {
+        "amt": 0,
+        "fee": 0,
+        "fv": 1,
+        "gen": "arc14-auth",
+        "gh": "f20b122eb226626b5c0d36cd33edcdb94613820f048baf2a1d6dfe46e5be18d1",
+        "lv": 1,
+        "rcv": "EW64GC6F24M7NDSC5R3ES4YUVE3ZXXNMARJHDCCCLIHZU6TBEOC7XRSBG4",
+        "snd": "EW64GC6F24M7NDSC5R3ES4YUVE3ZXXNMARJHDCCCLIHZU6TBEOC7XRSBG4",
+        "type": "pay",
+        "note": "arc14<msgpacked_auth_message>"
+    }
+}
+```
+
+### Signed Authentication Request
+
+Once a user has signed the Authentication Transaction with their wallet, the `Frontend` makes a request to the protected API resource including the Base-64-signed transaction and the account `PKa` in the `Authorization` header of the HTTP request that needs user authentication. The authentication scheme currently used is `Bearer` for simplicity, although this is specific to IETF RFC-6750 for OAuth 2.0-protected resources. Later implementation will likely post the authentication request to an authentication endpoint to retrieve a JWT session token to use with a `Bearer` `Authorization` header.
+
+The JSON object that is Base-64 encoded and sent with the `Authorization` header has the following interface schema:
+
+```js
+interface Identity {
+    /** Algorand account to authenticate with, i.e. the PKa address of the account */
+    account: string;
+    /** The signed authentication transaction */
+    authentication: string;
+}
 ```
 
 ## Reach backend
