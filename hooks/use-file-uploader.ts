@@ -20,7 +20,7 @@ export function useFileUploader({ name, description }: Props) {
         id?: string
         uploadUrl?: string
         offChainUrl?: string
-        arc3Name?: string
+        name?: string
         ipfsMetadataUrl?: string
         ipfsMetadataHash?: Uint8Array
     }
@@ -116,7 +116,7 @@ export function useFileUploader({ name, description }: Props) {
             const { assetName, url, integrity } = await response.json()
             setFileProps(file => ({
                 ...file,
-                arc3Name: assetName,
+                name: assetName,
                 ipfsMetadataUrl: url,
                 ipfsMetadataHash: integrity,
                 uploadState: FileUploadState.PINNED
@@ -163,7 +163,7 @@ export function useFileUploader({ name, description }: Props) {
         uploadState: fileProps.uploadState,
         fileProps: {
             offChainUrl: fileProps.offChainUrl,
-            arc3Name: fileProps.arc3Name,
+            name: fileProps.name,
             ipfsMetadataUrl: fileProps.ipfsMetadataUrl,
             ipfsMetadataHash: fileProps.ipfsMetadataHash
         },
