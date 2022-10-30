@@ -1,7 +1,7 @@
 import { ipfsUrl } from './api-config.js'
 
 export function maskWalletAddress(address) {
-    return `${address.substring(0, 5)}...${address.substring(address.length - 4)}`
+    return address ? `${address.substring(0, 5)}...${address.substring(address.length - 4)}` : ''
 }
 
 export function truncate(str, cnt = 10) {

@@ -3,6 +3,11 @@ import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { getQueryParameter } from 'utils/string-utils.js'
 import usePrevious from './use-previous.js'
 
+type Props = {
+    name: string
+    description: object
+}
+
 export enum FileUploadState {
     IDLE,
     STARTED,
@@ -169,9 +174,4 @@ export function useFileUploader({ name, description }: Props) {
         },
         reset
     }
-}
-
-type Props = {
-    name: string
-    description: object
 }
