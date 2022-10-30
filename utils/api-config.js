@@ -26,7 +26,8 @@ const fileUpload = 'api/files/upload'
 const ipfsFiles = 'api/ipfs/files'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
-const projects = accountId => `api/accounts/${accountId}/projects`
+const projects = 'api/projects'
+const accountProjects = accountId => `api/accounts/${accountId}/projects`
 
 export const endpoints = {
     accountTerracells,
@@ -40,7 +41,8 @@ export const endpoints = {
     fileUpload,
     ipfsFiles,
     solarPowerPlant,
-    projects
+    projects,
+    accountProjects
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

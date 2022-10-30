@@ -9,6 +9,7 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
+import { endpoints } from 'utils/api-config.js'
 import { maskWalletAddress } from 'utils/string-utils.js'
 import styles from './create-project-dialog.module.scss'
 
@@ -29,8 +30,10 @@ const defaultProject = {
 
 const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => {
     const user = useContext<User>(UserContext)
+    const [inProgress, setInProgress] = useState<boolean>(false)
     const [file, setFile] = useState<File>()
     const [project, setProject] = useState<Project>(defaultProject as Project)
+    const [error, setError] = useState<string>('')
     const {
         upload,
         uploadState,
@@ -46,6 +49,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         if (visible && prevVisible === false) {
             resetFileUploader()
             setProject(defaultProject)
+            setError('')
         }
     }, [prevVisible, resetFileUploader, visible])
 
@@ -62,9 +66,8 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     }
 
     function isInProgress() {
-        const uploading = uploadState != FileUploadState.IDLE
-        const failed = uploadState === FileUploadState.ERROR
-        return !failed && uploading
+        const failed = uploadState === FileUploadState.ERROR || error !== ''
+        return !failed && inProgress
     }
 
     /**
@@ -72,6 +75,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
      */
     function submit() {
         if (!file) return
+        setInProgress(true)
         upload(file)
     }
 
@@ -80,13 +84,41 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
      */
     useEffect(() => {
         async function saveProject() {
-            // TODO create project smart contract using fileProps
+            const response = await fetch(endpoints.projects, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify({
+                    name: fileProps.name,
+                    url: fileProps.ipfsMetadataUrl,
+                    hash: fileProps.ipfsMetadataHash,
+                    offChainImageUrl: fileProps.offChainUrl,
+                    creator: user.walletAddress
+                })
+            })
+
+            setInProgress(false)
+            if (response.status !== 201) {
+                setError(strings.errorCreatingProject)
+            }
         }
 
         if (uploadState === FileUploadState.PINNED) {
             saveProject()
+        } else if (uploadState === FileUploadState.ERROR) {
+            setInProgress(false)
+            setError(strings.errorCreatingProject)
         }
-    }, [fileProps, uploadState])
+    }, [
+        fileProps.ipfsMetadataHash,
+        fileProps.ipfsMetadataUrl,
+        fileProps.name,
+        fileProps.offChainUrl,
+        uploadState,
+        user.walletAddress
+    ])
 
     return (
         <ModalDialog visible={visible} title={strings.createProject} onClose={onClose}>

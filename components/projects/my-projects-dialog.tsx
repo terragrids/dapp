@@ -25,7 +25,7 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
         if (!user) return
         setError(null)
 
-        const response = await fetch(endpoints.projects(user.walletAddress))
+        const response = await fetch(endpoints.accountProjects(user.walletAddress))
 
         if (response.ok) {
             const { projects } = await response.json()
