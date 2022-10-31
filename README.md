@@ -172,15 +172,16 @@ This is the list of new features that have been implemented during the Algorand 
 
 **Backend**
 
-1. Project Smart Contract developed in Reach to store creators' project details ([GitHub repo](https://github.com/terragrids/project-contract))
-2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details.
+1. Project Smart Contract developed in Reach to store creators' project details ([GitHub repo](https://github.com/terragrids/project-contract)).
+2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details. The node.js backend uses Reach and an intermediary admin wallet to deploy smart contracts and call their APIs, to avoid charging transaction fees on the end user's wallet.
 3. Stateless authentication system - inspired by [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) draft - to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects. See current implementation details [here](#stateless-authentication).
 
 **Frontend**
 
-1. User interface to create and edit a project. Project details are stored on Pinata IPFS distributed system and IPFS URLs and metadata hashes are stored on the Project Smart Contract. When project details are updated, a new file is created on IPFS with the new data, and URL and metadata hash are updated on the Project Smart Contract through its API.
-2. User interface to see the list of available projects for a specified user and the details of individual projects.
-3. Stateless authentication support to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects.
+1. Pera Wallet integration with WalletConnect.
+2. User interface to create and edit a project. Project details are stored on Pinata IPFS distributed system and IPFS URLs and metadata hashes are stored on the Project Smart Contract. When project details are updated, a new file is created on IPFS with the new data, and URL and metadata hash are updated on the Project Smart Contract through its API.
+3. User interface to see the list of available projects for a specified user and the details of individual projects.
+4. Stateless authentication support to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects.
 
 ## DApp architecture
 
@@ -239,9 +240,9 @@ sequenceDiagram
     Frontend->>Wallet: Sign 0 fee Txn with msg
     User-->>Wallet: Confirm signature
     Wallet->>Frontend: Return signed Txn
-    Frontend->>Verifier: POST /auth <PKa, Sig(msg)>
+    Frontend->>Verifier: <METHOD> /<endpoint> <Authentication Header <PKa, Sig(msg)>>
     Verifier->>Verifier: Verify Sig(msg) with PKa and msg
-    Verifier->>Frontend: Return authentication response
+    Verifier->>Frontend: Return endpoint response
 ```
 
 ### Authentication Message
