@@ -4,6 +4,7 @@ import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
+import { useAuth } from 'hooks/use-auth.js'
 import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
 import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
@@ -41,6 +42,8 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         reset: resetFileUploader
     } = useFileUploader({ name: project.name, description: { text: project.description } })
 
+    const { getAuthHeader } = useAuth()
+
     /**
      * Reset state when opening the dialog
      */
@@ -50,6 +53,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
             resetFileUploader()
             setProject(defaultProject)
             setError('')
+            setInProgress(false)
         }
     }, [prevVisible, resetFileUploader, visible])
 
@@ -84,25 +88,32 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
      */
     useEffect(() => {
         async function saveProject() {
-            const response = await fetch(endpoints.projects, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                referrerPolicy: 'no-referrer',
-                body: JSON.stringify({
-                    name: fileProps.name,
-                    url: fileProps.ipfsMetadataUrl,
-                    hash: fileProps.ipfsMetadataHash,
-                    offChainImageUrl: fileProps.offChainUrl,
-                    creator: user.walletAddress
+            try {
+                const authHeader = await getAuthHeader(user.walletAddress)
+                const response = await fetch(endpoints.projects, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: authHeader
+                    },
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify({
+                        name: fileProps.name,
+                        url: fileProps.ipfsMetadataUrl,
+                        hash: fileProps.ipfsMetadataHash,
+                        offChainImageUrl: fileProps.offChainUrl,
+                        creator: user.walletAddress
+                    })
                 })
-            })
 
-            setInProgress(false)
-            if (response.status !== 201) {
+                if (response.status !== 201) {
+                    setError(strings.errorCreatingProject)
+                }
+            } catch (e) {
                 setError(strings.errorCreatingProject)
             }
+
+            setInProgress(false)
         }
 
         if (uploadState === FileUploadState.PINNED) {
@@ -116,6 +127,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         fileProps.ipfsMetadataUrl,
         fileProps.name,
         fileProps.offChainUrl,
+        getAuthHeader,
         uploadState,
         user.walletAddress
     ])
@@ -141,11 +153,14 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                     <Button
                         className={styles.button}
                         disabled={!isValid()}
-                        label={strings.mint}
+                        label={strings.create}
                         loading={isInProgress()}
                         checked={false}
                         onClick={submit}
                     />
+                </div>
+                <div className={styles.section}>
+                    <div className={styles.error}>{error}</div>
                 </div>
             </div>
         </ModalDialog>
