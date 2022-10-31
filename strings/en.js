@@ -16,6 +16,7 @@ const enStrings = {
     connectWallet: 'Connect to a wallet',
     contract: 'Contract',
     contractId: 'Contract ID',
+    create: 'Create',
     createProject: 'Create new project',
     createProjectWithWallet: 'Create a new project associated with your wallet address',
     description: 'Description',
@@ -29,6 +30,7 @@ const enStrings = {
         'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
     errorCreatingNftSaleContract:
         'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingProject: 'Something went wrong when creating your project. Please try again.',
     errorCreatingTerracellSaleContract:
         'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingNftSaleContract:
@@ -48,7 +50,6 @@ const enStrings = {
     errorTerminatingSppContract: 'Unable to terminate the Solar Power Plant Smart Contract.',
     errorUpdatingSppContract: 'Unable to update the Solar Power Plant Smart Contract.',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
-    errorCreatingProject: 'Something went wrong when creating your project. Please try again.',
     helloExplorer: 'Hello, Terragrids explorer!',
     holder: 'Holder',
     mint: 'Mint',
@@ -57,7 +58,6 @@ const enStrings = {
     myAlgoWallet: 'My Algo Wallet',
     myProjects: 'My Projects',
     name: 'Name',
-    projectLogo: 'Project logo',
     noContractPleaseRedeploy: 'No contract id is found. Please redeploy the SPP contract.',
     noDescription: 'No description',
     nominalPower: 'Nominal power (TRW)',
@@ -71,6 +71,7 @@ const enStrings = {
     positionY: 'Position Y',
     power: 'Power',
     price: 'Price',
+    projectLogo: 'Project logo',
     redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',
     sell: 'Sell',
