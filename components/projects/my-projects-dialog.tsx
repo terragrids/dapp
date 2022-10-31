@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { Project } from 'types/project.js'
 import { endpoints } from 'utils/api-config.js'
+import ProjectListItem from './projects-list-item'
 
 type MyProjectsDialogProps = {
     visible: boolean
@@ -42,7 +43,12 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
     return (
         <ModalDialog visible={visible} title={strings.myProjects} onClose={onClose}>
             {projects.map(project => (
-                <div key={project.id}>{project.id}</div>
+                <ProjectListItem
+                    key={project.id}
+                    id={project.id}
+                    name={project.name}
+                    imageUrl={project.offChainImageUrl}
+                />
             ))}
             {error && <div>{error.message}</div>}
         </ModalDialog>

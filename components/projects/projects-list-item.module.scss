@@ -1,0 +1,27 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    display: flex;
+    align-content: center;
+    height: 80px;
+}
+
+.imageContainer {
+    width: 80px;
+    position: relative;
+
+    .image {
+        object-fit: contain;
+        width: 100% !important;
+        position: relative !important;
+        height: unset !important;
+    }
+}
+
+.nameContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
