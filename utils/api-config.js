@@ -50,15 +50,15 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.status(405).end()
 }
 
-export async function callTerragridsApi(res, method, endpoint, data) {
-    await callApi(res, terragridsApiBaseUrl, method, endpoint, data)
+export async function callTerragridsApi(res, method, endpoint, data, headers) {
+    await callApi(res, terragridsApiBaseUrl, method, endpoint, data, headers)
 }
 
-export async function callProjectsApi(res, method, endpoint, data) {
-    await callApi(res, projectsApiBaseUrl, method, endpoint, data)
+export async function callProjectsApi(res, method, endpoint, data, headers) {
+    await callApi(res, projectsApiBaseUrl, method, endpoint, data, headers)
 }
 
-async function callApi(res, baseUrl, method, endpoint, data) {
+async function callApi(res, baseUrl, method, endpoint, data, headers) {
     await handleHttpRequest(res, async () => {
         let response
         switch (method) {
@@ -67,10 +67,10 @@ async function callApi(res, baseUrl, method, endpoint, data) {
                 break
             case 'POST':
             case 'PUT':
-                response = await httpRequest(method, `${baseUrl}/${endpoint}`, data)
+                response = await httpRequest(method, `${baseUrl}/${endpoint}`, data, headers)
                 break
             case 'DELETE':
-                response = await httpRequest(method, `${baseUrl}/${endpoint}`)
+                response = await httpRequest(method, `${baseUrl}/${endpoint}`, null, headers)
                 break
             default:
                 res.status(405).end()
@@ -96,13 +96,14 @@ export async function handleHttpRequest(res, run) {
     }
 }
 
-async function httpRequest(method, url, data = {}) {
+async function httpRequest(method, url, data = {}, headers = {}) {
     return await fetch(url, {
         method,
         cache: 'no-cache',
         referrerPolicy: 'no-referrer',
         ...(data && {
             headers: {
+                ...headers,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
