@@ -14,9 +14,8 @@ export function useAuth() {
         }
         const authMessage = await response.json()
 
-        const enc = new TextEncoder()
         const notePlainText = `arc14${Buffer.from(JSON.stringify(authMessage)).toString('base64')}`
-        const note = enc.encode(notePlainText)
+        const note = new TextEncoder().encode(notePlainText)
 
         try {
             const algosdk = reach.stdlib.algosdk

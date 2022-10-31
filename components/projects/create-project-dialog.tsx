@@ -86,6 +86,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     /**
      * 2. Create a smart contract for the project on the blockchain
      */
+    const prevUploadState = usePrevious(uploadState)
     useEffect(() => {
         async function saveProject() {
             try {
@@ -112,11 +113,10 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
             } catch (e) {
                 setError(strings.errorCreatingProject)
             }
-
             setInProgress(false)
         }
 
-        if (uploadState === FileUploadState.PINNED) {
+        if (uploadState === FileUploadState.PINNED && prevUploadState !== FileUploadState.PINNED) {
             saveProject()
         } else if (uploadState === FileUploadState.ERROR) {
             setInProgress(false)
@@ -128,6 +128,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         fileProps.name,
         fileProps.offChainUrl,
         getAuthHeader,
+        prevUploadState,
         uploadState,
         user.walletAddress
     ])
