@@ -1,10 +1,15 @@
 @import 'styles/colors.scss';
 @import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .container {
     position: relative;
-    max-width: 400px;
+    width: 400px;
     padding-bottom: 50px;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
 }
 
 .name {
