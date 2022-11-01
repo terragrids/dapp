@@ -17,6 +17,7 @@
     font-size: 16px;
     color: $color-ebony-clay;
     text-align: center;
+    width: 100%;
 
     i {
         font-size: 60px;
@@ -51,7 +52,6 @@
 .emptyBorder {
     display: block;
     padding: 40px;
-    min-width: 400px;
     border: 4px dashed $color-brand;
     border-radius: $dialog-border-radius;
     transition: $quick-transition;
