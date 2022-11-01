@@ -1,4 +1,4 @@
-import { ReachContext } from 'context/reach-context.js'
+import { ReachContext } from 'context/reach-context.ts'
 import { UserContext } from 'context/user-context.js'
 import { useContext } from 'react'
 

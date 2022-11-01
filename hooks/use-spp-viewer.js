@@ -1,6 +1,6 @@
 import { useContext, useCallback } from 'react'
 import { getContractFromJsonString } from 'utils/string-utils.js'
-import { ReachContext } from '../context/reach-context'
+import { ReachContext } from '../context/reach-context.ts'
 import { UserContext } from '../context/user-context'
 
 export function useSppViewer() {

@@ -1,7 +1,7 @@
 import { useContext, useRef, useCallback } from 'react'
 import { endpoints } from 'utils/api-config.js'
 import { createPromise } from 'utils/promise'
-import { ReachContext } from '../context/reach-context'
+import { ReachContext } from '../context/reach-context.ts'
 import { UserContext } from '../context/user-context'
 
 export function useNftSeller() {

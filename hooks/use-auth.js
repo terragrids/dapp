@@ -1,4 +1,4 @@
-import { ReachContext } from 'context/reach-context.js'
+import { ReachContext } from 'context/reach-context.ts'
 import AuthMessageError from 'errors/auth-message.error.js'
 import SignAuthError from 'errors/sign-auth.error.js'
 import { useContext } from 'react'

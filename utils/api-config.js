@@ -27,6 +27,7 @@ const ipfsFiles = 'api/ipfs/files'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const projects = 'api/projects'
+const project = id => `api/projects/${id}`
 const accountProjects = accountId => `api/accounts/${accountId}/projects`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
 
@@ -43,6 +44,7 @@ export const endpoints = {
     ipfsFiles,
     solarPowerPlant,
     projects,
+    project,
     accountProjects,
     authForWallet
 }

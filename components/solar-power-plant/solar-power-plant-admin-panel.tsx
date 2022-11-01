@@ -13,7 +13,7 @@ import { SolarPowerPlant } from 'types/spp.js'
 import { InputField } from 'components/input-field'
 import { useSppUpdater } from 'hooks/use-spp-updater.js'
 import { Label } from 'components/label'
-import { ContractLink } from 'components/contract-link'
+import { SppContractLink } from 'components/spp-contract-link'
 
 type SolarPowerPlantAdminPanelProps = {
     visible: boolean
@@ -165,7 +165,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                                 />
                             </div>
                             <header>{strings.contract}</header>
-                            {contractInfo && <ContractLink contractInfo={contractInfo} />}
+                            {contractInfo && <SppContractLink contractInfo={contractInfo} />}
                             <header>{strings.description}</header>
                             <pre>{error.description}</pre>
                         </>
@@ -177,7 +177,7 @@ const SolarPowerPlantAdminPanel = ({ visible, onClose }: SolarPowerPlantAdminPan
                 <div className={styles.content}>
                     <div className={styles.section}>
                         <Label text={strings.contractId} />
-                        {contractInfo && <ContractLink contractInfo={contractInfo} />}
+                        {contractInfo && <SppContractLink contractInfo={contractInfo} />}
                     </div>
                     <div className={styles.section}>
                         <InputField
