@@ -5,6 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { Project } from 'types/project.js'
 import { endpoints } from 'utils/api-config.js'
+import ProjectDetails from './project-details'
 import ProjectListItem from './projects-list-item'
 
 type MyProjectsDialogProps = {
@@ -21,6 +22,7 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
     const user = useContext<User>(UserContext)
     const [projects, setProjects] = useState<Array<Project>>([])
     const [error, setError] = useState<Error | null>()
+    const [selectedProject, setSelectedProject] = useState<string | null>()
 
     const fetchProjects = useCallback(async () => {
         if (!user) return
@@ -37,19 +39,32 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
     }, [user])
 
     useEffect(() => {
-        if (visible) fetchProjects()
+        if (visible) {
+            setSelectedProject(null)
+            fetchProjects()
+        }
     }, [fetchProjects, visible])
+
+    function openProject(id: string) {
+        setSelectedProject(id)
+    }
 
     return (
         <ModalDialog visible={visible} title={strings.myProjects} onClose={onClose}>
-            {projects.map(project => (
-                <ProjectListItem
-                    key={project.id}
-                    id={project.id}
-                    name={project.name}
-                    imageUrl={project.offChainImageUrl}
-                />
-            ))}
+            {!selectedProject && (
+                <>
+                    {projects.map(project => (
+                        <ProjectListItem
+                            key={project.id}
+                            id={project.id}
+                            name={project.name}
+                            imageUrl={project.offChainImageUrl}
+                            onClick={openProject}
+                        />
+                    ))}
+                </>
+            )}
+            {selectedProject && <ProjectDetails id={selectedProject} />}
             {error && <div>{error.message}</div>}
         </ModalDialog>
     )

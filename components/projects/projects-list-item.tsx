@@ -4,11 +4,12 @@ type ProjectListItemProps = {
     id: string
     name: string
     imageUrl: string
+    onClick: (id: string) => void
 }
 
-const ProjectListItem = ({ name, imageUrl }: ProjectListItemProps) => {
+const ProjectListItem = ({ id, name, imageUrl, onClick }: ProjectListItemProps) => {
     return (
-        <li className={styles.container}>
+        <li className={styles.container} onClick={() => onClick(id)}>
             <div className={styles.imageContainer}>
                 <img src={imageUrl} alt={name} className={styles.image} />
             </div>

@@ -5,14 +5,20 @@
     display: flex;
     flex: auto 1 0;
     align-content: center;
+    padding: 10px;
     box-sizing: border-box;
-    height: 80px;
+    height: 100px;
     width: 400px;
     margin: 10px 0;
     overflow: hidden;
+    cursor: pointer;
 
     @media (max-width: $screen-small) {
         width: 100%;
+    }
+
+    &:hover {
+        background-color: $color-brand;
     }
 
     & > div {
@@ -25,6 +31,9 @@
 .imageContainer {
     flex: 0 0 80px;
     position: relative;
+    background-color: $color-ebony-clay;
+    border-radius: 100%;
+    overflow: hidden;
 
     .image {
         width: 80px;
