@@ -1,27 +1,45 @@
 @import 'styles/colors.scss';
-@import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .container {
     display: flex;
+    flex: auto 1 0;
     align-content: center;
+    box-sizing: border-box;
     height: 80px;
+    width: 400px;
+    margin: 10px 0;
+    overflow: hidden;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
+
+    & > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 }
 
 .imageContainer {
-    width: 80px;
+    flex: 0 0 80px;
     position: relative;
 
     .image {
-        object-fit: contain;
-        width: 100% !important;
-        position: relative !important;
-        height: unset !important;
+        width: 80px;
+        height: auto;
+        position: relative;
     }
 }
 
 .nameContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding: 20px;
+    overflow: hidden;
+
+    & > div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }

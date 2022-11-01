@@ -47,7 +47,8 @@
             {
                 "case": "kebabCase"
             }
-        ]
+        ],
+        "@next/next/no-img-element": "off"
     },
     "ignorePatterns": ["*.rsh"]
 }
