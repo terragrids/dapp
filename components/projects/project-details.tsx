@@ -25,6 +25,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const [project, setProject] = useState<ProjectDetails | null>()
     const [error, setError] = useState<string | null>()
+
     const fetchProject = useCallback(async () => {
         if (!id) return
         setError(null)
@@ -63,17 +64,25 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             {!project && <LoadingSpinner />}
             {project && (
                 <>
-                    <div>{project.name}</div>
-                    <img src={project.logoUrl} alt={project.name} className={styles.image} />
-                    <Label text={strings.contractId} />
-                    <div>
-                        <ContractLink contractId={project.contractId} />
+                    <div className={styles.name}>{project.name}</div>
+                    <div className={styles.section}>
+                        <img src={project.logoUrl} alt={project.name} className={styles.image} />
                     </div>
-                    <Label text={strings.created} />
-                    <div>{new Date(project.created).toLocaleDateString()}</div>
-                    <Label text={strings.description} />
-                    <div>
-                        <ParagraphMaker text={project.description} />
+                    <div className={styles.section}>
+                        <Label text={strings.contractId} />
+                        <div className={styles.content}>
+                            <ContractLink contractId={project.contractId} />
+                        </div>
+                    </div>
+                    <div className={styles.section}>
+                        <Label text={strings.created} />
+                        <div className={styles.content}>{new Date(project.created).toLocaleDateString()}</div>
+                    </div>
+                    <div className={styles.section}>
+                        <Label text={strings.description} />
+                        <div className={styles.content}>
+                            <ParagraphMaker text={project.description} />
+                        </div>
                     </div>
                 </>
             )}

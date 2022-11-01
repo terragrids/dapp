@@ -1,6 +1,32 @@
 @import 'styles/colors.scss';
-@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
 
 .container {
     max-width: 400px;
+}
+
+.name {
+    margin-bottom: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.content {
+    padding: 10px;
+    background-color: $color-abbey;
+    border-radius: $border-radius;
+    color: $color-nomad;
+    font-size: 16px;
+    cursor: default;
+
+    a {
+        color: $color-nomad;
+    }
 }
