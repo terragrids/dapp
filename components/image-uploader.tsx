@@ -5,7 +5,12 @@ import ImageLoader, { ImageSize } from 'utils/image-loader'
 import { ImagePicker } from './image-picker'
 import styles from './image-uploader.module.scss'
 
-export const ImageUploader = ({ onFileSelected }: Props) => {
+type Props = {
+    imageUrl?: string
+    onFileSelected: (file: File) => void
+}
+
+export const ImageUploader = ({ imageUrl, onFileSelected }: Props) => {
     type State = {
         file?: File
         imageUrl?: string
@@ -30,7 +35,7 @@ export const ImageUploader = ({ onFileSelected }: Props) => {
 
     const imageMinResolution = 300
     const imageMaxResolution = 5000
-    const maxFileSize = 5 * (2 ** 20) // 5 MB
+    const maxFileSize = 5 * 2 ** 20 // 5 MB
 
     function onFilesPicked(files: File[]) {
         const fileList = files.filter(file => !!file.type.match(/image.*/))
@@ -50,37 +55,47 @@ export const ImageUploader = ({ onFileSelected }: Props) => {
     }
 
     useEffect(() => {
+        setState(state => ({
+            ...state,
+            imageUrl
+        }))
+    }, [imageUrl])
+
+    useEffect(() => {
         let isSubscribed = true
 
         async function loadImage() {
             if (!state.file) return
             try {
                 const fileLoader = new FileLoader(state.file)
-                const source = await fileLoader.load() as string
+                const source = (await fileLoader.load()) as string
 
                 const imageLoader = new ImageLoader(source)
-                const image = await imageLoader.load(source) as ImageSize
+                const image = (await imageLoader.load(source)) as ImageSize
 
                 const imageTooSmall = image.width < imageMinResolution || image.height < imageMinResolution
-                const imageTooLarge = imageMaxResolution && (image.width > imageMaxResolution || image.height > imageMaxResolution)
+                const imageTooLarge =
+                    imageMaxResolution && (image.width > imageMaxResolution || image.height > imageMaxResolution)
                 const fileTooBig = state.file.size > maxFileSize
 
-                isSubscribed && setState(state => ({
-                    ...state,
-                    imageUrl: source,
-                    loaded: true,
-                    width: image.width,
-                    height: image.height,
-                    tooSmall: imageTooSmall,
-                    tooLarge: imageTooLarge,
-                    fileTooBig: fileTooBig,
-                    errorMessage: ''
-                }))
+                isSubscribed &&
+                    setState(state => ({
+                        ...state,
+                        imageUrl: source,
+                        loaded: true,
+                        width: image.width,
+                        height: image.height,
+                        tooSmall: imageTooSmall,
+                        tooLarge: imageTooLarge,
+                        fileTooBig: fileTooBig,
+                        errorMessage: ''
+                    }))
             } catch (e) {
-                isSubscribed && setState(state => ({
-                    ...state,
-                    errorMessage: strings.errorFileReader
-                }))
+                isSubscribed &&
+                    setState(state => ({
+                        ...state,
+                        errorMessage: strings.errorFileReader
+                    }))
             }
         }
 
@@ -94,14 +109,8 @@ export const ImageUploader = ({ onFileSelected }: Props) => {
     return (
         <div className={styles.container}>
             <div className={styles.scrollContent}>
-                <ImagePicker
-                    url={state.imageUrl}
-                    onFilesPicked={onFilesPicked} />
+                <ImagePicker url={state.imageUrl} onFilesPicked={onFilesPicked} />
             </div>
         </div>
     )
 }
-
-type Props = {
-    onFileSelected: (file: File) => void
-};

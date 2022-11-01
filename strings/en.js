@@ -21,6 +21,7 @@ const enStrings = {
     createProject: 'Create new project',
     createProjectWithWallet: 'Create a new project associated with your wallet address',
     description: 'Description',
+    edit: 'Edit',
     details: 'Details',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
@@ -32,6 +33,7 @@ const enStrings = {
     errorCreatingNftSaleContract:
         'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
     errorCreatingProject: 'Something went wrong when creating your project. Please try again.',
+    errorUpdatingProject: 'Something went wrong when updating your project. Please try again.',
     errorCreatingTerracellSaleContract:
         'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingNftSaleContract:

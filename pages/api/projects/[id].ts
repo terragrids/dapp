@@ -7,7 +7,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case 'GET':
             await callProjectsApi(res, 'GET', `projects/${req.query.id}`)
             break
+        case 'PUT':
+            await callProjectsApi(res, 'PUT', `projects/${req.query.id}`, req.body, {
+                authorization: req.headers.authorization
+            })
+            break
         default:
-            setMethodNotAllowedResponse(res, ['GET'])
+            setMethodNotAllowedResponse(res, ['GET', 'PUT'])
     }
 }
