@@ -4,7 +4,7 @@
 
 .container {
     position: relative;
-    width: 400px;
+    width: 500px;
     padding-bottom: 50px;
 
     @media (max-width: $screen-small) {
@@ -55,4 +55,8 @@
     right: 0;
     height: 60px;
     background-color: $color-ebony-clay;
+}
+
+.button {
+    min-width: 200px;
 }

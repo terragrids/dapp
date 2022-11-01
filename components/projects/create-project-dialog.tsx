@@ -148,7 +148,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                     <InputField label={strings.name} onChange={setName} />
                 </div>
                 <div className={styles.section}>
-                    <InputField multiline label={strings.description} onChange={setDescription} />
+                    <InputField max={5000} multiline label={strings.description} onChange={setDescription} />
                 </div>
                 <div className={styles.section}>
                     <Button

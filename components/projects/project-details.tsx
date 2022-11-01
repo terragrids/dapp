@@ -251,6 +251,8 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                             <InputField
                                 initialValue={project.description}
                                 multiline
+                                max={5000}
+                                rows={10}
                                 label={strings.description}
                                 onChange={setDescription}
                             />
@@ -261,9 +263,17 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             </div>
             {canEdit() && (
                 <div className={styles.actionBar}>
-                    {!editing && <Button type={ButtonType.OUTLINE} label={strings.edit} onClick={edit} />}
+                    {!editing && (
+                        <Button
+                            className={styles.button}
+                            type={ButtonType.OUTLINE}
+                            label={strings.edit}
+                            onClick={edit}
+                        />
+                    )}
                     {editing && (
                         <Button
+                            className={styles.button}
                             type={ButtonType.OUTLINE}
                             label={strings.update}
                             disabled={!isUpdateValid()}

@@ -8,7 +8,25 @@ export type SelectOption = {
     value: string
 }
 
-export const InputField = ({ initialValue, label, multiline = false, max = 64, type = 'text', onChange }: Props) => {
+type Props = {
+    initialValue?: string
+    label: string
+    multiline?: boolean
+    max?: number
+    type?: string
+    rows?: number
+    onChange: (value: string) => void
+}
+
+export const InputField = ({
+    initialValue,
+    label,
+    multiline = false,
+    max = 64,
+    rows = 5,
+    type = 'text',
+    onChange
+}: Props) => {
     const id = useRef(uniqid())
 
     function onTextChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
@@ -18,33 +36,27 @@ export const InputField = ({ initialValue, label, multiline = false, max = 64, t
     return (
         <>
             <Label text={label} forId={id.current} />
-            {!multiline &&
+            {!multiline && (
                 <input
                     id={id.current}
                     className={styles.field}
                     defaultValue={initialValue}
                     maxLength={max}
                     type={type}
-                    onChange={onTextChange} />
-            }
+                    onChange={onTextChange}
+                />
+            )}
 
-            {multiline &&
+            {multiline && (
                 <textarea
                     id={id.current}
                     className={styles.field}
                     defaultValue={initialValue}
                     maxLength={max}
-                    onChange={onTextChange} />
-            }
+                    rows={rows}
+                    onChange={onTextChange}
+                />
+            )}
         </>
     )
 }
-
-type Props = {
-    initialValue?: string
-    label: string
-    multiline?: boolean
-    max?: number
-    type?: string
-    onChange: (value: string) => void
-};

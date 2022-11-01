@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from './paragraph-maker.module.scss'
 
 type Props = {
     text: string
@@ -12,7 +13,9 @@ export const ParagraphMaker = ({ text }: Props) => {
     return (
         <>
             {paragraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p className={styles.paragraph} key={index}>
+                    {paragraph}
+                </p>
             ))}
         </>
     )
