@@ -193,10 +193,34 @@ https://user-images.githubusercontent.com/2437709/199490659-ec66af5f-c13c-4eb9-b
     
 In particular, the application performs the following actions when selecting a project:
 
-1. The frontend requests the information for a specified project contract id
+1. The frontend requests the information from the Project Contract API for a specified project contract ID
 2. The Project Contract node.js backend fetches the information using a dummy Algorand account with no balance to connect to the Smart Contract read-only Reach `View` interface
 3. The Project Contract node.js backend returns the information to the frontend, without charging the user's wallet
 4. The frontend uses the IPFS URL specified in the project information to retrieve the project metadata and display it to the user 
+    
+### Editing projects
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+
+Users can edit their projects from the project details dialog. In particular, at the moment users can edit their project name, logo and description. In future implementations, edits will need to go through an approval process before being publicly applied.
+
+https://user-images.githubusercontent.com/2437709/199510816-8bcb5e1f-88a7-46db-a6db-19ccf9fdeda5.mov
+
+The frontend performs the following actions when editing a project:
+
+1. Upload the image and the project metadata to Pinata IPFS
+2. Request a unique authentication message from the API
+3. Authenticate the user by asking to sign a zero-fee/zero-algo transaction with their wallet, adding the authentication message in the transaction note
+4. Send the Pinata IPFS metadata URL and hash to the Project Contract API for the existing contract ID
+    
+The Project Contract API node.js backend service performs the following actions:
+
+1. Verify the user identity checking the signed authentication transaction
+2. If the user authentication is successful, call the Algorand Smart Contract API using an intermediary admin wallet, to avoid asking the project creator to pay transaction fees
+3. Pass the updated Pinata IPFS metadata URL and hash to the Project Smart Contract at deployment time to be stored in the contract state
+    
+The smart contract state is updated and pointing to a new file pinned on IPFS. 
 
 ## Algorand Greenhouse Hack #1
 
@@ -249,6 +273,9 @@ Lists on NFTs are fetched using a Terragrids Proxy API (i.e. https://testnet.ter
 ```
 
 ## Stateless Authentication
+    
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
 
 A stateless authentication protocol is used to authenticate users using their public wallet address, i.e. the public key `PKa` of their Algorand account.
 
