@@ -156,7 +156,9 @@ If the Terracell has not been sold yet, the trading contract will also call the 
 
 Users can submit their projects for crowdfunding from the user menu.
 
-Once all required information is entered (i.e. at the moment project logo, name and description, and later project timeline and budget goal), users press the "Create" button on the dialog. 
+Once all required information is entered (i.e. at the moment project logo, name and description, and later project timeline and budget goal), users press the "Create" button on the dialog.
+
+https://user-images.githubusercontent.com/2437709/199476143-532282fb-2e54-45a8-8d10-eebb34b23ed9.mov
 
 The frontend then performs the following actions:
 
