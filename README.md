@@ -173,7 +173,7 @@ This is the list of new features that have been implemented during the Algorand 
 **Backend**
 
 1. Project Smart Contract developed in Reach to store creators' project details ([GitHub repo](https://github.com/terragrids/project-contract)).
-2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details. The node.js backend uses Reach and an intermediary admin wallet to deploy smart contracts and call their APIs, to avoid charging transaction fees on the end user's wallet.
+2. Node.js API to deploy and connect to the Project Smart Contracts and use their API to update project details. The node.js backend uses Reach and an intermediary admin wallet to deploy smart contracts and call their API; this avoids charging transaction fees on the end user's wallet.
 3. Stateless authentication system - inspired by [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) draft - to authenticate users when they want to modify the application state, e.g. create a new project or edit and existing project on the blockchain, sell or buy NFTs to back creators' projects. See current implementation details [here](#stateless-authentication).
 
 **Frontend**
