@@ -1,5 +1,6 @@
 @import 'styles/colors.scss';
 @import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .container {
     display: flex;
@@ -7,7 +8,11 @@
     justify-content: center;
     align-items: center;
     padding-bottom: 20px;
-    max-width: 400px;
+    width: 500px;
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+    }
 }
 
 .header {
@@ -32,7 +37,6 @@
 }
 
 .button {
-    margin-top: 20px;
     min-width: 200px;
 }
 

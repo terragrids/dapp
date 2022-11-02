@@ -1,0 +1,14 @@
+@import 'styles/colors.scss';
+
+.this {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: $color-ebony-clay;
+}

@@ -1,4 +1,5 @@
-import Button from 'components/button'
+import ActionBar from 'components/action-bar'
+import Button, { ButtonType } from 'components/button'
 import { ImageUploader } from 'components/image-uploader'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
@@ -150,16 +151,17 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                 <div className={styles.section}>
                     <InputField max={5000} multiline label={strings.description} onChange={setDescription} />
                 </div>
-                <div className={styles.section}>
+                <ActionBar>
                     <Button
                         className={styles.button}
+                        type={ButtonType.OUTLINE}
                         disabled={!isValid()}
                         label={strings.create}
                         loading={isInProgress()}
                         checked={false}
                         onClick={submit}
                     />
-                </div>
+                </ActionBar>
                 <div className={styles.section}>
                     <div className={styles.error}>{error}</div>
                 </div>

@@ -1,3 +1,4 @@
+import ActionBar from 'components/action-bar'
 import Button, { ButtonType } from 'components/button'
 import { ContractLink } from 'components/contract-link'
 import { ImageUploader } from 'components/image-uploader'
@@ -262,7 +263,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 {error && <div>{error}</div>}
             </div>
             {canEdit() && (
-                <div className={styles.actionBar}>
+                <ActionBar>
                     {!editing && (
                         <Button
                             className={styles.button}
@@ -281,7 +282,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                             onClick={submit}
                         />
                     )}
-                </div>
+                </ActionBar>
             )}
         </>
     )

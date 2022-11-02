@@ -20,12 +20,6 @@
         }
     }
 
-    &.disabled {
-        color: $color-nomad;
-        background-color: $color-abbey;
-        cursor: default;
-    }
-
     i {
         font-size: 22px;
     }
@@ -34,6 +28,12 @@
 .default {
     background-color: $color-brand;
     border-color: $color-brand;
+
+    &.disabled {
+        color: $color-nomad;
+        background-color: $color-abbey;
+        cursor: default;
+    }
 }
 
 .outline {
@@ -43,6 +43,12 @@
     text-transform: none;
     min-height: auto;
     padding: 10px 20px;
+
+    &.disabled {
+        border-color: $color-nomad;
+        color: $color-nomad;
+        cursor: default;
+    }
 }
 
 .outlineAlert {
@@ -51,8 +57,8 @@
     border: 1px solid $color-red;
 }
 
-.outline:hover,
-.outline:active {
+.outline:hover:not(.disabled),
+.outline:active:not(.disabled) {
     background-color: $color-white;
     color: $color-abbey;
     opacity: 1;
