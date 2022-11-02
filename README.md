@@ -177,6 +177,24 @@ The Project Contract API node.js backend service performs the following actions:
 The authentication protocol loosely follows the proposed [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) and is described more in detail [here](#stateless-authentication).
 
 Once the Algorand Project Smart Contract is successfully deployed, the project information is stored entirely on decentralised systems, i.e. the Algorand blockchain and IPFS. The smart contract exposes an API to further interact and update its state, as described in a separate section.
+    
+### Viewing open projects by current user
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+    
+Users connected to their wallet can see a list of all projects that they have opened for crowdfunding. Newly created projects will need to go through an approval process (still to be implemented) before being publicly visible and eligible for crowdfunding on Terragrids.
+    
+When users select "My Projects" from the user menu, they will see a list of projects they have created.
+    
+Selecting a project from the list, a project details dialog will show the project information.
+    
+In particular, the application performs the following actions:
+
+1. The frontend requests the information for a specified project contract id
+2. The Project Contract node.js backend fetches the information using a dummy Algorand account with no balance to connect to the Smart Contract read-only Reach `View` interface
+3. The Project Contract node.js backend returns the information to the frontend, without charging the user's wallet
+4. The frontend uses the IPFS URL specified in the project information to retrieve the project metadata and display it to the user
 
 ## Algorand Greenhouse Hack #1
 
