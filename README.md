@@ -15,9 +15,7 @@ https://user-images.githubusercontent.com/2437709/199459819-b6fe52fd-f30b-474f-8
 
 ### User menu
 
-A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
-
-Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
+Once connected to their wallet, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
 
 https://user-images.githubusercontent.com/2437709/185812001-a75a3fab-1d61-48f9-be60-c45806abf6e6.mov
 
@@ -30,7 +28,7 @@ https://user-images.githubusercontent.com/2437709/185812064-826ceec2-26c8-4132-b
 
 ### NFT Minting
 
-From the user menu, any connected users can mint new Terragrids NFTs. This is temporary on Testnet, as only an administrator's wallet will be able to mint.
+From the user menu, administrator's wallet will be able to mint.
 
 If users click on the Mint option, they will see an NFT Mint dialog. From there, they can select an image, enter the type of NFT, its name and description, and more information based on its type, e.g. nominal power in TerraWatts (TRW) for Terracells, or map position for Terralands.
 
@@ -70,6 +68,7 @@ The new contract can be seen on AlgoExplorer.
 
 If a user's wallet does not own a Terraland NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
 Buying a Terraland will connect the user's wallet account to the trading Algorand contract for that NFT. The NFT is transferred from the contract account to the buyer's wallet account, and the price in ALGO is paid from the buyer's account to the Terragrids Treasury crowdfunding account. The contract will keep tracking the NFT, listening to further API calls.
+In a future implementation, users will be able to pick the project they want to contribute to when buying the NFT. The Reach smart contract will associate the NFT and the ALGO amount paid into the Terragrids Treasury crowdfunding account to a project contract and its creator's wallet address; this will allow final release of the total contributed amount once the project budget goal has been reached. 
 
 https://user-images.githubusercontent.com/2437709/185997014-dd1061e5-f03e-4f8b-be1c-890685a4c9d8.mov
 
@@ -89,7 +88,7 @@ After withdrawing, AlgoExplorer shows the contract as deleted.
 
 ### Solar Power Plant
 
-When administrators (at the moment any user) mint a new Terracell (`$TRCL`), it will be displayed in the Terragrids Solar Power Plant (SPP). The SPP dialog can be opened from the map clicking on the plot of land at position (0,0).
+When administrators mint a new Terracell (`$TRCL`), it will be displayed in the Terragrids Solar Power Plant (SPP). The SPP dialog can be opened from the map clicking on the plot of land at position (0,0).
 The Solar Power Plant has a Capacity and an Output.
 
 -   The Capacity is determined by the total nominal output in TerraWatts (TRW) of all the Terracells that are currently up for sale
