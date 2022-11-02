@@ -9,6 +9,8 @@ The Terragrids DApp is still a prototype. When running it on a developer's machi
 <img width="1898" alt="image" src="https://user-images.githubusercontent.com/2437709/199460586-e25dce5e-2e18-4093-abce-05b000c721dd.png">
 
 ### Algorand Wallets
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Pera Wallet integrated during Algorand Greenhouse Hack #2<sub>
 A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
 
 https://user-images.githubusercontent.com/2437709/199459819-b6fe52fd-f30b-474f-81f5-7087ac5d932b.mov
@@ -176,7 +178,9 @@ The Project Contract API node.js backend service performs the following actions:
 
 The authentication protocol loosely follows the proposed [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) and is described more in detail [here](#stateless-authentication).
 
-Once the Algorand Project Smart Contract is successfully deployed, the project information is stored entirely on decentralised systems, i.e. the Algorand blockchain and IPFS. The smart contract exposes an API to further interact and update its state, as described in a separate section.
+Once the Algorand Project Smart Contract is successfully deployed, the project information is stored entirely on decentralised systems, i.e. the Algorand blockchain and IPFS. The smart contract exposes an API to further interact and update its state, as described in [this section](#editing-projects).
+    
+A project is represented quite similarly to an NFT on the Algorand blockchain. It is an Algorand Smart Contract deployed on the blockchain which points to the URL of the current project metadata file pinned on IPFS. The URL of the metadata file and its integrity hash are updated on the Smart Contract to a new one every time the project is updated by a user.
     
 ### Viewing open projects by current user
 
@@ -221,6 +225,12 @@ The Project Contract API node.js backend service performs the following actions:
 3. Pass the updated Pinata IPFS metadata URL and hash to the Project Smart Contract at deployment time to be stored in the contract state
     
 The smart contract state is updated and pointing to a new file pinned on IPFS. 
+
+https://user-images.githubusercontent.com/2437709/199514545-1714b4fd-9f4e-4546-aca7-cbe1a3c201fd.mov
+
+Users can follow the link to the Algo Explorer page and check the status of their project smart contract on the blockchain. They can see that it's been deployed and accessed by the Terragrids intermediary admin wallet account and they can monitor the transactions involving their contract.
+
+https://user-images.githubusercontent.com/2437709/199512600-9308777a-f610-46d9-9108-a13562462a97.mov
 
 ## Algorand Greenhouse Hack #1
 
