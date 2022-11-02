@@ -187,14 +187,16 @@ Users connected to their wallet can see a list of all projects that they have op
     
 When users select "My Projects" from the user menu, they will see a list of projects they have created.
     
-Selecting a project from the list, a project details dialog will show the project information.
+Selecting a project from the list, a project details dialog will show the project information. The Algorand Application ID for the current project is also displayed on the dialog, with a link to the Application on Algo Explorer.
+
+https://user-images.githubusercontent.com/2437709/199490659-ec66af5f-c13c-4eb9-b48a-6ba7fcfda187.mov
     
-In particular, the application performs the following actions:
+In particular, the application performs the following actions when selecting a project:
 
 1. The frontend requests the information for a specified project contract id
 2. The Project Contract node.js backend fetches the information using a dummy Algorand account with no balance to connect to the Smart Contract read-only Reach `View` interface
 3. The Project Contract node.js backend returns the information to the frontend, without charging the user's wallet
-4. The frontend uses the IPFS URL specified in the project information to retrieve the project metadata and display it to the user
+4. The frontend uses the IPFS URL specified in the project information to retrieve the project metadata and display it to the user 
 
 ## Algorand Greenhouse Hack #1
 
