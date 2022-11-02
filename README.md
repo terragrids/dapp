@@ -8,9 +8,14 @@ The Terragrids DApp is still a prototype. When running it on a developer's machi
 
 <img width="1772" alt="image" src="https://user-images.githubusercontent.com/2437709/185810976-f7c6e715-bad7-44a0-9506-811f40fb4292.png">
 
+### Algorand Wallets
+A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
+
+https://user-images.githubusercontent.com/2437709/199459819-b6fe52fd-f30b-474f-81f5-7087ac5d932b.mov
+
 ### User menu
 
-A button at the top right allows users to connect to their Algo Wallet. At the moment, only MyAlgo Wallet is supported.
+A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
 
 Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
 
