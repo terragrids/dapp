@@ -6,7 +6,7 @@ The DApp web interface and Reach backend.
 
 The Terragrids DApp is still a prototype. When running it on a developer's machine, or accessing it at https://testnet.terragrids.org, it shows an isometric map, representing the Terragrids metaverse. Currently, all images in the frontend and NFTs are test images and will be replaced.
 
-<img width="1772" alt="image" src="https://user-images.githubusercontent.com/2437709/185810976-f7c6e715-bad7-44a0-9506-811f40fb4292.png">
+<img width="1898" alt="image" src="https://user-images.githubusercontent.com/2437709/199460586-e25dce5e-2e18-4093-abce-05b000c721dd.png">
 
 ### Algorand Wallets
 A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
