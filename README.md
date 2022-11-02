@@ -149,6 +149,33 @@ https://user-images.githubusercontent.com/2437709/186005539-9a27c521-75e4-43c3-9
 If a Terracell is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terracell is up for sale, it will be withdrawn from the market, but still visible in the SPP; if the Terracell is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
 If the Terracell has not been sold yet, the trading contract will also call the SPP smart contract to decrease the SPP Capacity by the Terracell nominal power (still to be implemented).
 
+### Creating projects
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+
+Users can submit their projects for crowdfunding from the user menu.
+
+Once all required information is entered (i.e. at the moment project logo, name and description, and later project timeline and budget goal), users press the "Create" button on the dialog. 
+
+The frontend then performs the following actions:
+
+1. Upload the image and the project metadata to Pinata IPFS
+2. Request a unique authentication message from the API
+3. Authenticate the user by asking to sign a zero-fee/zero-algo transaction with their wallet, adding the authentication message in the transaction note
+4. Post the Pinata IPFS metadata URL and hash to the Project Contract API ([GutHub repo](https://github.com/terragrids/project-contract))
+
+The Project Contract API node.js backend service performs the following actions:
+
+1. Verify the user identity checking the signed authentication transaction
+2. If the user authentication is successful, deploy a new Algorand Smart Contract using an intermediary admin wallet, to avoid asking the project creator to pay transaction fees
+3. Pass the Pinata IPFS metadata URL and hash to the Project Smart Contract at deployment time to be stored in the contract state
+4. Save the contract ID (i.e. the Algorand Application ID) and the associated user wallet address on the off-chain DynamoDB
+
+The authentication protocol loosely follows the proposed [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) and is described more in detail [here](#stateless-authentication).
+
+Once the Algorand Project Smart Contract is successfully deployed, the project information is stored entirely on decentralised systems, i.e. the Algorand blockchain and IPFS. The smart contract exposes an API to further interact and update its state, as described in a separate section.
+
 ## Algorand Greenhouse Hack #1
 
 This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
