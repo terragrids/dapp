@@ -6,13 +6,18 @@ The DApp web interface and Reach backend.
 
 The Terragrids DApp is still a prototype. When running it on a developer's machine, or accessing it at https://testnet.terragrids.org, it shows an isometric map, representing the Terragrids metaverse. Currently, all images in the frontend and NFTs are test images and will be replaced.
 
-<img width="1772" alt="image" src="https://user-images.githubusercontent.com/2437709/185810976-f7c6e715-bad7-44a0-9506-811f40fb4292.png">
+<img width="1898" alt="image" src="https://user-images.githubusercontent.com/2437709/199460586-e25dce5e-2e18-4093-abce-05b000c721dd.png">
+
+### Algorand Wallets
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Pera Wallet integrated during Algorand Greenhouse Hack #2<sub>
+A button at the top right allows users to connect to their Algo Wallet. At the moment, MyAlgo Wallet and Pera Wallet are supported.
+
+https://user-images.githubusercontent.com/2437709/199459819-b6fe52fd-f30b-474f-81f5-7087ac5d932b.mov
 
 ### User menu
 
-A button at the top right allows users to connect to their Algo Wallet. At the moment, only MyAlgo Wallet is supported.
-
-Once connected, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
+Once connected to their wallet, users can see their ALGO balance in their wallet at the top right. If they click on it, they will see a user menu, showing a list of Terragrids NFTs: Terracells (`$TRCL`), Terralands (`$TRLD`), Terrabuilds (`$TRBD`).
 
 https://user-images.githubusercontent.com/2437709/185812001-a75a3fab-1d61-48f9-be60-c45806abf6e6.mov
 
@@ -25,7 +30,7 @@ https://user-images.githubusercontent.com/2437709/185812064-826ceec2-26c8-4132-b
 
 ### NFT Minting
 
-From the user menu, any connected users can mint new Terragrids NFTs. This is temporary on Testnet, as only an administrator's wallet will be able to mint.
+From the user menu, administrator's wallet will be able to mint.
 
 If users click on the Mint option, they will see an NFT Mint dialog. From there, they can select an image, enter the type of NFT, its name and description, and more information based on its type, e.g. nominal power in TerraWatts (TRW) for Terracells, or map position for Terralands.
 
@@ -65,6 +70,7 @@ The new contract can be seen on AlgoExplorer.
 
 If a user's wallet does not own a Terraland NFT and it is currently up for sale, users will see their price, their trading contract ID (i.e. the Algorand Application ID), and a button to buy it for the specified price.
 Buying a Terraland will connect the user's wallet account to the trading Algorand contract for that NFT. The NFT is transferred from the contract account to the buyer's wallet account, and the price in ALGO is paid from the buyer's account to the Terragrids Treasury crowdfunding account. The contract will keep tracking the NFT, listening to further API calls.
+In a future implementation, users will be able to pick the project they want to contribute to when buying the NFT. The Reach smart contract will associate the NFT and the ALGO amount paid into the Terragrids Treasury crowdfunding account to a project contract and its creator's wallet address; this will allow final release of the total contributed amount once the project budget goal has been reached. 
 
 https://user-images.githubusercontent.com/2437709/185997014-dd1061e5-f03e-4f8b-be1c-890685a4c9d8.mov
 
@@ -84,7 +90,7 @@ After withdrawing, AlgoExplorer shows the contract as deleted.
 
 ### Solar Power Plant
 
-When administrators (at the moment any user) mint a new Terracell (`$TRCL`), it will be displayed in the Terragrids Solar Power Plant (SPP). The SPP dialog can be opened from the map clicking on the plot of land at position (0,0).
+When administrators mint a new Terracell (`$TRCL`), it will be displayed in the Terragrids Solar Power Plant (SPP). The SPP dialog can be opened from the map clicking on the plot of land at position (0,0).
 The Solar Power Plant has a Capacity and an Output.
 
 -   The Capacity is determined by the total nominal output in TerraWatts (TRW) of all the Terracells that are currently up for sale
@@ -145,6 +151,87 @@ https://user-images.githubusercontent.com/2437709/186005539-9a27c521-75e4-43c3-9
 If a Terracell is up for sale, or sold but still tracked by its deployed smart contract, sellers can decide to withdraw it by calling a Reach API. If the Terracell is up for sale, it will be withdrawn from the market, but still visible in the SPP; if the Terracell is already sold, the seller stops the tracking contract, effectively allowing the new owner to sell the NFT themselves using a new trading contract.
 If the Terracell has not been sold yet, the trading contract will also call the SPP smart contract to decrease the SPP Capacity by the Terracell nominal power (still to be implemented).
 
+### Creating projects
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+
+Users can submit their projects for crowdfunding from the user menu.
+
+Once all required information is entered (i.e. at the moment project logo, name and description, and later project timeline and budget goal), users press the "Create" button on the dialog.
+
+https://user-images.githubusercontent.com/2437709/199476143-532282fb-2e54-45a8-8d10-eebb34b23ed9.mov
+
+The frontend then performs the following actions:
+
+1. Upload the image and the project metadata to Pinata IPFS
+2. Request a unique authentication message from the API
+3. Authenticate the user by asking to sign a zero-fee/zero-algo transaction with their wallet, adding the authentication message in the transaction note
+4. Post the Pinata IPFS metadata URL and hash to the Project Contract API ([GutHub repo](https://github.com/terragrids/project-contract))
+
+The Project Contract API node.js backend service performs the following actions:
+
+1. Verify the user identity checking the signed authentication transaction
+2. If the user authentication is successful, deploy a new Algorand Smart Contract using an intermediary admin wallet, to avoid asking the project creator to pay transaction fees
+3. Pass the Pinata IPFS metadata URL and hash to the Project Smart Contract at deployment time to be stored in the contract state
+4. Save the contract ID (i.e. the Algorand Application ID) and the associated user wallet address on the off-chain DynamoDB
+
+The authentication protocol loosely follows the proposed [ARC-0014](https://github.com/algorandfoundation/ARCs/pull/84) and is described more in detail [here](#stateless-authentication).
+
+Once the Algorand Project Smart Contract is successfully deployed, the project information is stored entirely on decentralised systems, i.e. the Algorand blockchain and IPFS. The smart contract exposes an API to further interact and update its state, as described in [this section](#editing-projects).
+    
+A project is represented quite similarly to an NFT on the Algorand blockchain. It is an Algorand Smart Contract deployed on the blockchain which points to the URL of the current project metadata file pinned on IPFS. The URL of the metadata file and its integrity hash are updated on the Smart Contract to a new one every time the project is updated by a user.
+    
+### Viewing open projects by current user
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+    
+Users connected to their wallet can see a list of all projects that they have opened for crowdfunding. Newly created projects will need to go through an approval process (still to be implemented) before being publicly visible and eligible for crowdfunding on Terragrids.
+    
+When users select "My Projects" from the user menu, they will see a list of projects they have created.
+    
+Selecting a project from the list, a project details dialog will show the project information. The Algorand Application ID for the current project is also displayed on the dialog, with a link to the Application on Algo Explorer.
+
+https://user-images.githubusercontent.com/2437709/199490659-ec66af5f-c13c-4eb9-b48a-6ba7fcfda187.mov
+    
+In particular, the application performs the following actions when selecting a project:
+
+1. The frontend requests the information from the Project Contract API for a specified project contract ID
+2. The Project Contract node.js backend fetches the information using a dummy Algorand account with no balance to connect to the Smart Contract read-only Reach `View` interface
+3. The Project Contract node.js backend returns the information to the frontend, without charging the user's wallet
+4. The frontend uses the IPFS URL specified in the project information to retrieve the project metadata and display it to the user 
+    
+### Editing projects
+
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
+
+Users can edit their projects from the project details dialog. In particular, at the moment users can edit their project name, logo and description. In future implementations, edits will need to go through an approval process before being publicly applied.
+
+https://user-images.githubusercontent.com/2437709/199510816-8bcb5e1f-88a7-46db-a6db-19ccf9fdeda5.mov
+
+The frontend performs the following actions when editing a project:
+
+1. Upload the image and the project metadata to Pinata IPFS
+2. Request a unique authentication message from the API
+3. Authenticate the user by asking to sign a zero-fee/zero-algo transaction with their wallet, adding the authentication message in the transaction note
+4. Send the Pinata IPFS metadata URL and hash to the Project Contract API for the existing contract ID
+    
+The Project Contract API node.js backend service performs the following actions:
+
+1. Verify the user identity checking the signed authentication transaction
+2. If the user authentication is successful, call the Algorand Smart Contract API using an intermediary admin wallet, to avoid asking the project creator to pay transaction fees
+3. Pass the updated Pinata IPFS metadata URL and hash to the Project Smart Contract at deployment time to be stored in the contract state
+    
+The smart contract state is updated and pointing to a new file pinned on IPFS. 
+
+https://user-images.githubusercontent.com/2437709/199514545-1714b4fd-9f4e-4546-aca7-cbe1a3c201fd.mov
+
+Users can follow the link to the Algo Explorer page and check the status of their project smart contract on the blockchain. They can see that it's been deployed and accessed by the Terragrids intermediary admin wallet account and they can monitor the transactions involving their contract.
+
+https://user-images.githubusercontent.com/2437709/199512600-9308777a-f610-46d9-9108-a13562462a97.mov
+
 ## Algorand Greenhouse Hack #1
 
 This is the list of new features that have been implemented during the Algorand Greenhouse Hack #1:
@@ -196,6 +283,9 @@ Lists on NFTs are fetched using a Terragrids Proxy API (i.e. https://testnet.ter
 ```
 
 ## Stateless Authentication
+    
+> <img width="30" alt="image" src="https://user-images.githubusercontent.com/2437709/199463330-3bb8da4b-de7d-408d-b58a-be7b7d42bcca.png">
+> <sub>Developed during Algorand Greenhouse Hack #2<sub>
 
 A stateless authentication protocol is used to authenticate users using their public wallet address, i.e. the public key `PKa` of their Algorand account.
 
