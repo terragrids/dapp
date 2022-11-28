@@ -31,8 +31,9 @@ type Asset = {
 type AssetDetails = {
     text: string
     power: number
-    positionX: number
-    positionY: number
+    price: number
+    rarity: string
+    author: string
 }
 
 const defaultAsset = {
@@ -41,8 +42,9 @@ const defaultAsset = {
     details: {
         text: '',
         power: 10,
-        positionX: 0,
-        positionY: 0
+        price: 10,
+        rarity: 'common',
+        author: ''
     } as AssetDetails
 } as Asset
 
@@ -69,19 +71,21 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         setAsset(asset => ({ ...asset, details: { ...asset.details, power: +power } }))
     }
 
-    function setNftPositionX(x: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, positionX: +x } }))
+    function setNftPrice(price: string) {
+        setAsset(asset => ({ ...asset, details: { ...asset.details, price: +price } }))
     }
 
-    function setNftPositionY(y: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, positionY: +y } }))
+    function setNftRarity(rarity: string) {
+        setAsset(asset => ({ ...asset, details: { ...asset.details, rarity } }))
+    }
+
+    function setNftAuthor(author: string) {
+        setAsset(asset => ({ ...asset, details: { ...asset.details, author } }))
     }
 
     function isValidNft() {
-        let valid = !!asset.name && !!asset.symbol && !!asset.details.text
+        let valid = !!asset.name && !!asset.symbol && !!asset.details.text && asset.details.price > 0
         if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.details.power && asset.details.power > 0
-        if (asset.symbol === Nft.TRLD.symbol)
-            valid = valid && asset.details.positionX !== undefined && asset.details.positionY !== undefined
         return valid
     }
 
@@ -100,35 +104,15 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     function onUpload() {
         if (!file) return
 
-        switch (asset.symbol) {
-            case Nft.TRCL.symbol:
-                setAsset(asset => ({
-                    ...asset,
-                    description: {
-                        text: asset.details.text,
-                        power: asset.details.power
-                    }
-                }))
-                break
-            case Nft.TRLD.symbol:
-                setAsset(asset => ({
-                    ...asset,
-                    description: {
-                        text: asset.details.text,
-                        positionX: asset.details.positionX,
-                        positionY: asset.details.positionY
-                    }
-                }))
-                break
-            case Nft.TRBD.symbol:
-                setAsset(asset => ({
-                    ...asset,
-                    description: {
-                        text: asset.details.text
-                    }
-                }))
-                break
-        }
+        setAsset(asset => ({
+            ...asset,
+            description: {
+                text: asset.details.text,
+                price: asset.details.price,
+                ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power })
+            }
+        }))
+
         upload(file)
     }
 
@@ -181,11 +165,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     assetId: asset.id,
                     symbol: asset.symbol,
                     offchainUrl: fileProps.offChainUrl,
-                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power }),
-                    ...(asset.symbol === Nft.TRLD.symbol && {
-                        positionX: asset.details.positionX,
-                        positionY: asset.details.positionY
-                    })
+                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power })
                 })
             })
 
@@ -195,15 +175,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (mintState === MintState.SAVING) {
             saveToken()
         }
-    }, [
-        asset.details.positionX,
-        asset.details.positionY,
-        asset.details.power,
-        asset.id,
-        asset.symbol,
-        fileProps.offChainUrl,
-        mintState
-    ])
+    }, [asset.details.power, asset.id, asset.symbol, fileProps.offChainUrl, mintState])
 
     /**
      * 4. All done, close dialog
@@ -244,6 +216,17 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     />
                 </div>
                 <div className={styles.section}>
+                    <DropDownSelector
+                        label={strings.rarity}
+                        options={[
+                            { key: 'common', value: 'Common' },
+                            { key: 'rare', value: 'Rare' },
+                            { key: 'legendary', value: 'Legendary' }
+                        ]}
+                        onSelected={setNftRarity}
+                    />
+                </div>
+                <div className={styles.section}>
                     <InputField max={26} label={strings.name} onChange={setNftName} />
                 </div>
                 <div className={styles.section}>
@@ -259,26 +242,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                         />
                     </div>
                 )}
-                {asset.symbol === Nft.TRLD.symbol && (
-                    <>
-                        <div className={styles.section}>
-                            <InputField
-                                type={'number'}
-                                initialValue={'0'}
-                                label={strings.positionX}
-                                onChange={setNftPositionX}
-                            />
-                        </div>
-                        <div className={styles.section}>
-                            <InputField
-                                type={'number'}
-                                initialValue={'0'}
-                                label={strings.positionY}
-                                onChange={setNftPositionY}
-                            />
-                        </div>
-                    </>
-                )}
+                <div className={styles.section}>
+                    <InputField max={26} label={strings.author} onChange={setNftAuthor} />
+                </div>
+                <div className={styles.section}>
+                    <InputField type={'number'} initialValue={'10'} label={strings.basePrice} onChange={setNftPrice} />
+                </div>
                 <Button
                     className={styles.button}
                     disabled={!file || !isValidNft()}

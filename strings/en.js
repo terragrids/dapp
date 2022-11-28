@@ -4,8 +4,10 @@ const enStrings = {
     activeTerracells: 'Active terracells',
     algoSigner: 'AlgoSigner',
     assetID: 'Asset ID',
+    author: 'Author',
     availableToBuy: 'Available to buy',
     back: '< Back',
+    basePrice: 'Base Price ($ALGO)',
     buy: 'Buy',
     buyFor: 'Buy for',
     capacity: 'Capacity',
@@ -21,10 +23,10 @@ const enStrings = {
     createProject: 'Create new project',
     createProjectWithWallet: 'Create a new project associated with your wallet address',
     description: 'Description',
-    edit: 'Edit',
     details: 'Details',
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
+    edit: 'Edit',
     errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
     errorBuyingNft:
         'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
@@ -33,7 +35,6 @@ const enStrings = {
     errorCreatingNftSaleContract:
         'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
     errorCreatingProject: 'Something went wrong when creating your project. Please try again.',
-    errorUpdatingProject: 'Something went wrong when updating your project. Please try again.',
     errorCreatingTerracellSaleContract:
         'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingNftSaleContract:
@@ -52,6 +53,7 @@ const enStrings = {
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorNoSppContract: 'Unable to find the Solar Power Plant Smart Contract.',
     errorTerminatingSppContract: 'Unable to terminate the Solar Power Plant Smart Contract.',
+    errorUpdatingProject: 'Something went wrong when updating your project. Please try again.',
     errorUpdatingSppContract: 'Unable to update the Solar Power Plant Smart Contract.',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     helloExplorer: 'Hello, Terragrids explorer!',
@@ -76,6 +78,7 @@ const enStrings = {
     power: 'Power',
     price: 'Price',
     projectLogo: 'Project logo',
+    rarity: 'Rarity',
     redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',
     sell: 'Sell',
