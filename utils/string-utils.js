@@ -14,6 +14,7 @@ export function getQueryParameter(searchString, parameter) {
 
 export function getIpfsHash(url) {
     if (url && url.startsWith('ipfs://')) {
+        url.replace('#arc3', '')
         return url.slice(7)
     }
     return null

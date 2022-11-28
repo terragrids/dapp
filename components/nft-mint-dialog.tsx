@@ -58,7 +58,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     function setNftName(name: string) {
-        setAsset(asset => ({ ...asset, name: `${name.trim()}@arc3` }))
+        setAsset(asset => ({ ...asset, name: name.trim() }))
     }
 
     function setNftDescription(description: string) {
@@ -118,7 +118,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             const assetId = await mint({
                 name: fileProps.name,
                 symbol: asset.symbol,
-                url: fileProps.ipfsMetadataUrl,
+                url: `${fileProps.ipfsMetadataUrl}#arc3`,
                 metadataHash: fileProps.ipfsMetadataHash
             })
 
