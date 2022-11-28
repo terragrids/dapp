@@ -44,18 +44,28 @@ export default function WalletPicker({ visible, onClose }) {
         try {
             setLoading(true)
 
-            const account = await reach.stdlib.getDefaultAccount()
-            const [balance, assetResponse] = await Promise.all([
-                reach.stdlib.balanceOf(account),
-                fetch(endpoints.accountTerracells(account.networkAccount.addr))
-            ])
-            const { assets } = await assetResponse.json()
+            if (process.env.NEXT_PUBLIC_OFFLINE === 'true') {
+                user.update({
+                    walletAccount: {
+                        contract: {},
+                        networkAccount: { addr: process.env.NEXT_PUBLIC_ADMIN_WALLETS.split(',')[0] }
+                    },
+                    walletBalance: 100
+                })
+            } else {
+                const account = await reach.stdlib.getDefaultAccount()
+                const [balance, assetResponse] = await Promise.all([
+                    reach.stdlib.balanceOf(account),
+                    fetch(endpoints.accountTerracells(account.networkAccount.addr))
+                ])
+                const { assets } = await assetResponse.json()
 
-            user.update({
-                walletAccount: account,
-                walletBalance: reach.stdlib.formatCurrency(balance, 4),
-                terracells: assets
-            })
+                user.update({
+                    walletAccount: account,
+                    walletBalance: reach.stdlib.formatCurrency(balance, 4),
+                    terracells: assets
+                })
+            }
 
             setLoading(false)
             onClose()
