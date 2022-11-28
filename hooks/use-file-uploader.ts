@@ -5,7 +5,8 @@ import usePrevious from './use-previous.js'
 
 type Props = {
     name: string
-    description: object
+    description: string
+    properties: object
 }
 
 export enum FileUploadState {
@@ -17,7 +18,7 @@ export enum FileUploadState {
     ERROR
 }
 
-export function useFileUploader({ name, description }: Props) {
+export function useFileUploader({ name, description, properties }: Props) {
     type FileProps = {
         uploadState: FileUploadState
         file?: File
@@ -113,6 +114,7 @@ export function useFileUploader({ name, description }: Props) {
             body: JSON.stringify({
                 assetName: name,
                 assetDescription: description,
+                assetProperties: properties,
                 fileName: fileProps.id
             })
         })
@@ -132,7 +134,7 @@ export function useFileUploader({ name, description }: Props) {
                 uploadState: FileUploadState.ERROR
             }))
         }
-    }, [name, description, fileProps.id])
+    }, [fileProps.id, name, description, properties])
 
     /**
      * State machine

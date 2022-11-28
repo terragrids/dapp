@@ -24,12 +24,11 @@ type Asset = {
     id?: string
     name: string
     symbol: string
-    details: AssetDetails
-    description: object
+    description: string
+    properties: AssetProperties
 }
 
-type AssetDetails = {
-    text: string
+type AssetProperties = {
     power: number
     price: number
     rarity: string
@@ -39,13 +38,12 @@ type AssetDetails = {
 const defaultAsset = {
     name: '',
     symbol: Nft.TRCL.symbol,
-    details: {
-        text: '',
+    properties: {
         power: 10,
         price: 10,
         rarity: 'common',
         author: ''
-    } as AssetDetails
+    } as AssetProperties
 } as Asset
 
 export const NftMintDialog = ({ visible, onClose }: Props) => {
@@ -60,32 +58,37 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     function setNftName(name: string) {
-        setAsset(asset => ({ ...asset, name: `${name}@arc3` }))
+        setAsset(asset => ({ ...asset, name: `${name.trim()}@arc3` }))
     }
 
     function setNftDescription(description: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, text: description } }))
+        setAsset(asset => ({ ...asset, description: description.trim() }))
     }
 
     function setNftPower(power: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, power: +power } }))
+        setAsset(asset => ({ ...asset, properties: { ...asset.properties, power: +power } }))
     }
 
     function setNftPrice(price: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, price: +price } }))
+        setAsset(asset => ({ ...asset, properties: { ...asset.properties, price: +price } }))
     }
 
     function setNftRarity(rarity: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, rarity } }))
+        setAsset(asset => ({ ...asset, properties: { ...asset.properties, rarity } }))
     }
 
     function setNftAuthor(author: string) {
-        setAsset(asset => ({ ...asset, details: { ...asset.details, author } }))
+        setAsset(asset => ({ ...asset, properties: { ...asset.properties, author: author.trim() } }))
     }
 
     function isValidNft() {
-        let valid = !!asset.name && !!asset.symbol && !!asset.details.text && asset.details.price > 0
-        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.details.power && asset.details.power > 0
+        let valid =
+            !!asset.name &&
+            !!asset.symbol &&
+            !!asset.description &&
+            asset.properties.price > 0 &&
+            !!asset.properties.author
+        if (asset.symbol === Nft.TRCL.symbol) valid = valid && !!asset.properties.power && asset.properties.power > 0
         return valid
     }
 
@@ -103,16 +106,6 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
      */
     function onUpload() {
         if (!file) return
-
-        setAsset(asset => ({
-            ...asset,
-            description: {
-                text: asset.details.text,
-                price: asset.details.price,
-                ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power })
-            }
-        }))
-
         upload(file)
     }
 
@@ -165,7 +158,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     assetId: asset.id,
                     symbol: asset.symbol,
                     offchainUrl: fileProps.offChainUrl,
-                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.details.power })
+                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.properties.power })
                 })
             })
 
@@ -175,7 +168,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
         if (mintState === MintState.SAVING) {
             saveToken()
         }
-    }, [asset.details.power, asset.id, asset.symbol, fileProps.offChainUrl, mintState])
+    }, [asset.id, asset.properties.power, asset.symbol, fileProps.offChainUrl, mintState])
 
     /**
      * 4. All done, close dialog

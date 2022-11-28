@@ -8,13 +8,16 @@
     align-items: center;
     padding-bottom: 20px;
     min-width: 500px;
+    max-width: 600px;
 
     @media (max-width: $screen-midi) {
         min-width: 400px;
+        max-width: 500px;
     }
 
     @media (max-width: $screen-small) {
         min-width: 0;
+        max-width: none;
         width: 100%;
     }
 }
