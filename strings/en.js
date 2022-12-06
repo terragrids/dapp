@@ -78,6 +78,7 @@ const enStrings = {
     power: 'Power',
     price: 'Price',
     projectLogo: 'Project logo',
+    projects: 'Projects',
     rarity: 'Rarity',
     redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',

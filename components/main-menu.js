@@ -12,6 +12,7 @@ export default function MainMenu({
     onMint,
     onDisconnectWallet,
     onOpenSppAdminPanel,
+    onOpenProjects,
     onOpenMyProjects,
     onCreateProject,
     onToggleMenu
@@ -35,6 +36,11 @@ export default function MainMenu({
 
     const openNftListDialog = symbol => {
         onSelectSymbol(symbol)
+        onToggleMenu()
+    }
+
+    const openProjects = () => {
+        onOpenProjects()
         onToggleMenu()
     }
 
@@ -74,6 +80,7 @@ export default function MainMenu({
                     </ul>
 
                     <ul className={styles.actions}>
+                        <li onClick={openProjects}>{strings.projects}</li>
                         <li onClick={openMyProjects}>{strings.myProjects}</li>
                         <li onClick={createProject}>{strings.createProject}</li>
                         {user && user.isAdmin && (

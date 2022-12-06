@@ -1,3 +1,4 @@
+import LoadingSpinner from 'components/loading-spinner.js'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
@@ -7,9 +8,11 @@ import { Project } from 'types/project.js'
 import { endpoints } from 'utils/api-config.js'
 import ProjectDetails from './project-details'
 import ProjectListItem from './projects-list-item'
+import styles from './projects-dialog.module.scss'
 
-type MyProjectsDialogProps = {
+type ProjectsDialogProps = {
     visible: boolean
+    ownerWalletAddress: string | null
     onClose: () => void
 }
 
@@ -18,9 +21,9 @@ type Error = {
     description?: string
 }
 
-const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
+const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: ProjectsDialogProps) => {
     const user = useContext<User>(UserContext)
-    const [projects, setProjects] = useState<Array<Project>>([])
+    const [projects, setProjects] = useState<Array<Project> | null>(null)
     const [error, setError] = useState<Error | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
 
@@ -28,7 +31,9 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
         if (!user) return
         setError(null)
 
-        const response = await fetch(endpoints.accountProjects(user.walletAddress))
+        const response = await fetch(
+            ownerWalletAddress ? endpoints.accountProjects(ownerWalletAddress) : endpoints.projects
+        )
 
         if (response.ok) {
             const { projects } = await response.json()
@@ -36,10 +41,11 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
         } else {
             setError({ message: strings.errorFetchingProjects })
         }
-    }, [user])
+    }, [ownerWalletAddress, user])
 
     useEffect(() => {
         if (visible) {
+            setProjects(null)
             setSelectedProject(null)
             fetchProjects()
         }
@@ -50,14 +56,23 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
     }
 
     return (
-        <ModalDialog visible={visible} title={strings.myProjects} onClose={onClose}>
-            {!selectedProject && (
+        <ModalDialog
+            visible={visible}
+            title={ownerWalletAddress ? strings.myProjects : strings.projects}
+            onClose={onClose}>
+            {!projects && !error && (
+                <div className={styles.loading}>
+                    <LoadingSpinner />
+                </div>
+            )}
+            {projects && !selectedProject && (
                 <>
                     {projects.map(project => (
                         <ProjectListItem
                             key={project.id}
                             id={project.id}
                             name={project.name}
+                            ownerWallet={project.creator}
                             imageUrl={project.offChainImageUrl}
                             onClick={openProject}
                         />
@@ -70,4 +85,4 @@ const MyProjectsDialog = ({ visible, onClose }: MyProjectsDialogProps) => {
     )
 }
 
-export default MyProjectsDialog
+export default ProjectsDialog

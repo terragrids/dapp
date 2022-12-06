@@ -17,6 +17,7 @@ export default function Layout({
     onMint,
     onOpenSppAdminPanel,
     onOpenMyProjects,
+    onOpenProjects,
     onCreateProject
 }) {
     const user = useContext(UserContext)
@@ -66,6 +67,7 @@ export default function Layout({
                         onMint={onMint}
                         onDisconnectWallet={onDisconnectWallet}
                         onOpenSppAdminPanel={onOpenSppAdminPanel}
+                        onOpenProjects={onOpenProjects}
                         onOpenMyProjects={onOpenMyProjects}
                         onCreateProject={onCreateProject}
                         onToggleMenu={onToggleMenu}

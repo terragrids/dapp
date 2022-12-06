@@ -1,19 +1,22 @@
 @import 'styles/colors.scss';
 @import 'styles/screens.scss';
+@import 'styles/dimens.scss';
 
 .container {
     display: flex;
     flex: auto 1 0;
     align-content: center;
+    justify-content: flex-start;
     padding: 10px;
     box-sizing: border-box;
     height: 100px;
-    width: 400px;
+    width: 600px;
     margin: 10px 0;
     overflow: hidden;
     cursor: pointer;
 
     @media (max-width: $screen-small) {
+        min-width: auto;
         width: 100%;
     }
 
@@ -31,8 +34,9 @@
 .imageContainer {
     flex: 0 0 80px;
     position: relative;
-    border-radius: 100%;
     overflow: hidden;
+    border-radius: $border-radius;
+    background-color: $color-abbey;
 
     .image {
         width: 80px;
@@ -44,10 +48,16 @@
 .nameContainer {
     padding: 20px;
     overflow: hidden;
+    text-align: start;
 
     & > div {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
+}
+
+.ownerContainer {
+    text-align: right;
+    flex: 1 0 80px;
 }

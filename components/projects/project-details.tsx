@@ -31,29 +31,26 @@ type ProjectDetails = {
     description: string
 }
 
-type UpdatedProjectDetails = {
+type UpdatedProjectProperties = {
     name: string
     description: string
+    properties: object
     logoFile: File
 }
-
-const defaultProject = {
-    name: '',
-    description: ''
-} as UpdatedProjectDetails
 
 const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [project, setProject] = useState<ProjectDetails | null>()
-    const [updatedProject, setUpdatedProject] = useState<UpdatedProjectDetails>(defaultProject)
+    const [updatedProject, setUpdatedProject] = useState<UpdatedProjectProperties>({} as UpdatedProjectProperties)
     const [error, setError] = useState<string | null>()
     const [editing, setEditing] = useState<boolean>(false)
     const [inProgress, setInProgress] = useState<boolean>(false)
 
     const { upload, uploadState, fileProps } = useFileUploader({
         name: updatedProject.name,
-        description: { text: updatedProject.description }
+        description: updatedProject.description,
+        properties: {}
     })
 
     const { getAuthHeader } = useAuth()
@@ -104,7 +101,8 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         setUpdatedProject({
             name: project.name,
             description: project.description,
-            logoFile: new File([fileBlob], 'file', fileBlob)
+            logoFile: new File([fileBlob], 'file', fileBlob),
+            properties: {}
         })
 
         setEditing(true)

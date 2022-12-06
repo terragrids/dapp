@@ -9,8 +9,8 @@ import Map from 'components/map'
 import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
 import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-plant-admin-panel'
 import { UserContext } from 'context/user-context.js'
-import MyProjectsDialog from 'components/projects/my-projects-dialog'
 import CreateProjectDialog from 'components/projects/create-project-dialog'
+import ProjectsDialog from 'components/projects/projects-dialog'
 
 export default function Home() {
     const user = useContext(UserContext)
@@ -19,7 +19,7 @@ export default function Home() {
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
     const [sppVisible, setSppVisible] = useState(false)
     const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
-    const [myProjectsVisible, setMyProjectsVisible] = useState(false)
+    const [projectsDialog, setProjectsDialog] = useState({ visible: false, ownerWalletAddress: null })
     const [createProjectVisible, setCreateProjectVisible] = useState(false)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
@@ -61,8 +61,12 @@ export default function Home() {
         setSppAdminPanelVisible(true)
     }
 
+    function onOpenProjects() {
+        setProjectsDialog({ visible: true })
+    }
+
     function onOpenMyProjects() {
-        setMyProjectsVisible(true)
+        setProjectsDialog({ visible: true, ownerWalletAddress: user.walletAddress })
     }
 
     function onCreateProject() {
@@ -87,6 +91,7 @@ export default function Home() {
             onDisconnectWallet={onDisconnectWallet}
             onMint={onMint}
             onOpenSppAdminPanel={onOpenSppAdminPanel}
+            onOpenProjects={onOpenProjects}
             onOpenMyProjects={onOpenMyProjects}
             onCreateProject={onCreateProject}>
             <Head>
@@ -115,7 +120,11 @@ export default function Home() {
                 }}
             />
             <SolarPowerPlantAdminPanel visible={sppAdminPanelVisible} onClose={() => setSppAdminPanelVisible(false)} />
-            <MyProjectsDialog visible={myProjectsVisible} onClose={() => setMyProjectsVisible(false)} />
+            <ProjectsDialog
+                visible={projectsDialog.visible}
+                ownerWalletAddress={projectsDialog.ownerWalletAddress}
+                onClose={() => setProjectsDialog({ visible: false })}
+            />
             <CreateProjectDialog visible={createProjectVisible} onClose={() => setCreateProjectVisible(false)} />
         </Layout>
     )
