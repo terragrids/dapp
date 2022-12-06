@@ -41,7 +41,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         uploadState,
         fileProps,
         reset: resetFileUploader
-    } = useFileUploader({ name: project.name, description: { text: project.description } })
+    } = useFileUploader({ name: project.name, description: project.description, properties: {} })
 
     const { getAuthHeader } = useAuth()
 
