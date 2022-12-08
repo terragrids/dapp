@@ -15,7 +15,7 @@ export class Nft {
     }
 
     static list() {
-        return [Nft.TRCL, Nft.TRLD, Nft.TRBD]
+        return [Nft.TRLD, Nft.TRBD, Nft.TRCL]
     }
 }
 

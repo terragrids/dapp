@@ -37,7 +37,7 @@ type AssetProperties = {
 
 const defaultAsset = {
     name: '',
-    symbol: Nft.TRCL.symbol,
+    symbol: Nft.list()[0].symbol,
     properties: {
         power: 10,
         price: 10,
@@ -212,9 +212,9 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     <DropDownSelector
                         label={strings.rarity}
                         options={[
-                            { key: 'common', value: 'Common' },
-                            { key: 'rare', value: 'Rare' },
-                            { key: 'legendary', value: 'Legendary' }
+                            { key: 'common', value: strings.common },
+                            { key: 'rare', value: strings.rare },
+                            { key: 'legendary', value: strings.legendary }
                         ]}
                         onSelected={setNftRarity}
                     />
