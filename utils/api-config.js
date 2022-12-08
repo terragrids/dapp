@@ -15,6 +15,8 @@ export const projectsApiBaseUrl =
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
+const pageSize = 5
+
 const accountTerracells = accountId => `api/accounts/${accountId}/terracells`
 const terracells = next => `api/nfts/type/trcl${next ? `?next=${next}` : ''}`
 const terracellContract = (id, applicationId) => `api/terracells/${id}/contracts/${applicationId}`
@@ -27,8 +29,11 @@ const ipfsFiles = 'api/ipfs/files'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const projects = 'api/projects'
+const paginatedProjects = nextPageKey =>
+    `api/projects?pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}`
 const project = id => `api/projects/${id}`
-const accountProjects = accountId => `api/accounts/${accountId}/projects`
+const paginatedAccountProjects = (accountId, nextPageKey) =>
+    `api/accounts/${accountId}/projects?pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
 
 export const endpoints = {
@@ -44,8 +49,9 @@ export const endpoints = {
     ipfsFiles,
     solarPowerPlant,
     projects,
+    paginatedProjects,
     project,
-    accountProjects,
+    paginatedAccountProjects,
     authForWallet
 }
 
@@ -54,20 +60,31 @@ export function setMethodNotAllowedResponse(res, allowedList) {
     res.status(405).end()
 }
 
-export async function callTerragridsApi(res, method, endpoint, data, headers) {
-    await callApi(res, terragridsApiBaseUrl, method, endpoint, data, headers)
+export async function callTerragridsApi(res, method, endpoint, data, headers, query) {
+    await callApi(res, terragridsApiBaseUrl, method, endpoint, data, headers, query)
 }
 
-export async function callProjectsApi(res, method, endpoint, data, headers) {
-    await callApi(res, projectsApiBaseUrl, method, endpoint, data, headers)
+export async function callProjectsApi(res, method, endpoint, data, headers, query) {
+    await callApi(res, projectsApiBaseUrl, method, endpoint, data, headers, query)
 }
 
-async function callApi(res, baseUrl, method, endpoint, data, headers) {
+async function callApi(res, baseUrl, method, endpoint, data, headers, query) {
     await handleHttpRequest(res, async () => {
         let response
         switch (method) {
             case 'GET':
-                response = await fetch(`${baseUrl}/${endpoint}`)
+                let url = `${baseUrl}/${endpoint}`
+                if (query) {
+                    const props = []
+                    for (var key in query) {
+                        if (query.hasOwnProperty(key) && query[key] !== undefined) {
+                            props.push(`${key}=${query[key]}`)
+                        }
+                    }
+                    const queryString = props.join('&')
+                    url = `${url}?${queryString}`
+                }
+                response = await fetch(url)
                 break
             case 'POST':
             case 'PUT':

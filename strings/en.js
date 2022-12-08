@@ -84,6 +84,7 @@ const enStrings = {
     refreshAndTryAgain: 'Please refresh the page and try again.',
     sell: 'Sell',
     sellFor: 'Sell for',
+    showMore: 'Show more',
     siteDescription: 'Web client for Terragrids',
     siteTitle: 'Terragrids',
     solarPowerPlant: 'Solar Power Plant',

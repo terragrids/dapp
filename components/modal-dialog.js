@@ -1,7 +1,7 @@
 import styles from './modal-dialog.module.scss'
 import PropTypes from 'prop-types'
 
-export default function ModalDialog({ visible, title, children, onClose, subtitle, className }) {
+export default function ModalDialog({ visible, title, children, subtitle, className, onClose, onScroll }) {
     return visible ? (
         <div className={styles.container}>
             <div className={`${styles.dialog} ${className ? className : ''}`}>
@@ -19,7 +19,9 @@ export default function ModalDialog({ visible, title, children, onClose, subtitl
                         )}
                     </header>
                 )}
-                <section className={styles.content}>{children}</section>
+                <section className={styles.content} onScroll={onScroll}>
+                    {children}
+                </section>
             </div>
         </div>
     ) : (
@@ -31,7 +33,8 @@ ModalDialog.propTypes = {
     visible: PropTypes.bool,
     title: PropTypes.string,
     children: PropTypes.node,
-    onClose: PropTypes.func,
     subtitle: PropTypes.string,
-    className: PropTypes.string
+    className: PropTypes.string,
+    onClose: PropTypes.func,
+    onScroll: PropTypes.func
 }
