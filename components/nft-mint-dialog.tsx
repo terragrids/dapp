@@ -6,6 +6,7 @@ import { strings } from 'strings/en.js'
 import { setTimeout } from 'timers'
 import { Nft } from 'types/nft'
 import { endpoints } from 'utils/api-config.js'
+import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import Button from './button'
 import { DropDownSelector } from './drop-down-selector'
 import { ImageUploader } from './image-uploader'
@@ -39,7 +40,6 @@ const defaultAsset = {
     name: '',
     symbol: Nft.list()[0].symbol,
     properties: {
-        power: 10,
         price: 10,
         rarity: 'common',
         author: ''
@@ -115,11 +115,12 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     useEffect(() => {
         async function mintToken() {
             setMintState(MintState.MINTING)
+            const cid = getHashFromIpfsUrl(fileProps.ipfsMetadataUrl)
+
             const assetId = await mint({
                 name: fileProps.name,
                 symbol: asset.symbol,
-                url: `${fileProps.ipfsMetadataUrl}#arc3`,
-                metadataHash: fileProps.ipfsMetadataHash
+                cid
             })
 
             if (assetId) {
