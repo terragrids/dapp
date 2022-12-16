@@ -59,6 +59,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
             setProjects(null)
             setNextPageKey(null)
             setSelectedProject(null)
+            setError(null)
         }
     }, [fetchProjects, prevVisible, visible])
 

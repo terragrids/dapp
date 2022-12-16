@@ -11,11 +11,13 @@ import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-
 import { UserContext } from 'context/user-context.js'
 import CreateProjectDialog from 'components/projects/create-project-dialog'
 import ProjectsDialog from 'components/projects/projects-dialog'
+import NftListDialog from 'components/nft/nft-list-dialog'
 
 export default function Home() {
     const user = useContext(UserContext)
     const [walletPickerVisible, setWalletPickerVisible] = useState(false)
     const [nftMintVisible, setNftMintVisible] = useState(false)
+    const [assetsVisible, setAssetsVisible] = useState(false)
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
     const [sppVisible, setSppVisible] = useState(false)
     const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
@@ -57,6 +59,10 @@ export default function Home() {
         setNftMintVisible(true)
     }
 
+    function onOpenAssets() {
+        setAssetsVisible(true)
+    }
+
     function onOpenSppAdminPanel() {
         setSppAdminPanelVisible(true)
     }
@@ -90,6 +96,7 @@ export default function Home() {
             onConnectWallet={onConnectWallet}
             onDisconnectWallet={onDisconnectWallet}
             onMint={onMint}
+            onOpenAssets={onOpenAssets}
             onOpenSppAdminPanel={onOpenSppAdminPanel}
             onOpenProjects={onOpenProjects}
             onOpenMyProjects={onOpenMyProjects}
@@ -126,6 +133,7 @@ export default function Home() {
                 onClose={() => setProjectsDialog({ visible: false })}
             />
             <CreateProjectDialog visible={createProjectVisible} onClose={() => setCreateProjectVisible(false)} />
+            <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
         </Layout>
     )
 }

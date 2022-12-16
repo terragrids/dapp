@@ -15,6 +15,7 @@ export default function Layout({
     onConnectWallet,
     onDisconnectWallet,
     onMint,
+    onOpenAssets,
     onOpenSppAdminPanel,
     onOpenMyProjects,
     onOpenProjects,
@@ -64,6 +65,7 @@ export default function Layout({
                     <MainMenu
                         visible={mainMenuVisible}
                         onSelectSymbol={onSelectSymbol}
+                        onOpenAssets={onOpenAssets}
                         onMint={onMint}
                         onDisconnectWallet={onDisconnectWallet}
                         onOpenSppAdminPanel={onOpenSppAdminPanel}

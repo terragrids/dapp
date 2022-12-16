@@ -10,6 +10,7 @@ export default function MainMenu({
     visible,
     onSelectSymbol,
     onMint,
+    onOpenAssets,
     onDisconnectWallet,
     onOpenSppAdminPanel,
     onOpenProjects,
@@ -21,6 +22,11 @@ export default function MainMenu({
 
     const openMintDialog = () => {
         onMint()
+        onToggleMenu()
+    }
+
+    const openAssetsDialog = () => {
+        onOpenAssets()
         onToggleMenu()
     }
 
@@ -63,35 +69,40 @@ export default function MainMenu({
 
             {user.authenticated && (
                 <>
-                    <ul>
-                        <li className={`${styles.border} ${styles.static}`}>{maskWalletAddress(user.walletAddress)}</li>
-                        <li className={`${styles.darker} ${styles.static}`}>
-                            $ALGO <strong>{user.walletBalance}</strong>
-                        </li>
-                        <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
-                            {Nft.TRCL.currencySymbol} <strong>{'>'}</strong>
-                        </li>
-                        <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>
-                            {Nft.TRLD.currencySymbol} <strong>{'>'}</strong>
-                        </li>
-                        <li onClick={() => openNftListDialog(Nft.TRBD.symbol)}>
-                            {Nft.TRBD.currencySymbol} <strong>{'>'}</strong>
-                        </li>
-                    </ul>
+                    <div className={styles.listContainer}>
+                        <ul>
+                            <li className={`${styles.border} ${styles.static}`}>
+                                {maskWalletAddress(user.walletAddress)}
+                            </li>
+                            <li className={`${styles.darker} ${styles.static}`}>
+                                $ALGO <strong>{user.walletBalance}</strong>
+                            </li>
+                            <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
+                                {Nft.TRCL.currencySymbol} <strong>{'>'}</strong>
+                            </li>
+                            <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>
+                                {Nft.TRLD.currencySymbol} <strong>{'>'}</strong>
+                            </li>
+                            <li onClick={() => openNftListDialog(Nft.TRBD.symbol)}>
+                                {Nft.TRBD.currencySymbol} <strong>{'>'}</strong>
+                            </li>
+                        </ul>
 
-                    <ul className={styles.actions}>
-                        <li onClick={openProjects}>{strings.projects}</li>
-                        <li onClick={openMyProjects}>{strings.myProjects}</li>
-                        <li onClick={createProject}>{strings.createProject}</li>
-                        {user && user.isAdmin && (
-                            <>
-                                <li className={styles.accent} onClick={openMintDialog}>
-                                    {strings.mint}
-                                </li>
-                                <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
-                            </>
-                        )}
-                    </ul>
+                        <ul className={styles.actions}>
+                            <li onClick={openProjects}>{strings.projects}</li>
+                            <li onClick={openMyProjects}>{strings.myProjects}</li>
+                            <li onClick={createProject}>{strings.createProject}</li>
+                            {user && user.isAdmin && (
+                                <>
+                                    <li className={styles.accent} onClick={openMintDialog}>
+                                        {strings.mint}
+                                    </li>
+                                    <li onClick={openAssetsDialog}>{strings.assets}</li>
+                                    <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
+                                </>
+                            )}
+                        </ul>
+                    </div>
                     <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
                         {strings.disconnect}
                     </button>

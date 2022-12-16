@@ -19,18 +19,17 @@ export class Nft {
     }
 }
 
-export type Symbols = 'TRCL' | 'TRLD' | 'TRBD'
-
 export type Holder = {
     address: string
     amount: number
 }
 
-export type TerraNft = {
+export type TerragridsNft = {
     id: string
     name: string
     description?: string
     symbol: string
+    status: string
     url: string
     offchainUrl: string
     holders: Array<Holder>
@@ -40,11 +39,13 @@ export type TerraNft = {
     sellerAddress?: string
 }
 
-export type Terraland = TerraNft & {
+export type Terraland = TerragridsNft & {
     positionX: number
     positionY: number
 }
 
-export type Terracell = TerraNft & {
+export type Terrabuild = Terraland
+
+export type Terracell = TerragridsNft & {
     power: number
 }
