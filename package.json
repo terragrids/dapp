@@ -9,12 +9,12 @@
         "test": "jest",
         "sanitize": "scripts/sanitize-package-lock.sh",
         "reach-copy": "mkdir ./blockchain/token-market/build; cp ./blockchain/solar-power-plant/build/index.main.mjs ./blockchain/token-market/build/spp.main.mjs;",
-        "reach-compile": "REACH_VERSION=da882525 ./reach compile ./blockchain/solar-power-plant/index.rsh -o ./blockchain/solar-power-plant/build; npm run reach-copy; REACH_VERSION=da882525 ./reach compile ./blockchain/token-market/index.rsh -o ./blockchain/token-market/build; node scripts/generate-app-approval.mjs",
-        "reach-run": "REACH_VERSION=da882525 ./reach run blockchain/solar-power-plant; npm run reach-copy; REACH_VERSION=da882525 ./reach run blockchain/token-market;",
+        "reach-compile": "REACH_VERSION=1f68dfdb ./reach compile ./blockchain/solar-power-plant/index.rsh -o ./blockchain/solar-power-plant/build; npm run reach-copy; REACH_VERSION=1f68dfdb ./reach compile ./blockchain/token-market/index.rsh -o ./blockchain/token-market/build; node scripts/generate-app-approval.mjs",
+        "reach-run": "REACH_VERSION=1f68dfdb ./reach run blockchain/solar-power-plant; npm run reach-copy; REACH_VERSION=1f68dfdb ./reach run blockchain/token-market;",
         "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
     },
     "dependencies": {
-        "@reach-sh/stdlib": "^0.1.11-rc.9",
+        "@reach-sh/stdlib": "^0.1.12-rc.9",
         "multiformats": "^10.0.2",
         "next": "^13.0.4",
         "prop-types": "^15.8.1",
