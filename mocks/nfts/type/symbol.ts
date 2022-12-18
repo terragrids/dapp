@@ -9,7 +9,7 @@ const trldAssets = [
         positiony: 0,
         holders: [
             {
-                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'DJQIWDJ899JD238JF348HC843H89HC438HC834HC8392HC2JIIEJKJWDCN384CJI34',
                 amount: 1
             }
         ]
@@ -24,7 +24,7 @@ const trldAssets = [
         positiony: 0,
         holders: [
             {
-                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'DJQIWDJ899JD238JF348HC843H89HC438HC834HC8392HC2JIIEJKJWDCN384CJI34',
                 amount: 1
             }
         ]
@@ -39,7 +39,7 @@ const trldAssets = [
         positiony: 0,
         holders: [
             {
-                address: 'PYUAEMWBZY6SVVPGX27KF7J25V6GC5UZQTW6NFW2JOL42ZWZJKMKCGVCUY',
+                address: 'DJQIWDJ899JD238JF348HC843H89HC438HC834HC8392HC2JIIEJKJWDCN384CJI34',
                 amount: 1
             }
         ]
@@ -64,6 +64,37 @@ const trclAssets = [
         power: 25
     }
 ]
+
+const mockNfts = {
+    assets: [
+        {
+            id: '148392275',
+            status: 'created',
+            statusChanged: '1670884746193',
+            offchainUrl: 'https://images.terragrids.org/b1197ef8-6252-4098-aded-7bebafeff79e',
+            name: 'A rocky land',
+            holders: [
+                {
+                    address: 'DJQIWDJ899JD238JF348HC843H89HC438HC834HC8392HC2JIIEJKJWDCN384CJI34',
+                    amount: 1
+                }
+            ]
+        },
+        {
+            id: '148916649',
+            status: 'created',
+            statusChanged: '1671191928435',
+            offchainUrl: 'https://images.terragrids.org/812a752f-897e-4b45-8f42-310ea6d5d3b8',
+            name: 'A bit of forest',
+            holders: [
+                {
+                    address: 'DJQIWDJ899JD238JF348HC843H89HC438HC834HC8392HC2JIIEJKJWDCN384CJI34',
+                    amount: 1
+                }
+            ]
+        }
+    ]
+}
 
 const createPositions = () => {
     const temp: { positionX: number; positionY: number }[] = []
@@ -107,7 +138,8 @@ const TRBD_MOCK = {
 export const NFT_MOCKS = {
     trld: TRLD_MOCK,
     trcl: TRCL_MOCK,
-    trbd: TRBD_MOCK
+    trbd: TRBD_MOCK,
+    nfts: mockNfts
 }
 
 type NftMockKeys = keyof typeof NFT_MOCKS

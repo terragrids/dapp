@@ -11,6 +11,7 @@ import Button, { ButtonType } from 'components/button'
 import { Nft, TerragridsNft } from 'types/nft'
 import NftListItem from './nft-list-item'
 import { DropDownSelector } from 'components/drop-down-selector'
+import NftCard from './nft-card'
 
 type NftListDialogProps = {
     visible: boolean
@@ -29,7 +30,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>()
-    const [, setSelectedNft] = useState<string | null>()
+    const [selectedNftId, setSelectedNftId] = useState<string | null>()
 
     const fetchNfts = useCallback(async () => {
         if (!user || isFetching) return
@@ -52,7 +53,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     function reset() {
         setNfts(null)
         setNextPageKey(null)
-        setSelectedNft(null)
+        setSelectedNftId(null)
         setError(null)
     }
 
@@ -77,7 +78,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     }, [error, fetchNfts, nfts, visible])
 
     function openNft(id: string) {
-        setSelectedNft(id)
+        setSelectedNftId(id)
     }
 
     function fetchMoreNfts() {
@@ -100,44 +101,59 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
 
     return (
         <ModalDialog visible={visible} title={strings.assets} onClose={onClose} onScroll={handleScroll}>
-            <div className={styles.container}>
-                <DropDownSelector
-                    label={strings.type}
-                    options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
-                    onSelected={setNftSymbol}
-                />
-                {!nfts && !error && (
-                    <div className={styles.loading}>
-                        <LoadingSpinner />
+            <>
+                {selectedNftId && (
+                    <div className={styles.detailContainer}>
+                        <NftCard id={selectedNftId} />
                     </div>
                 )}
-                {nfts && nfts.length > 0 && (
-                    <div className={styles.scrollContainer}>
-                        {nfts.map(nft => (
-                            <NftListItem
-                                key={nft.id}
-                                id={nft.id}
-                                name={nft.name}
-                                status={nft.status}
-                                holder={nft.holders[0]}
-                                imageUrl={nft.offchainUrl}
-                                onClick={openNft}
-                            />
-                        ))}
-                        {isFetching && (
+                {!selectedNftId && (
+                    <div className={styles.listContainer}>
+                        <DropDownSelector
+                            label={strings.type}
+                            options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
+                            onSelected={setNftSymbol}
+                        />
+                        {!nfts && !error && (
                             <div className={styles.loading}>
                                 <LoadingSpinner />
                             </div>
                         )}
-                        {!isFetching && !!nextPageKey && (
-                            <Button type={ButtonType.OUTLINE} label={strings.showMore} onClick={fetchMoreNfts} />
+                        {nfts && nfts.length > 0 && (
+                            <div className={styles.scrollContainer}>
+                                {nfts.map(nft => (
+                                    <NftListItem
+                                        key={nft.id}
+                                        id={nft.id}
+                                        name={nft.name}
+                                        status={nft.status}
+                                        holder={nft.holders[0]}
+                                        imageUrl={nft.offchainUrl}
+                                        onClick={openNft}
+                                    />
+                                ))}
+                                {isFetching && (
+                                    <div className={styles.loading}>
+                                        <LoadingSpinner />
+                                    </div>
+                                )}
+                                {!isFetching && !!nextPageKey && (
+                                    <Button
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.showMore}
+                                        onClick={fetchMoreNfts}
+                                    />
+                                )}
+                            </div>
                         )}
+
+                        {nfts && nfts.length === 0 && (
+                            <div className={styles.empty}>{strings.noNftsFoundForSearch}</div>
+                        )}
+                        {error && <div className={styles.error}>{error.message}</div>}
                     </div>
                 )}
-
-                {nfts && nfts.length === 0 && <div className={styles.empty}>{strings.noNftsFoundForSearch}</div>}
-                {error && <div>{error.message}</div>}
-            </div>
+            </>
         </ModalDialog>
     )
 }
