@@ -30,6 +30,7 @@ export type TerragridsNft = {
     description?: string
     symbol: string
     status: string
+    reserve: string
     url: string
     offchainUrl: string
     holders: Array<Holder>

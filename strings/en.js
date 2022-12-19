@@ -45,6 +45,7 @@ const enStrings = {
         'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
     errorDeployingSppContract: 'Unable to deploy the Solar Power Plant Smart Contract.',
     errorFetchingMap: 'Something went wrong when fetching the Terragrids map.\nPlease refresh the page and try again.',
+    errorFetchingNft: 'Unable to retrieve the NFT. Please refresh the page and try again.',
     errorFetchingNfts: 'Unable to retrieve the NFTs. Please refresh the page and try again.',
     errorFetchingProject: 'Unable to retrieve this project. Please refresh the page and try again.',
     errorFetchingProjects: 'Unable to retrieve the projects. Please refresh the page and try again.',
