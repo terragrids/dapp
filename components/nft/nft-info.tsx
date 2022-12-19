@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
 import { strings } from 'strings/en'
-import { Terracell, Terraland } from 'types/nft'
-import { maskWalletAddress, truncate } from 'utils/string-utils'
+import { Terrabuild, Terracell, Terraland } from 'types/nft'
+import { getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
 import styles from './nft-info.module.scss'
 
-const MAX_CHARS_TO_DISPLAY = 15
-
 type NftInfoProps = {
-    data: Terracell | Terraland
+    asset: Terraland | Terrabuild | Terracell
 }
 
-const NftInfo = ({ data }: NftInfoProps) => {
+const NftInfo = ({ asset }: NftInfoProps) => {
     const [showFullDescription, setShowFullDescription] = useState(false)
 
     function toggleDescription() {
@@ -29,7 +27,7 @@ const NftInfo = ({ data }: NftInfoProps) => {
         <dl className={styles.dList}>
             <div className={dlItemClass}>
                 <dt>{strings.name}</dt>
-                <dd>{data.name}</dd>
+                <dd>{asset.name}</dd>
             </div>
 
             <div className={showFullDescription ? styles.expand : styles.dListItem} onClick={toggleDescription}>
@@ -44,41 +42,43 @@ const NftInfo = ({ data }: NftInfoProps) => {
                 </dt>
                 <dd className={showFullDescription ? styles.dd : ''}>
                     {showFullDescription
-                        ? data.description || strings.noDescription
-                        : data.description
-                        ? truncate(`${data.description}`, MAX_CHARS_TO_DISPLAY)
+                        ? asset.description || strings.noDescription
+                        : asset.description
+                        ? asset.description
                         : strings.noDescription}
                 </dd>
             </div>
 
-            {isTerracell(data) ? (
+            {isTerracell(asset) && (
                 <div className={dlItemClass}>
                     <dt>{strings.output}</dt>
-                    <dd>{data.power || 0} TRW</dd>
+                    <dd>{asset.power || 0} TRW</dd>
                 </div>
-            ) : (
+            )}
+
+            {asset.positionX && asset.positionY && (
                 <div className={dlItemClass}>
                     <dt>{strings.position}</dt>
                     <dd>
-                        ({data.positionX},{data.positionY})
+                        ({asset.positionX},{asset.positionY})
                     </dd>
                 </div>
             )}
 
-            <div className={dlItemClass}>
+            <a href={getAssetPeraExplorerUrl(asset.id)} target={'_blank'} rel={'noreferrer'} className={dlItemClass}>
                 <dt>{strings.assetID}</dt>
-                <dd>{data.id}</dd>
-            </div>
+                <dd>{asset.id}</dd>
+            </a>
 
             <div className={dlItemClass}>
                 <dt>{strings.holder}</dt>
-                <dd>{maskWalletAddress(data.holders[0].address)}</dd>
+                <dd>{maskWalletAddress(asset.holders[0].address)}</dd>
             </div>
 
-            {data.contractId && (
+            {asset.contractId && (
                 <div className={dlItemClass}>
                     <dt>{strings.contractId}</dt>
-                    <dd>{data.contractId}</dd>
+                    <dd>{asset.contractId}</dd>
                 </div>
             )}
         </dl>

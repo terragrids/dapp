@@ -42,6 +42,10 @@
     max-height: 85vh;
     overflow-x: hidden;
     overflow-y: auto;
+
+    @media (max-width: $screen-small) {
+        padding: 0;
+    }
 }
 
 .header {

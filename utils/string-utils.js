@@ -34,6 +34,11 @@ export function getApplicationAlgoExplorerUrl(applicationId) {
     return `https://${prefix}algoexplorer.io/application/${applicationId}`
 }
 
+export function getAssetPeraExplorerUrl(assetId) {
+    const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
+    return `https://${prefix}explorer.perawallet.app/assets/${assetId}`
+}
+
 export function getWalletNoteUrl() {
     const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet' : 'app'
     return `https://${prefix}.terragrids.org/`

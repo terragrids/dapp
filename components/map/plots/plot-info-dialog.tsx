@@ -11,8 +11,8 @@ import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { UserContext } from 'context/user-context.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { useNftSeller } from 'hooks/use-nft-seller.js'
-import NftInfo from 'components/nft-info'
 import { Contract } from 'types/contract.js'
+import NftInfo from 'components/nft/nft-info'
 
 type PlotInfoDialogProps = {
     visible: boolean
@@ -163,7 +163,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                             </picture>
                         </div>
                         <div className={styles.info}>
-                            <NftInfo data={terraland} />
+                            <NftInfo asset={terraland} />
                         </div>
                     </>
                 )}

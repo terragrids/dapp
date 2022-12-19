@@ -1,5 +1,6 @@
 @import 'styles/colors.scss';
 @import 'styles/dimens.scss';
+@import 'styles/screens.scss';
 
 .dList {
     display: grid;
@@ -19,10 +20,15 @@
 
         dt,
         dd {
-            max-width: 200px;
+            max-width: 300px;
+
+            @media (max-width: $screen-small) {
+                max-width: 150px;
+            }
         }
 
         dd {
+            white-space: nowrap;
             text-align: right;
             overflow: hidden;
             text-overflow: ellipsis;

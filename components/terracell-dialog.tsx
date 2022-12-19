@@ -11,8 +11,8 @@ import { UserContext } from 'context/user-context'
 import { formatNftName, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { User, UserCapabilities } from 'hooks/use-user'
 import { Terracell } from 'types/nft'
-import NftInfo from './nft-info'
 import { Contract } from 'types/contract.js'
+import NftInfo from './nft/nft-info'
 
 type TerracellDialogProps = {
     id: string | undefined
@@ -161,7 +161,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                         </div>
 
                         <div className={styles.info}>
-                            <NftInfo data={terracell} />
+                            <NftInfo asset={terracell} />
                         </div>
                         {error && <div className={styles.error}>{error}</div>}
 

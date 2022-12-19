@@ -38,15 +38,12 @@ export type TerragridsNft = {
     contractInfo?: string
     assetPrice?: number
     sellerAddress?: string
-}
-
-export type Terraland = TerragridsNft & {
     positionX: number
     positionY: number
 }
 
-export type Terrabuild = Terraland
-
+export type Terraland = TerragridsNft
+export type Terrabuild = TerragridsNft
 export type Terracell = TerragridsNft & {
     power: number
 }

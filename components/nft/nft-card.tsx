@@ -1,16 +1,22 @@
 import LoadingSpinner from 'components/loading-spinner.js'
-import { useCallback, useEffect, useState } from 'react'
+import { ReachContext, ReachStdlib } from 'context/reach-context'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { TerragridsNft } from 'types/nft.js'
-import { endpoints } from 'utils/api-config.js'
+import { endpoints, ipfsUrl } from 'utils/api-config.js'
+import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './nft-card.module.scss'
+import NftInfo from './nft-info'
 
 type NftCardProps = {
     id: string
 }
 
 const NftCard = ({ id }: NftCardProps) => {
-    const [nft, setNft] = useState<TerragridsNft | null>(null)
+    const { stdlib } = useContext<ReachStdlib>(ReachContext)
+    const [nft, setNft] = useState<TerragridsNft | null>()
+    const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
     const [error, setError] = useState<string | null>(null)
 
     const fetchNft = useCallback(async () => {
@@ -19,12 +25,27 @@ const NftCard = ({ id }: NftCardProps) => {
         const response = await fetch(endpoints.nft(id))
 
         if (response.ok) {
-            const jsonResponse = await response.json()
-            setNft(jsonResponse.asset)
+            const { asset } = await response.json()
+            const cid = cidFromAlgorandAddress(stdlib.algosdk, asset.reserve)
+            const metadataUrl = ipfsUrl(cid)
+            setNft(asset)
+
+            // Try to fetch NFT metadata and image from IPFS
+            try {
+                const metadataResponse = await fetch(metadataUrl)
+                if (metadataResponse.ok) {
+                    const { image, description } = await metadataResponse.json()
+                    setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
+                    setNft(nft => ({
+                        ...(nft as TerragridsNft),
+                        description: description as string
+                    }))
+                }
+            } catch (e) {}
         } else {
             setError(strings.errorFetchingNft)
         }
-    }, [id])
+    }, [id, stdlib.algosdk])
 
     useEffect(() => {
         fetchNft()
@@ -34,7 +55,17 @@ const NftCard = ({ id }: NftCardProps) => {
         <div className={styles.container}>
             {!nft && !error && <LoadingSpinner />}
             {!nft && error && <div>{error}</div>}
-            {nft && <div>{nft.name}</div>}
+            {nft && (
+                <>
+                    <picture>
+                        <source srcSet={nft.offchainUrl} type={'image/*'} />
+                        <img src={ipfsImageUrl ? ipfsImageUrl : nft.offchainUrl} alt={nft.name} />
+                    </picture>
+                    <div className={styles.details}>
+                        <NftInfo asset={nft} />
+                    </div>
+                </>
+            )}
         </div>
     )
 }
