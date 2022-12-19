@@ -96,6 +96,7 @@ const enStrings = {
     siteTitle: 'Terragrids',
     solarPowerPlant: 'Solar Power Plant',
     sppAdminPanel: 'SPP Admin Panel',
+    status: 'Status',
     tapToPick: 'Tap to pick an image',
     terminate: 'Terminate',
     terracellInformation: 'Terracell ($TRCL)',

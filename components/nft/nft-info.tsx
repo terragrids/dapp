@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user.js'
+import React, { useContext, useState } from 'react'
 import { strings } from 'strings/en'
 import { Terrabuild, Terracell, Terraland } from 'types/nft'
 import { getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
@@ -9,6 +11,7 @@ type NftInfoProps = {
 }
 
 const NftInfo = ({ asset }: NftInfoProps) => {
+    const user = useContext<User>(UserContext)
     const [showFullDescription, setShowFullDescription] = useState(false)
 
     function toggleDescription() {
@@ -79,6 +82,13 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                 <div className={dlItemClass}>
                     <dt>{strings.contractId}</dt>
                     <dd>{asset.contractId}</dd>
+                </div>
+            )}
+
+            {user && user.isAdmin && (
+                <div className={dlItemClass}>
+                    <dt>{strings.status}</dt>
+                    <dd>{asset.status}</dd>
                 </div>
             )}
         </dl>

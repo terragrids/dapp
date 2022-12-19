@@ -30,7 +30,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>()
-    const [selectedNftId, setSelectedNftId] = useState<string | null>()
+    const [selectedNft, setSelectedNft] = useState<TerragridsNft | null>()
 
     const fetchNfts = useCallback(async () => {
         if (!user || isFetching) return
@@ -53,13 +53,14 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     function reset() {
         setNfts(null)
         setNextPageKey(null)
-        setSelectedNftId(null)
+        setSelectedNft(null)
         setError(null)
     }
 
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && !prevVisible) {
+            setSymbol(Nft.TRLD.symbol)
             reset()
         }
     }, [prevVisible, visible])
@@ -76,10 +77,6 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
             fetchNfts()
         }
     }, [error, fetchNfts, nfts, visible])
-
-    function openNft(id: string) {
-        setSelectedNftId(id)
-    }
 
     function fetchMoreNfts() {
         const hasMore = !!nextPageKey
@@ -99,15 +96,24 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
         setSymbol(symbol)
     }
 
+    function close() {
+        if (selectedNft) setSelectedNft(null)
+        else onClose()
+    }
+
     return (
-        <ModalDialog visible={visible} title={strings.assets} onClose={onClose} onScroll={handleScroll}>
+        <ModalDialog
+            visible={visible}
+            title={selectedNft ? selectedNft.name : strings.assets}
+            onClose={close}
+            onScroll={handleScroll}>
             <>
-                {selectedNftId && (
+                {selectedNft && (
                     <div className={styles.detailContainer}>
-                        <NftCard id={selectedNftId} />
+                        <NftCard id={selectedNft.id} />
                     </div>
                 )}
-                {!selectedNftId && (
+                {!selectedNft && (
                     <div className={styles.listContainer}>
                         <DropDownSelector
                             label={strings.type}
@@ -129,7 +135,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
                                         status={nft.status}
                                         holder={nft.holders[0]}
                                         imageUrl={nft.offchainUrl}
-                                        onClick={openNft}
+                                        onClick={() => setSelectedNft(nft)}
                                     />
                                 ))}
                                 {isFetching && (
