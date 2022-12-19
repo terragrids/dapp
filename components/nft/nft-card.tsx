@@ -34,11 +34,14 @@ const NftCard = ({ id }: NftCardProps) => {
             try {
                 const metadataResponse = await fetch(metadataUrl)
                 if (metadataResponse.ok) {
-                    const { image, description } = await metadataResponse.json()
+                    const { image, description, properties } = await metadataResponse.json()
                     setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
                     setNft(nft => ({
                         ...(nft as TerragridsNft),
-                        description: description as string
+                        description: description as string,
+                        assetPrice: properties['base_price'].value,
+                        rarity: properties.rarity.value,
+                        author: properties.author.value
                     }))
                 }
             } catch (e) {}

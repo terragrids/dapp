@@ -78,6 +78,21 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                 <dd>{maskWalletAddress(asset.holders[0].address)}</dd>
             </div>
 
+            <div className={dlItemClass}>
+                <dt>{strings.price}</dt>
+                <dd>{`${asset.assetPrice} ALGO`}</dd>
+            </div>
+
+            <div className={dlItemClass}>
+                <dt>{strings.rarity}</dt>
+                <dd>{asset.rarity}</dd>
+            </div>
+
+            <div className={dlItemClass}>
+                <dt>{strings.author}</dt>
+                <dd>{asset.author}</dd>
+            </div>
+
             {asset.contractId && (
                 <div className={dlItemClass}>
                     <dt>{strings.contractId}</dt>
