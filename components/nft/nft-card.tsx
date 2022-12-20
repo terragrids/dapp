@@ -1,8 +1,11 @@
+import Button, { ButtonType } from 'components/button'
 import LoadingSpinner from 'components/loading-spinner.js'
 import { ReachContext, ReachStdlib } from 'context/reach-context'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
-import { TerragridsNft } from 'types/nft.js'
+import { NftStatus, TerragridsNft } from 'types/nft'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
 import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
@@ -18,6 +21,7 @@ const NftCard = ({ id }: NftCardProps) => {
     const [nft, setNft] = useState<TerragridsNft | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
     const [error, setError] = useState<string | null>(null)
+    const user = useContext<User>(UserContext)
 
     const fetchNft = useCallback(async () => {
         setError(null)
@@ -50,6 +54,10 @@ const NftCard = ({ id }: NftCardProps) => {
         }
     }, [id, stdlib.algosdk])
 
+    function onSell() {
+        // todo
+    }
+
     useEffect(() => {
         fetchNft()
     }, [fetchNft])
@@ -67,6 +75,16 @@ const NftCard = ({ id }: NftCardProps) => {
                     <div className={styles.details}>
                         <NftInfo asset={nft} />
                     </div>
+                    {user && user.isAdmin && nft.status === NftStatus.Created && (
+                        <div className={styles.footer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.sell}
+                                onClick={onSell}
+                            />
+                        </div>
+                    )}
                 </>
             )}
         </div>

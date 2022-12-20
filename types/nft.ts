@@ -49,3 +49,9 @@ export type Terrabuild = TerragridsNft
 export type Terracell = TerragridsNft & {
     power: number
 }
+
+export enum NftStatus {
+    Created = 'created',
+    ForSale = 'forsale',
+    Sold = 'sold'
+}
