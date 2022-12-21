@@ -12,7 +12,7 @@ import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { endpoints } from 'utils/api-config.js'
-import { maskWalletAddress } from 'utils/string-utils.js'
+import { getHashFromIpfsUrl, maskWalletAddress } from 'utils/string-utils.js'
 import styles from './create-project-dialog.module.scss'
 
 type CreateProjectDialogProps = {
@@ -23,11 +23,13 @@ type CreateProjectDialogProps = {
 type Project = {
     name: string
     description: string
+    budget: number
 }
 
 const defaultProject = {
     name: '',
-    description: ''
+    description: '',
+    budget: 0
 } as Project
 
 const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => {
@@ -41,7 +43,11 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         uploadState,
         fileProps,
         reset: resetFileUploader
-    } = useFileUploader({ name: project.name, description: project.description, properties: {} })
+    } = useFileUploader({
+        name: project.name,
+        description: project.description,
+        properties: { budget: project.budget }
+    })
 
     const { getAuthHeader } = useAuth()
 
@@ -66,8 +72,12 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         setProject(project => ({ ...project, description }))
     }
 
+    function setBudget(budget: string) {
+        setProject(project => ({ ...project, budget: +budget }))
+    }
+
     function isValid() {
-        return file && !!project.name && !!project.description
+        return file && !!project.name && !!project.description && !!project.budget && project.budget > 0
     }
 
     function isInProgress() {
@@ -101,8 +111,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                     referrerPolicy: 'no-referrer',
                     body: JSON.stringify({
                         name: fileProps.name,
-                        url: fileProps.ipfsMetadataUrl,
-                        hash: fileProps.ipfsMetadataHash,
+                        cid: getHashFromIpfsUrl(fileProps.ipfsMetadataUrl),
                         offChainImageUrl: fileProps.offChainUrl,
                         creator: user.walletAddress
                     })
@@ -147,6 +156,14 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                 </div>
                 <div className={styles.section}>
                     <InputField label={strings.name} onChange={setName} />
+                </div>
+                <div className={styles.section}>
+                    <InputField
+                        type={'number'}
+                        initialValue={'10'}
+                        label={strings.projectBudgetAlgo}
+                        onChange={setBudget}
+                    />
                 </div>
                 <div className={styles.section}>
                     <InputField max={5000} multiline label={strings.description} onChange={setDescription} />

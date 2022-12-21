@@ -83,6 +83,8 @@ const enStrings = {
     positionY: 'Position Y',
     power: 'Power',
     price: 'Price',
+    projectBalanceAlgo: 'Project balance (ALGO)',
+    projectBudgetAlgo: 'Project budget (ALGO)',
     projectLogo: 'Project logo',
     projects: 'Projects',
     rare: 'Rare',

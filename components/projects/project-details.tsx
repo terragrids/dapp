@@ -1,4 +1,5 @@
 import ActionBar from 'components/action-bar'
+import { AssetLink } from 'components/asset-link'
 import Button, { ButtonType } from 'components/button'
 import { ContractLink } from 'components/contract-link'
 import { ImageUploader } from 'components/image-uploader'
@@ -14,8 +15,9 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
-import { endpoints } from 'utils/api-config.js'
+import { endpoints, ipfsUrl } from 'utils/api-config.js'
 import { getContractFromJsonString, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './project-details.module.scss'
 
 type ProjectDetailsProps = {
@@ -29,6 +31,9 @@ type ProjectDetails = {
     logoUrl: string
     name: string
     description: string
+    tokenId: string
+    balance: number
+    budget: number
 }
 
 type UpdatedProjectProperties = {
@@ -62,24 +67,38 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         const response = await fetch(endpoints.project(id))
 
         if (response.ok) {
-            const { url, created, creator } = await response.json()
+            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId } = await response.json()
+            const contractId = stdlib.bigNumberToNumber(getContractFromJsonString(id))
 
-            const ipfsResponse = await fetch(ipfsUrlToGatewayUrl(url))
+            setProject({
+                contractId,
+                name,
+                created: parseInt(created),
+                creator,
+                balance,
+                tokenId,
+                logoUrl: offChainImageUrl
+            } as ProjectDetails)
 
-            if (ipfsResponse.ok) {
-                const { name, image, description } = await ipfsResponse.json()
-                const ipfsImageUrl = ipfsUrlToGatewayUrl(image)
-                const contractId = stdlib.bigNumberToNumber(getContractFromJsonString(id))
+            // Try to fetch NFT metadata and image from IPFS
+            try {
+                const cid = cidFromAlgorandAddress(stdlib.algosdk, reserve)
+                const metadataUrl = ipfsUrl(cid)
+                const metadataResponse = await fetch(metadataUrl)
 
-                setProject({
-                    contractId,
-                    name,
-                    created: parseInt(created),
-                    creator,
-                    logoUrl: ipfsImageUrl,
-                    description: description.text as string
-                } as ProjectDetails)
-            }
+                if (metadataResponse.ok) {
+                    const { image, description, properties } = await metadataResponse.json()
+                    setProject(
+                        project =>
+                            ({
+                                ...project,
+                                logoUrl: ipfsUrlToGatewayUrl(image),
+                                description: description,
+                                budget: properties.budget.value
+                            } as ProjectDetails)
+                    )
+                }
+            } catch (e) {}
         } else {
             setError(strings.errorFetchingProject)
         }
@@ -214,8 +233,22 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                             </div>
                         </div>
                         <div className={styles.section}>
+                            <Label text={strings.assetID} />
+                            <div className={styles.content}>
+                                <AssetLink assetId={project.tokenId} />
+                            </div>
+                        </div>
+                        <div className={styles.section}>
                             <Label text={strings.created} />
                             <div className={styles.content}>{new Date(project.created).toLocaleDateString()}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.projectBudgetAlgo} />
+                            <div className={styles.content}>{project.budget}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.projectBalanceAlgo} />
+                            <div className={styles.content}>{project.balance}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />
