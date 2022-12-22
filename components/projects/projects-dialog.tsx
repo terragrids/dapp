@@ -87,12 +87,18 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         }
     }
 
+    function close() {
+        if (!selectedProject) onClose()
+        else setSelectedProject(null)
+    }
+
+    function getTitle() {
+        if (selectedProject) return projects?.find(project => project.id === selectedProject)?.name
+        else return ownerWalletAddress ? strings.myProjects : strings.projects
+    }
+
     return (
-        <ModalDialog
-            visible={visible}
-            title={ownerWalletAddress ? strings.myProjects : strings.projects}
-            onClose={onClose}
-            onScroll={handleScroll}>
+        <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             {!projects && !error && (
                 <div className={styles.loading}>
                     <LoadingSpinner />

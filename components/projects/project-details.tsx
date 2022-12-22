@@ -34,6 +34,7 @@ type ProjectDetails = {
     tokenId: string
     balance: number
     budget: number
+    approved: boolean
 }
 
 type UpdatedProjectProperties = {
@@ -219,10 +220,9 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     return (
         <>
             <div className={styles.container}>
-                {!project && <LoadingSpinner />}
+                {!project && !error && <LoadingSpinner />}
                 {project && !editing && (
                     <>
-                        <div className={styles.name}>{project.name}</div>
                         <div className={styles.section}>
                             <img src={project.logoUrl} alt={project.name} className={styles.image} />
                         </div>
@@ -249,6 +249,12 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                         <div className={styles.section}>
                             <Label text={strings.projectBalanceAlgo} />
                             <div className={styles.content}>{project.balance}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.approvalStatus} />
+                            <div className={styles.content}>
+                                {project.approved ? strings.approved : strings.underReview}
+                            </div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />
