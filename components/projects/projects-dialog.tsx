@@ -99,35 +99,37 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
 
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
-            {!projects && !error && (
-                <div className={styles.loading}>
-                    <LoadingSpinner />
-                </div>
-            )}
-            {projects && !selectedProject && (
-                <div className={styles.scrollContainer}>
-                    {projects.map(project => (
-                        <ProjectListItem
-                            key={project.id}
-                            id={project.id}
-                            name={project.name}
-                            ownerWallet={project.creator}
-                            imageUrl={project.offChainImageUrl}
-                            onClick={openProject}
-                        />
-                    ))}
-                    {isFetching && (
-                        <div className={styles.loading}>
-                            <LoadingSpinner />
-                        </div>
-                    )}
-                    {!isFetching && !!nextPageKey && (
-                        <Button type={ButtonType.OUTLINE} label={strings.showMore} onClick={fetchMoreProjects} />
-                    )}
-                </div>
-            )}
-            {selectedProject && <ProjectDetails id={selectedProject} />}
-            {error && <div>{error.message}</div>}
+            <div className={styles.container}>
+                {!projects && !error && (
+                    <div className={styles.loading}>
+                        <LoadingSpinner />
+                    </div>
+                )}
+                {projects && !selectedProject && (
+                    <div className={styles.scrollContainer}>
+                        {projects.map(project => (
+                            <ProjectListItem
+                                key={project.id}
+                                id={project.id}
+                                name={project.name}
+                                ownerWallet={project.creator}
+                                imageUrl={project.offChainImageUrl}
+                                onClick={openProject}
+                            />
+                        ))}
+                        {isFetching && (
+                            <div className={styles.loading}>
+                                <LoadingSpinner />
+                            </div>
+                        )}
+                        {!isFetching && !!nextPageKey && (
+                            <Button type={ButtonType.OUTLINE} label={strings.showMore} onClick={fetchMoreProjects} />
+                        )}
+                    </div>
+                )}
+                {selectedProject && <ProjectDetails id={selectedProject} />}
+                {error && <div>{error.message}</div>}
+            </div>
         </ModalDialog>
     )
 }
