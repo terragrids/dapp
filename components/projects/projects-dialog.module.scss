@@ -1,11 +1,19 @@
+@import 'styles/colors.scss';
+
 .container {
     min-height: 300px;
 }
 
 .scrollContainer {
+    padding-bottom: 40px;
     text-align: center;
 }
 
 .loading {
+    padding: 10px 0;
     min-width: 600px;
+}
+
+.error {
+    color: $color-red;
 }

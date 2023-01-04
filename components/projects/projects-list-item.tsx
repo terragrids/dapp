@@ -1,5 +1,5 @@
 import MenuDropDown, { Align } from 'components/menu-drop-down'
-import DropDownMenuItem from 'components/menu-drop-down-item'
+import MenuDropDownItem from 'components/menu-drop-down-item'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
 import { useContext } from 'react'
@@ -13,10 +13,21 @@ type ProjectListItemProps = {
     ownerWallet: string | null
     imageUrl: string
     onClick: (id: string) => void
+    onArchive: (id: string) => void
+    onDelete: (id: string) => void
 }
 
-const ProjectListItem = ({ id, name, imageUrl, ownerWallet = null, onClick }: ProjectListItemProps) => {
+const ProjectListItem = ({
+    id,
+    name,
+    imageUrl,
+    ownerWallet = null,
+    onClick,
+    onArchive,
+    onDelete
+}: ProjectListItemProps) => {
     const user = useContext<User>(UserContext)
+
     return (
         <li className={styles.container} onClick={() => onClick(id)}>
             <div className={styles.leftContainer}>
@@ -32,8 +43,13 @@ const ProjectListItem = ({ id, name, imageUrl, ownerWallet = null, onClick }: Pr
                 {user && user.isAdmin && (
                     <div className={styles.menuButton}>
                         <MenuDropDown align={Align.RIGHT}>
-                            <DropDownMenuItem id={id} text={strings.archive} icon={'icon-archive'} />
-                            <DropDownMenuItem id={id} text={strings.delete} icon={'icon-bin'} />
+                            <MenuDropDownItem
+                                id={id}
+                                text={strings.archive}
+                                icon={'icon-archive'}
+                                onClick={onArchive}
+                            />
+                            <MenuDropDownItem id={id} text={strings.delete} icon={'icon-bin'} onClick={onDelete} />
                         </MenuDropDown>
                     </div>
                 )}

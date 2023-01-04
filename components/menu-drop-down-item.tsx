@@ -8,7 +8,7 @@ type Props = {
     onClick?: (id: string) => void
 }
 
-export default function DropDownMenuItem({
+export default function MenuDropDownItem({
     id,
     disabled,
     icon,

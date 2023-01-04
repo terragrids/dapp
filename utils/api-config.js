@@ -74,27 +74,28 @@ export async function callProjectsApi(res, method, endpoint, data, headers, quer
 async function callApi(res, baseUrl, method, endpoint, data, headers, query) {
     await handleHttpRequest(res, async () => {
         let response
+        let url = `${baseUrl}/${endpoint}`
+        if (query) {
+            const props = []
+            for (var key in query) {
+                if (query.hasOwnProperty(key) && query[key] !== undefined) {
+                    props.push(`${key}=${query[key]}`)
+                }
+            }
+            const queryString = props.join('&')
+            url = `${url}?${queryString}`
+        }
+
         switch (method) {
             case 'GET':
-                let url = `${baseUrl}/${endpoint}`
-                if (query) {
-                    const props = []
-                    for (var key in query) {
-                        if (query.hasOwnProperty(key) && query[key] !== undefined) {
-                            props.push(`${key}=${query[key]}`)
-                        }
-                    }
-                    const queryString = props.join('&')
-                    url = `${url}?${queryString}`
-                }
                 response = await fetch(url)
                 break
             case 'POST':
             case 'PUT':
-                response = await httpRequest(method, `${baseUrl}/${endpoint}`, data, headers)
+                response = await httpRequest(method, url, data, headers)
                 break
             case 'DELETE':
-                response = await httpRequest(method, `${baseUrl}/${endpoint}`, null, headers)
+                response = await httpRequest(method, url, null, headers)
                 break
             default:
                 res.status(405).end()
@@ -125,10 +126,10 @@ async function httpRequest(method, url, data = {}, headers = {}) {
         method,
         cache: 'no-cache',
         referrerPolicy: 'no-referrer',
-        ...(data && {
+        ...(headers && {
             headers: {
                 ...headers,
-                'Content-Type': 'application/json'
+                ...(data && { 'Content-Type': 'application/json' })
             },
             body: JSON.stringify(data)
         })

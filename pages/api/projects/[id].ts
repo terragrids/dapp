@@ -12,7 +12,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 authorization: req.headers.authorization
             })
             break
+        case 'DELETE':
+            await callProjectsApi(
+                res,
+                'DELETE',
+                `projects/${req.query.id}`,
+                null,
+                { authorization: req.headers.authorization },
+                {
+                    ...(req.query.permanent && { permanent: req.query.permanent })
+                }
+            )
+            break
         default:
-            setMethodNotAllowedResponse(res, ['GET', 'PUT'])
+            setMethodNotAllowedResponse(res, ['GET', 'PUT', 'DELETE'])
     }
 }

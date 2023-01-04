@@ -11,6 +11,8 @@ import ProjectListItem from './projects-list-item'
 import styles from './projects-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import Button, { ButtonType } from 'components/button'
+import { useAuth } from 'hooks/use-auth.js'
+import ActionBar from 'components/action-bar'
 
 type ProjectsDialogProps = {
     visible: boolean
@@ -27,9 +29,12 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const user = useContext<User>(UserContext)
     const [projects, setProjects] = useState<Array<Project> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>()
+    const [message, setMessage] = useState<string | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
+    const { getAuthHeader } = useAuth()
 
     const fetchProjects = useCallback(async () => {
         if (!user || isFetching) return
@@ -53,15 +58,20 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         setIsFetching(false)
     }, [isFetching, nextPageKey, ownerWalletAddress, projects, user])
 
+    function reset() {
+        setProjects(null)
+        setNextPageKey(null)
+        setSelectedProject(null)
+        setError(null)
+        setMessage(null)
+    }
+
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && !prevVisible) {
-            setProjects(null)
-            setNextPageKey(null)
-            setSelectedProject(null)
-            setError(null)
+            reset()
         }
-    }, [fetchProjects, prevVisible, visible])
+    }, [prevVisible, visible])
 
     useEffect(() => {
         if (visible && !projects && !error) {
@@ -71,6 +81,39 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
 
     function openProject(id: string) {
         setSelectedProject(id)
+    }
+
+    async function deleteProject(id: string, permanent: boolean) {
+        setIsProcessing(true)
+        setError(null)
+
+        const authHeader = await getAuthHeader(user.walletAddress)
+
+        let url = `${endpoints.project(id)}`
+        if (permanent) url = `${url}?permanent=true`
+
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: authHeader
+            },
+            referrerPolicy: 'no-referrer'
+        })
+
+        if (response.ok) {
+            const jsonResponse = await response.json()
+            reset()
+            setMessage(
+                `${permanent ? strings.projectDeleted : strings.projectArchived}. ${
+                    !jsonResponse.contractDeleted ? `${strings.failedDeletingContract}.` : ''
+                }`
+            )
+        } else {
+            setError({ message: permanent ? strings.failedDeletingProject : strings.failedArchivingProject })
+        }
+
+        setIsProcessing(false)
     }
 
     function fetchMoreProjects() {
@@ -115,6 +158,8 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                                 ownerWallet={project.creator}
                                 imageUrl={project.offChainImageUrl}
                                 onClick={openProject}
+                                onArchive={() => deleteProject(project.id, false)}
+                                onDelete={() => deleteProject(project.id, true)}
                             />
                         ))}
                         {isFetching && (
@@ -128,7 +173,17 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                     </div>
                 )}
                 {selectedProject && <ProjectDetails id={selectedProject} />}
-                {error && <div>{error.message}</div>}
+                {(error || message || isProcessing) && (
+                    <ActionBar>
+                        {error && <div className={styles.error}>{error.message}</div>}
+                        {message && <div>{message}</div>}
+                        {isProcessing && (
+                            <div className={styles.loading}>
+                                <LoadingSpinner />
+                            </div>
+                        )}
+                    </ActionBar>
+                )}
             </div>
         </ModalDialog>
     )
