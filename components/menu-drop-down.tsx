@@ -20,7 +20,6 @@ export enum Align {
 }
 
 export default function MenuDropDown({
-    expanded = false,
     tooltip,
     icon = 'icon-ellipsis',
     visible = true,
@@ -29,40 +28,25 @@ export default function MenuDropDown({
     className = '',
     align
 }: Props) {
-    const [state, setState] = useState({
-        expanded: expanded,
-        tooltipStyle: null,
-        menuItemsStyle: null
-    })
+    const [expanded, setExpanded] = useState<boolean>(false)
 
     const node = useRef<HTMLDivElement>(null)
-    const tooltipNode = useRef<HTMLDivElement>(null)
-    const menuItemsNode = useRef<HTMLDivElement>(null)
     useDocumentEventListener('mousedown', handleDocumentMouseDown)
 
-    function handleDocumentMouseDown(e: React.UIEvent<HTMLElement>) {
-        if (node.current && !node.current.contains(e.currentTarget)) {
-            setState(state => ({
-                ...state,
-                expanded: false
-            }))
+    function handleDocumentMouseDown(e: MouseEvent) {
+        if (node.current && !node.current.contains(e.target as Node)) {
+            setExpanded(false)
         }
     }
 
     function onIconClick(e: React.UIEvent<HTMLElement>) {
-        children &&
-            setState(state => ({
-                ...state,
-                expanded: !state.expanded
-            }))
+        setExpanded(!expanded)
         e.stopPropagation()
     }
 
-    function onListClick() {
-        setState(state => ({
-            ...state,
-            expanded: false
-        }))
+    function onListClick(e: React.UIEvent<HTMLElement>) {
+        setExpanded(false)
+        e.stopPropagation()
     }
 
     function getVisibilityClass() {
@@ -84,14 +68,10 @@ export default function MenuDropDown({
                 onClick={onIconClick}
             />
 
-            {tooltip && !state.expanded && (
-                <div ref={tooltipNode} className={`${styles.tooltip} ${alignClass}`}>
-                    {tooltip}
-                </div>
-            )}
+            {tooltip && !expanded && <div className={`${styles.tooltip} ${alignClass}`}>{tooltip}</div>}
 
-            {children && state.expanded && (
-                <div ref={menuItemsNode} className={`${styles.menuItems} ${alignClass}`} onClick={onListClick}>
+            {children && expanded && (
+                <div className={`${styles.menuItems} ${alignClass}`} onClick={onListClick}>
                     {children}
                 </div>
             )}

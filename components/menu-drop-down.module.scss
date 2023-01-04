@@ -21,7 +21,7 @@
         transition: $quick-transition;
     }
 
-    i {
+    & > i {
         display: inline-block;
         font-size: 20px;
         padding: 10px;

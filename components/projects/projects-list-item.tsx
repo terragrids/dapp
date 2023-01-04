@@ -1,7 +1,9 @@
 import MenuDropDown, { Align } from 'components/menu-drop-down'
+import DropDownMenuItem from 'components/menu-drop-down-item'
 import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
 import { useContext } from 'react'
+import { strings } from 'strings/en.js'
 import { maskWalletAddress } from 'utils/string-utils.js'
 import styles from './projects-list-item.module.scss'
 
@@ -29,7 +31,10 @@ const ProjectListItem = ({ id, name, imageUrl, ownerWallet = null, onClick }: Pr
                 {ownerWallet && <div className={styles.owner}>{maskWalletAddress(ownerWallet)}</div>}
                 {user && user.isAdmin && (
                     <div className={styles.menuButton}>
-                        <MenuDropDown align={Align.RIGHT}>menu</MenuDropDown>
+                        <MenuDropDown align={Align.RIGHT}>
+                            <DropDownMenuItem id={id} text={strings.archive} icon={'icon-archive'} />
+                            <DropDownMenuItem id={id} text={strings.delete} icon={'icon-bin'} />
+                        </MenuDropDown>
                     </div>
                 )}
             </div>

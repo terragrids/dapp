@@ -1,0 +1,45 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/mixins.scss';
+@import 'styles/screens.scss';
+
+.container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    height: 45px;
+    padding: 0 30px 0 10px;
+    color: $color-abbey;
+    white-space: nowrap;
+
+    &.disabled {
+        color: $color-emperor;
+    }
+
+    i {
+        display: inline-block;
+        margin-right: 10px;
+        font-size: 20px;
+        padding: 10px;
+    }
+
+    @media (hover: hover) {
+        &:hover {
+            color: $color-alto;
+            background-color: $color-cape-cod;
+
+            .icon {
+                color: $color-alto;
+            }
+        }
+    }
+
+    .icon {
+        color: $color-abbey;
+        margin-right: 10px;
+    }
+
+    .text {
+        white-space: nowrap;
+    }
+}
