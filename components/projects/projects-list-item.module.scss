@@ -6,13 +6,13 @@
     display: flex;
     flex: auto 1 0;
     align-content: center;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px;
     box-sizing: border-box;
     height: 100px;
     width: 600px;
     margin: 10px 0;
-    overflow: hidden;
     cursor: pointer;
 
     @media (max-width: $screen-small) {
@@ -21,8 +21,15 @@
     }
 
     &:hover {
-        background-color: $color-brand;
+        border-radius: $border-radius;
+        background-color: $color-mine-shaft;
     }
+}
+
+.leftContainer,
+.rightContainer {
+    display: flex;
+    justify-content: flex-start;
 
     & > div {
         display: flex;
@@ -35,8 +42,6 @@
     flex: 0 0 80px;
     position: relative;
     overflow: hidden;
-    border-radius: $border-radius;
-    background-color: $color-abbey;
 
     .image {
         width: 80px;
@@ -45,7 +50,8 @@
     }
 }
 
-.nameContainer {
+.name {
+    flex: 0 0 300px;
     padding: 20px;
     overflow: hidden;
     text-align: start;
@@ -57,7 +63,12 @@
     }
 }
 
-.ownerContainer {
+.owner {
+    flex: 0 0 auto;
     text-align: right;
-    flex: 1 0 80px;
+}
+
+.menuButton {
+    padding-left: 20px;
+    flex: 0 0 50px;
 }

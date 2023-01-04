@@ -1,0 +1,113 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/mixins.scss';
+@import 'styles/screens.scss';
+
+.container {
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+    @include no-user-select();
+
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+        transition: $quick-transition;
+    }
+
+    &.hidden {
+        visibility: hidden;
+        opacity: 0;
+        transition: $quick-transition;
+    }
+
+    i {
+        display: inline-block;
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 100%;
+        cursor: pointer;
+        border: 1px solid transparent;
+        color: $color-alto;
+
+        &.rotated {
+            transform: rotate(90deg);
+        }
+
+        &.selected {
+            color: $color-ebony-clay;
+            background-color: $color-ebony-clay;
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                color: $color-abbey;
+                background-color: $color-alto;
+                border: 1px solid $color-black-60;
+                transition: $quick-transition;
+
+                + .tooltip {
+                    visibility: visible;
+                    opacity: 1;
+                    transition: $quick-transition;
+                    transition-delay: $quick-transition-delay;
+                }
+            }
+        }
+    }
+
+    .tooltip {
+        position: absolute;
+        display: block;
+        white-space: nowrap;
+        visibility: hidden;
+        opacity: 0;
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: $border-radius;
+        margin-top: 1px;
+        color: $color-white;
+        background-color: $color-ebony-clay;
+        transition: $quick-transition;
+        z-index: $z-index-drop-down-menu;
+
+        &.leftAligned {
+            left: 0;
+        }
+
+        &.rightAligned {
+            right: 0;
+        }
+
+        @media (hover: none) {
+            display: none;
+        }
+    }
+
+    .menuItems {
+        position: absolute;
+        min-width: 120px;
+        padding: 3px 0;
+        margin: 10px -2px;
+        background: $color-white;
+        border-radius: $border-radius;
+        box-shadow: $box-shadow;
+        font-size: 16px;
+        text-align: left;
+        border: 1px solid $color-emperor;
+        z-index: $z-index-drop-down-menu;
+
+        &.leftAligned {
+            left: 0;
+        }
+
+        &.rightAligned {
+            right: 0;
+            text-align: left;
+        }
+
+        &.centerAligned {
+            opacity: 0;
+        }
+    }
+}

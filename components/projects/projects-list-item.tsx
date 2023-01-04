@@ -1,3 +1,7 @@
+import MenuDropDown, { Align } from 'components/menu-drop-down'
+import { UserContext } from 'context/user-context.js'
+import { User } from 'hooks/use-user.js'
+import { useContext } from 'react'
 import { maskWalletAddress } from 'utils/string-utils.js'
 import styles from './projects-list-item.module.scss'
 
@@ -10,15 +14,25 @@ type ProjectListItemProps = {
 }
 
 const ProjectListItem = ({ id, name, imageUrl, ownerWallet = null, onClick }: ProjectListItemProps) => {
+    const user = useContext<User>(UserContext)
     return (
         <li className={styles.container} onClick={() => onClick(id)}>
-            <div className={styles.imageContainer}>
-                <img src={imageUrl} alt={name} className={styles.image} />
+            <div className={styles.leftContainer}>
+                <div className={styles.imageContainer}>
+                    <img src={imageUrl} alt={name} className={styles.image} />
+                </div>
+                <div className={styles.name}>
+                    <div>{name}</div>
+                </div>
             </div>
-            <div className={styles.nameContainer}>
-                <div>{name}</div>
+            <div className={styles.rightContainer}>
+                {ownerWallet && <div className={styles.owner}>{maskWalletAddress(ownerWallet)}</div>}
+                {user && user.isAdmin && (
+                    <div className={styles.menuButton}>
+                        <MenuDropDown align={Align.RIGHT}>menu</MenuDropDown>
+                    </div>
+                )}
             </div>
-            {ownerWallet && <div className={styles.ownerContainer}>{maskWalletAddress(ownerWallet)}</div>}
         </li>
     )
 }
