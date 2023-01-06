@@ -4,7 +4,7 @@ import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
-import { Project } from 'types/project.js'
+import { Project, ProjectStatus } from 'types/project'
 import { endpoints } from 'utils/api-config.js'
 import ProjectDetails from './project-details'
 import ProjectListItem from './projects-list-item'
@@ -13,6 +13,7 @@ import usePrevious from 'hooks/use-previous.js'
 import Button, { ButtonType } from 'components/button'
 import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
+import { DropDownSelector } from 'components/drop-down-selector'
 
 type ProjectsDialogProps = {
     visible: boolean
@@ -34,6 +35,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
+    const [projectStatus, setProjectStatus] = useState<string | null>()
     const { getAuthHeader } = useAuth()
 
     const fetchProjects = useCallback(async () => {
@@ -43,8 +45,8 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
 
         const response = await fetch(
             ownerWalletAddress
-                ? endpoints.paginatedAccountProjects(ownerWalletAddress, nextPageKey)
-                : endpoints.paginatedProjects(nextPageKey)
+                ? endpoints.paginatedAccountProjects(ownerWalletAddress, nextPageKey, projectStatus)
+                : endpoints.paginatedProjects(nextPageKey, projectStatus)
         )
 
         if (response.ok) {
@@ -56,7 +58,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         }
 
         setIsFetching(false)
-    }, [isFetching, nextPageKey, ownerWalletAddress, projects, user])
+    }, [isFetching, nextPageKey, ownerWalletAddress, projectStatus, projects, user])
 
     function reset() {
         setProjects(null)
@@ -72,6 +74,13 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
             reset()
         }
     }, [prevVisible, visible])
+
+    const prevStatus = usePrevious(projectStatus)
+    useEffect(() => {
+        if (projectStatus !== prevStatus) {
+            reset()
+        }
+    }, [prevStatus, projectStatus])
 
     useEffect(() => {
         if (visible && !projects && !error) {
@@ -143,6 +152,11 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
+                <DropDownSelector
+                    label={strings.status}
+                    options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
+                    onSelected={setProjectStatus}
+                />
                 {!projects && !error && (
                     <div className={styles.loading}>
                         <LoadingSpinner />

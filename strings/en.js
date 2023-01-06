@@ -6,6 +6,7 @@ const enStrings = {
     approvalStatus: 'Approval status',
     approved: 'Approved',
     archive: 'Archive',
+    archived: 'Archived',
     assetID: 'Asset ID',
     assets: 'Assets',
     author: 'Author',
@@ -33,6 +34,7 @@ const enStrings = {
     disconnect: 'Disconnect',
     dropImageHere: 'Drop image here',
     edit: 'Edit',
+    edited: 'Edited',
     errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
     errorBuyingNft:
         'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
