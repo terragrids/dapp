@@ -26,6 +26,8 @@ const enStrings = {
     contractId: 'Contract ID',
     create: 'Create',
     created: 'Created',
+    waitingForApproval: 'Waiting for approval',
+    waitingForEditReview: 'Waiting for edit review',
     createProject: 'Create new project',
     createProjectWithWallet: 'Create a new project associated with your wallet address',
     delete: 'Delete',

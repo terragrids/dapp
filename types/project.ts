@@ -9,9 +9,9 @@ export type Project = {
 }
 
 export class ProjectStatus {
-    static readonly CREATED = new ProjectStatus('created', strings.created)
+    static readonly CREATED = new ProjectStatus('created', strings.waitingForApproval)
     static readonly APPROVED = new ProjectStatus('approved', strings.approved)
-    static readonly EDITED = new ProjectStatus('approved-edited', strings.edited)
+    static readonly EDITED = new ProjectStatus('approved-edited', strings.waitingForEditReview)
     static readonly ARCHIVED = new ProjectStatus('archived', strings.archived)
 
     // private to disallow creating other instances of this type

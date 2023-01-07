@@ -5,7 +5,8 @@ export default async function handler(req, res) {
         case 'GET':
             await callProjectsApi(res, 'GET', `creators/${req.query.accountId}/projects`, null, null, {
                 pageSize: req.query.pageSize,
-                nextPageKey: req.query.nextPageKey
+                nextPageKey: req.query.nextPageKey,
+                status: req.query.status
             })
             break
         default:
