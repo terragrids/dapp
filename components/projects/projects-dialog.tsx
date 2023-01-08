@@ -153,7 +153,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                {(ownerWalletAddress || (user && user.isAdmin)) && (
+                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && (
                     <DropDownSelector
                         label={strings.status}
                         options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
