@@ -35,7 +35,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
-    const [projectStatus, setProjectStatus] = useState<string | null>(ProjectStatus.APPROVED.value)
+    const [projectStatus, setProjectStatus] = useState<string | null>(ProjectStatus.APPROVED.key)
     const { getAuthHeader } = useAuth()
 
     const fetchProjects = useCallback(async () => {
@@ -71,6 +71,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && !prevVisible) {
+            setProjectStatus(ProjectStatus.APPROVED.key)
             reset()
         }
     }, [prevVisible, visible])
