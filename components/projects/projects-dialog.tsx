@@ -46,7 +46,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         const response = await fetch(
             ownerWalletAddress
                 ? endpoints.paginatedAccountProjects(ownerWalletAddress, nextPageKey, projectStatus)
-                : endpoints.paginatedProjects(nextPageKey, projectStatus)
+                : endpoints.paginatedProjects(nextPageKey, user.isAdmin ? projectStatus : ProjectStatus.APPROVED.key)
         )
 
         if (response.ok) {
@@ -71,7 +71,6 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && !prevVisible) {
-            setProjectStatus(ProjectStatus.APPROVED.key)
             reset()
         }
     }, [prevVisible, visible])
@@ -157,7 +156,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                     <DropDownSelector
                         label={strings.status}
                         options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
-                        defaultValue={ProjectStatus.APPROVED}
+                        defaultValue={projectStatus}
                         onSelected={setProjectStatus}
                     />
                 )}

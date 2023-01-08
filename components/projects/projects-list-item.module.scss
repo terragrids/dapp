@@ -14,6 +14,7 @@
     width: 100%;
     margin: 10px 0;
     cursor: pointer;
+    border: 1px solid transparent;
 
     @media (max-width: $screen-small) {
         min-width: auto;
@@ -23,6 +24,7 @@
     &:hover {
         border-radius: $border-radius;
         background-color: $color-mine-shaft;
+        border: 1px solid $color-abbey;
     }
 }
 

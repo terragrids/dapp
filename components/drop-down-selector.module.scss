@@ -4,13 +4,14 @@
 
 .selector {
     color: $color-white;
-    background-color: $color-tundora;
+    background-color: $color-mine-shaft;
     font-size: 18px;
     font-family: $font-default;
     padding: 8px 5px;
     margin-top: 5px;
     width: 100%;
     border-radius: $border-radius;
+    border: 1px solid $color-abbey;
     cursor: pointer;
 
     &:focus,

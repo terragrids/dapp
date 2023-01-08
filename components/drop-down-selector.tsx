@@ -10,7 +10,7 @@ export type SelectOption = {
 
 type Props = {
     options: Array<SelectOption>
-    defaultValue?: SelectOption
+    defaultValue?: string | null
     label: string
     onSelected: (value: string) => void
 }
@@ -25,11 +25,7 @@ export const DropDownSelector = ({ options, label, defaultValue, onSelected }: P
     return (
         <>
             <Label text={label} forId={id.current} />
-            <select
-                id={id.current}
-                className={styles.selector}
-                defaultValue={defaultValue?.key}
-                onChange={onSelectItem}>
+            <select id={id.current} className={styles.selector} defaultValue={defaultValue} onChange={onSelectItem}>
                 {options.map(option => (
                     <option key={option.key} value={option.key}>
                         {option.value}
