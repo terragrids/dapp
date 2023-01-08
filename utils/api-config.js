@@ -32,14 +32,14 @@ const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const projects = 'api/projects'
 const paginatedProjects = (nextPageKey, status) =>
-    `api/projects?pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
+    `api/projects?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }`
 const project = id => `api/projects/${id}`
 const paginatedAccountProjects = (accountId, nextPageKey, status) =>
-    `api/accounts/${accountId}/projects?pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
-        status ? `&status=${status}` : ''
-    }`
+    `api/accounts/${accountId}/projects?sort=desc&pageSize=${pageSize}${
+        nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
+    }${status ? `&status=${status}` : ''}`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
 
 export const endpoints = {

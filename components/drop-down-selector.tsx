@@ -25,7 +25,11 @@ export const DropDownSelector = ({ options, label, defaultValue, onSelected }: P
     return (
         <>
             <Label text={label} forId={id.current} />
-            <select id={id.current} className={styles.selector} defaultValue={defaultValue} onChange={onSelectItem}>
+            <select
+                id={id.current}
+                className={styles.selector}
+                defaultValue={defaultValue || undefined}
+                onChange={onSelectItem}>
                 {options.map(option => (
                     <option key={option.key} value={option.key}>
                         {option.value}
