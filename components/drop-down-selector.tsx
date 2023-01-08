@@ -8,7 +8,14 @@ export type SelectOption = {
     value: string
 }
 
-export const DropDownSelector = ({ options, label, onSelected }: Props) => {
+type Props = {
+    options: Array<SelectOption>
+    defaultValue?: SelectOption
+    label: string
+    onSelected: (value: string) => void
+}
+
+export const DropDownSelector = ({ options, label, defaultValue, onSelected }: Props) => {
     const id = useRef(uniqid())
 
     function onSelectItem(event: React.ChangeEvent<HTMLSelectElement>): void {
@@ -21,11 +28,10 @@ export const DropDownSelector = ({ options, label, onSelected }: Props) => {
             <select
                 id={id.current}
                 className={styles.selector}
+                defaultValue={defaultValue?.key}
                 onChange={onSelectItem}>
                 {options.map(option => (
-                    <option
-                        key={option.key}
-                        value={option.key}>
+                    <option key={option.key} value={option.key}>
                         {option.value}
                     </option>
                 ))}
@@ -33,9 +39,3 @@ export const DropDownSelector = ({ options, label, onSelected }: Props) => {
         </>
     )
 }
-
-type Props = {
-    options: Array<SelectOption>
-    label: string
-    onSelected: (value: string) => void
-};

@@ -35,7 +35,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
-    const [projectStatus, setProjectStatus] = useState<string | null>()
+    const [projectStatus, setProjectStatus] = useState<string | null>(ProjectStatus.APPROVED.value)
     const { getAuthHeader } = useAuth()
 
     const fetchProjects = useCallback(async () => {
@@ -152,11 +152,14 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                <DropDownSelector
-                    label={strings.status}
-                    options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
-                    onSelected={setProjectStatus}
-                />
+                {(ownerWalletAddress || (user && user.isAdmin)) && (
+                    <DropDownSelector
+                        label={strings.status}
+                        options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
+                        defaultValue={ProjectStatus.APPROVED}
+                        onSelected={setProjectStatus}
+                    />
+                )}
                 {!projects && !error && (
                     <div className={styles.loading}>
                         <LoadingSpinner />
