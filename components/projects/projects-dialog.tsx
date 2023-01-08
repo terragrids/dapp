@@ -165,7 +165,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                         <LoadingSpinner />
                     </div>
                 )}
-                {projects && !selectedProject && (
+                {projects && projects.length > 0 && !selectedProject && (
                     <div className={styles.scrollContainer}>
                         {projects.map(project => (
                             <ProjectListItem
@@ -189,6 +189,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                         )}
                     </div>
                 )}
+                {projects && projects.length === 0 && <div className={styles.empty}>{strings.noProjectsFound}</div>}
                 {selectedProject && <ProjectDetails id={selectedProject} />}
                 {(error || message || isProcessing) && (
                     <ActionBar>
