@@ -119,6 +119,10 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
 
                 if (response.status !== 201) {
                     setError(strings.errorCreatingProject)
+                } else if (user.walletAccount) {
+                    const { tokenId } = await response.json()
+                    await user.walletAccount.tokenAccept(tokenId)
+                    onClose()
                 }
             } catch (e) {
                 setError(strings.errorCreatingProject)
@@ -138,8 +142,10 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         fileProps.name,
         fileProps.offChainUrl,
         getAuthHeader,
+        onClose,
         prevUploadState,
         uploadState,
+        user.walletAccount,
         user.walletAddress
     ])
 

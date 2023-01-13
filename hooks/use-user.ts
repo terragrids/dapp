@@ -6,6 +6,7 @@ export type User = {
         networkAccount: {
             addr: string
         }
+        tokenAccept: (tokenId: number) => Promise<void>
     }
     stdlib?: object
     walletBalance?: string
