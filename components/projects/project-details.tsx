@@ -41,7 +41,7 @@ type UpdatedProjectProperties = {
     name: string
     description: string
     properties: object
-    logoFile: File
+    imageFile: File
 }
 
 const ProjectDetails = ({ id }: ProjectDetailsProps) => {
@@ -88,13 +88,14 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 const metadataResponse = await fetch(metadataUrl)
 
                 if (metadataResponse.ok) {
-                    const { image, description, properties } = await metadataResponse.json()
+                    const { name, image, description, properties } = await metadataResponse.json()
                     setProject(
                         project =>
                             ({
                                 ...project,
                                 logoUrl: ipfsUrlToGatewayUrl(image),
-                                description: description,
+                                name,
+                                description,
                                 budget: properties.budget.value
                             } as ProjectDetails)
                     )
@@ -121,7 +122,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         setUpdatedProject({
             name: project.name,
             description: project.description,
-            logoFile: new File([fileBlob], 'file', fileBlob),
+            imageFile: new File([fileBlob], 'file', fileBlob),
             properties: {}
         })
 
@@ -135,7 +136,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     function setFile(file: File) {
         setUpdatedProject(project => ({
             ...project,
-            logoFile: file
+            imageFile: file
         }))
     }
 
@@ -154,7 +155,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     }
 
     function isUpdateValid() {
-        return updatedProject.logoFile && !!updatedProject.name && !!updatedProject.description
+        return updatedProject.imageFile && !!updatedProject.name && !!updatedProject.description
     }
 
     function isUpdateInProgress() {
@@ -168,7 +169,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     function submit() {
         if (!updatedProject) return
         setInProgress(true)
-        upload(updatedProject.logoFile)
+        upload(updatedProject.imageFile)
     }
 
     /**
@@ -270,8 +271,6 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 )}
                 {project && editing && (
                     <>
-                        <div className={styles.name}>{project.name}</div>
-
                         <div className={styles.section}>
                             <Label text={strings.projectLogo} />
                             <ImageUploader imageUrl={project.logoUrl} onFileSelected={file => setFile(file)} />
