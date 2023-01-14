@@ -15,6 +15,7 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
+import { ProjectStatus } from 'types/project'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
 import { getContractFromJsonString, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
@@ -35,6 +36,7 @@ type ProjectDetails = {
     balance: number
     budget: number
     approved: boolean
+    status: string
 }
 
 type UpdatedProjectProperties = {
@@ -68,7 +70,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         const response = await fetch(endpoints.project(id))
 
         if (response.ok) {
-            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId, approved } =
+            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId, approved, status } =
                 await response.json()
             const contractId = stdlib.bigNumberToNumber(getContractFromJsonString(id))
 
@@ -80,6 +82,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 balance,
                 tokenId,
                 approved,
+                status,
                 logoUrl: offChainImageUrl
             } as ProjectDetails)
 
@@ -289,9 +292,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>
-                                {project.approved ? strings.approved : strings.underReview}
-                            </div>
+                            <div className={styles.content}>{ProjectStatus.getByKey(project.status)}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />

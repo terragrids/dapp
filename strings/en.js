@@ -106,6 +106,7 @@ const enStrings = {
     redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',
     reject: 'Reject',
+    rejected: 'Rejected',
     sell: 'Sell',
     sellFor: 'Sell for',
     showMore: 'Show more',
