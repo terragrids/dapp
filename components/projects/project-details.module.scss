@@ -4,7 +4,11 @@
 
 .container {
     position: relative;
-    margin-bottom: 50px;
+    padding-bottom: 80px;
+
+    img {
+        padding: 10px;
+    }
 
     @media (max-width: $screen-small) {
         width: 100%;
@@ -41,6 +45,13 @@
     color: $color-red;
     padding-top: 40px;
     font-size: 16px;
+}
+
+.buttonContainer {
+    text-align: center;
+    & > * {
+        margin: 2px 5px;
+    }
 }
 
 .button {

@@ -4,6 +4,7 @@ const enStrings = {
     activeTerracells: 'Active terracells',
     algoSigner: 'AlgoSigner',
     approvalStatus: 'Approval status',
+    approve: 'Approve',
     approved: 'Approved',
     archive: 'Archive',
     archived: 'Archived',

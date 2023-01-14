@@ -128,6 +128,10 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         setEditing(true)
     }
 
+    async function approve() {
+        //
+    }
+
     function setFile(file: File) {
         setUpdatedProject(project => ({
             ...project,
@@ -302,12 +306,22 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             {canEdit() && (
                 <ActionBar>
                     {!editing && (
-                        <Button
-                            className={styles.button}
-                            type={ButtonType.OUTLINE}
-                            label={strings.edit}
-                            onClick={edit}
-                        />
+                        <div className={styles.buttonContainer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.edit}
+                                onClick={edit}
+                            />
+                            {user && user.isAdmin && project && !project.approved && (
+                                <Button
+                                    className={styles.button}
+                                    type={ButtonType.OUTLINE}
+                                    label={strings.approve}
+                                    onClick={approve}
+                                />
+                            )}
+                        </div>
                     )}
                     {editing && (
                         <Button
