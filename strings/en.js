@@ -37,6 +37,7 @@ const enStrings = {
     edit: 'Edit',
     edited: 'Edited',
     errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
+    errorApprovingProject: 'Something went wrong when approving this project. Please try again.',
     errorBuyingNft:
         'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
     errorConnectingWallet:
@@ -104,6 +105,7 @@ const enStrings = {
     rarity: 'Rarity',
     redeployContract: 'Redeploy contract',
     refreshAndTryAgain: 'Please refresh the page and try again.',
+    reject: 'Reject',
     sell: 'Sell',
     sellFor: 'Sell for',
     showMore: 'Show more',

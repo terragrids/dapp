@@ -68,7 +68,8 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         const response = await fetch(endpoints.project(id))
 
         if (response.ok) {
-            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId } = await response.json()
+            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId, approved } =
+                await response.json()
             const contractId = stdlib.bigNumberToNumber(getContractFromJsonString(id))
 
             setProject({
@@ -78,6 +79,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 creator,
                 balance,
                 tokenId,
+                approved,
                 logoUrl: offChainImageUrl
             } as ProjectDetails)
 
@@ -100,11 +102,44 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                             } as ProjectDetails)
                     )
                 }
+
+                setInProgress(false)
             } catch (e) {}
         } else {
             setError(strings.errorFetchingProject)
         }
     }, [id, stdlib])
+
+    const approveProject = useCallback(
+        async (approvalStatus: boolean) => {
+            setError(null)
+            setInProgress(true)
+            try {
+                const authHeader = await getAuthHeader(user.walletAddress)
+                const response = await fetch(endpoints.projectApproval(id), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: authHeader
+                    },
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify({
+                        approved: approvalStatus
+                    })
+                })
+
+                if (response.ok) {
+                    fetchProject()
+                } else {
+                    throw new Error()
+                }
+            } catch (e) {
+                setError(strings.errorApprovingProject)
+                setInProgress(false)
+            }
+        },
+        [fetchProject, getAuthHeader, id, user.walletAddress]
+    )
 
     useEffect(() => {
         setEditing(false)
@@ -126,11 +161,8 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             properties: {}
         })
 
+        setError(null)
         setEditing(true)
-    }
-
-    async function approve() {
-        //
     }
 
     function setFile(file: File) {
@@ -300,11 +332,11 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                         </div>
                     </>
                 )}
-                {error && <div>{error}</div>}
             </div>
             {canEdit() && (
                 <ActionBar>
-                    {!editing && (
+                    {error && <div className={styles.error}>{error}</div>}
+                    {!editing && !inProgress && (
                         <div className={styles.buttonContainer}>
                             <Button
                                 className={styles.button}
@@ -312,16 +344,17 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                                 label={strings.edit}
                                 onClick={edit}
                             />
-                            {user && user.isAdmin && project && !project.approved && (
+                            {user && user.isAdmin && project && (
                                 <Button
                                     className={styles.button}
                                     type={ButtonType.OUTLINE}
-                                    label={strings.approve}
-                                    onClick={approve}
+                                    label={project.approved ? strings.reject : strings.approve}
+                                    onClick={() => approveProject(!project.approved)}
                                 />
                             )}
                         </div>
                     )}
+                    {!editing && inProgress && <LoadingSpinner />}
                     {editing && (
                         <Button
                             className={styles.button}

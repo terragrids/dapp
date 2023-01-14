@@ -134,7 +134,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         const margin = 10
         const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
         const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom) {
+        if (bottom && !selectedProject) {
             fetchMoreProjects()
         }
     }

@@ -36,6 +36,7 @@ const paginatedProjects = (nextPageKey, status) =>
         status ? `&status=${status}` : ''
     }`
 const project = id => `api/projects/${id}`
+const projectApproval = id => `api/projects/${id}/approval`
 const paginatedAccountProjects = (accountId, nextPageKey, status) =>
     `api/accounts/${accountId}/projects?sort=desc&pageSize=${pageSize}${
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
@@ -58,6 +59,7 @@ export const endpoints = {
     projects,
     paginatedProjects,
     project,
+    projectApproval,
     paginatedAccountProjects,
     authForWallet
 }
