@@ -6,12 +6,12 @@ import useTouch from './use-touch'
 
 const ZOOM_SENSITIVITY = 0.0001
 const PINCH_ZOOM_SENSITIVITY = 0.2
-const MAX_SCALE = 4
+const MAX_SCALE = 8
 const MIN_SCALE = 0.8
 
 export const useCanvasController = (
     canvas: HTMLCanvasElement | null,
-    startPosition: Position2D,
+    startPosition: Position2D,  
     initialScale: number
 ) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
