@@ -12,6 +12,13 @@ export const projectsApiBaseUrl =
         ? 'https://dev.api-project-contract.terragrids.org'
         : 'https://api-project-contract.terragrids.org'
 
+export const nftsApiBaseUrl =
+    process.env.API_ENV === 'local'
+        ? 'http://localhost:3005'
+        : process.env.API_ENV === 'dev'
+        ? 'https://dev.api-nft-contract.terragrids.org'
+        : 'https://api-nft-contract.terragrids.org'
+
 export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
 export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
@@ -75,6 +82,10 @@ export async function callTerragridsApi(res, method, endpoint, data, headers, qu
 
 export async function callProjectsApi(res, method, endpoint, data, headers, query) {
     await callApi(res, projectsApiBaseUrl, method, endpoint, data, headers, query)
+}
+
+export async function callNftsApi(res, method, endpoint, data, headers, query) {
+    await callApi(res, nftsApiBaseUrl, method, endpoint, data, headers, query)
 }
 
 async function callApi(res, baseUrl, method, endpoint, data, headers, query) {

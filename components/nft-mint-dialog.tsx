@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { setTimeout } from 'timers'
 import { Nft } from 'types/nft'
-import { endpoints } from 'utils/api-config.js'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import Button from './button'
 import { DropDownSelector } from './drop-down-selector'
@@ -17,7 +16,6 @@ import styles from './nft-mint-dialog.module.scss'
 enum MintState {
     IDLE,
     MINTING,
-    SAVING,
     DONE,
     ERROR
 }
@@ -95,10 +93,9 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     function isInProgress() {
         const uploading = uploadState != FileUploadState.IDLE
         const minting = mintState === MintState.MINTING
-        const saving = mintState === MintState.SAVING
         const minted = mintState === MintState.DONE
         const failed = uploadState === FileUploadState.ERROR || mintState === MintState.ERROR
-        return !minted && !failed && (uploading || minting || saving)
+        return !minted && !failed && (uploading || minting)
     }
 
     /**
@@ -110,22 +107,24 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
     }
 
     /**
-     * 2. Mint token on the blockchain
+     * 2. Mint token on the blockchain and put it up for sale
      */
     useEffect(() => {
         async function mintToken() {
             setMintState(MintState.MINTING)
             const cid = getHashFromIpfsUrl(fileProps.ipfsMetadataUrl)
 
-            const assetId = await mint({
-                name: fileProps.name,
-                symbol: asset.symbol,
-                cid
-            })
+            const result = await mint(
+                asset.symbol,
+                fileProps.name as string,
+                cid,
+                asset.properties.price,
+                fileProps.offChainUrl as string
+            )
 
-            if (assetId) {
-                setAsset(asset => ({ ...asset, id: assetId }))
-                setMintState(MintState.SAVING)
+            if (result) {
+                setAsset(asset => ({ ...asset, id: result.tokenId }))
+                setMintState(MintState.DONE)
             } else {
                 setMintState(MintState.ERROR)
             }
@@ -135,44 +134,18 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
             mintToken()
         }
     }, [
+        asset.properties.price,
         asset.symbol,
-        fileProps.name,
-        fileProps.ipfsMetadataHash,
         fileProps.ipfsMetadataUrl,
+        fileProps.name,
+        fileProps.offChainUrl,
         mint,
         mintState,
         uploadState
     ])
 
     /**
-     * 3. Save token off-chain
-     */
-    useEffect(() => {
-        async function saveToken() {
-            const response = await fetch(endpoints.nfts, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                referrerPolicy: 'no-referrer',
-                body: JSON.stringify({
-                    assetId: asset.id,
-                    symbol: asset.symbol,
-                    offchainUrl: fileProps.offChainUrl,
-                    ...(asset.symbol === Nft.TRCL.symbol && { power: asset.properties.power })
-                })
-            })
-
-            setMintState(response.status === 201 ? MintState.DONE : MintState.ERROR)
-        }
-
-        if (mintState === MintState.SAVING) {
-            saveToken()
-        }
-    }, [asset.id, asset.properties.power, asset.symbol, fileProps.offChainUrl, mintState])
-
-    /**
-     * 4. All done, close dialog
+     * 3. All done, close dialog
      */
     useEffect(() => {
         if (mintState === MintState.DONE) {
@@ -224,7 +197,7 @@ export const NftMintDialog = ({ visible, onClose }: Props) => {
                     <InputField max={26} label={strings.name} onChange={setNftName} />
                 </div>
                 <div className={styles.section}>
-                    <InputField multiline max={512} label={strings.description} onChange={setNftDescription} />
+                    <InputField multiline max={5000} label={strings.description} onChange={setNftDescription} />
                 </div>
                 {asset.symbol === Nft.TRCL.symbol && (
                     <div className={styles.section}>
