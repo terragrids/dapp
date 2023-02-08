@@ -257,6 +257,10 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         user.walletAddress
     ])
 
+    function support() {
+        // TODO
+    }
+
     return (
         <>
             <div className={styles.container}>
@@ -351,6 +355,14 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                                     type={ButtonType.OUTLINE}
                                     label={project.approved ? strings.reject : strings.approve}
                                     onClick={() => approveProject(!project.approved)}
+                                />
+                            )}
+                            {project?.approved && (
+                                <Button
+                                    className={styles.button}
+                                    type={ButtonType.OUTLINE}
+                                    label={strings.support}
+                                    onClick={support}
                                 />
                             )}
                         </div>
