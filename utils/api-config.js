@@ -31,7 +31,7 @@ const nfts = 'api/nfts'
 const nft = id => `api/nfts/${id}`
 const accountNftsByType = (accountId, symbol) => `api/accounts/${accountId}/nfts/${symbol}`
 const paginatedNfts = (symbol, nextPageKey) =>
-    `api/nfts/type/${symbol}?pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}`
+    `api/nfts?sort=desc&symbol=${symbol}&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}`
 const nftContract = (id, applicationId) => `api/nfts/${id}/contracts/${applicationId}`
 const fileUpload = 'api/files/upload'
 const ipfsFiles = 'api/ipfs/files'

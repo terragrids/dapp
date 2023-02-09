@@ -7,7 +7,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { NftStatus, TerragridsNft } from 'types/nft'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
-import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { getContractFromJsonString, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './nft-card.module.scss'
 import NftInfo from './nft-info'
@@ -29,7 +29,7 @@ const NftCard = ({ id }: NftCardProps) => {
         const response = await fetch(endpoints.nft(id))
 
         if (response.ok) {
-            const { asset } = await response.json()
+            const asset = await response.json()
             const cid = cidFromAlgorandAddress(stdlib.algosdk, asset.reserve)
             const metadataUrl = ipfsUrl(cid)
             setNft(asset)
@@ -43,7 +43,8 @@ const NftCard = ({ id }: NftCardProps) => {
                     setNft(nft => ({
                         ...(nft as TerragridsNft),
                         description: description as string,
-                        assetPrice: properties['base_price'].value,
+                        contractId: stdlib.bigNumberToNumber(getContractFromJsonString(asset.contractId)),
+                        assetPrice: properties.price?.value,
                         rarity: properties.rarity.value,
                         author: properties.author.value
                     }))
@@ -52,7 +53,7 @@ const NftCard = ({ id }: NftCardProps) => {
         } else {
             setError(strings.errorFetchingNft)
         }
-    }, [id, stdlib.algosdk])
+    }, [id, stdlib])
 
     function onSell() {
         // todo
@@ -69,8 +70,8 @@ const NftCard = ({ id }: NftCardProps) => {
             {nft && (
                 <>
                     <picture>
-                        <source srcSet={nft.offchainUrl} type={'image/*'} />
-                        <img src={ipfsImageUrl ? ipfsImageUrl : nft.offchainUrl} alt={nft.name} />
+                        <source srcSet={nft.offChainImageUrl} type={'image/*'} />
+                        <img src={ipfsImageUrl ? ipfsImageUrl : nft.offChainImageUrl} alt={nft.name} />
                     </picture>
                     <div className={styles.details}>
                         <NftInfo asset={nft} />

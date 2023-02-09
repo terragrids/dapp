@@ -3,7 +3,7 @@ import { User } from 'hooks/use-user.js'
 import React, { useContext, useState } from 'react'
 import { strings } from 'strings/en'
 import { Terrabuild, Terracell, Terraland } from 'types/nft'
-import { getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
+import { getApplicationAlgoExplorerUrl, getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
 import styles from './nft-info.module.scss'
 
 type NftInfoProps = {
@@ -94,10 +94,14 @@ const NftInfo = ({ asset }: NftInfoProps) => {
             </div>
 
             {asset.contractId && (
-                <div className={dlItemClass}>
+                <a
+                    href={getApplicationAlgoExplorerUrl(asset.contractId)}
+                    target={'_blank'}
+                    rel={'noreferrer'}
+                    className={dlItemClass}>
                     <dt>{strings.contractId}</dt>
                     <dd>{asset.contractId}</dd>
-                </div>
+                </a>
             )}
 
             {user && user.isAdmin && (

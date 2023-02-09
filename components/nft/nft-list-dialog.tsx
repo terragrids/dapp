@@ -133,8 +133,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
                                         id={nft.id}
                                         name={nft.name}
                                         status={nft.status}
-                                        holder={nft.holders[0]}
-                                        imageUrl={nft.offchainUrl}
+                                        imageUrl={nft.offChainImageUrl}
                                         onClick={() => setSelectedNft(nft)}
                                     />
                                 ))}
