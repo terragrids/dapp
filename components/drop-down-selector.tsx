@@ -23,7 +23,7 @@ export const DropDownSelector = ({ options, label, defaultValue, onSelected }: P
     }
 
     return (
-        <>
+        <div>
             <Label text={label} forId={id.current} />
             <select
                 id={id.current}
@@ -36,6 +36,6 @@ export const DropDownSelector = ({ options, label, defaultValue, onSelected }: P
                     </option>
                 ))}
             </select>
-        </>
+        </div>
     )
 }

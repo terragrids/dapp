@@ -8,7 +8,7 @@ import { endpoints } from 'utils/api-config.js'
 import styles from './nft-list-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import Button, { ButtonType } from 'components/button'
-import { Nft, TerragridsNft } from 'types/nft'
+import { Nft, NftStatus, TerragridsNft } from 'types/nft'
 import NftListItem from './nft-list-item'
 import { DropDownSelector } from 'components/drop-down-selector'
 import NftCard from './nft-card'
@@ -25,7 +25,8 @@ type Error = {
 
 const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
     const user = useContext<User>(UserContext)
-    const [symbol, setSymbol] = useState<string>(Nft.TRLD.symbol)
+    const [symbol, setSymbol] = useState<string>(Nft.list()[0].symbol)
+    const [status, setStatus] = useState<string>(NftStatus.list()[0].code)
     const [nfts, setNfts] = useState<Array<TerragridsNft> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
@@ -37,7 +38,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
         setIsFetching(true)
         setError(null)
 
-        const response = await fetch(endpoints.paginatedNfts(symbol.toLowerCase(), nextPageKey))
+        const response = await fetch(endpoints.paginatedNfts(symbol.toLowerCase(), status, nextPageKey))
 
         if (response.ok) {
             const jsonResponse = await response.json()
@@ -48,7 +49,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
         }
 
         setIsFetching(false)
-    }, [isFetching, nextPageKey, nfts, symbol, user])
+    }, [isFetching, nextPageKey, nfts, status, symbol, user])
 
     function reset() {
         setNfts(null)
@@ -71,6 +72,13 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
             reset()
         }
     }, [fetchNfts, prevSymbol, symbol])
+
+    const prevStatus = usePrevious(status)
+    useEffect(() => {
+        if (status !== prevStatus) {
+            reset()
+        }
+    }, [prevStatus, status])
 
     useEffect(() => {
         if (visible && !nfts && !error) {
@@ -96,6 +104,10 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
         setSymbol(symbol)
     }
 
+    function setNftStatus(status: string) {
+        setStatus(status)
+    }
+
     function close() {
         if (selectedNft) setSelectedNft(null)
         else onClose()
@@ -115,11 +127,20 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
                 )}
                 {!selectedNft && (
                     <div className={styles.listContainer}>
-                        <DropDownSelector
-                            label={strings.type}
-                            options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
-                            onSelected={setNftSymbol}
-                        />
+                        <div className={styles.selectors}>
+                            <DropDownSelector
+                                label={strings.type}
+                                options={Nft.list().map(nft => ({ key: nft.symbol, value: nft.toString() }))}
+                                onSelected={setNftSymbol}
+                            />
+                            {user && user.isAdmin && (
+                                <DropDownSelector
+                                    label={strings.status}
+                                    options={NftStatus.list().map(nft => ({ key: nft.code, value: nft.name }))}
+                                    onSelected={setNftStatus}
+                                />
+                            )}
+                        </div>
                         {!nfts && !error && (
                             <div className={styles.loading}>
                                 <LoadingSpinner />
@@ -132,7 +153,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
                                         key={nft.id}
                                         id={nft.id}
                                         name={nft.name}
-                                        status={nft.status}
+                                        status={user && user.isAdmin ? nft.status : ''}
                                         imageUrl={nft.offChainImageUrl}
                                         onClick={() => setSelectedNft(nft)}
                                     />

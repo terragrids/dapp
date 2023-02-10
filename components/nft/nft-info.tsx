@@ -2,7 +2,7 @@ import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useState } from 'react'
 import { strings } from 'strings/en'
-import { Terrabuild, Terracell, Terraland } from 'types/nft'
+import { NftStatus, Terrabuild, Terracell, Terraland } from 'types/nft'
 import { getApplicationAlgoExplorerUrl, getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
 import styles from './nft-info.module.scss'
 
@@ -107,7 +107,7 @@ const NftInfo = ({ asset }: NftInfoProps) => {
             {user && user.isAdmin && (
                 <div className={dlItemClass}>
                     <dt>{strings.status}</dt>
-                    <dd>{asset.status}</dd>
+                    <dd>{NftStatus.new(asset.status).name}</dd>
                 </div>
             )}
         </dl>

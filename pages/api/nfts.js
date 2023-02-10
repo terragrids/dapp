@@ -7,6 +7,7 @@ export default async function handler(req, res) {
                 pageSize: req.query.pageSize,
                 nextPageKey: req.query.nextPageKey,
                 symbol: req.query.symbol,
+                status: req.query.status,
                 sort: req.query.sort
             })
             break

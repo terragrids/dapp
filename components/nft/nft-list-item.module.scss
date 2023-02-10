@@ -9,12 +9,13 @@
     justify-content: flex-start;
     padding: 10px;
     box-sizing: border-box;
-    height: 100px;
+    height: 150px;
     width: 600px;
     margin: 10px 0;
     overflow: hidden;
     cursor: pointer;
     border-radius: $border-radius;
+    font-size: 18px;
 
     @media (max-width: $screen-small) {
         min-width: auto;
@@ -33,13 +34,13 @@
 }
 
 .imageContainer {
-    flex: 0 0 80px;
+    flex: 0 0 120px;
     position: relative;
     border-radius: $border-radius;
 
     .image {
         display: block;
-        width: 80px;
+        width: 120px;
         height: auto;
         position: relative;
         border-radius: $border-radius;
@@ -47,7 +48,7 @@
 }
 
 .name {
-    flex: 0 0 200px;
+    flex: 1 1 auto;
     padding: 20px;
     overflow: hidden;
     text-align: start;
@@ -57,9 +58,4 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-}
-
-.holder {
-    text-align: right;
-    flex: 1 0 80px;
 }

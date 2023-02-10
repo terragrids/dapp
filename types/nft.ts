@@ -50,8 +50,27 @@ export type Terracell = TerragridsNft & {
     power: number
 }
 
-export enum NftStatus {
-    Created = 'created',
-    ForSale = 'forsale',
-    Sold = 'sold'
+export class NftStatus {
+    static readonly FORSALE = new NftStatus('forsale', 'For Sale')
+    static readonly SOLD = new NftStatus('sold', 'Sold')
+    static readonly ARCHIVED = new NftStatus('archived', 'Archived')
+
+    // private to disallow creating other instances of this type
+    private constructor(public readonly code: string, public readonly name: string) {}
+
+    static list() {
+        return [NftStatus.FORSALE, NftStatus.SOLD, NftStatus.ARCHIVED]
+    }
+
+    static new(code: string) {
+        switch (code) {
+            default:
+            case 'forsale':
+                return NftStatus.FORSALE
+            case 'sold':
+                return NftStatus.SOLD
+            case 'archived':
+                return NftStatus.ARCHIVED
+        }
+    }
 }
