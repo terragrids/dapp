@@ -23,6 +23,7 @@ import styles from './project-details.module.scss'
 
 type ProjectDetailsProps = {
     id: string
+    onSupport: (id: string) => void
 }
 
 type ProjectDetails = {
@@ -46,7 +47,7 @@ type UpdatedProjectProperties = {
     imageFile: File
 }
 
-const ProjectDetails = ({ id }: ProjectDetailsProps) => {
+const ProjectDetails = ({ id, onSupport }: ProjectDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [project, setProject] = useState<ProjectDetails | null>()
@@ -257,10 +258,6 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
         user.walletAddress
     ])
 
-    function support() {
-        // TODO
-    }
-
     return (
         <>
             <div className={styles.container}>
@@ -362,7 +359,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                                     className={styles.button}
                                     type={ButtonType.OUTLINE}
                                     label={strings.support}
-                                    onClick={support}
+                                    onClick={() => onSupport(id)}
                                 />
                             )}
                         </div>

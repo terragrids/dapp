@@ -14,6 +14,7 @@ import Button, { ButtonType } from 'components/button'
 import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
 import { DropDownSelector } from 'components/drop-down-selector'
+import NftPicker from 'components/nft/nft-picker'
 
 type ProjectsDialogProps = {
     visible: boolean
@@ -35,6 +36,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedProject, setSelectedProject] = useState<string | null>()
+    const [supportingProject, setSupportingProject] = useState<string | null>()
     const [projectStatus, setProjectStatus] = useState<string | null>(ProjectStatus.APPROVED.key)
     const { getAuthHeader } = useAuth()
 
@@ -64,6 +66,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         setProjects(null)
         setNextPageKey(null)
         setSelectedProject(null)
+        setSupportingProject(null)
         setError(null)
         setMessage(null)
     }
@@ -134,25 +137,40 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         const margin = 10
         const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
         const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom && !selectedProject) {
+        if (bottom && !selectedProject && !supportingProject) {
             fetchMoreProjects()
         }
     }
 
     function close() {
-        if (!selectedProject) onClose()
-        else setSelectedProject(null)
+        if (selectedProject || supportingProject) {
+            setSelectedProject(null)
+            setSupportingProject(null)
+        } else onClose()
+    }
+
+    function getSelectedProjectName() {
+        return projects?.find(project => project.id === selectedProject)?.name
     }
 
     function getTitle() {
-        if (selectedProject) return projects?.find(project => project.id === selectedProject)?.name
+        if (selectedProject && !supportingProject) return getSelectedProjectName()
+        else if (supportingProject) return strings.pickNft
         else return ownerWalletAddress ? strings.myProjects : strings.projects
+    }
+
+    function support(id: string) {
+        setSupportingProject(id)
+    }
+
+    function onSelectedSupportingNft(/*nft: TerragridsNft*/) {
+        close()
     }
 
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && (
+                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && !supportingProject && (
                     <DropDownSelector
                         label={strings.status}
                         options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
@@ -165,7 +183,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                         <LoadingSpinner />
                     </div>
                 )}
-                {projects && projects.length > 0 && !selectedProject && (
+                {projects && projects.length > 0 && !selectedProject && !supportingProject && (
                     <div className={styles.scrollContainer}>
                         {projects.map(project => (
                             <ProjectListItem
@@ -190,7 +208,15 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                     </div>
                 )}
                 {projects && projects.length === 0 && <div className={styles.empty}>{strings.noProjectsFound}</div>}
-                {selectedProject && <ProjectDetails id={selectedProject} />}
+                {selectedProject && !supportingProject && <ProjectDetails id={selectedProject} onSupport={support} />}
+                {supportingProject && (
+                    <>
+                        <div className={styles.message}>{`${
+                            strings.pickNftToSupportProject
+                        } - "${getSelectedProjectName()}"`}</div>
+                        <NftPicker onSelect={onSelectedSupportingNft} />
+                    </>
+                )}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}

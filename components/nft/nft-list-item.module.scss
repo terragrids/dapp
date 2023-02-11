@@ -10,17 +10,11 @@
     padding: 10px;
     box-sizing: border-box;
     height: 150px;
-    width: 600px;
     margin: 10px 0;
     overflow: hidden;
     cursor: pointer;
     border-radius: $border-radius;
     font-size: 18px;
-
-    @media (max-width: $screen-small) {
-        min-width: auto;
-        width: 100%;
-    }
 
     &:hover {
         background-color: $color-brand;

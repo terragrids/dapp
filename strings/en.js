@@ -134,7 +134,9 @@ const enStrings = {
     yourBuildings: 'Your buildings',
     yourPlotsOfLand: 'Your plots of land',
     yourSolarPvCells: 'Your solar PV cells',
-    yourWallet: 'Your wallet'
+    yourWallet: 'Your wallet',
+    pickNft: 'Pick and NFT',
+    pickNftToSupportProject: 'Pick an NFT to support this project'
 }
 
 export const strings = new LocalizedStrings({
