@@ -61,7 +61,7 @@ const NftInfo = ({ asset }: NftInfoProps) => {
 
             {asset.positionX && asset.positionY && (
                 <div className={dlItemClass}>
-                    <dt>{strings.position}</dt>
+                    <dt>{strings.mapPosition}</dt>
                     <dd>
                         ({asset.positionX},{asset.positionY})
                     </dd>
@@ -73,10 +73,12 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                 <dd>{asset.id}</dd>
             </a>
 
-            <div className={dlItemClass}>
-                <dt>{strings.holder}</dt>
-                <dd>{maskWalletAddress(asset.holders[0].address)}</dd>
-            </div>
+            {asset.holders && (
+                <div className={dlItemClass}>
+                    <dt>{strings.holder}</dt>
+                    <dd>{maskWalletAddress(asset.holders[0].address)}</dd>
+                </div>
+            )}
 
             <div className={dlItemClass}>
                 <dt>{strings.price}</dt>

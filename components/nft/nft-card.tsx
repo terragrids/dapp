@@ -11,9 +11,11 @@ import NftInfo from './nft-info'
 
 type NftCardProps = {
     id: string
+    positionX?: number
+    positionY?: number
 }
 
-const NftCard = ({ id }: NftCardProps) => {
+const NftCard = ({ id, positionX, positionY }: NftCardProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const [nft, setNft] = useState<TerragridsNft | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
@@ -66,7 +68,7 @@ const NftCard = ({ id }: NftCardProps) => {
                         <img src={ipfsImageUrl ? ipfsImageUrl : nft.offChainImageUrl} alt={nft.name} />
                     </picture>
                     <div className={styles.details}>
-                        <NftInfo asset={nft} />
+                        <NftInfo asset={{ ...nft, positionX, positionY } as TerragridsNft} />
                     </div>
                 </>
             )}
