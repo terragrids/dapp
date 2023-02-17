@@ -3,7 +3,7 @@ import { useState, useContext, useEffect, useRef } from 'react'
 import { strings } from '../strings/en'
 import Layout from '../components/layout'
 import WalletPicker from '../components/wallet-picker'
-import { NftMintDialog } from 'components/nft-mint-dialog.tsx'
+import { NftMintDialog } from 'components/nft-mint-dialog'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
@@ -12,6 +12,7 @@ import { UserContext } from 'context/user-context.js'
 import CreateProjectDialog from 'components/projects/create-project-dialog'
 import ProjectsDialog from 'components/projects/projects-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
+import ProjectFundraiser from 'components/projects/project-fundraiser'
 
 export default function Home() {
     const user = useContext(UserContext)
@@ -22,6 +23,7 @@ export default function Home() {
     const [sppVisible, setSppVisible] = useState(false)
     const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
     const [projectsDialog, setProjectsDialog] = useState({ visible: false, ownerWalletAddress: null })
+    const [projectFundraiser, setProjectFundraiser] = useState({ visible: false, project: null, nft: null, plot: null })
     const [createProjectVisible, setCreateProjectVisible] = useState(false)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
@@ -49,6 +51,10 @@ export default function Home() {
     const onSelectPlot = plot => {
         setSelectedPlot(plot)
         setPlotInfoVisible(true)
+    }
+
+    const onSelectEmptyPlot = plot => {
+        setProjectFundraiser(fr => ({ ...fr, plot }))
     }
 
     const onSelectSolarPowerPlant = () => {
@@ -90,6 +96,11 @@ export default function Home() {
         } catch (e) {}
     }
 
+    function onSupportingProject(project, nft) {
+        setProjectsDialog({ visible: false })
+        setProjectFundraiser({ visible: true, project, nft })
+    }
+
     return (
         <Layout
             headerRef={headerRef}
@@ -109,6 +120,7 @@ export default function Home() {
                 width={mapSize.width}
                 height={mapSize.height}
                 onSelectPlot={onSelectPlot}
+                onSelectEmptyPlot={onSelectEmptyPlot}
                 onSelectSolarPowerPlant={onSelectSolarPowerPlant}
             />
 
@@ -131,9 +143,23 @@ export default function Home() {
                 visible={projectsDialog.visible}
                 ownerWalletAddress={projectsDialog.ownerWalletAddress}
                 onClose={() => setProjectsDialog({ visible: false })}
+                onSupportingProject={onSupportingProject}
             />
             <CreateProjectDialog visible={createProjectVisible} onClose={() => setCreateProjectVisible(false)} />
             <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
+            <ProjectFundraiser
+                visible={projectFundraiser.visible}
+                project={projectFundraiser.project}
+                nft={projectFundraiser.nft}
+                selectedPlot={projectFundraiser.plot}
+                onClose={() => setProjectFundraiser({ visible: false })}
+            />
+            {/* <ProjectFundraiser
+                visible={true}
+                project={{ name: 'The Project' }}
+                nft={{ name: 'The NFT', assetPrice: 85 }}
+                onClose={() => setProjectFundraiser({ visible: false })}
+            /> */}
         </Layout>
     )
 }

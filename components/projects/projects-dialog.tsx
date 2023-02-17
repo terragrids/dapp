@@ -15,10 +15,12 @@ import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
 import { DropDownSelector } from 'components/drop-down-selector'
 import NftPicker from 'components/nft/nft-picker'
+import { TerragridsNft } from 'types/nft.js'
 
 type ProjectsDialogProps = {
     visible: boolean
     ownerWalletAddress: string | null
+    onSupportingProject: (project: Project, nft: TerragridsNft) => void
     onClose: () => void
 }
 
@@ -27,7 +29,7 @@ type Error = {
     description?: string
 }
 
-const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: ProjectsDialogProps) => {
+const ProjectsDialog = ({ visible, ownerWalletAddress = null, onSupportingProject, onClose }: ProjectsDialogProps) => {
     const user = useContext<User>(UserContext)
     const [projects, setProjects] = useState<Array<Project> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -149,12 +151,12 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         } else onClose()
     }
 
-    function getSelectedProjectName() {
-        return projects?.find(project => project.id === selectedProject)?.name
+    function getSelectedProject() {
+        return projects?.find(project => project.id === selectedProject) as Project
     }
 
     function getTitle() {
-        if (selectedProject && !supportingProject) return getSelectedProjectName()
+        if (selectedProject && !supportingProject) return getSelectedProject()?.name
         else if (supportingProject) return strings.pickNft
         else return ownerWalletAddress ? strings.myProjects : strings.projects
     }
@@ -163,7 +165,8 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         setSupportingProject(id)
     }
 
-    function onSelectedSupportingNft(/*nft: TerragridsNft*/) {
+    function onSelectedSupportingNft(nft: TerragridsNft) {
+        onSupportingProject(getSelectedProject(), nft)
         close()
     }
 
@@ -211,9 +214,9 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                 {selectedProject && !supportingProject && <ProjectDetails id={selectedProject} onSupport={support} />}
                 {supportingProject && (
                     <>
-                        <div className={styles.message}>{`${
-                            strings.pickNftToSupportProject
-                        } - "${getSelectedProjectName()}"`}</div>
+                        <div className={styles.message}>{`${strings.pickNftToSupportProject} - "${
+                            getSelectedProject()?.name
+                        }"`}</div>
                         <NftPicker onSelect={onSelectedSupportingNft} />
                     </>
                 )}

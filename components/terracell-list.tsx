@@ -57,8 +57,8 @@ const TerraCellItem = ({ terracell, onSelectTerracell }: TerraCellItemProps) => 
             onClick={() => onSelectTerracell(terracell.id)}>
             {/* TODO: replace with Image */}
             <picture>
-                <source srcSet={terracell.offchainUrl} type={'image/*'} />
-                <img src={terracell.offchainUrl} alt={terracell.name} width={106} height={'auto'} />
+                <source srcSet={terracell.offChainImageUrl} type={'image/*'} />
+                <img src={terracell.offChainImageUrl} alt={terracell.name} width={106} height={'auto'} />
             </picture>
             {isMouseOver && (
                 <div className={styles.overlay}>

@@ -24,10 +24,11 @@ export type MapProps = {
     width: number | undefined
     height: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
+    onSelectEmptyPlot: (position: Position2D) => void
     onSelectSolarPowerPlant: () => void
 }
 
-const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps) => {
+const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowerPlant }: MapProps) => {
     const [canvasRef, initialScale, renderCanvas] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
@@ -117,7 +118,10 @@ const Map = ({ width, height, onSelectPlot, onSelectSolarPowerPlant }: MapProps)
         const index = positionY * GRID_SIZE + positionX
         const target = mapPlots.find(el => el.index === index)
 
-        if (!target) return
+        if (!target) {
+            onSelectEmptyPlot({ x: positionX, y: positionY } as Position2D)
+            return
+        }
 
         if (isSppPosition({ x: positionX, y: positionY })) {
             onSelectSolarPowerPlant()

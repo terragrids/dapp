@@ -153,9 +153,9 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                         <div className={styles.image}>
                             {/* TODO: replace with Image */}
                             <picture>
-                                <source srcSet={terraland.offchainUrl} type={'image/*'} />
+                                <source srcSet={terraland.offChainImageUrl} type={'image/*'} />
                                 <img
-                                    src={ipfsImageUrl ? ipfsImageUrl : terraland.offchainUrl}
+                                    src={ipfsImageUrl ? ipfsImageUrl : terraland.offChainImageUrl}
                                     alt={terraland.name}
                                     width={100}
                                     height={'auto'}

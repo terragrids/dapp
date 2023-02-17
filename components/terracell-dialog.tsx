@@ -155,8 +155,11 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                         {/* TODO: replace with Image */}
                         <div className={styles.image}>
                             <picture>
-                                <source srcSet={terracell.offchainUrl} type={'image/*'} />
-                                <img src={ipfsImageUrl ? ipfsImageUrl : terracell.offchainUrl} alt={terracell.name} />
+                                <source srcSet={terracell.offChainImageUrl} type={'image/*'} />
+                                <img
+                                    src={ipfsImageUrl ? ipfsImageUrl : terracell.offChainImageUrl}
+                                    alt={terracell.name}
+                                />
                             </picture>
                         </div>
 

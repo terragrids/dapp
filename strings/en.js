@@ -90,6 +90,9 @@ const enStrings = {
     orPickFromDialog: 'or click to pick from dialog',
     output: 'Output',
     peraWallet: 'Pera Wallet',
+    pickMapPosition: 'To continue, pick a position for your NFT on the map. You will confirm your contribution later.',
+    pickNft: 'Pick and NFT',
+    pickNftToSupportProject: 'Pick an NFT to support this project',
     position: 'Position',
     positionX: 'Position X',
     positionY: 'Position Y',
@@ -116,6 +119,7 @@ const enStrings = {
     sppAdminPanel: 'SPP Admin Panel',
     status: 'Status',
     support: 'Support',
+    supportProjectWithNft: 'You can support {0} buying {1}.',
     tapToPick: 'Tap to pick an image',
     terminate: 'Terminate',
     terracellInformation: 'Terracell ($TRCL)',
@@ -134,9 +138,7 @@ const enStrings = {
     yourBuildings: 'Your buildings',
     yourPlotsOfLand: 'Your plots of land',
     yourSolarPvCells: 'Your solar PV cells',
-    yourWallet: 'Your wallet',
-    pickNft: 'Pick and NFT',
-    pickNftToSupportProject: 'Pick an NFT to support this project'
+    yourWallet: 'Your wallet'
 }
 
 export const strings = new LocalizedStrings({
