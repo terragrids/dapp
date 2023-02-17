@@ -23,6 +23,7 @@
     max-height: 85vh;
     background-color: $color-ebony-clay;
     border-radius: $dialog-border-radius;
+    overflow: hidden;
 
     @media (max-width: $screen-small) {
         max-width: none;

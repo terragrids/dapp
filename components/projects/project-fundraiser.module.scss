@@ -21,7 +21,6 @@
     padding: 20px;
     background-color: $color-ebony-clay;
     border-radius: $border-radius;
-    overflow-x: hidden;
 
     @media (max-width: $screen-small) {
         padding: 10px;
@@ -50,12 +49,12 @@
 }
 
 .body {
-    padding-top: 20px;
-}
+    min-width: $screen-small;
 
-.actionBar {
-    display: flex;
-    justify-content: center;
+    @media (max-width: $screen-midi) {
+        min-width: 0;
+        width: 100%;
+    }
 }
 
 .close {
