@@ -17,8 +17,9 @@
 }
 
 .content {
+    position: relative;
     padding: 20px;
-    background-color: $color-abbey;
+    background-color: $color-ebony-clay;
     border-radius: $border-radius;
     overflow-x: hidden;
 
@@ -46,6 +47,15 @@
             padding-bottom: 0;
         }
     }
+}
+
+.body {
+    padding-top: 20px;
+}
+
+.actionBar {
+    display: flex;
+    justify-content: center;
 }
 
 .close {

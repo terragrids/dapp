@@ -13,9 +13,10 @@ type NftCardProps = {
     id: string
     positionX?: number
     positionY?: number
+    onNftReady?: (nft: TerragridsNft) => void
 }
 
-const NftCard = ({ id, positionX, positionY }: NftCardProps) => {
+const NftCard = ({ id, positionX, positionY, onNftReady }: NftCardProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const [nft, setNft] = useState<TerragridsNft | null>()
     const [ipfsImageUrl, setIpfsImageUrl] = useState<string | null>()
@@ -38,20 +39,23 @@ const NftCard = ({ id, positionX, positionY }: NftCardProps) => {
                 if (metadataResponse.ok) {
                     const { image, description, properties } = await metadataResponse.json()
                     setIpfsImageUrl(ipfsUrlToGatewayUrl(image))
-                    setNft(nft => ({
-                        ...(nft as TerragridsNft),
+
+                    const nft = {
+                        ...(asset as TerragridsNft),
                         description: description as string,
                         contractId: stdlib.bigNumberToNumber(getContractFromJsonString(asset.contractId)),
-                        assetPrice: properties.price?.value,
+                        assetPrice: properties['base_price']?.value,
                         rarity: properties.rarity.value,
                         author: properties.author.value
-                    }))
+                    }
+                    setNft(nft)
+                    if (onNftReady) onNftReady(nft)
                 }
             } catch (e) {}
         } else {
             setError(strings.errorFetchingNft)
         }
-    }, [id, stdlib])
+    }, [id, onNftReady, stdlib])
 
     useEffect(() => {
         fetchNft()

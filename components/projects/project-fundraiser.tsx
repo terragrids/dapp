@@ -1,5 +1,7 @@
+import Button, { ButtonType } from 'components/button'
 import { Position2D } from 'components/map/plots/plot.js'
 import NftCard from 'components/nft/nft-card'
+import { useState } from 'react'
 import { strings } from 'strings/en.js'
 import { TerragridsNft } from 'types/nft.js'
 import { Project } from 'types/project.js'
@@ -14,6 +16,15 @@ type Props = {
 }
 
 const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Props) => {
+    const [price, setPrice] = useState(0)
+
+    function onNftReady(nft: TerragridsNft) {
+        setPrice(nft.assetPrice || 0)
+    }
+    function onBuy() {
+        // TODO
+    }
+
     return visible ? (
         <div className={`${styles.main} ${selectedPlot ? styles.narrow : ''}`}>
             <div className={`${styles.content} ${selectedPlot ? styles.narrow : ''}`}>
@@ -26,9 +37,23 @@ const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Pro
                     </div>
                     {!selectedPlot && <div className={styles.message}>{strings.pickMapPosition}</div>}
                     {selectedPlot && (
-                        <>
-                            <NftCard id={nft.id} positionX={selectedPlot.x} positionY={selectedPlot.y} />
-                        </>
+                        <div className={styles.body}>
+                            <NftCard
+                                id={nft.id}
+                                positionX={selectedPlot.x}
+                                positionY={selectedPlot.y}
+                                onNftReady={onNftReady}
+                            />
+                            <div className={styles.actionBar}>
+                                <Button
+                                    className={styles.button}
+                                    type={ButtonType.OUTLINE}
+                                    label={`${strings.buyFor} ${price} ALGO`}
+                                    loading={!price}
+                                    onClick={onBuy}
+                                />
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
