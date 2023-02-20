@@ -19,12 +19,12 @@ export default function WalletPicker({ visible, onClose }) {
     const user = useContext(UserContext)
 
     async function connectMyAlgoWallet() {
-        await setWallet({ MyAlgoConnect: reach.myAlgoConnect })
+        await setWallet('MyAlgo')
         await connectWallet()
     }
 
     async function connectPeraWallet() {
-        await setWallet({ WalletConnect: reach.walletConnect })
+        await setWallet('Pera')
         await connectWallet()
     }
 
@@ -32,10 +32,16 @@ export default function WalletPicker({ visible, onClose }) {
         setError()
         delete window.algorand
         reach.reload()
+
+        const walletConnector =
+            wallet === 'Pera'
+                ? { WalletConnect: reach.makeWalletConnect(reach.walletConnect, reach.qrCodeModal) }
+                : { MyAlgoConnect: reach.myAlgoConnect }
+
         reach.stdlib.setWalletFallback(
             reach.stdlib.walletFallback({
                 providerEnv: process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER,
-                ...wallet
+                ...walletConnector
             })
         )
     }

@@ -14,7 +14,10 @@
         "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
     },
     "dependencies": {
-        "@reach-sh/stdlib": "^0.1.12-rc.9",
+        "@randlabs/myalgo-connect": "^1.4.2",
+        "@reach-sh/stdlib": "^0.1.13-rc.1",
+        "@walletconnect/client": "^1.8.0",
+        "algorand-walletconnect-qrcode-modal": "^1.8.0",
         "multiformats": "^10.0.2",
         "next": "^13.0.4",
         "prop-types": "^15.8.1",

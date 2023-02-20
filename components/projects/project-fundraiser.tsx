@@ -3,6 +3,7 @@ import Button, { ButtonType } from 'components/button'
 import { Position2D } from 'components/map/plots/plot.js'
 import ModalDialog from 'components/modal-dialog'
 import NftCard from 'components/nft/nft-card'
+import { useNftBuyer } from 'hooks/use-nft-buyer.js'
 import { useState } from 'react'
 import { strings } from 'strings/en.js'
 import { TerragridsNft } from 'types/nft.js'
@@ -19,12 +20,13 @@ type Props = {
 
 const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Props) => {
     const [price, setPrice] = useState(0)
+    const { buy } = useNftBuyer()
 
     function onNftReady(nft: TerragridsNft) {
         setPrice(nft.assetPrice || 0)
     }
-    function onBuy() {
-        // TODO
+    async function onBuy() {
+        await buy(project.id)
     }
 
     return visible ? (
