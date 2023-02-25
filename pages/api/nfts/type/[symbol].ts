@@ -6,7 +6,6 @@ import { callTerragridsApi, setMethodNotAllowedResponse } from 'utils/api-config
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
-        case 'GET':
             if (process.env.NEXT_PUBLIC_OFFLINE === 'true') {
                 res.status(200).send(NFT_MOCKS.nfts)
             } else

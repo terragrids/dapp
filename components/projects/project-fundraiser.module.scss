@@ -60,3 +60,12 @@
 .close {
     cursor: pointer;
 }
+
+.button {
+    min-width: 200px;
+}
+
+.error {
+    padding: 20px;
+    color: $color-red;
+}

@@ -5,6 +5,7 @@ export type ReachStdlib = {
         bigNumberToNumber: (contract: object) => string
         algosdk: object
     }
+    nftContractBackend: object
 }
 
 export const ReachContext = React.createContext({} as ReachStdlib)

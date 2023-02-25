@@ -1,11 +1,19 @@
 import { useState, useCallback } from 'react'
 import { Terracell } from 'types/nft.js'
 
+export type NftContract = {
+    v: {
+        View: { token: () => Promise<Array<{ toNumber: () => number }>> }
+    }
+    a: { Market: { buy: () => Promise<void> } }
+}
+
 export type User = {
     walletAccount?: null | {
         networkAccount: {
             addr: string
         }
+        contract: (backend: object, contractInfo: object) => NftContract
         tokenAccept: (tokenId: number) => Promise<void>
     }
     stdlib?: object

@@ -3,7 +3,7 @@ import Button, { ButtonType } from 'components/button'
 import { Position2D } from 'components/map/plots/plot.js'
 import ModalDialog from 'components/modal-dialog'
 import NftCard from 'components/nft/nft-card'
-import { useNftBuyer } from 'hooks/use-nft-buyer.js'
+import { useNftBuyer } from 'hooks/use-nft-buyer'
 import { useState } from 'react'
 import { strings } from 'strings/en.js'
 import { TerragridsNft } from 'types/nft.js'
@@ -20,13 +20,22 @@ type Props = {
 
 const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Props) => {
     const [price, setPrice] = useState(0)
+    const [buying, setBuying] = useState(false)
+    const [error, setError] = useState('')
     const { buy } = useNftBuyer()
 
     function onNftReady(nft: TerragridsNft) {
         setPrice(nft.assetPrice || 0)
     }
     async function onBuy() {
-        await buy(project.id)
+        setError('')
+        setBuying(true)
+        try {
+            await buy(nft.id, project.id, selectedPlot.x, selectedPlot.y)
+        } catch (e) {
+            setError(strings.errorBuyingNft)
+        }
+        setBuying(false)
     }
 
     return visible ? (
@@ -60,13 +69,16 @@ const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Pro
                             onNftReady={onNftReady}
                         />
                         <ActionBar>
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={`${strings.buyFor} ${price} ALGO`}
-                                loading={!price}
-                                onClick={onBuy}
-                            />
+                            <>
+                                <div className={styles.error}>{error}</div>
+                                <Button
+                                    className={styles.button}
+                                    type={ButtonType.OUTLINE}
+                                    label={`${strings.buyFor} ${price} ALGO`}
+                                    loading={!price || buying}
+                                    onClick={onBuy}
+                                />
+                            </>
                         </ActionBar>
                     </div>
                 </ModalDialog>
