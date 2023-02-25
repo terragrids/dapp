@@ -60,6 +60,11 @@ const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Pro
                     visible={visible}
                     title={nft.name}
                     subtitle={strings.formatString(strings.supportProjectWithNft, project.name, nft.name) as string}
+                    withFooter={true}
+                    error={error}
+                    button1Label={`${strings.buyFor} ${price} ALGO`}
+                    button1Loading={!price || buying}
+                    onButton1Click={onBuy}
                     onClose={onClose}>
                     <div className={styles.body}>
                         <NftCard
@@ -68,18 +73,6 @@ const ProjectFundraiser = ({ visible, project, nft, selectedPlot, onClose }: Pro
                             positionY={selectedPlot.y}
                             onNftReady={onNftReady}
                         />
-                        <ActionBar>
-                            <>
-                                <div className={styles.error}>{error}</div>
-                                <Button
-                                    className={styles.button}
-                                    type={ButtonType.OUTLINE}
-                                    label={`${strings.buyFor} ${price} ALGO`}
-                                    loading={!price || buying}
-                                    onClick={onBuy}
-                                />
-                            </>
-                        </ActionBar>
                     </div>
                 </ModalDialog>
             )}

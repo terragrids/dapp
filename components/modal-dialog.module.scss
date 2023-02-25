@@ -19,6 +19,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     max-width: 75vw;
     max-height: 85vh;
     background-color: $color-ebony-clay;
@@ -77,4 +78,21 @@
 
 .close {
     cursor: pointer;
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    .button {
+        min-width: 200px;
+    }
+
+    .error {
+        padding: 20px;
+        color: $color-red;
+    }
 }
