@@ -115,7 +115,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
         try {
             await withdraw(terraland.id, terraland.contractId, terraland.contractInfo)
-            setTerraland({ ...terraland, contractId: undefined, contractInfo: undefined })
+            setTerraland({ ...terraland, contractId: '', contractInfo: undefined })
             onClose()
         } catch (e) {
             setError(strings.errorDeletingNftSaleContract)
@@ -132,7 +132,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
 
         try {
             await buy(terraland.contractInfo)
-            setTerraland({ ...terraland, contractId: undefined, contractInfo: undefined })
+            setTerraland({ ...terraland, contractId: '', contractInfo: undefined })
             onClose()
         } catch (e) {
             setError(strings.errorBuyingNft)

@@ -116,7 +116,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
         try {
             await withdraw(terracell.id, terracell.contractId, terracell.contractInfo)
-            setTerracell({ ...terracell, contractId: undefined, contractInfo: undefined })
+            setTerracell({ ...terracell, contractId: '', contractInfo: undefined })
             onClose()
         } catch (e) {
             setError(strings.errorDeletingNftSaleContract)
@@ -133,7 +133,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
 
         try {
             await buy(terracell.contractInfo)
-            setTerracell({ ...terracell, contractId: undefined, contractInfo: undefined })
+            setTerracell({ ...terracell, contractId: '', contractInfo: undefined })
             onClose()
         } catch (e) {
             setError(strings.errorBuyingNft)

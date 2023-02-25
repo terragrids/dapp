@@ -11,7 +11,13 @@ export function useNftBuyer() {
     const { getAuthHeader } = useAuth()
 
     const buy = useCallback(
-        async (assetId: string, contractInfo: string, positionX: number, positionY: number) => {
+        async (
+            assetId: string,
+            assetContractId: string,
+            projectContractId: string,
+            positionX: number,
+            positionY: number
+        ) => {
             const authHeader = await getAuthHeader(walletAddress)
             const response = await fetch(endpoints.nftPurchaseAuth(assetId), {
                 method: 'POST',
@@ -21,7 +27,7 @@ export function useNftBuyer() {
                 },
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({
-                    projectId: contractInfo,
+                    projectId: projectContractId,
                     positionX,
                     positionY
                 })
@@ -37,7 +43,7 @@ export function useNftBuyer() {
                 throw Error('Unable to proceed to purchase')
             }
 
-            const infoObject = JSON.parse(Buffer.from(contractInfo, 'base64').toString())
+            const infoObject = JSON.parse(Buffer.from(assetContractId, 'base64').toString())
             const contract = walletAccount.contract(nftContractBackend, infoObject)
             const tokenId = (await contract.v.View.token())[1].toNumber()
             await walletAccount.tokenAccept(tokenId)

@@ -150,16 +150,10 @@ export default function Home() {
             <ProjectFundraiser
                 visible={projectFundraiser.visible}
                 project={projectFundraiser.project}
-                nft={projectFundraiser.nft}
+                asset={projectFundraiser.nft}
                 selectedPlot={projectFundraiser.plot}
                 onClose={() => setProjectFundraiser({ visible: false })}
             />
-            {/* <ProjectFundraiser
-                visible={true}
-                project={{ name: 'The Project' }}
-                nft={{ name: 'The NFT', assetPrice: 85 }}
-                onClose={() => setProjectFundraiser({ visible: false })}
-            /> */}
         </Layout>
     )
 }

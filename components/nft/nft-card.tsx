@@ -44,6 +44,7 @@ const NftCard = ({ id, positionX, positionY, onNftReady }: NftCardProps) => {
                         ...(asset as TerragridsNft),
                         description: description as string,
                         contractId: stdlib.bigNumberToNumber(getContractFromJsonString(asset.contractId)),
+                        contractInfo: asset.contractId,
                         assetPrice: properties['base_price']?.value,
                         rarity: properties.rarity.value,
                         author: properties.author.value
@@ -58,8 +59,8 @@ const NftCard = ({ id, positionX, positionY, onNftReady }: NftCardProps) => {
     }, [id, onNftReady, stdlib])
 
     useEffect(() => {
-        fetchNft()
-    }, [fetchNft])
+        if (!nft) fetchNft()
+    }, [fetchNft, nft])
 
     return (
         <div className={styles.container}>

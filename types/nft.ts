@@ -34,7 +34,7 @@ export type TerragridsNft = {
     url: string
     offChainImageUrl: string
     holders: Array<Holder>
-    contractId?: string
+    contractId: string
     contractInfo?: string
     assetPrice?: number
     rarity?: string
