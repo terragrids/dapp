@@ -45,7 +45,6 @@ const NftCard = ({ id, positionX, positionY, onNftReady }: NftCardProps) => {
                         description: description as string,
                         contractId: stdlib.bigNumberToNumber(getContractFromJsonString(asset.contractId)),
                         contractInfo: asset.contractId,
-                        assetPrice: properties['base_price']?.value,
                         rarity: properties.rarity.value,
                         author: properties.author.value
                     }

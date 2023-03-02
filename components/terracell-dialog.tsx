@@ -93,7 +93,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
         try {
             const { applicationId, contractInfo }: Contract = (await sell({
                 tokenId: terracell.id,
-                price: terracell.assetPrice || assetPrice,
+                price: terracell.price || assetPrice,
                 power: terracell.power,
                 sppContractInfo
             })) as Contract
@@ -174,7 +174,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                     <Button
                                         type={ButtonType.OUTLINE}
                                         className={styles.button}
-                                        label={`${strings.sellFor} ${terracell.assetPrice || assetPrice} $${unit}`}
+                                        label={`${strings.sellFor} ${terracell.price || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onSell}
                                     />
@@ -194,7 +194,7 @@ export default function TerracellDialog({ id, visible, onClose }: TerracellDialo
                                     <Button
                                         className={styles.button}
                                         type={ButtonType.OUTLINE}
-                                        label={`${strings.buyFor} ${terracell.assetPrice || assetPrice} $${unit}`}
+                                        label={`${strings.buyFor} ${terracell.price || assetPrice} $${unit}`}
                                         loading={loading}
                                         onClick={onBuy}
                                     />

@@ -59,7 +59,7 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                 </div>
             )}
 
-            {asset.positionX && asset.positionY && (
+            {asset.positionX !== undefined && asset.positionY !== undefined && (
                 <div className={dlItemClass}>
                     <dt>{strings.mapPosition}</dt>
                     <dd>
@@ -80,10 +80,19 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                 </div>
             )}
 
-            <div className={dlItemClass}>
-                <dt>{strings.price}</dt>
-                <dd>{`${asset.assetPrice} ALGO`}</dd>
-            </div>
+            {asset.price && (
+                <div className={dlItemClass}>
+                    <dt>{strings.price}</dt>
+                    <dd>{`${asset.price} ALGO`}</dd>
+                </div>
+            )}
+
+            {asset.lastSalePrice && (
+                <div className={dlItemClass}>
+                    <dt>{strings.lastSalePrice}</dt>
+                    <dd>{`${asset.price} ALGO`}</dd>
+                </div>
+            )}
 
             <div className={dlItemClass}>
                 <dt>{strings.rarity}</dt>
@@ -101,7 +110,7 @@ const NftInfo = ({ asset }: NftInfoProps) => {
                     target={'_blank'}
                     rel={'noreferrer'}
                     className={dlItemClass}>
-                    <dt>{strings.contractId}</dt>
+                    <dt>{strings.saleContractId}</dt>
                     <dd>{asset.contractId}</dd>
                 </a>
             )}

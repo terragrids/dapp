@@ -198,7 +198,7 @@ const PlotInfoDialog = ({ visible, onClose, nftId }: PlotInfoDialogProps) => {
                     <Button
                         className={styles.button}
                         type={ButtonType.OUTLINE}
-                        label={`${strings.buyFor} ${terraland.assetPrice} $${unit}`}
+                        label={`${strings.buyFor} ${terraland.price} $${unit}`}
                         loading={waiting}
                         onClick={onBuy}
                     />

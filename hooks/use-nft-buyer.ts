@@ -19,7 +19,7 @@ export function useNftBuyer() {
             positionY: number
         ) => {
             const authHeader = await getAuthHeader(walletAddress)
-            const response = await fetch(endpoints.nftPurchaseAuth(assetId), {
+            const purchaseAuthResponse = await fetch(endpoints.nftPurchaseAuth(assetId), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,11 +33,11 @@ export function useNftBuyer() {
                 })
             })
 
-            if (response.status !== 201) {
+            if (purchaseAuthResponse.status !== 201) {
                 throw Error('Unable to get purchase token')
             }
 
-            const { purchaseAuthToken } = await response.json()
+            const { purchaseAuthToken } = await purchaseAuthResponse.json()
 
             if (!purchaseAuthToken || !walletAccount) {
                 throw Error('Unable to proceed to purchase')
@@ -48,6 +48,15 @@ export function useNftBuyer() {
             const tokenId = (await contract.v.View.token())[1].toNumber()
             await walletAccount.tokenAccept(tokenId)
             await contract.a.Market.buy()
+
+            await fetch(endpoints.nftPurchase(assetId), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify({ purchaseAuthToken })
+            })
         },
         [getAuthHeader, nftContractBackend, walletAccount, walletAddress]
     )

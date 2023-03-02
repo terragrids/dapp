@@ -36,7 +36,8 @@ export type TerragridsNft = {
     holders: Array<Holder>
     contractId: string
     contractInfo?: string
-    assetPrice?: number
+    price?: number
+    lastSalePrice?: number
     rarity?: string
     author?: string
     sellerAddress?: string

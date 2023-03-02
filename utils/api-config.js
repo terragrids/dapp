@@ -31,10 +31,11 @@ const nfts = 'api/nfts'
 const nft = id => `api/nfts/${id}`
 const accountNftsByType = (accountId, symbol) => `api/accounts/${accountId}/nfts/${symbol}`
 const paginatedNfts = (symbol, status, nextPageKey) =>
-    `api/nfts?sort=asc&symbol=${symbol}&status=${status}&pageSize=${pageSize}${
+    `api/nfts?sort=desc&symbol=${symbol}&status=${status}&pageSize=${pageSize}${
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
     }`
 const nftContract = (id, applicationId) => `api/nfts/${id}/contracts/${applicationId}`
+const nftPurchase = id => `api/nfts/${id}/purchase`
 const nftPurchaseAuth = id => `api/nfts/${id}/purchase/auth`
 const fileUpload = 'api/files/upload'
 const ipfsFiles = 'api/ipfs/files'
@@ -63,6 +64,7 @@ export const endpoints = {
     terralands,
     accountNftsByType,
     nftContract,
+    nftPurchase,
     nftPurchaseAuth,
     fileUpload,
     ipfsFiles,
