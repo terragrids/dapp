@@ -19,7 +19,7 @@ export const BIG_PLOT: PlotType = {
     name: 'BIG POWER PLANT',
     symbol: 'TRCL',
     url: '',
-    offchainUrl: BIG.src,
+    offChainImageUrl: BIG.src,
     positionX: 3,
     positionY: 2,
     holders: []
@@ -29,7 +29,7 @@ export const GRASS_PLOT: PlotType = {
     name: 'GRASS PLOT',
     symbol: 'TRCL',
     url: '',
-    offchainUrl: GRASS.src,
+    offChainImageUrl: GRASS.src,
     positionX: 3,
     positionY: 2,
     holders: []
@@ -67,12 +67,12 @@ export const positionToIndex = (position: Position2D) => {
     return position.y * GRID_SIZE + position.x
 }
 
-export const convertToMapPlot = ({ offchainUrl, positionX, positionY, ...rest }: PlotType): MapPlotType => {
+export const convertToMapPlot = ({ offChainImageUrl, positionX, positionY, ...rest }: PlotType): MapPlotType => {
     const image = new Image()
-    image.src = offchainUrl
+    image.src = offChainImageUrl
     return {
         ...rest,
-        offchainUrl,
+        offChainImageUrl,
         positionX,
         positionY,
         index: positionToIndex({ x: positionX, y: positionY }),

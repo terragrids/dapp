@@ -34,6 +34,8 @@ const paginatedNfts = (symbol, status, nextPageKey) =>
     `api/nfts?sort=desc&symbol=${symbol}&status=${status}&pageSize=${pageSize}${
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
     }`
+const paginatedProjectNfts = (projectId, nextPageKey) =>
+    `api/nfts?sort=desc&projectId=${projectId}&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}`
 const nftContract = (id, applicationId) => `api/nfts/${id}/contracts/${applicationId}`
 const nftPurchase = id => `api/nfts/${id}/purchase`
 const nftPurchaseAuth = id => `api/nfts/${id}/purchase/auth`
@@ -61,6 +63,7 @@ export const endpoints = {
     nfts,
     nft,
     paginatedNfts,
+    paginatedProjectNfts,
     terralands,
     accountNftsByType,
     nftContract,

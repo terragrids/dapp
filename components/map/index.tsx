@@ -19,6 +19,7 @@ import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
 import { getSppPlots, isSppPosition, SPP_SIZE } from 'components/solar-power-plant/spp-helper'
+import { ProjectStatus } from 'types/project'
 
 export type MapProps = {
     width: number | undefined
@@ -142,21 +143,31 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowe
 
     useEffect(() => {
         const load = async () => {
-            const res = await fetch(endpoints.terralands())
-            if (!res.ok) {
+            const projectResponse = await fetch(endpoints.paginatedProjects(null, ProjectStatus.APPROVED.key))
+            if (!projectResponse.ok) {
                 setError(strings.errorFetchingMap)
                 setLoading(false)
                 return
             }
 
-            const { assets } = await res.json()
+            const { projects } = await projectResponse.json()
+            let plots = [] as Array<MapPlotType>
 
-            const plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
+            if (projects.length > 0) {
+                const project = projects[0]
+
+                const nftResponse = await fetch(endpoints.paginatedProjectNfts(project.id))
+                if (nftResponse.ok) {
+                    const { assets } = await nftResponse.json()
+                    plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
+                }
+            }
 
             const spp = getSppPlots()
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
 
             const allPlots = [...spp, ...plots]
+
             setMapPlots(allPlots)
             loadPlotImages(allPlots)
         }

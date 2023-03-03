@@ -8,6 +8,7 @@ export default async function handler(req, res) {
                 nextPageKey: req.query.nextPageKey,
                 symbol: req.query.symbol,
                 status: req.query.status,
+                projectId: req.query.projectId,
                 sort: req.query.sort
             })
             break

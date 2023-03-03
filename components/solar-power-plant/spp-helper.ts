@@ -64,7 +64,7 @@ export const getSppPlots = () => {
             name: 'SOLAR POWER PLANT',
             symbol: 'SPP',
             url: '',
-            offchainUrl: imgSrc,
+            offChainImageUrl: imgSrc,
             positionX: coords[0],
             positionY: coords[1],
             holders: []

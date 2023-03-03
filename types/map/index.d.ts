@@ -3,7 +3,7 @@ type PlotType = {
     name: string
     symbol: string
     url: string
-    offchainUrl: string
+    offChainImageUrl: string
     positionX: number
     positionY: number
     holders: { address: string; amount: number }[]
