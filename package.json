@@ -14,6 +14,7 @@
         "index": "node --experimental-modules --unhandled-rejections=strict ./blockchain/index.mjs"
     },
     "dependencies": {
+        "@auth0/nextjs-auth0": "^2.2.2",
         "@randlabs/myalgo-connect": "^1.4.2",
         "@reach-sh/stdlib": "^0.1.13-rc.1",
         "@walletconnect/client": "^1.8.0",
