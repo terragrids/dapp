@@ -30,15 +30,23 @@ export default function TopMenu({ mainMenuVisible, onToggleMenu }) {
                 {!user && (
                     <>
                         <li>
-                            <a href={'/api/auth/login'}>{strings.login}</a>
+                            <a className={styles.button} href={'/api/auth/login'}>
+                                {strings.login}
+                            </a>
                         </li>
                     </>
                 )}
                 {user && (
                     <>
-                        <li>{user.name}</li>
                         <li>
-                            <a href={'/api/auth/logout'}>{strings.logout}</a>
+                            <button className={styles.button} onClick={onToggleMenu}>
+                                {strings.account}
+                            </button>
+                        </li>
+                        <li className={styles.toggle_menu} onClick={onToggleMenu}>
+                            <button>
+                                <i className={mainMenuVisible ? 'icon-cross' : 'icon-menu'} />
+                            </button>
                         </li>
                     </>
                 )}

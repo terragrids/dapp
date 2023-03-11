@@ -110,7 +110,13 @@
 .secondary {
     border: 1px solid $color-white;
     padding: 8px 20px;
-    border-radius: 14px;
+    border-radius: $button-border-radius;
     display: block;
     margin: 1.5em auto;
+
+    @media (hover: hover) {
+        &:hover {
+            text-decoration: none;
+        }
+    }
 }

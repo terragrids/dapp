@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
 import { UserContext } from '../context/user-context'
 import MainMenu from './main-menu'
 import { AccountNftsDialog } from './account-nfts-dialog'
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 export default function Layout({
     children,
@@ -21,7 +22,8 @@ export default function Layout({
     onOpenProjects,
     onCreateProject
 }) {
-    const user = useContext(UserContext)
+    const algoUser = useContext(UserContext)
+    const { user } = useUser()
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
     const [accountNftsDialogVisible, setAccountNftsDialogVisible] = useState(false)
     const [selectedSymbol, setSelectedSymbol] = useState({ undefined })
@@ -45,7 +47,7 @@ export default function Layout({
                 <meta name={'twitter:card'} content={'summary_large_image'} />
             </Head>
             <header
-                className={`${styles.topbar} ${!user.authenticated ? styles.notconnected : styles.navbar}`}
+                className={`${styles.topbar} ${!algoUser.authenticated ? styles.notconnected : styles.navbar}`}
                 ref={headerRef}>
                 <div className={styles.navContent}>
                     <div className={styles.logowrapper}>
@@ -61,7 +63,7 @@ export default function Layout({
                 </div>
             </header>
             <main className={styles.content}>
-                {user.authenticated && (
+                {user && (
                     <MainMenu
                         visible={mainMenuVisible}
                         onSelectSymbol={onSelectSymbol}

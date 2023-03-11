@@ -142,7 +142,9 @@ const enStrings = {
     yourBuildings: 'Your buildings',
     yourPlotsOfLand: 'Your plots of land',
     yourSolarPvCells: 'Your solar PV cells',
-    yourWallet: 'Your wallet'
+    yourWallet: 'Your wallet',
+    yourAccount: 'Your account',
+    account: 'Account'
 }
 
 export const strings = new LocalizedStrings({

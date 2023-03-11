@@ -5,6 +5,7 @@ import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
 import PropTypes from 'prop-types'
 import { Nft } from 'types/nft'
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 export default function MainMenu({
     visible,
@@ -18,7 +19,8 @@ export default function MainMenu({
     onCreateProject,
     onToggleMenu
 }) {
-    const user = useContext(UserContext)
+    const algoUser = useContext(UserContext)
+    const { user } = useUser()
 
     const openMintDialog = () => {
         onMint()
@@ -63,36 +65,40 @@ export default function MainMenu({
     return visible ? (
         <nav className={styles.wrapper}>
             <header className={styles.header}>
-                <h2 className={styles.title}>{strings.yourWallet}</h2>
+                <h2 className={styles.title}>{strings.yourAccount}</h2>
                 <i className={`${styles.close} icon-cross`} onClick={onToggleMenu} />
             </header>
 
-            {user.authenticated && (
+            {user && (
                 <>
                     <div className={styles.listContainer}>
                         <ul>
-                            <li className={`${styles.border} ${styles.static}`}>
-                                {maskWalletAddress(user.walletAddress)}
-                            </li>
-                            <li className={`${styles.darker} ${styles.static}`}>
-                                $ALGO <strong>{user.walletBalance}</strong>
-                            </li>
-                            <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
-                                {Nft.TRCL.currencySymbol} <strong>{'>'}</strong>
-                            </li>
-                            <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>
-                                {Nft.TRLD.currencySymbol} <strong>{'>'}</strong>
-                            </li>
-                            <li onClick={() => openNftListDialog(Nft.TRBD.symbol)}>
-                                {Nft.TRBD.currencySymbol} <strong>{'>'}</strong>
-                            </li>
+                            {algoUser.authenticated && (
+                                <>
+                                    <li className={`${styles.border} ${styles.static}`}>
+                                        {maskWalletAddress(algoUser.walletAddress)}
+                                    </li>
+                                    <li className={`${styles.darker} ${styles.static}`}>
+                                        $ALGO <strong>{algoUser.walletBalance}</strong>
+                                    </li>
+                                    <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
+                                        {Nft.TRCL.currencySymbol} <strong>{'>'}</strong>
+                                    </li>
+                                    <li onClick={() => openNftListDialog(Nft.TRLD.symbol)}>
+                                        {Nft.TRLD.currencySymbol} <strong>{'>'}</strong>
+                                    </li>
+                                    <li onClick={() => openNftListDialog(Nft.TRBD.symbol)}>
+                                        {Nft.TRBD.currencySymbol} <strong>{'>'}</strong>
+                                    </li>
+                                </>
+                            )}
                         </ul>
 
                         <ul className={styles.actions}>
                             <li onClick={openProjects}>{strings.projects}</li>
                             <li onClick={openMyProjects}>{strings.myProjects}</li>
                             <li onClick={createProject}>{strings.createProject}</li>
-                            {user && user.isAdmin && (
+                            {algoUser && algoUser.isAdmin && (
                                 <>
                                     <li className={styles.accent} onClick={openMintDialog}>
                                         {strings.mint}
@@ -103,9 +109,14 @@ export default function MainMenu({
                             )}
                         </ul>
                     </div>
-                    <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
-                        {strings.disconnect}
-                    </button>
+                    {algoUser.authenticated && (
+                        <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
+                            {strings.disconnect}
+                        </button>
+                    )}
+                    <a className={`${styles.secondary}`} href={'/api/auth/logout'}>
+                        {strings.logout}
+                    </a>
                 </>
             )}
         </nav>

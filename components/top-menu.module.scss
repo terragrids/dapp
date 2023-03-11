@@ -8,9 +8,7 @@
     margin-left: 30px;
     list-style: none;
 
-    .brand {
-        background-color: $color-brand;
-
+    .button {
         @media (max-width: $screen-small) {
             display: none;
         }
@@ -31,5 +29,22 @@
 
     @media (max-width: $screen-small) {
         display: block;
+    }
+}
+
+.button {
+    border-radius: $button-border-radius;
+    background-color: $color-brand;
+    color: $color-white;
+    font-size: 16px;
+    padding: 10px 20px;
+    display: block;
+    text-decoration: none;
+
+    @media (hover: hover) {
+        &:hover {
+            text-decoration: none;
+            opacity: 0.9;
+        }
     }
 }
