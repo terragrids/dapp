@@ -55,6 +55,7 @@ const paginatedAccountProjects = (accountId, nextPageKey, status) =>
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
     }${status ? `&status=${status}` : ''}`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
+const user = 'api/user'
 
 export const endpoints = {
     accountTerracells,
@@ -77,7 +78,8 @@ export const endpoints = {
     project,
     projectApproval,
     paginatedAccountProjects,
-    authForWallet
+    authForWallet,
+    user
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {
@@ -114,14 +116,12 @@ async function callApi(res, baseUrl, method, endpoint, data, headers, query) {
 
         switch (method) {
             case 'GET':
-                response = await fetch(url)
+            case 'DELETE':
+                response = await httpRequest(method, url, null, headers)
                 break
             case 'POST':
             case 'PUT':
                 response = await httpRequest(method, url, data, headers)
-                break
-            case 'DELETE':
-                response = await httpRequest(method, url, null, headers)
                 break
             default:
                 res.status(405).end()
@@ -147,7 +147,7 @@ export async function handleHttpRequest(res, run) {
     }
 }
 
-async function httpRequest(method, url, data = {}, headers = {}) {
+async function httpRequest(method, url, data = null, headers = {}) {
     return await fetch(url, {
         method,
         cache: 'no-cache',
@@ -157,7 +157,7 @@ async function httpRequest(method, url, data = {}, headers = {}) {
                 ...headers,
                 ...(data && { 'Content-Type': 'application/json' })
             },
-            body: JSON.stringify(data)
+            ...(data && { body: JSON.stringify(data) })
         })
     })
 }

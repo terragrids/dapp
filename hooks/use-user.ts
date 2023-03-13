@@ -9,6 +9,7 @@ export type NftContract = {
 }
 
 export type User = {
+    id?: string | null
     walletAccount?: null | {
         networkAccount: {
             addr: string
@@ -35,9 +36,10 @@ export enum UserCapabilities {
 }
 
 export function useUser() {
-    const update = useCallback(({ walletAccount, walletBalance, terracells }: User) => {
+    const update = useCallback(({ id, walletAccount, walletBalance, terracells }: User) => {
         setUser(user => ({
             ...user,
+            ...(id && { id }),
             ...(walletAccount && { walletAccount }),
             ...(walletBalance && { walletBalance }),
             ...(terracells && { terracells })
@@ -65,6 +67,7 @@ export function useUser() {
     }, [])
 
     const [user, setUser] = useState<User>({
+        id: null,
         walletAccount: null,
         walletBalance: '0',
         terracells: null,
@@ -77,7 +80,7 @@ export function useUser() {
 
     return {
         ...user,
-        authenticated: user.walletAccount !== null,
+        authenticated: user.id !== null,
         walletAddress: user.walletAccount ? user.walletAccount.networkAccount.addr : null,
         isAdmin:
             user.walletAccount && process.env.NEXT_PUBLIC_ADMIN_WALLETS

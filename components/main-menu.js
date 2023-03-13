@@ -5,7 +5,6 @@ import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
 import PropTypes from 'prop-types'
 import { Nft } from 'types/nft'
-import { useUser } from '@auth0/nextjs-auth0/client'
 
 export default function MainMenu({
     visible,
@@ -19,8 +18,7 @@ export default function MainMenu({
     onCreateProject,
     onToggleMenu
 }) {
-    const algoUser = useContext(UserContext)
-    const { user } = useUser()
+    const user = useContext(UserContext)
 
     const openMintDialog = () => {
         onMint()
@@ -69,17 +67,17 @@ export default function MainMenu({
                 <i className={`${styles.close} icon-cross`} onClick={onToggleMenu} />
             </header>
 
-            {user && (
+            {user.authenticated && (
                 <>
                     <div className={styles.listContainer}>
                         <ul>
-                            {algoUser.authenticated && (
+                            {user.walletAddress && (
                                 <>
                                     <li className={`${styles.border} ${styles.static}`}>
-                                        {maskWalletAddress(algoUser.walletAddress)}
+                                        {maskWalletAddress(user.walletAddress)}
                                     </li>
                                     <li className={`${styles.darker} ${styles.static}`}>
-                                        $ALGO <strong>{algoUser.walletBalance}</strong>
+                                        $ALGO <strong>{user.walletBalance}</strong>
                                     </li>
                                     <li onClick={() => openNftListDialog(Nft.TRCL.symbol)}>
                                         {Nft.TRCL.currencySymbol} <strong>{'>'}</strong>
@@ -98,7 +96,7 @@ export default function MainMenu({
                             <li onClick={openProjects}>{strings.projects}</li>
                             <li onClick={openMyProjects}>{strings.myProjects}</li>
                             <li onClick={createProject}>{strings.createProject}</li>
-                            {algoUser && algoUser.isAdmin && (
+                            {user && user.isAdmin && (
                                 <>
                                     <li className={styles.accent} onClick={openMintDialog}>
                                         {strings.mint}
@@ -109,7 +107,7 @@ export default function MainMenu({
                             )}
                         </ul>
                     </div>
-                    {algoUser.authenticated && (
+                    {user.walletAddress && (
                         <button className={`${styles.secondary} secondary`} onClick={disconnectWallet}>
                             {strings.disconnect}
                         </button>
