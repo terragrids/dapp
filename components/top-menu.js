@@ -15,10 +15,11 @@ export default function TopMenu({ mainMenuVisible, onToggleMenu }) {
             const identity = await fetch(endpoints.user)
             setLoadingUser(false)
             if (identity.ok) {
-                user.update({ id: (await identity.json()).id })
+                const json = await identity.json()
+                user.update({ id: json.id })
             }
         }
-        if (user && !user.authenticated) getUser()
+        if (user) getUser()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
