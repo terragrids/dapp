@@ -1,5 +1,6 @@
 import ActionBar from 'components/action-bar'
 import Button, { ButtonType } from 'components/button'
+import { DropDownSelector } from 'components/drop-down-selector'
 import { ImageUploader } from 'components/image-uploader'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
@@ -11,8 +12,9 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
+import { Place } from 'types/place'
 import { endpoints } from 'utils/api-config.js'
-import { getHashFromIpfsUrl, maskWalletAddress } from 'utils/string-utils.js'
+import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import styles from './create-project-dialog.module.scss'
 
 type CreateProjectDialogProps = {
@@ -23,13 +25,13 @@ type CreateProjectDialogProps = {
 type Project = {
     name: string
     description: string
-    budget: number
+    type: string
 }
 
 const defaultProject = {
     name: '',
     description: '',
-    budget: 0
+    type: Place.list()[0].code
 } as Project
 
 const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => {
@@ -46,7 +48,7 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     } = useFileUploader({
         name: project.name,
         description: project.description,
-        properties: { budget: project.budget }
+        properties: { placeType: project.type }
     })
 
     const { getAuthHeader } = useAuth()
@@ -72,12 +74,12 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
         setProject(project => ({ ...project, description }))
     }
 
-    function setBudget(budget: string) {
-        setProject(project => ({ ...project, budget: +budget }))
+    function setPlaceType(code: string) {
+        setProject(project => ({ ...project, type: code }))
     }
 
     function isValid() {
-        return file && !!project.name && !!project.description && !!project.budget && project.budget > 0
+        return file && !!project.name && !!project.description && !!project.type
     }
 
     function isInProgress() {
@@ -95,25 +97,19 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     }
 
     /**
-     * 2. Create a smart contract for the project on the blockchain
+     * 2. Create a project on the blockchain
      */
     const prevUploadState = usePrevious(uploadState)
     useEffect(() => {
         async function saveProject() {
             try {
-                const authHeader = await getAuthHeader(user.walletAddress)
                 const response = await fetch(endpoints.projects, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: authHeader
-                    },
                     referrerPolicy: 'no-referrer',
                     body: JSON.stringify({
                         name: fileProps.name,
                         cid: getHashFromIpfsUrl(fileProps.ipfsMetadataUrl),
-                        offChainImageUrl: fileProps.offChainUrl,
-                        creator: user.walletAddress
+                        offChainImageUrl: fileProps.offChainUrl
                     })
                 })
 
@@ -150,29 +146,24 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     ])
 
     return (
-        <ModalDialog visible={visible} title={strings.createProject} onClose={onClose}>
+        <ModalDialog visible={visible} title={strings.createPlace} onClose={onClose}>
             <div className={styles.container}>
                 <div className={styles.section}>
-                    <div className={styles.header}>{strings.createProjectWithWallet}</div>
-                    {user && <div className={styles.address}>{maskWalletAddress(user.walletAddress)}</div>}
-                </div>
-                <div className={styles.section}>
-                    <Label text={strings.projectLogo} />
+                    <Label text={strings.howToSeePlaceOnMap} />
                     <ImageUploader onFileSelected={file => setFile(file)} />
                 </div>
                 <div className={styles.section}>
-                    <InputField label={strings.name} onChange={setName} />
+                    <InputField label={strings.memorablePlaceName} onChange={setName} />
                 </div>
                 <div className={styles.section}>
-                    <InputField
-                        type={'number'}
-                        initialValue={'10'}
-                        label={strings.projectBudgetAlgo}
-                        onChange={setBudget}
+                    <DropDownSelector
+                        label={strings.whatTypeOfPlace}
+                        options={Place.list().map(place => ({ key: place.code, value: place.name }))}
+                        onSelected={setPlaceType}
                     />
                 </div>
                 <div className={styles.section}>
-                    <InputField max={5000} multiline label={strings.description} onChange={setDescription} />
+                    <InputField max={5000} multiline label={strings.describeYourPlace} onChange={setDescription} />
                 </div>
                 <ActionBar>
                     <Button

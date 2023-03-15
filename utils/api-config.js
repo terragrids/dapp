@@ -148,7 +148,7 @@ export async function handleHttpRequest(res, run) {
 }
 
 async function httpRequest(method, url, data = null, headers = {}) {
-    return await fetch(url, {
+    const options = {
         method,
         cache: 'no-cache',
         referrerPolicy: 'no-referrer',
@@ -159,5 +159,7 @@ async function httpRequest(method, url, data = null, headers = {}) {
             },
             ...(data && { body: JSON.stringify(data) })
         })
-    })
+    }
+
+    return await fetch(url, options)
 }

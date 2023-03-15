@@ -284,10 +284,6 @@ const ProjectDetails = ({ id, onSupport }: ProjectDetailsProps) => {
                             <div className={styles.content}>{new Date(project.created).toLocaleDateString()}</div>
                         </div>
                         <div className={styles.section}>
-                            <Label text={strings.projectBudgetAlgo} />
-                            <div className={styles.content}>{project.budget}</div>
-                        </div>
-                        <div className={styles.section}>
                             <Label text={strings.projectBalanceAlgo} />
                             <div className={styles.content}>{project.balance}</div>
                         </div>
@@ -306,7 +302,7 @@ const ProjectDetails = ({ id, onSupport }: ProjectDetailsProps) => {
                 {project && editing && (
                     <>
                         <div className={styles.section}>
-                            <Label text={strings.projectLogo} />
+                            <Label text={strings.howToSeePlaceOnMap} />
                             <ImageUploader imageUrl={project.logoUrl} onFileSelected={file => setFile(file)} />
                         </div>
                         <div className={styles.section}>

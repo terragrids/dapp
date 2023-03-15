@@ -1,6 +1,8 @@
+import { withApiAuthRequired } from '@auth0/nextjs-auth0'
+import { getAuthToken } from 'utils/auth-utils.js'
 import { callProjectsApi, setMethodNotAllowedResponse } from '../../utils/api-config'
 
-export default async function handler(req, res) {
+export default withApiAuthRequired(async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             await callProjectsApi(res, 'GET', 'projects', null, null, {
@@ -11,9 +13,14 @@ export default async function handler(req, res) {
             })
             break
         case 'POST':
-            await callProjectsApi(res, 'POST', 'projects', req.body, { authorization: req.headers.authorization })
+            const authToken = await getAuthToken(req, res)
+            if (authToken) {
+                await callProjectsApi(res, 'POST', 'projects', JSON.parse(req.body), {
+                    authorization: `Bearer ${authToken}`
+                })
+            }
             break
         default:
             setMethodNotAllowedResponse(res, ['GET', 'POST'])
     }
-}
+})

@@ -1,6 +1,7 @@
 import LocalizedStrings from 'react-localization'
 
 const enStrings = {
+    account: 'Account',
     activeTerracells: 'Active terracells',
     algoSigner: 'AlgoSigner',
     approvalStatus: 'Approval status',
@@ -27,9 +28,10 @@ const enStrings = {
     contractId: 'Contract ID',
     create: 'Create',
     created: 'Created',
+    createPlace: 'Create new place',
     createProject: 'Create new project',
-    createProjectWithWallet: 'Create a new project associated with your wallet address',
     delete: 'Delete',
+    describeYourPlace: 'Describe your place in a few words (optional but useful)',
     description: 'Description',
     details: 'Details',
     disconnect: 'Disconnect',
@@ -73,11 +75,13 @@ const enStrings = {
     failedDeletingProject: 'Failed deleting the project',
     helloExplorer: 'Hello, Terragrids explorer!',
     holder: 'Holder',
+    howToSeePlaceOnMap: 'How your place will show on the map',
     lastSalePrice: 'Last sale price',
     legendary: 'Legendary',
     login: 'Login',
     logout: 'Logout',
     mapPosition: 'Map position',
+    memorablePlaceName: 'A memorable name for your place',
     mint: 'Mint',
     mintingTerracell: 'Minting a new $TRCL token',
     mintNft: 'Mint a new NFT',
@@ -103,9 +107,7 @@ const enStrings = {
     price: 'Price',
     projectArchived: 'Project archived',
     projectBalanceAlgo: 'Project balance (ALGO)',
-    projectBudgetAlgo: 'Project budget (ALGO)',
     projectDeleted: 'Project deleted',
-    projectLogo: 'Project logo',
     projects: 'Projects',
     rare: 'Rare',
     rarity: 'Rarity',
@@ -137,14 +139,14 @@ const enStrings = {
     update: 'Update',
     waitingForApproval: 'Waiting for approval',
     waitingForEditReview: 'Waiting for edit review',
+    whatTypeOfPlace: 'What type of place is it?',
     withdraw: 'Withdraw',
     youHaveNoNfts: 'You have no {0} in your wallet',
+    yourAccount: 'Your account',
     yourBuildings: 'Your buildings',
     yourPlotsOfLand: 'Your plots of land',
     yourSolarPvCells: 'Your solar PV cells',
-    yourWallet: 'Your wallet',
-    yourAccount: 'Your account',
-    account: 'Account'
+    yourWallet: 'Your wallet'
 }
 
 export const strings = new LocalizedStrings({
