@@ -135,23 +135,13 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
             }
 
             const { projects } = await projectResponse.json()
-            let plots = [] as Array<MapPlotType>
-
-            if (projects.length > 0) {
-                const project = projects[0]
-
-                const nftResponse = await fetch(endpoints.paginatedProjectNfts(project.id))
-                if (nftResponse.ok) {
-                    const { assets } = await nftResponse.json()
-                    plots = assets.map((asset: PlotType) => convertToMapPlot(asset))
-                }
-            }
+            const plots = projects.map((project: PlotType) => convertToMapPlot(project))
 
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
-            const allPlots = [...plots]
+            // const allPlots = [...plots]
 
-            setMapPlots(allPlots)
-            loadPlotImages(allPlots)
+            setMapPlots(plots)
+            loadPlotImages(plots)
         }
         mapPlots.length === 0 && load()
     }, [loadPlotImages, mapPlots.length])
