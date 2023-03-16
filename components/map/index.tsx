@@ -18,7 +18,6 @@ import {
 import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
-import { getSppPlots, isSppPosition, SPP_SIZE } from 'components/solar-power-plant/spp-helper'
 import { ProjectStatus } from 'types/project'
 
 export type MapProps = {
@@ -26,10 +25,9 @@ export type MapProps = {
     height: number | undefined
     onSelectPlot: (plotInfo: MapPlotType) => void
     onSelectEmptyPlot: (position: Position2D) => void
-    onSelectSolarPowerPlant: () => void
 }
 
-const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowerPlant }: MapProps) => {
+const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
     const [canvasRef, initialScale, renderCanvas] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
@@ -68,21 +66,11 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowe
         if (!isInsideMap(startPositionRef.current, mouseX, mouseY)) return
 
         const { positionX, positionY } = getPlotPosition(startPositionRef.current, mouseX, mouseY)
-        const isSpp = isSppPosition({ x: positionX, y: positionY })
 
-        let renderX, renderY, width, height
-        if (isSpp) {
-            const offset = SPP_SIZE - 1
-            renderX = x - offset * Plot.PLOT_HALF_WIDTH
-            renderY = y + offset * Plot.PLOT_HALF_HEIGHT
-            width = Plot.PLOT_WIDTH * SPP_SIZE
-            height = Plot.PLOT_HEIGHT * SPP_SIZE
-        } else {
-            renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
-            renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
-            width = Plot.PLOT_WIDTH
-            height = Plot.PLOT_HEIGHT
-        }
+        const renderX = x + (positionX - positionY) * Plot.PLOT_HALF_WIDTH
+        const renderY = y + (positionX + positionY) * Plot.PLOT_HALF_HEIGHT
+        const width = Plot.PLOT_WIDTH
+        const height = Plot.PLOT_HEIGHT
 
         renderHoveredPlot(ctx, renderX, renderY + Plot.PLOT_HEIGHT, width, height)
     }
@@ -124,11 +112,7 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowe
             return
         }
 
-        if (isSppPosition({ x: positionX, y: positionY })) {
-            onSelectSolarPowerPlant()
-        } else if (index < GRID_SIZE * GRID_SIZE) {
-            onSelectPlot(target)
-        }
+        onSelectPlot(target)
     }
     const handleMouseMove = (positionX: number, positionY: number) => {
         const index = positionY * GRID_SIZE + positionX
@@ -163,10 +147,8 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot, onSelectSolarPowe
                 }
             }
 
-            const spp = getSppPlots()
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
-
-            const allPlots = [...spp, ...plots]
+            const allPlots = [...plots]
 
             setMapPlots(allPlots)
             loadPlotImages(allPlots)

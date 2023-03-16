@@ -6,8 +6,6 @@ import WalletPicker from '../components/wallet-picker'
 import { NftMintDialog } from 'components/nft-mint-dialog'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
-import SolarPowerPlantDialog from 'components/solar-power-plant/solar-power-plant-dialog'
-import SolarPowerPlantAdminPanel from 'components/solar-power-plant/solar-power-plant-admin-panel'
 import { UserContext } from 'context/user-context.js'
 import CreateProjectDialog from 'components/projects/create-project-dialog'
 import ProjectsDialog from 'components/projects/projects-dialog'
@@ -20,8 +18,6 @@ export default function Home() {
     const [nftMintVisible, setNftMintVisible] = useState(false)
     const [assetsVisible, setAssetsVisible] = useState(false)
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
-    const [sppVisible, setSppVisible] = useState(false)
-    const [sppAdminPanelVisible, setSppAdminPanelVisible] = useState(false)
     const [projectsDialog, setProjectsDialog] = useState({ visible: false, ownerWalletAddress: null })
     const [projectFundraiser, setProjectFundraiser] = useState({ visible: false, project: null, nft: null, plot: null })
     const [createProjectVisible, setCreateProjectVisible] = useState(false)
@@ -131,14 +127,6 @@ export default function Home() {
                 onClose={() => setPlotInfoVisible(false)}
                 nftId={selectedPlot ? selectedPlot.id : null}
             />
-            <SolarPowerPlantDialog
-                visible={sppVisible}
-                onClose={openSppAdminPanel => {
-                    setSppVisible(false)
-                    if (openSppAdminPanel) setSppAdminPanelVisible(true)
-                }}
-            />
-            <SolarPowerPlantAdminPanel visible={sppAdminPanelVisible} onClose={() => setSppAdminPanelVisible(false)} />
             <ProjectsDialog
                 visible={projectsDialog.visible}
                 ownerWalletAddress={projectsDialog.ownerWalletAddress}
