@@ -27,4 +27,9 @@ export class Place {
             Place.FARM
         ]
     }
+
+    static new(code: string) {
+        const newPlace = this.list().find(place => place.code === code)
+        return newPlace || Place.DETACHED
+    }
 }

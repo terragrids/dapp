@@ -1,19 +1,18 @@
 import ActionBar from 'components/action-bar'
 import Button, { ButtonType } from 'components/button'
 import { DropDownSelector } from 'components/drop-down-selector'
-import { ImageUploader } from 'components/image-uploader'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
-import { useAuth } from 'hooks/use-auth.js'
-import { FileUploadState, useFileUploader } from 'hooks/use-file-uploader'
+import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
+import { useFilePinner } from 'hooks/use-file-pinner'
 import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { Place } from 'types/place'
-import { endpoints } from 'utils/api-config.js'
+import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import styles from './create-project-dialog.module.scss'
 
@@ -25,33 +24,22 @@ type CreateProjectDialogProps = {
 type Project = {
     name: string
     description: string
-    type: string
+    type: Place
 }
 
 const defaultProject = {
     name: '',
     description: '',
-    type: Place.list()[0].code
+    type: Place.list()[0]
 } as Project
 
 const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => {
     const user = useContext<User>(UserContext)
     const [inProgress, setInProgress] = useState<boolean>(false)
-    const [file, setFile] = useState<File>()
     const [project, setProject] = useState<Project>(defaultProject as Project)
     const [error, setError] = useState<string>('')
-    const {
-        upload,
-        uploadState,
-        fileProps,
-        reset: resetFileUploader
-    } = useFileUploader({
-        name: project.name,
-        description: project.description,
-        properties: { placeType: project.type }
-    })
-
-    const { getAuthHeader } = useAuth()
+    const { pinFileToIpfs } = useFilePinner()
+    const { fetchOrLogin } = useFetchOrLogin()
 
     /**
      * Reset state when opening the dialog
@@ -59,12 +47,11 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && prevVisible === false) {
-            resetFileUploader()
             setProject(defaultProject)
             setError('')
             setInProgress(false)
         }
-    }, [prevVisible, resetFileUploader, visible])
+    }, [prevVisible, visible])
 
     function setName(name: string) {
         setProject(project => ({ ...project, name }))
@@ -75,82 +62,58 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     }
 
     function setPlaceType(code: string) {
-        setProject(project => ({ ...project, type: code }))
+        setProject(project => ({ ...project, type: Place.new(code) }))
     }
 
     function isValid() {
-        return file && !!project.name && !!project.description && !!project.type
+        return !!project.name && !!project.type && !!project.description
     }
 
     function isInProgress() {
-        const failed = uploadState === FileUploadState.ERROR || error !== ''
+        const failed = error !== ''
         return !failed && inProgress
     }
 
-    /**
-     * 1. Save project file on S3 and IPFS
-     */
-    function submit() {
-        if (!file) return
+    async function submit() {
         setInProgress(true)
-        upload(file)
-    }
 
-    /**
-     * 2. Create a project on the blockchain
-     */
-    const prevUploadState = usePrevious(uploadState)
-    useEffect(() => {
-        async function saveProject() {
-            try {
-                const response = await fetch(endpoints.projects, {
-                    method: 'POST',
-                    referrerPolicy: 'no-referrer',
-                    body: JSON.stringify({
-                        name: fileProps.name,
-                        cid: getHashFromIpfsUrl(fileProps.ipfsMetadataUrl),
-                        offChainImageUrl: fileProps.offChainUrl
-                    })
+        try {
+            const { assetName, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
+                id: '1cbeb62a-935d-434e-875d-f17c9f5a2d4c', // TODO replace with selected id
+                name: project.name,
+                description: project.description,
+                properties: { type: project.type }
+            })
+
+            const response = await fetchOrLogin(endpoints.projects, {
+                method: 'POST',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify({
+                    name: assetName,
+                    cid: getHashFromIpfsUrl(ipfsMetadataUrl),
+                    offChainImageUrl
                 })
+            })
 
-                if (response.status !== 201) {
-                    setError(strings.errorCreatingProject)
-                } else if (user.walletAccount) {
-                    const { tokenId } = await response.json()
-                    await user.walletAccount.tokenAccept(tokenId)
-                    onClose()
-                }
-            } catch (e) {
+            if (!response.ok) {
                 setError(strings.errorCreatingProject)
+            } else if (user.walletAccount) {
+                const { tokenId } = await response.json()
+                await user.walletAccount.tokenAccept(tokenId)
+                onClose()
             }
-            setInProgress(false)
-        }
-
-        if (uploadState === FileUploadState.PINNED && prevUploadState !== FileUploadState.PINNED) {
-            saveProject()
-        } else if (uploadState === FileUploadState.ERROR) {
-            setInProgress(false)
+        } catch (e) {
             setError(strings.errorCreatingProject)
         }
-    }, [
-        fileProps.ipfsMetadataHash,
-        fileProps.ipfsMetadataUrl,
-        fileProps.name,
-        fileProps.offChainUrl,
-        getAuthHeader,
-        onClose,
-        prevUploadState,
-        uploadState,
-        user.walletAccount,
-        user.walletAddress
-    ])
+        setInProgress(false)
+    }
 
     return (
         <ModalDialog visible={visible} title={strings.createPlace} onClose={onClose}>
             <div className={styles.container}>
                 <div className={styles.section}>
                     <Label text={strings.howToSeePlaceOnMap} />
-                    <ImageUploader onFileSelected={file => setFile(file)} />
+                    <img src={terragridsImageUrl('1cbeb62a-935d-434e-875d-f17c9f5a2d4c')} alt={'image'} />
                 </div>
                 <div className={styles.section}>
                     <InputField label={strings.memorablePlaceName} onChange={setName} />

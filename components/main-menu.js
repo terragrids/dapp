@@ -5,6 +5,7 @@ import { UserContext } from '../context/user-context'
 import { maskWalletAddress } from '../utils/string-utils'
 import PropTypes from 'prop-types'
 import { Nft } from 'types/nft'
+import { endpoints } from 'utils/api-config.js'
 
 export default function MainMenu({
     visible,
@@ -112,7 +113,7 @@ export default function MainMenu({
                             {strings.disconnect}
                         </button>
                     )}
-                    <a className={`${styles.secondary}`} href={'/api/auth/logout'}>
+                    <a className={`${styles.secondary}`} href={endpoints.logout}>
                         {strings.logout}
                     </a>
                 </>

@@ -1,8 +1,7 @@
-import { withApiAuthRequired } from '@auth0/nextjs-auth0'
 import { getAuthToken } from 'utils/auth-utils.js'
 import { callProjectsApi, setMethodNotAllowedResponse } from '../../utils/api-config'
 
-export default withApiAuthRequired(async function handler(req, res) {
+export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
             await callProjectsApi(res, 'GET', 'projects', null, null, {
@@ -23,4 +22,4 @@ export default withApiAuthRequired(async function handler(req, res) {
         default:
             setMethodNotAllowedResponse(res, ['GET', 'POST'])
     }
-})
+}

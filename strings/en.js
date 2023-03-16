@@ -31,7 +31,7 @@ const enStrings = {
     createPlace: 'Create new place',
     createProject: 'Create new project',
     delete: 'Delete',
-    describeYourPlace: 'Describe your place in a few words (optional but useful)',
+    describeYourPlace: 'Describe your place in a few words',
     description: 'Description',
     details: 'Details',
     disconnect: 'Disconnect',

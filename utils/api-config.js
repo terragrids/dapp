@@ -56,6 +56,8 @@ const paginatedAccountProjects = (accountId, nextPageKey, status) =>
     }${status ? `&status=${status}` : ''}`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
 const user = 'api/user'
+const login = '/api/auth/login'
+const logout = '/api/auth/logout'
 
 export const endpoints = {
     accountTerracells,
@@ -79,7 +81,9 @@ export const endpoints = {
     projectApproval,
     paginatedAccountProjects,
     authForWallet,
-    user
+    user,
+    login,
+    logout
 }
 
 export function setMethodNotAllowedResponse(res, allowedList) {

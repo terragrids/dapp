@@ -44,7 +44,7 @@ export default function TopMenu({ mainMenuVisible, onToggleMenu }) {
                     {!user.authenticated && (
                         <>
                             <li>
-                                <a className={styles.button} href={'/api/auth/login'}>
+                                <a className={styles.button} href={endpoints.login}>
                                     {strings.login}
                                 </a>
                             </li>
