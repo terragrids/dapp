@@ -53,20 +53,12 @@ export default function Home() {
         setProjectFundraiser(fr => ({ ...fr, plot }))
     }
 
-    const onSelectSolarPowerPlant = () => {
-        setSppVisible(true)
-    }
-
     function onMint() {
         setNftMintVisible(true)
     }
 
     function onOpenAssets() {
         setAssetsVisible(true)
-    }
-
-    function onOpenSppAdminPanel() {
-        setSppAdminPanelVisible(true)
     }
 
     function onOpenProjects() {
@@ -104,7 +96,6 @@ export default function Home() {
             onDisconnectWallet={onDisconnectWallet}
             onMint={onMint}
             onOpenAssets={onOpenAssets}
-            onOpenSppAdminPanel={onOpenSppAdminPanel}
             onOpenProjects={onOpenProjects}
             onOpenMyProjects={onOpenMyProjects}
             onCreateProject={onCreateProject}>
@@ -117,7 +108,6 @@ export default function Home() {
                 height={mapSize.height}
                 onSelectPlot={onSelectPlot}
                 onSelectEmptyPlot={onSelectEmptyPlot}
-                onSelectSolarPowerPlant={onSelectSolarPowerPlant}
             />
 
             <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />

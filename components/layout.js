@@ -16,7 +16,6 @@ export default function Layout({
     onDisconnectWallet,
     onMint,
     onOpenAssets,
-    onOpenSppAdminPanel,
     onOpenMyProjects,
     onOpenProjects,
     onCreateProject
@@ -68,7 +67,6 @@ export default function Layout({
                         onOpenAssets={onOpenAssets}
                         onMint={onMint}
                         onDisconnectWallet={onDisconnectWallet}
-                        onOpenSppAdminPanel={onOpenSppAdminPanel}
                         onOpenProjects={onOpenProjects}
                         onOpenMyProjects={onOpenMyProjects}
                         onCreateProject={onCreateProject}

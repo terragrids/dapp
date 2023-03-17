@@ -13,7 +13,6 @@ export default function MainMenu({
     onMint,
     onOpenAssets,
     onDisconnectWallet,
-    onOpenSppAdminPanel,
     onOpenProjects,
     onOpenMyProjects,
     onCreateProject,
@@ -33,11 +32,6 @@ export default function MainMenu({
 
     const disconnectWallet = () => {
         onDisconnectWallet()
-        onToggleMenu()
-    }
-
-    const openSppAdminPanel = () => {
-        onOpenSppAdminPanel()
         onToggleMenu()
     }
 
@@ -103,7 +97,6 @@ export default function MainMenu({
                                         {strings.mint}
                                     </li>
                                     <li onClick={openAssetsDialog}>{strings.assets}</li>
-                                    <li onClick={openSppAdminPanel}>{strings.sppAdminPanel}</li>
                                 </>
                             )}
                         </ul>
@@ -129,6 +122,5 @@ MainMenu.propTypes = {
     onSelectSymbol: PropTypes.func,
     onMint: PropTypes.func,
     onDisconnectWallet: PropTypes.func,
-    onOpenSppAdminPanel: PropTypes.func,
     onToggleMenu: PropTypes.func
 }
