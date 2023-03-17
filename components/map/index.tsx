@@ -43,8 +43,6 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
     )
 
     const renderPlots = (ctx: CanvasRenderingContext2D, { x, y }: Position2D) => {
-        if (mapPlots.length === 0) return
-
         for (let plotX = 0; plotX < GRID_SIZE; ++plotX) {
             for (let plotY = 0; plotY < GRID_SIZE; ++plotY) {
                 const index = plotY * GRID_SIZE + plotX
@@ -77,9 +75,12 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
 
     const loadPlotImages = useCallback(
         async (plots: MapPlotType[]) => {
-            if (plots.length === 0 || imageLoadingStarted) return
-            let loadCount = 0
+            if (plots.length === 0 || imageLoadingStarted) {
+                renderCanvas()
+                setLoading(false)
+            }
 
+            let loadCount = 0
             plots.forEach(plot => {
                 const image = new Image()
                 image.addEventListener('load', () => {
