@@ -14,7 +14,6 @@ import Button, { ButtonType } from 'components/button'
 import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
 import { DropDownSelector } from 'components/drop-down-selector'
-import NftPicker from 'components/nft/nft-picker'
 import { TerragridsNft } from 'types/nft.js'
 
 type ProjectsDialogProps = {
@@ -29,7 +28,7 @@ type Error = {
     description?: string
 }
 
-const ProjectsDialog = ({ visible, ownerWalletAddress = null, onSupportingProject, onClose }: ProjectsDialogProps) => {
+const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: ProjectsDialogProps) => {
     const user = useContext<User>(UserContext)
     const [projects, setProjects] = useState<Array<Project> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -161,19 +160,10 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onSupportingProjec
         else return ownerWalletAddress ? strings.myProjects : strings.projects
     }
 
-    function support(id: string) {
-        setSupportingProject(id)
-    }
-
-    function onSelectedSupportingNft(nft: TerragridsNft) {
-        onSupportingProject(getSelectedProject(), nft)
-        close()
-    }
-
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && !supportingProject && (
+                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && (
                     <DropDownSelector
                         label={strings.status}
                         options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
@@ -186,7 +176,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onSupportingProjec
                         <LoadingSpinner />
                     </div>
                 )}
-                {projects && projects.length > 0 && !selectedProject && !supportingProject && (
+                {projects && projects.length > 0 && !selectedProject && (
                     <div className={styles.scrollContainer}>
                         {projects.map(project => (
                             <ProjectListItem
@@ -211,15 +201,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onSupportingProjec
                     </div>
                 )}
                 {projects && projects.length === 0 && <div className={styles.empty}>{strings.noProjectsFound}</div>}
-                {selectedProject && !supportingProject && <ProjectDetails id={selectedProject} onSupport={support} />}
-                {supportingProject && (
-                    <>
-                        <div className={styles.message}>{`${strings.pickNftToSupportProject} - "${
-                            getSelectedProject()?.name
-                        }"`}</div>
-                        <NftPicker onSelect={onSelectedSupportingNft} />
-                    </>
-                )}
+                {selectedProject && <ProjectDetails id={selectedProject} />}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}

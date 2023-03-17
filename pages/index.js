@@ -10,7 +10,6 @@ import { UserContext } from 'context/user-context.js'
 import CreateProjectDialog from 'components/projects/create-project-dialog'
 import ProjectsDialog from 'components/projects/projects-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
-import ProjectFundraiser from 'components/projects/project-fundraiser'
 
 export default function Home() {
     const user = useContext(UserContext)
@@ -19,7 +18,6 @@ export default function Home() {
     const [assetsVisible, setAssetsVisible] = useState(false)
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
     const [projectsDialog, setProjectsDialog] = useState({ visible: false, ownerWalletAddress: null })
-    const [projectFundraiser, setProjectFundraiser] = useState({ visible: false, project: null, nft: null, plot: null })
     const [createProjectVisible, setCreateProjectVisible] = useState(false)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
@@ -49,8 +47,8 @@ export default function Home() {
         setPlotInfoVisible(true)
     }
 
-    const onSelectEmptyPlot = plot => {
-        setProjectFundraiser(fr => ({ ...fr, plot }))
+    const onSelectEmptyPlot = () => {
+        // TODO show node creator
     }
 
     function onMint() {
@@ -82,11 +80,6 @@ export default function Home() {
             if (window.algorand && window.algorand.disconnect) await window.algorand.disconnect()
             if (user.authenticated) user.disconnect()
         } catch (e) {}
-    }
-
-    function onSupportingProject(project, nft) {
-        setProjectsDialog({ visible: false })
-        setProjectFundraiser({ visible: true, project, nft })
     }
 
     return (
@@ -121,17 +114,9 @@ export default function Home() {
                 visible={projectsDialog.visible}
                 ownerWalletAddress={projectsDialog.ownerWalletAddress}
                 onClose={() => setProjectsDialog({ visible: false })}
-                onSupportingProject={onSupportingProject}
             />
             <CreateProjectDialog visible={createProjectVisible} onClose={() => setCreateProjectVisible(false)} />
             <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
-            <ProjectFundraiser
-                visible={projectFundraiser.visible}
-                project={projectFundraiser.project}
-                asset={projectFundraiser.nft}
-                selectedPlot={projectFundraiser.plot}
-                onClose={() => setProjectFundraiser({ visible: false })}
-            />
         </Layout>
     )
 }
