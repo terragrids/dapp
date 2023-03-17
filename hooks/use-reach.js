@@ -1,6 +1,4 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
-import * as tokenMarketBackend from '../blockchain/token-market/build/index.main.mjs'
-import * as sppBackend from '../blockchain/solar-power-plant/build/index.main.mjs'
 import * as nftContractBackend from '../blockchain/nft-contract/index.main.mjs'
 
 export function useReach() {
@@ -41,8 +39,6 @@ export function useReach() {
     }, [reload])
 
     return {
-        tokenMarketBackend,
-        sppBackend,
         nftContractBackend,
         stdlib: stdlib.current,
         myAlgoConnect: myAlgoConnect.current,
