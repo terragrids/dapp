@@ -157,7 +157,7 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     function getTitle() {
         if (selectedProject && !supportingProject) return getSelectedProject()?.name
         else if (supportingProject) return strings.pickNft
-        else return ownerWalletAddress ? strings.myProjects : strings.projects
+        else return ownerWalletAddress ? strings.myPlaces : strings.allPlaces
     }
 
     return (

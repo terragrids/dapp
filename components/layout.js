@@ -16,9 +16,8 @@ export default function Layout({
     onDisconnectWallet,
     onMint,
     onOpenAssets,
-    onOpenMyProjects,
-    onOpenProjects,
-    onCreateProject
+    onOpenMyPlaces,
+    onOpenAllPlaces
 }) {
     const user = useContext(UserContext)
     const [mainMenuVisible, setMainMenuVisible] = useState(false)
@@ -67,9 +66,8 @@ export default function Layout({
                         onOpenAssets={onOpenAssets}
                         onMint={onMint}
                         onDisconnectWallet={onDisconnectWallet}
-                        onOpenProjects={onOpenProjects}
-                        onOpenMyProjects={onOpenMyProjects}
-                        onCreateProject={onCreateProject}
+                        onOpenAllPlaces={onOpenAllPlaces}
+                        onOpenMyPlaces={onOpenMyPlaces}
                         onToggleMenu={onToggleMenu}
                     />
                 )}

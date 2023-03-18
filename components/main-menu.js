@@ -13,9 +13,8 @@ export default function MainMenu({
     onMint,
     onOpenAssets,
     onDisconnectWallet,
-    onOpenProjects,
-    onOpenMyProjects,
-    onCreateProject,
+    onOpenAllPlaces,
+    onOpenMyPlaces,
     onToggleMenu
 }) {
     const user = useContext(UserContext)
@@ -40,18 +39,13 @@ export default function MainMenu({
         onToggleMenu()
     }
 
-    const openProjects = () => {
-        onOpenProjects()
+    const openAllPlaces = () => {
+        onOpenAllPlaces()
         onToggleMenu()
     }
 
-    const openMyProjects = () => {
-        onOpenMyProjects()
-        onToggleMenu()
-    }
-
-    const createProject = () => {
-        onCreateProject()
+    const openMyPlaces = () => {
+        onOpenMyPlaces()
         onToggleMenu()
     }
 
@@ -88,9 +82,8 @@ export default function MainMenu({
                         </ul>
 
                         <ul className={styles.actions}>
-                            <li onClick={openProjects}>{strings.projects}</li>
-                            <li onClick={openMyProjects}>{strings.myProjects}</li>
-                            <li onClick={createProject}>{strings.createProject}</li>
+                            <li onClick={openMyPlaces}>{strings.myPlaces}</li>
+                            <li onClick={openAllPlaces}>{strings.allPlaces}</li>
                             {user && user.isAdmin && (
                                 <>
                                     <li className={styles.accent} onClick={openMintDialog}>

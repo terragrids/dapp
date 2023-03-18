@@ -17,8 +17,8 @@ export default function Home() {
     const [nftMintVisible, setNftMintVisible] = useState(false)
     const [assetsVisible, setAssetsVisible] = useState(false)
     const [plotInfoVisible, setPlotInfoVisible] = useState(false)
-    const [projectsDialog, setProjectsDialog] = useState({ visible: false, ownerWalletAddress: null })
-    const [createProjectVisible, setCreateProjectVisible] = useState(false)
+    const [placesDialog, setPlacesDialog] = useState({ visible: false, ownerWalletAddress: null })
+    const [newPlacePosition, setNewPlacePosition] = useState(null)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
         width: undefined,
@@ -47,8 +47,8 @@ export default function Home() {
         setPlotInfoVisible(true)
     }
 
-    const onSelectEmptyPlot = () => {
-        // TODO show node creator
+    const onSelectEmptyPlot = plot => {
+        setNewPlacePosition({ x: plot.x, y: plot.y })
     }
 
     function onMint() {
@@ -59,16 +59,12 @@ export default function Home() {
         setAssetsVisible(true)
     }
 
-    function onOpenProjects() {
-        setProjectsDialog({ visible: true })
+    function onOpenAllPlaces() {
+        setPlacesDialog({ visible: true })
     }
 
-    function onOpenMyProjects() {
-        setProjectsDialog({ visible: true, ownerWalletAddress: user.walletAddress })
-    }
-
-    function onCreateProject() {
-        setCreateProjectVisible(true)
+    function onOpenMyPlaces() {
+        setPlacesDialog({ visible: true, ownerWalletAddress: user.walletAddress })
     }
 
     function onConnectWallet() {
@@ -89,9 +85,8 @@ export default function Home() {
             onDisconnectWallet={onDisconnectWallet}
             onMint={onMint}
             onOpenAssets={onOpenAssets}
-            onOpenProjects={onOpenProjects}
-            onOpenMyProjects={onOpenMyProjects}
-            onCreateProject={onCreateProject}>
+            onOpenAllPlaces={onOpenAllPlaces}
+            onOpenMyPlaces={onOpenMyPlaces}>
             <Head>
                 <title>{strings.siteTitle}</title>
             </Head>
@@ -111,11 +106,15 @@ export default function Home() {
                 nftId={selectedPlot ? selectedPlot.id : null}
             />
             <ProjectsDialog
-                visible={projectsDialog.visible}
-                ownerWalletAddress={projectsDialog.ownerWalletAddress}
-                onClose={() => setProjectsDialog({ visible: false })}
+                visible={placesDialog.visible}
+                ownerWalletAddress={placesDialog.ownerWalletAddress}
+                onClose={() => setPlacesDialog({ visible: false })}
             />
-            <CreateProjectDialog visible={createProjectVisible} onClose={() => setCreateProjectVisible(false)} />
+            <CreateProjectDialog
+                visible={!!newPlacePosition}
+                position={newPlacePosition}
+                onClose={() => setNewPlacePosition(null)}
+            />
             <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
         </Layout>
     )

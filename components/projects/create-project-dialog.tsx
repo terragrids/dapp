@@ -3,6 +3,7 @@ import Button, { ButtonType } from 'components/button'
 import { DropDownSelector } from 'components/drop-down-selector'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
+import Plot, { Position2D } from 'components/map/plots/plot.js'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
@@ -18,6 +19,7 @@ import styles from './create-project-dialog.module.scss'
 
 type CreateProjectDialogProps = {
     visible: boolean
+    position: Position2D
     onClose: () => void
 }
 
@@ -33,7 +35,7 @@ const defaultProject = {
     type: Place.list()[0]
 } as Project
 
-const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => {
+const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialogProps) => {
     const user = useContext<User>(UserContext)
     const [inProgress, setInProgress] = useState<boolean>(false)
     const [project, setProject] = useState<Project>(defaultProject as Project)
@@ -111,12 +113,13 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
     return (
         <ModalDialog visible={visible} title={strings.createPlace} onClose={onClose}>
             <div className={styles.container}>
+                {position && (
+                    <div className={styles.section}>
+                        {strings.formatString(strings.createNewPlaceAtNode, position.x, position.y)}
+                    </div>
+                )}
                 <div className={styles.section}>
-                    <Label text={strings.howToSeePlaceOnMap} />
-                    <img src={terragridsImageUrl('1cbeb62a-935d-434e-875d-f17c9f5a2d4c')} alt={'image'} />
-                </div>
-                <div className={styles.section}>
-                    <InputField label={strings.memorablePlaceName} onChange={setName} />
+                    <InputField label={strings.giveMemorablePlaceName} onChange={setName} />
                 </div>
                 <div className={styles.section}>
                     <DropDownSelector
@@ -124,6 +127,10 @@ const CreateProjectDialog = ({ visible, onClose }: CreateProjectDialogProps) => 
                         options={Place.list().map(place => ({ key: place.code, value: place.name }))}
                         onSelected={setPlaceType}
                     />
+                </div>
+                <div className={styles.section}>
+                    <Label text={strings.howToSeePlaceOnMap} />
+                    <img src={terragridsImageUrl('1cbeb62a-935d-434e-875d-f17c9f5a2d4c')} alt={'image'} />
                 </div>
                 <div className={styles.section}>
                     <InputField max={5000} multiline label={strings.describeYourPlace} onChange={setDescription} />
