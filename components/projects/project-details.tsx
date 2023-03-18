@@ -243,7 +243,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
             saveProject()
         } else if (uploadState === FileUploadState.ERROR) {
             setInProgress(false)
-            setError(strings.errorCreatingProject)
+            setError(strings.errorCreatingPlace)
         }
     }, [
         fileProps.ipfsMetadataHash,

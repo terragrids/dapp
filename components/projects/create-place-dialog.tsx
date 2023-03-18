@@ -3,7 +3,7 @@ import Button, { ButtonType } from 'components/button'
 import { DropDownSelector } from 'components/drop-down-selector'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
-import Plot, { Position2D } from 'components/map/plots/plot.js'
+import { Position2D } from 'components/map/plots/plot.js'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
@@ -15,30 +15,30 @@ import { strings } from 'strings/en'
 import { Place } from 'types/place'
 import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
-import styles from './create-project-dialog.module.scss'
+import styles from './create-place-dialog.module.scss'
 
-type CreateProjectDialogProps = {
+type CreatePlaceDialogProps = {
     visible: boolean
     position: Position2D
     onClose: () => void
 }
 
-type Project = {
+type PlaceDetails = {
     name: string
     description: string
     type: Place
 }
 
-const defaultProject = {
+const defaultPlace = {
     name: '',
     description: '',
     type: Place.list()[0]
-} as Project
+} as PlaceDetails
 
-const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialogProps) => {
+const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProps) => {
     const user = useContext<User>(UserContext)
     const [inProgress, setInProgress] = useState<boolean>(false)
-    const [project, setProject] = useState<Project>(defaultProject as Project)
+    const [place, setPlace] = useState<PlaceDetails>(defaultPlace as PlaceDetails)
     const [error, setError] = useState<string>('')
     const { pinFileToIpfs } = useFilePinner()
     const { fetchOrLogin } = useFetchOrLogin()
@@ -49,26 +49,26 @@ const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialog
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         if (visible && prevVisible === false) {
-            setProject(defaultProject)
+            setPlace(defaultPlace)
             setError('')
             setInProgress(false)
         }
     }, [prevVisible, visible])
 
     function setName(name: string) {
-        setProject(project => ({ ...project, name }))
+        setPlace(place => ({ ...place, name }))
     }
 
     function setDescription(description: string) {
-        setProject(project => ({ ...project, description }))
+        setPlace(place => ({ ...place, description }))
     }
 
     function setPlaceType(code: string) {
-        setProject(project => ({ ...project, type: Place.new(code) }))
+        setPlace(place => ({ ...place, type: Place.new(code) }))
     }
 
     function isValid() {
-        return !!project.name && !!project.type && !!project.description
+        return !!place.name && !!place.type && !!place.description
     }
 
     function isInProgress() {
@@ -82,9 +82,9 @@ const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialog
         try {
             const { assetName, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
                 id: '1cbeb62a-935d-434e-875d-f17c9f5a2d4c', // TODO replace with selected id
-                name: project.name,
-                description: project.description,
-                properties: { type: project.type }
+                name: place.name,
+                description: place.description,
+                properties: { type: place.type }
             })
 
             const response = await fetchOrLogin(endpoints.projects, {
@@ -98,14 +98,14 @@ const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialog
             })
 
             if (!response.ok) {
-                setError(strings.errorCreatingProject)
+                setError(strings.errorCreatingPlace)
             } else if (user.walletAccount) {
                 const { tokenId } = await response.json()
                 await user.walletAccount.tokenAccept(tokenId)
                 onClose()
             }
         } catch (e) {
-            setError(strings.errorCreatingProject)
+            setError(strings.errorCreatingPlace)
         }
         setInProgress(false)
     }
@@ -154,4 +154,4 @@ const CreateProjectDialog = ({ visible, position, onClose }: CreateProjectDialog
     )
 }
 
-export default CreateProjectDialog
+export default CreatePlaceDialog

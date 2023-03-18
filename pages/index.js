@@ -7,7 +7,7 @@ import { NftMintDialog } from 'components/nft-mint-dialog'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import { UserContext } from 'context/user-context.js'
-import CreateProjectDialog from 'components/projects/create-project-dialog'
+import CreatePlaceDialog from 'components/projects/create-place-dialog'
 import ProjectsDialog from 'components/projects/projects-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
 
@@ -110,7 +110,7 @@ export default function Home() {
                 ownerWalletAddress={placesDialog.ownerWalletAddress}
                 onClose={() => setPlacesDialog({ visible: false })}
             />
-            <CreateProjectDialog
+            <CreatePlaceDialog
                 visible={!!newPlacePosition}
                 position={newPlacePosition}
                 onClose={() => setNewPlacePosition(null)}
