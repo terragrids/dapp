@@ -8,7 +8,7 @@ import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import { UserContext } from 'context/user-context.js'
 import CreatePlaceDialog from 'components/projects/create-place-dialog'
-import ProjectsDialog from 'components/projects/projects-dialog'
+import PlacesDialog from 'components/projects/places-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
 
 export default function Home() {
@@ -105,7 +105,7 @@ export default function Home() {
                 onClose={() => setPlotInfoVisible(false)}
                 nftId={selectedPlot ? selectedPlot.id : null}
             />
-            <ProjectsDialog
+            <PlacesDialog
                 visible={placesDialog.visible}
                 ownerWalletAddress={placesDialog.ownerWalletAddress}
                 onClose={() => setPlacesDialog({ visible: false })}

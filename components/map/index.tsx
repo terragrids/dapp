@@ -128,15 +128,15 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
 
     useEffect(() => {
         const load = async () => {
-            const projectResponse = await fetch(endpoints.paginatedProjects(null, ProjectStatus.APPROVED.key))
+            const projectResponse = await fetch(endpoints.paginatedPlaces(null, ProjectStatus.APPROVED.key))
             if (!projectResponse.ok) {
                 setError(strings.errorFetchingMap)
                 setLoading(false)
                 return
             }
 
-            const { projects } = await projectResponse.json()
-            const plots = projects.map((project: PlotType) => convertToMapPlot(project))
+            const { places } = await projectResponse.json()
+            const plots = places.map((project: PlotType) => convertToMapPlot(project))
 
             // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
             // const allPlots = [...plots]

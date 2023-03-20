@@ -4,7 +4,7 @@ import { callProjectsApi, setMethodNotAllowedResponse } from '../../utils/api-co
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            await callProjectsApi(res, 'GET', 'projects', null, null, {
+            await callProjectsApi(res, 'GET', 'places', null, null, {
                 pageSize: req.query.pageSize,
                 nextPageKey: req.query.nextPageKey,
                 status: req.query.status,
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         case 'POST':
             const authToken = await getAuthToken(req, res)
             if (authToken) {
-                await callProjectsApi(res, 'POST', 'projects', JSON.parse(req.body), {
+                await callProjectsApi(res, 'POST', 'places', JSON.parse(req.body), {
                     authorization: `Bearer ${authToken}`
                 })
             }

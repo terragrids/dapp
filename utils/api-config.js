@@ -43,15 +43,15 @@ const fileUpload = 'api/files/upload'
 const ipfsFiles = 'api/ipfs/files'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
-const projects = 'api/projects'
-const paginatedProjects = (nextPageKey, status) =>
-    `api/projects?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
+const places = 'api/places'
+const paginatedPlaces = (nextPageKey, status) =>
+    `api/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }`
 const project = id => `api/projects/${id}`
 const projectApproval = id => `api/projects/${id}/approval`
-const paginatedAccountProjects = (accountId, nextPageKey, status) =>
-    `api/accounts/${accountId}/projects?sort=desc&pageSize=${pageSize}${
+const paginatedAccountPlaces = (accountId, nextPageKey, status) =>
+    `api/accounts/${accountId}/places?sort=desc&pageSize=${pageSize}${
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
     }${status ? `&status=${status}` : ''}`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
@@ -75,11 +75,11 @@ export const endpoints = {
     fileUpload,
     ipfsFiles,
     solarPowerPlant,
-    projects,
-    paginatedProjects,
+    places,
+    paginatedPlaces,
     project,
     projectApproval,
-    paginatedAccountProjects,
+    paginatedAccountPlaces,
     authForWallet,
     user,
     login,

@@ -87,7 +87,7 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
                 properties: { type: place.type }
             })
 
-            const response = await fetchOrLogin(endpoints.projects, {
+            const response = await fetchOrLogin(endpoints.places, {
                 method: 'POST',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({

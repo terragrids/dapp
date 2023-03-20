@@ -8,18 +8,16 @@ import { Project, ProjectStatus } from 'types/project'
 import { endpoints } from 'utils/api-config.js'
 import ProjectDetails from './project-details'
 import ProjectListItem from './projects-list-item'
-import styles from './projects-dialog.module.scss'
+import styles from './places-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import Button, { ButtonType } from 'components/button'
 import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
 import { DropDownSelector } from 'components/drop-down-selector'
-import { TerragridsNft } from 'types/nft.js'
 
-type ProjectsDialogProps = {
+type PlacesDialogProps = {
     visible: boolean
     ownerWalletAddress: string | null
-    onSupportingProject: (project: Project, nft: TerragridsNft) => void
     onClose: () => void
 }
 
@@ -28,46 +26,44 @@ type Error = {
     description?: string
 }
 
-const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: ProjectsDialogProps) => {
+const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDialogProps) => {
     const user = useContext<User>(UserContext)
-    const [projects, setProjects] = useState<Array<Project> | null>(null)
+    const [places, setPlaces] = useState<Array<Project> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
-    const [selectedProject, setSelectedProject] = useState<string | null>()
-    const [supportingProject, setSupportingProject] = useState<string | null>()
-    const [projectStatus, setProjectStatus] = useState<string | null>(ProjectStatus.APPROVED.key)
+    const [selectedPlace, setSelectedPlace] = useState<string | null>()
+    const [placeStatus, setPlaceStatus] = useState<string | null>(ProjectStatus.APPROVED.key)
     const { getAuthHeader } = useAuth()
 
-    const fetchProjects = useCallback(async () => {
+    const fetchPlaces = useCallback(async () => {
         if (!user || isFetching) return
         setIsFetching(true)
         setError(null)
 
         const response = await fetch(
             ownerWalletAddress
-                ? endpoints.paginatedAccountProjects(ownerWalletAddress, nextPageKey, projectStatus)
-                : endpoints.paginatedProjects(nextPageKey, user.isAdmin ? projectStatus : ProjectStatus.APPROVED.key)
+                ? endpoints.paginatedAccountPlaces(ownerWalletAddress, nextPageKey, placeStatus)
+                : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : ProjectStatus.APPROVED.key)
         )
 
         if (response.ok) {
             const jsonResponse = await response.json()
-            setProjects(!projects ? jsonResponse.projects : projects.concat(jsonResponse.projects))
+            setPlaces(!places ? jsonResponse.places : places.concat(jsonResponse.places))
             setNextPageKey(jsonResponse.nextPageKey)
         } else {
-            setError({ message: strings.errorFetchingProjects })
+            setError({ message: strings.errorFetchingPlaces })
         }
 
         setIsFetching(false)
-    }, [isFetching, nextPageKey, ownerWalletAddress, projectStatus, projects, user])
+    }, [isFetching, nextPageKey, ownerWalletAddress, placeStatus, places, user])
 
     function reset() {
-        setProjects(null)
+        setPlaces(null)
         setNextPageKey(null)
-        setSelectedProject(null)
-        setSupportingProject(null)
+        setSelectedPlace(null)
         setError(null)
         setMessage(null)
     }
@@ -79,24 +75,24 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
         }
     }, [prevVisible, visible])
 
-    const prevStatus = usePrevious(projectStatus)
+    const prevStatus = usePrevious(placeStatus)
     useEffect(() => {
-        if (projectStatus !== prevStatus) {
+        if (placeStatus !== prevStatus) {
             reset()
         }
-    }, [prevStatus, projectStatus])
+    }, [prevStatus, placeStatus])
 
     useEffect(() => {
-        if (visible && !projects && !error) {
-            fetchProjects()
+        if (visible && !places && !error) {
+            fetchPlaces()
         }
-    }, [error, fetchProjects, projects, visible])
+    }, [error, fetchPlaces, places, visible])
 
-    function openProject(id: string) {
-        setSelectedProject(id)
+    function openPlace(id: string) {
+        setSelectedPlace(id)
     }
 
-    async function deleteProject(id: string, permanent: boolean) {
+    async function deletePlace(id: string, permanent: boolean) {
         setIsProcessing(true)
         setError(null)
 
@@ -118,76 +114,74 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
             const jsonResponse = await response.json()
             reset()
             setMessage(
-                `${permanent ? strings.projectDeleted : strings.projectArchived}. ${
+                `${permanent ? strings.placeDeleted : strings.placeArchived}. ${
                     !jsonResponse.contractDeleted ? `${strings.failedDeletingContract}.` : ''
                 }`
             )
         } else {
-            setError({ message: permanent ? strings.failedDeletingProject : strings.failedArchivingProject })
+            setError({ message: permanent ? strings.failedDeletingPlace : strings.failedArchivingPlace })
         }
 
         setIsProcessing(false)
     }
 
-    function fetchMoreProjects() {
+    function fetchMorePlaces() {
         const hasMore = !!nextPageKey
-        if (hasMore) fetchProjects()
+        if (hasMore) fetchPlaces()
     }
 
     function handleScroll(e: React.UIEvent<HTMLElement>) {
         const margin = 10
         const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
         const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom && !selectedProject && !supportingProject) {
-            fetchMoreProjects()
+        if (bottom && !selectedPlace) {
+            fetchMorePlaces()
         }
     }
 
     function close() {
-        if (selectedProject || supportingProject) {
-            setSelectedProject(null)
-            setSupportingProject(null)
+        if (selectedPlace) {
+            setSelectedPlace(null)
         } else onClose()
     }
 
-    function getSelectedProject() {
-        return projects?.find(project => project.id === selectedProject) as Project
+    function getSelectedPlace() {
+        return places?.find(place => place.id === selectedPlace) as Project
     }
 
     function getTitle() {
-        if (selectedProject && !supportingProject) return getSelectedProject()?.name
-        else if (supportingProject) return strings.pickNft
+        if (selectedPlace) return getSelectedPlace()?.name
         else return ownerWalletAddress ? strings.myPlaces : strings.allPlaces
     }
 
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedProject && (
+                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
                         label={strings.status}
                         options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
-                        defaultValue={projectStatus}
-                        onSelected={setProjectStatus}
+                        defaultValue={placeStatus}
+                        onSelected={setPlaceStatus}
                     />
                 )}
-                {!projects && !error && (
+                {!places && !error && (
                     <div className={styles.loading}>
                         <LoadingSpinner />
                     </div>
                 )}
-                {projects && projects.length > 0 && !selectedProject && (
+                {places && places.length > 0 && !selectedPlace && (
                     <div className={styles.scrollContainer}>
-                        {projects.map(project => (
+                        {places.map(place => (
                             <ProjectListItem
-                                key={project.id}
-                                id={project.id}
-                                name={project.name}
-                                ownerWallet={project.creator}
-                                imageUrl={project.offChainImageUrl}
-                                onClick={openProject}
-                                onArchive={() => deleteProject(project.id, false)}
-                                onDelete={() => deleteProject(project.id, true)}
+                                key={place.id}
+                                id={place.id}
+                                name={place.name}
+                                ownerWallet={place.creator}
+                                imageUrl={place.offChainImageUrl}
+                                onClick={openPlace}
+                                onArchive={() => deletePlace(place.id, false)}
+                                onDelete={() => deletePlace(place.id, true)}
                             />
                         ))}
                         {isFetching && (
@@ -196,12 +190,12 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
                             </div>
                         )}
                         {!isFetching && !!nextPageKey && (
-                            <Button type={ButtonType.OUTLINE} label={strings.showMore} onClick={fetchMoreProjects} />
+                            <Button type={ButtonType.OUTLINE} label={strings.showMore} onClick={fetchMorePlaces} />
                         )}
                     </div>
                 )}
-                {projects && projects.length === 0 && <div className={styles.empty}>{strings.noProjectsFound}</div>}
-                {selectedProject && <ProjectDetails id={selectedProject} />}
+                {places && places.length === 0 && <div className={styles.empty}>{strings.noPlacesFound}</div>}
+                {selectedPlace && <ProjectDetails id={selectedPlace} />}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}
@@ -218,4 +212,4 @@ const ProjectsDialog = ({ visible, ownerWalletAddress = null, onClose }: Project
     )
 }
 
-export default ProjectsDialog
+export default PlacesDialog
