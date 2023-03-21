@@ -12,7 +12,7 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
-import { Place } from 'types/place'
+import { PlaceType } from 'types/place-type'
 import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import styles from './create-place-dialog.module.scss'
@@ -26,13 +26,13 @@ type CreatePlaceDialogProps = {
 type PlaceDetails = {
     name: string
     description: string
-    type: Place
+    type: PlaceType
 }
 
 const defaultPlace = {
     name: '',
     description: '',
-    type: Place.list()[0]
+    type: PlaceType.list()[0]
 } as PlaceDetails
 
 const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProps) => {
@@ -64,7 +64,7 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
     }
 
     function setPlaceType(code: string) {
-        setPlace(place => ({ ...place, type: Place.new(code) }))
+        setPlace(place => ({ ...place, type: PlaceType.new(code) }))
     }
 
     function isValid() {
@@ -124,7 +124,7 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
                 <div className={styles.section}>
                     <DropDownSelector
                         label={strings.whatTypeOfPlace}
-                        options={Place.list().map(place => ({ key: place.code, value: place.name }))}
+                        options={PlaceType.list().map(place => ({ key: place.code, value: place.name }))}
                         onSelected={setPlaceType}
                     />
                 </div>
