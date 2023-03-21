@@ -1,3 +1,13 @@
+import { strings } from 'strings/en.js'
+
+export type Place = {
+    id: string
+    created: string
+    creator: string
+    name: string
+    offChainImageUrl: string
+}
+
 export class PlaceType {
     static readonly DETACHED = new PlaceType('detached', 'Deatched House')
     static readonly SEMIDETACHED = new PlaceType('semidetached', 'Semi-detached House')
@@ -31,5 +41,25 @@ export class PlaceType {
     static new(code: string) {
         const newPlace = this.list().find(place => place.code === code)
         return newPlace || PlaceType.DETACHED
+    }
+}
+
+export class PlaceStatus {
+    static readonly CREATED = new PlaceStatus('created', strings.waitingForApproval)
+    static readonly APPROVED = new PlaceStatus('approved', strings.approved)
+    static readonly REJECTED = new PlaceStatus('rejected', strings.rejected)
+    static readonly EDITED = new PlaceStatus('approved-edited', strings.waitingForEditReview)
+    static readonly ARCHIVED = new PlaceStatus('archived', strings.archived)
+
+    // private to disallow creating other instances of this type
+    private constructor(public readonly key: string, public readonly value: string) {}
+
+    static list() {
+        return [PlaceStatus.CREATED, PlaceStatus.APPROVED, PlaceStatus.REJECTED, PlaceStatus.ARCHIVED]
+    }
+
+    static getByKey(key: string): string {
+        const status = this.list().find(status => status.key === key)
+        return status ? status.value : ''
     }
 }

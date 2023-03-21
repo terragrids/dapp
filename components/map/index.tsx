@@ -18,7 +18,7 @@ import {
 import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
-import { ProjectStatus } from 'types/project'
+import { PlaceStatus } from 'types/place'
 
 export type MapProps = {
     width: number | undefined
@@ -128,7 +128,7 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
 
     useEffect(() => {
         const load = async () => {
-            const projectResponse = await fetch(endpoints.paginatedPlaces(null, ProjectStatus.APPROVED.key))
+            const projectResponse = await fetch(endpoints.paginatedPlaces(null, PlaceStatus.APPROVED.key))
             if (!projectResponse.ok) {
                 setError(strings.errorFetchingMap)
                 setLoading(false)

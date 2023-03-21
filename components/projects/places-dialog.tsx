@@ -4,7 +4,7 @@ import { UserContext } from 'context/user-context.js'
 import { User } from 'hooks/use-user.js'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
-import { Project, ProjectStatus } from 'types/project'
+import { Place, PlaceStatus } from 'types/place'
 import { endpoints } from 'utils/api-config.js'
 import ProjectDetails from './project-details'
 import ProjectListItem from './projects-list-item'
@@ -28,14 +28,14 @@ type Error = {
 
 const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDialogProps) => {
     const user = useContext<User>(UserContext)
-    const [places, setPlaces] = useState<Array<Project> | null>(null)
+    const [places, setPlaces] = useState<Array<Place> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedPlace, setSelectedPlace] = useState<string | null>()
-    const [placeStatus, setPlaceStatus] = useState<string | null>(ProjectStatus.APPROVED.key)
+    const [placeStatus, setPlaceStatus] = useState<string | null>(PlaceStatus.APPROVED.key)
     const { getAuthHeader } = useAuth()
 
     const fetchPlaces = useCallback(async () => {
@@ -46,7 +46,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
         const response = await fetch(
             ownerWalletAddress
                 ? endpoints.paginatedAccountPlaces(ownerWalletAddress, nextPageKey, placeStatus)
-                : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : ProjectStatus.APPROVED.key)
+                : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : PlaceStatus.APPROVED.key)
         )
 
         if (response.ok) {
@@ -146,7 +146,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
     }
 
     function getSelectedPlace() {
-        return places?.find(place => place.id === selectedPlace) as Project
+        return places?.find(place => place.id === selectedPlace) as Place
     }
 
     function getTitle() {
@@ -160,7 +160,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
                 {(ownerWalletAddress || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
                         label={strings.status}
-                        options={ProjectStatus.list().map(status => ({ key: status.key, value: status.value }))}
+                        options={PlaceStatus.list().map(status => ({ key: status.key, value: status.value }))}
                         defaultValue={placeStatus}
                         onSelected={setPlaceStatus}
                     />

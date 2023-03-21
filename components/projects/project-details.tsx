@@ -15,7 +15,7 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
-import { ProjectStatus } from 'types/project'
+import { PlaceStatus } from 'types/place'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
 import { getContractFromJsonString, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
@@ -288,7 +288,7 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>{ProjectStatus.getByKey(project.status)}</div>
+                            <div className={styles.content}>{PlaceStatus.getByKey(project.status)}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />
