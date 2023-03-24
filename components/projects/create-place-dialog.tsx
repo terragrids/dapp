@@ -21,6 +21,7 @@ type CreatePlaceDialogProps = {
     visible: boolean
     position: Position2D
     onClose: () => void
+    onCreate: () => void
 }
 
 type PlaceDetails = {
@@ -35,9 +36,10 @@ const defaultPlace = {
     type: PlaceType.list()[0]
 } as PlaceDetails
 
-const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProps) => {
+const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlaceDialogProps) => {
     const user = useContext<User>(UserContext)
     const [inProgress, setInProgress] = useState<boolean>(false)
+    const [done, setDone] = useState<boolean>(false)
     const [place, setPlace] = useState<PlaceDetails>(defaultPlace as PlaceDetails)
     const [error, setError] = useState<string>('')
     const { pinFileToIpfs } = useFilePinner()
@@ -52,6 +54,7 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
             setPlace(defaultPlace)
             setError('')
             setInProgress(false)
+            setDone(false)
         }
     }, [prevVisible, visible])
 
@@ -93,16 +96,21 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
                 body: JSON.stringify({
                     name: assetName,
                     cid: getHashFromIpfsUrl(ipfsMetadataUrl),
-                    offChainImageUrl
+                    offChainImageUrl,
+                    positionX: position.x,
+                    positionY: position.y
                 })
             })
 
             if (!response.ok) {
                 setError(strings.errorCreatingPlace)
-            } else if (user.walletAccount) {
-                const { tokenId } = await response.json()
-                await user.walletAccount.tokenAccept(tokenId)
-                onClose()
+            } else {
+                if (user.walletAccount) {
+                    const { tokenId } = await response.json()
+                    await user.walletAccount.tokenAccept(tokenId)
+                }
+                setDone(true)
+                setTimeout(onCreate, 2000)
             }
         } catch (e) {
             setError(strings.errorCreatingPlace)
@@ -142,7 +150,7 @@ const CreatePlaceDialog = ({ visible, position, onClose }: CreatePlaceDialogProp
                         disabled={!isValid()}
                         label={strings.create}
                         loading={isInProgress()}
-                        checked={false}
+                        checked={done}
                         onClick={submit}
                     />
                 </ActionBar>

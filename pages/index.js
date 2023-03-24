@@ -24,6 +24,7 @@ export default function Home() {
         width: undefined,
         height: undefined
     })
+    const [mapRefreshCounter, setMapRefreshCounter] = useState(0)
     const headerRef = useRef()
 
     useEffect(() => {
@@ -78,6 +79,11 @@ export default function Home() {
         } catch (e) {}
     }
 
+    function onCreateNewPlaceDone() {
+        setNewPlacePosition(null)
+        setMapRefreshCounter(mapRefreshCounter + 1)
+    }
+
     return (
         <Layout
             headerRef={headerRef}
@@ -94,6 +100,7 @@ export default function Home() {
             <Map
                 width={mapSize.width}
                 height={mapSize.height}
+                refreshCounter={mapRefreshCounter}
                 onSelectPlot={onSelectPlot}
                 onSelectEmptyPlot={onSelectEmptyPlot}
             />
@@ -114,6 +121,7 @@ export default function Home() {
                 visible={!!newPlacePosition}
                 position={newPlacePosition}
                 onClose={() => setNewPlacePosition(null)}
+                onCreate={onCreateNewPlaceDone}
             />
             <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
         </Layout>

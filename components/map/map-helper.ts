@@ -52,9 +52,16 @@ export const getBigs = (plots: MapPlotType[]): MapPlotType[] => {
         }))
     return bigs.map(big => convertToMapPlot(big))
 }
-export const getGrassPlots = (): MapPlotType[] => {
+export const getStaticPlots = (): MapPlotType[] => {
     const grassPlots: PlotType[] = POSITION_ALL.flat().map(el => ({
-        ...GRASS_PLOT,
+        ...{
+            id: 'GRASS',
+            name: 'GRASS PLOT',
+            symbol: 'TRLD',
+            url: '',
+            offChainImageUrl: GRASS.src,
+            holders: []
+        },
         id: `${el.x}${el.y}`,
         positionX: el.x,
         positionY: el.y

@@ -18,20 +18,20 @@ import {
 import Plot, { Position2D } from './plots/plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
-import { PlaceStatus } from 'types/place'
+import usePrevious from 'hooks/use-previous.js'
 
 export type MapProps = {
     width: number | undefined
     height: number | undefined
+    refreshCounter: number
     onSelectPlot: (plotInfo: MapPlotType) => void
     onSelectEmptyPlot: (position: Position2D) => void
 }
 
-const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
+const Map = ({ width, height, refreshCounter, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
     const [canvasRef, initialScale, renderCanvas] = useCanvas(render, width, height)
     const startPositionRef = useRef({ x: -1, y: -1 })
     const [mapPlots, setMapPlots] = useState<MapPlotType[]>([])
-    const [imageLoadingStarted, setImageLoadingStarted] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [clickable, setClickable] = useState(false)
@@ -75,7 +75,7 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
 
     const loadPlotImages = useCallback(
         async (plots: MapPlotType[]) => {
-            if (plots.length === 0 || imageLoadingStarted) {
+            if (plots.length === 0) {
                 renderCanvas()
                 setLoading(false)
             }
@@ -93,10 +93,8 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
                 })
                 image.src = plot.image.src
             })
-
-            setImageLoadingStarted(true)
         },
-        [renderCanvas, imageLoadingStarted]
+        [renderCanvas]
     )
 
     function render(ctx: CanvasRenderingContext2D) {
@@ -126,9 +124,11 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
         }
     }
 
+    const prevRefreshCounter = usePrevious(refreshCounter) || 0
     useEffect(() => {
         const load = async () => {
-            const projectResponse = await fetch(endpoints.paginatedPlaces(null, PlaceStatus.APPROVED.key))
+            setLoading(true)
+            const projectResponse = await fetch(endpoints.paginatedPlaces(null))
             if (!projectResponse.ok) {
                 setError(strings.errorFetchingMap)
                 setLoading(false)
@@ -138,14 +138,14 @@ const Map = ({ width, height, onSelectPlot, onSelectEmptyPlot }: MapProps) => {
             const { places } = await projectResponse.json()
             const plots = places.map((project: PlotType) => convertToMapPlot(project))
 
-            // const bigs = getBigs([...plots]) // TODO: remove if no need to render not larger image plots
-            // const allPlots = [...plots]
+            // const testPlaces = getStaticPlots() // TODO: remove if no need to render test places
+            // const allPlots = [...plots, ...testPlaces]
 
             setMapPlots(plots)
             loadPlotImages(plots)
         }
-        mapPlots.length === 0 && load()
-    }, [loadPlotImages, mapPlots.length])
+        if (mapPlots.length === 0 || (refreshCounter > 0 && refreshCounter > prevRefreshCounter)) load()
+    }, [loadPlotImages, mapPlots.length, prevRefreshCounter, refreshCounter])
 
     useEffect(() => {
         if (width === undefined || height === undefined) return
