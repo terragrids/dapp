@@ -5,9 +5,9 @@ import { User } from 'hooks/use-user.js'
 import { useContext } from 'react'
 import { strings } from 'strings/en.js'
 import { maskWalletAddress } from 'utils/string-utils.js'
-import styles from './projects-list-item.module.scss'
+import styles from './place-list-item.module.scss'
 
-type ProjectListItemProps = {
+type PlaceListItemProps = {
     id: string
     name: string
     ownerWallet: string | null
@@ -17,7 +17,7 @@ type ProjectListItemProps = {
     onDelete: (id: string) => void
 }
 
-const ProjectListItem = ({
+const PlaceListItem = ({
     id,
     name,
     imageUrl,
@@ -25,7 +25,7 @@ const ProjectListItem = ({
     onClick,
     onArchive,
     onDelete
-}: ProjectListItemProps) => {
+}: PlaceListItemProps) => {
     const user = useContext<User>(UserContext)
 
     return (
@@ -58,4 +58,4 @@ const ProjectListItem = ({
     )
 }
 
-export default ProjectListItem
+export default PlaceListItem

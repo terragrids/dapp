@@ -7,7 +7,7 @@ import { strings } from 'strings/en'
 import { Place, PlaceStatus } from 'types/place'
 import { endpoints } from 'utils/api-config.js'
 import ProjectDetails from './project-details'
-import ProjectListItem from './projects-list-item'
+import PlaceListItem from './place-list-item'
 import styles from './places-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import Button, { ButtonType } from 'components/button'
@@ -173,7 +173,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
                 {places && places.length > 0 && !selectedPlace && (
                     <div className={styles.scrollContainer}>
                         {places.map(place => (
-                            <ProjectListItem
+                            <PlaceListItem
                                 key={place.id}
                                 id={place.id}
                                 name={place.name}
