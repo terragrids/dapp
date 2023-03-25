@@ -46,7 +46,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
         const response = await fetch(
             ownerWalletAddress
                 ? endpoints.paginatedAccountPlaces(ownerWalletAddress, nextPageKey, placeStatus)
-                : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : PlaceStatus.APPROVED.key)
+                : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : undefined)
         )
 
         if (response.ok) {
