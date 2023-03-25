@@ -257,7 +257,7 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                 {!place && !error && <LoadingSpinner />}
                 {place && !editing && (
                     <>
-                        <div className={styles.section}>
+                        <div className={`${styles.section} ${styles.image}`}>
                             <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
                         </div>
                         <div className={styles.section}>

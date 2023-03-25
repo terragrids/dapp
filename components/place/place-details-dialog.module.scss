@@ -1,0 +1,11 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+
+.container {
+    width: 700px;
+    min-height: 300px;
+
+    @media (max-width: $screen-medium) {
+        width: 100%;
+    }
+}

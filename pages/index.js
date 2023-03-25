@@ -4,19 +4,19 @@ import { strings } from '../strings/en'
 import Layout from '../components/layout'
 import WalletPicker from '../components/wallet-picker'
 import { NftMintDialog } from 'components/nft-mint-dialog'
-import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import { UserContext } from 'context/user-context.js'
 import CreatePlaceDialog from 'components/place/create-place-dialog'
 import PlacesDialog from 'components/place/places-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
+import PlaceDetailsDialog from 'components/place/place-details-dialog'
 
 export default function Home() {
     const user = useContext(UserContext)
     const [walletPickerVisible, setWalletPickerVisible] = useState(false)
     const [nftMintVisible, setNftMintVisible] = useState(false)
     const [assetsVisible, setAssetsVisible] = useState(false)
-    const [plotInfoVisible, setPlotInfoVisible] = useState(false)
+    const [placeDetailsVisible, setPlaceDetailsVisible] = useState(false)
     const [placesDialog, setPlacesDialog] = useState({ visible: false, ownerWalletAddress: null })
     const [newPlacePosition, setNewPlacePosition] = useState(null)
     const [selectedPlot, setSelectedPlot] = useState()
@@ -45,7 +45,7 @@ export default function Home() {
 
     const onSelectPlot = plot => {
         setSelectedPlot(plot)
-        setPlotInfoVisible(true)
+        setPlaceDetailsVisible(true)
     }
 
     const onSelectEmptyPlot = plot => {
@@ -107,10 +107,11 @@ export default function Home() {
 
             <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />
             <NftMintDialog visible={nftMintVisible} onClose={() => setNftMintVisible(false)} />
-            <PlotInfoDialog
-                visible={plotInfoVisible}
-                onClose={() => setPlotInfoVisible(false)}
-                nftId={selectedPlot ? selectedPlot.id : null}
+            <PlaceDetailsDialog
+                visible={placeDetailsVisible}
+                onClose={() => setPlaceDetailsVisible(false)}
+                id={selectedPlot ? selectedPlot.id : null}
+                name={selectedPlot ? selectedPlot.name : null}
             />
             <PlacesDialog
                 visible={placesDialog.visible}
