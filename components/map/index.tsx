@@ -15,7 +15,7 @@ import {
     isInsideMap,
     renderHoveredPlot
 } from './map-helper'
-import Plot, { Position2D } from './plots/plot'
+import Plot, { Position2D } from './plot'
 import { strings } from 'strings/en.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
 import usePrevious from 'hooks/use-previous.js'

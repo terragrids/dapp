@@ -1,4 +1,4 @@
-import Plot, { Position2D } from './plots/plot'
+import Plot, { Position2D } from './plot'
 // TODO: should remove when larger images are fetched from api
 import BIG from 'public/images/Selma_Cardoso_Terragrids_illo_square_A_02.png'
 import GRASS from 'public/images/grasstile.png'

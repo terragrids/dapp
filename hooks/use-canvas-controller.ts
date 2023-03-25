@@ -1,5 +1,5 @@
 import { DEFAULT_MAP_SCALE, getPlotPosition, getTransformedPoint, isInsideMap } from 'components/map/map-helper'
-import { Position2D } from 'components/map/plots/plot'
+import { Position2D } from 'components/map/plot'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import usePan from './use-pan'
 import useTouch from './use-touch'
@@ -11,7 +11,7 @@ const MIN_SCALE = 0.8
 
 export const useCanvasController = (
     canvas: HTMLCanvasElement | null,
-    startPosition: Position2D,  
+    startPosition: Position2D,
     initialScale: number
 ) => {
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)

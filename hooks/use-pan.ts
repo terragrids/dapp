@@ -1,4 +1,4 @@
-import { Position2D } from 'components/map/plots/plot'
+import { Position2D } from 'components/map/plot'
 import { useState, useRef, useCallback, useEffect } from 'react'
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 })
