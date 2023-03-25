@@ -6,7 +6,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { Place, PlaceStatus } from 'types/place'
 import { endpoints } from 'utils/api-config.js'
-import ProjectDetails from './project-details'
+import PlaceDetails from './place-details'
 import PlaceListItem from './place-list-item'
 import styles from './places-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
@@ -98,7 +98,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
 
         const authHeader = await getAuthHeader(user.walletAddress)
 
-        let url = `${endpoints.project(id)}`
+        let url = `${endpoints.place(id)}`
         if (permanent) url = `${url}?permanent=true`
 
         const response = await fetch(url, {
@@ -195,7 +195,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
                     </div>
                 )}
                 {places && places.length === 0 && <div className={styles.empty}>{strings.noPlacesFound}</div>}
-                {selectedPlace && <ProjectDetails id={selectedPlace} />}
+                {selectedPlace && <PlaceDetails id={selectedPlace} />}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}

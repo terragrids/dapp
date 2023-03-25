@@ -48,8 +48,8 @@ const paginatedPlaces = (nextPageKey, status) =>
     `api/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }`
-const project = id => `api/projects/${id}`
-const projectApproval = id => `api/projects/${id}/approval`
+const place = id => `api/places/${id}`
+const placeApproval = id => `api/places/${id}/approval`
 const paginatedAccountPlaces = (accountId, nextPageKey, status) =>
     `api/accounts/${accountId}/places?sort=desc&pageSize=${pageSize}${
         nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
@@ -77,8 +77,8 @@ export const endpoints = {
     solarPowerPlant,
     places,
     paginatedPlaces,
-    project,
-    projectApproval,
+    place,
+    placeApproval,
     paginatedAccountPlaces,
     authForWallet,
     user,

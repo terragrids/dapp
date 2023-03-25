@@ -5,10 +5,10 @@ import { callProjectsApi, setMethodNotAllowedResponse } from 'utils/api-config'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
-            await callProjectsApi(res, 'GET', `projects/${req.query.id}`)
+            await callProjectsApi(res, 'GET', `places/${req.query.id}`)
             break
         case 'PUT':
-            await callProjectsApi(res, 'PUT', `projects/${req.query.id}`, req.body, {
+            await callProjectsApi(res, 'PUT', `places/${req.query.id}`, req.body, {
                 authorization: req.headers.authorization
             })
             break
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await callProjectsApi(
                 res,
                 'DELETE',
-                `projects/${req.query.id}`,
+                `places/${req.query.id}`,
                 null,
                 { authorization: req.headers.authorization },
                 {

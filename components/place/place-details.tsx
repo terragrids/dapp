@@ -1,7 +1,6 @@
 import ActionBar from 'components/action-bar'
 import { AssetLink } from 'components/asset-link'
 import Button, { ButtonType } from 'components/button'
-import { ContractLink } from 'components/contract-link'
 import { ImageUploader } from 'components/image-uploader'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
@@ -17,74 +16,70 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { PlaceStatus } from 'types/place'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
-import { getContractFromJsonString, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
-import styles from './project-details.module.scss'
+import styles from './place-details.module.scss'
 
-type ProjectDetailsProps = {
+type PlaceDetailsProps = {
     id: string
 }
 
-type ProjectDetails = {
-    contractId: string
-    created: number
-    creator: string
-    logoUrl: string
+type PlaceDetails = {
+    id: string
     name: string
+    created: number
+    userId: string
+    offChainImageUrl: string
     description: string
-    tokenId: string
-    balance: number
-    budget: number
-    approved: boolean
     status: string
+    positionX: number
+    positionY: number
 }
 
-type UpdatedProjectProperties = {
+type UpdatedPlaceProperties = {
     name: string
     description: string
     properties: object
     imageFile: File
 }
 
-const ProjectDetails = ({ id }: ProjectDetailsProps) => {
+const PlaceDetails = ({ id }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
-    const [project, setProject] = useState<ProjectDetails | null>()
-    const [updatedProject, setUpdatedProject] = useState<UpdatedProjectProperties>({} as UpdatedProjectProperties)
+    const [place, setPlace] = useState<PlaceDetails | null>()
+    const [updatedPlace, setUpdatedPlace] = useState<UpdatedPlaceProperties>({} as UpdatedPlaceProperties)
     const [error, setError] = useState<string | null>()
     const [editing, setEditing] = useState<boolean>(false)
     const [inProgress, setInProgress] = useState<boolean>(false)
 
     const { upload, uploadState, fileProps } = useFileUploader({
-        name: updatedProject.name,
-        description: updatedProject.description,
+        name: updatedPlace.name,
+        description: updatedPlace.description,
         properties: {}
     })
 
     const { getAuthHeader } = useAuth()
 
-    const fetchProject = useCallback(async () => {
+    const fetchPlace = useCallback(async () => {
         if (!id) return
         setError(null)
 
-        const response = await fetch(endpoints.project(id))
+        const response = await fetch(endpoints.place(id))
 
         if (response.ok) {
-            const { name, reserve, created, creator, offChainImageUrl, balance, tokenId, approved, status } =
+            const { id, name, reserve, created, userId, offChainImageUrl, status, positionX, positionY } =
                 await response.json()
-            const contractId = stdlib.bigNumberToNumber(getContractFromJsonString(id))
 
-            setProject({
-                contractId,
+            setPlace({
+                id,
                 name,
                 created: parseInt(created),
-                creator,
-                balance,
-                tokenId,
-                approved,
+                userId,
                 status,
-                logoUrl: offChainImageUrl
-            } as ProjectDetails)
+                offChainImageUrl,
+                positionX,
+                positionY
+            } as PlaceDetails)
 
             // Try to fetch NFT metadata and image from IPFS
             try {
@@ -93,33 +88,32 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 const metadataResponse = await fetch(metadataUrl)
 
                 if (metadataResponse.ok) {
-                    const { name, image, description, properties } = await metadataResponse.json()
-                    setProject(
-                        project =>
+                    const { name, image, description /*, properties */ } = await metadataResponse.json()
+                    setPlace(
+                        place =>
                             ({
-                                ...project,
+                                ...place,
                                 logoUrl: ipfsUrlToGatewayUrl(image),
                                 name,
-                                description,
-                                budget: properties.budget.value
-                            } as ProjectDetails)
+                                description
+                            } as PlaceDetails)
                     )
                 }
 
                 setInProgress(false)
             } catch (e) {}
         } else {
-            setError(strings.errorFetchingProject)
+            setError(strings.errorFetchingPlace)
         }
     }, [id, stdlib])
 
-    const approveProject = useCallback(
+    const approvePlace = useCallback(
         async (approvalStatus: boolean) => {
             setError(null)
             setInProgress(true)
             try {
                 const authHeader = await getAuthHeader(user.walletAddress)
-                const response = await fetch(endpoints.projectApproval(id), {
+                const response = await fetch(endpoints.placeApproval(id), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -132,34 +126,34 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 })
 
                 if (response.ok) {
-                    fetchProject()
+                    fetchPlace()
                 } else {
                     throw new Error()
                 }
             } catch (e) {
-                setError(strings.errorApprovingProject)
+                setError(strings.errorApprovingPlace)
                 setInProgress(false)
             }
         },
-        [fetchProject, getAuthHeader, id, user.walletAddress]
+        [fetchPlace, getAuthHeader, id, user.walletAddress]
     )
 
     useEffect(() => {
         setEditing(false)
-        fetchProject()
-    }, [fetchProject])
+        fetchPlace()
+    }, [fetchPlace])
 
     function canEdit() {
-        return user && project && (user.isAdmin || user.walletAddress === project.creator) ? true : false
+        return user && place && (user.isAdmin || user.id === place.userId) ? true : false
     }
 
     async function edit() {
-        if (!project) return
-        const fileBlob = await (await fetch(project.logoUrl)).blob()
+        if (!place) return
+        const fileBlob = await (await fetch(place.offChainImageUrl)).blob()
 
-        setUpdatedProject({
-            name: project.name,
-            description: project.description,
+        setUpdatedPlace({
+            name: place.name,
+            description: place.description,
             imageFile: new File([fileBlob], 'file', fileBlob),
             properties: {}
         })
@@ -169,28 +163,28 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     }
 
     function setFile(file: File) {
-        setUpdatedProject(project => ({
-            ...project,
+        setUpdatedPlace(place => ({
+            ...place,
             imageFile: file
         }))
     }
 
     function setName(name: string) {
-        setUpdatedProject(project => ({
-            ...project,
+        setUpdatedPlace(place => ({
+            ...place,
             name
         }))
     }
 
     function setDescription(description: string) {
-        setUpdatedProject(project => ({
-            ...project,
+        setUpdatedPlace(place => ({
+            ...place,
             description
         }))
     }
 
     function isUpdateValid() {
-        return updatedProject.imageFile && !!updatedProject.name && !!updatedProject.description
+        return updatedPlace.imageFile && !!updatedPlace.name && !!updatedPlace.description
     }
 
     function isUpdateInProgress() {
@@ -199,23 +193,23 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     }
 
     /**
-     * 1. Save project file on S3 and IPFS
+     * 1. Save place file on S3 and IPFS
      */
     function submit() {
-        if (!updatedProject) return
+        if (!updatedPlace) return
         setInProgress(true)
-        upload(updatedProject.imageFile)
+        upload(updatedPlace.imageFile)
     }
 
     /**
-     * 2. Create a smart contract for the project on the blockchain
+     * 2. Update the place on the backend
      */
     const prevUploadState = usePrevious(uploadState)
     useEffect(() => {
-        async function saveProject() {
+        async function savePlace() {
             try {
                 const authHeader = await getAuthHeader(user.walletAddress)
-                const response = await fetch(endpoints.project(id), {
+                const response = await fetch(endpoints.place(id), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -231,16 +225,16 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                 })
 
                 if (!response.ok) {
-                    setError(strings.errorUpdatingProject)
+                    setError(strings.errorUpdatingPlace)
                 }
             } catch (e) {
-                setError(strings.errorUpdatingProject)
+                setError(strings.errorUpdatingPlace)
             }
             setInProgress(false)
         }
 
         if (uploadState === FileUploadState.PINNED && prevUploadState !== FileUploadState.PINNED) {
-            saveProject()
+            savePlace()
         } else if (uploadState === FileUploadState.ERROR) {
             setInProgress(false)
             setError(strings.errorCreatingPlace)
@@ -260,66 +254,54 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     return (
         <>
             <div className={styles.container}>
-                {!project && !error && <LoadingSpinner />}
-                {project && !editing && (
+                {!place && !error && <LoadingSpinner />}
+                {place && !editing && (
                     <>
                         <div className={styles.section}>
-                            <img src={project.logoUrl} alt={project.name} className={styles.image} />
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.contractId} />
-                            <div className={styles.content}>
-                                <ContractLink contractId={project.contractId} />
-                            </div>
+                            <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.assetID} />
                             <div className={styles.content}>
-                                <AssetLink assetId={project.tokenId} />
+                                <AssetLink assetId={place.id} />
                             </div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.created} />
-                            <div className={styles.content}>{new Date(project.created).toLocaleDateString()}</div>
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.projectBalanceAlgo} />
-                            <div className={styles.content}>{project.balance}</div>
+                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>{PlaceStatus.getByKey(project.status)}</div>
+                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.mapPosition} />
+                            <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />
                             <div className={styles.content}>
-                                <ParagraphMaker text={project.description} />
+                                <ParagraphMaker text={place.description} />
                             </div>
                         </div>
                     </>
                 )}
-                {project && editing && (
+                {place && editing && (
                     <>
                         <div className={styles.section}>
                             <Label text={strings.howToSeePlaceOnMap} />
-                            <ImageUploader imageUrl={project.logoUrl} onFileSelected={file => setFile(file)} />
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.contractId} />
-                            <div className={styles.content}>
-                                <ContractLink contractId={project.contractId} />
-                            </div>
+                            <ImageUploader imageUrl={place.offChainImageUrl} onFileSelected={file => setFile(file)} />
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.created} />
-                            <div className={styles.content}>{new Date(project.created).toLocaleDateString()}</div>
+                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
                         </div>
                         <div className={styles.section}>
-                            <InputField initialValue={project.name} label={strings.name} onChange={setName} />
+                            <InputField initialValue={place.name} label={strings.name} onChange={setName} />
                         </div>
                         <div className={styles.section}>
                             <InputField
-                                initialValue={project.description}
+                                initialValue={place.description}
                                 multiline
                                 max={5000}
                                 rows={10}
@@ -341,12 +323,12 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
                                 label={strings.edit}
                                 onClick={edit}
                             />
-                            {user && user.isAdmin && project && (
+                            {user && user.isAdmin && place && (
                                 <Button
                                     className={styles.button}
                                     type={ButtonType.OUTLINE}
-                                    label={project.approved ? strings.reject : strings.approve}
-                                    onClick={() => approveProject(!project.approved)}
+                                    label={place.status === PlaceStatus.APPROVED.key ? strings.reject : strings.approve}
+                                    onClick={() => approvePlace(!(place.status === PlaceStatus.APPROVED.key))}
                                 />
                             )}
                         </div>
@@ -368,4 +350,4 @@ const ProjectDetails = ({ id }: ProjectDetailsProps) => {
     )
 }
 
-export default ProjectDetails
+export default PlaceDetails

@@ -7,8 +7,8 @@ import { NftMintDialog } from 'components/nft-mint-dialog'
 import PlotInfoDialog from 'components/map/plots/plot-info-dialog'
 import Map from 'components/map'
 import { UserContext } from 'context/user-context.js'
-import CreatePlaceDialog from 'components/projects/create-place-dialog'
-import PlacesDialog from 'components/projects/places-dialog'
+import CreatePlaceDialog from 'components/place/create-place-dialog'
+import PlacesDialog from 'components/place/places-dialog'
 import NftListDialog from 'components/nft/nft-list-dialog'
 
 export default function Home() {
