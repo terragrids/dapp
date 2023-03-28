@@ -272,10 +272,12 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                             <Label text={strings.created} />
                             <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
                         </div>
-                        <div className={styles.section}>
-                            <Label text={strings.type} />
-                            <div className={styles.content}>{place.type}</div>
-                        </div>
+                        {place.type && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.type} />
+                                <div className={styles.content}>{place.type}</div>
+                            </div>
+                        )}
                         <div className={styles.section}>
                             <Label text={strings.mapPosition} />
                             <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
@@ -284,12 +286,14 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                             <Label text={strings.approvalStatus} />
                             <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
                         </div>
-                        <div className={styles.section}>
-                            <Label text={strings.description} />
-                            <div className={styles.content}>
-                                <ParagraphMaker text={place.description} />
+                        {place.description && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.description} />
+                                <div className={styles.content}>
+                                    <ParagraphMaker text={place.description} />
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </>
                 )}
                 {place && editing && (
