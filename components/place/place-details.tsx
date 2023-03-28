@@ -14,7 +14,7 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en.js'
-import { PlaceStatus } from 'types/place'
+import { PlaceStatus, PlaceType } from 'types/place'
 import { endpoints, ipfsUrl } from 'utils/api-config.js'
 import { ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
@@ -32,6 +32,7 @@ type PlaceDetails = {
     offChainImageUrl: string
     description: string
     status: string
+    type: string
     positionX: number
     positionY: number
 }
@@ -88,14 +89,15 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                 const metadataResponse = await fetch(metadataUrl)
 
                 if (metadataResponse.ok) {
-                    const { name, image, description /*, properties */ } = await metadataResponse.json()
+                    const { name, image, description, properties } = await metadataResponse.json()
                     setPlace(
                         place =>
                             ({
                                 ...place,
                                 logoUrl: ipfsUrlToGatewayUrl(image),
                                 name,
-                                description
+                                description,
+                                type: PlaceType.new(properties.placeType.value).name
                             } as PlaceDetails)
                     )
                 }
@@ -271,12 +273,16 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                             <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
                         </div>
                         <div className={styles.section}>
-                            <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
+                            <Label text={strings.type} />
+                            <div className={styles.content}>{place.type}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.mapPosition} />
                             <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.approvalStatus} />
+                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
                         </div>
                         <div className={styles.section}>
                             <Label text={strings.description} />

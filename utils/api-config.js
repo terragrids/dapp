@@ -19,7 +19,7 @@ export const nftsApiBaseUrl =
         ? 'https://dev.api-nft-contract.terragrids.org'
         : 'https://api-nft-contract.terragrids.org'
 
-export const ipfsUrl = hash => `https://gateway.pinata.cloud/ipfs/${hash}`
+export const ipfsUrl = hash => `https://terragrids.infura-ipfs.io/ipfs/${hash}`
 export const terragridsImageUrl = name => `https://images.terragrids.org/${name}`
 
 const pageSize = 5
