@@ -17,7 +17,7 @@ import { DropDownSelector } from 'components/drop-down-selector'
 
 type PlacesDialogProps = {
     visible: boolean
-    ownerWalletAddress: string | null
+    filterByUser: boolean
     onClose: () => void
 }
 
@@ -26,7 +26,7 @@ type Error = {
     description?: string
 }
 
-const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDialogProps) => {
+const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogProps) => {
     const user = useContext<User>(UserContext)
     const [places, setPlaces] = useState<Array<Place> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -35,7 +35,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
     const [error, setError] = useState<Error | null>()
     const [message, setMessage] = useState<string | null>()
     const [selectedPlace, setSelectedPlace] = useState<string | null>()
-    const [placeStatus, setPlaceStatus] = useState<string | null>(PlaceStatus.APPROVED.key)
+    const [placeStatus, setPlaceStatus] = useState<string | null>(PlaceStatus.CREATED.key)
     const { getAuthHeader } = useAuth()
 
     const fetchPlaces = useCallback(async () => {
@@ -44,8 +44,8 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
         setError(null)
 
         const response = await fetch(
-            ownerWalletAddress
-                ? endpoints.paginatedAccountPlaces(ownerWalletAddress, nextPageKey, placeStatus)
+            filterByUser
+                ? endpoints.paginatedAccountPlaces(user.id, nextPageKey, placeStatus)
                 : endpoints.paginatedPlaces(nextPageKey, user.isAdmin ? placeStatus : undefined)
         )
 
@@ -58,7 +58,7 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
         }
 
         setIsFetching(false)
-    }, [isFetching, nextPageKey, ownerWalletAddress, placeStatus, places, user])
+    }, [filterByUser, isFetching, nextPageKey, placeStatus, places, user])
 
     function reset() {
         setPlaces(null)
@@ -151,13 +151,13 @@ const PlacesDialog = ({ visible, ownerWalletAddress = null, onClose }: PlacesDia
 
     function getTitle() {
         if (selectedPlace) return getSelectedPlace()?.name
-        else return ownerWalletAddress ? strings.myPlaces : strings.allPlaces
+        else return filterByUser ? strings.myPlaces : strings.allPlaces
     }
 
     return (
         <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
             <div className={styles.container}>
-                {(ownerWalletAddress || (user && user.isAdmin)) && !selectedPlace && (
+                {(filterByUser || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
                         label={strings.status}
                         options={PlaceStatus.list().map(status => ({ key: status.key, value: status.value }))}

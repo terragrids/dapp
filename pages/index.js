@@ -17,7 +17,7 @@ export default function Home() {
     const [nftMintVisible, setNftMintVisible] = useState(false)
     const [assetsVisible, setAssetsVisible] = useState(false)
     const [placeDetailsVisible, setPlaceDetailsVisible] = useState(false)
-    const [placesDialog, setPlacesDialog] = useState({ visible: false, ownerWalletAddress: null })
+    const [placesDialog, setPlacesDialog] = useState({ visible: false, filterByUser: false })
     const [newPlacePosition, setNewPlacePosition] = useState(null)
     const [selectedPlot, setSelectedPlot] = useState()
     const [mapSize, setMapSize] = useState({
@@ -65,7 +65,7 @@ export default function Home() {
     }
 
     function onOpenMyPlaces() {
-        setPlacesDialog({ visible: true, ownerWalletAddress: user.walletAddress })
+        setPlacesDialog({ visible: true, filterByUser: true })
     }
 
     function onConnectWallet() {
@@ -115,7 +115,7 @@ export default function Home() {
             />
             <PlacesDialog
                 visible={placesDialog.visible}
-                ownerWalletAddress={placesDialog.ownerWalletAddress}
+                filterByUser={placesDialog.filterByUser}
                 onClose={() => setPlacesDialog({ visible: false })}
             />
             <CreatePlaceDialog

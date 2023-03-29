@@ -50,10 +50,10 @@ const paginatedPlaces = (nextPageKey, status) =>
     }`
 const place = id => `api/places/${id}`
 const placeApproval = id => `api/places/${id}/approval`
-const paginatedAccountPlaces = (accountId, nextPageKey, status) =>
-    `api/accounts/${accountId}/places?sort=desc&pageSize=${pageSize}${
-        nextPageKey ? `&nextPageKey=${nextPageKey}` : ''
-    }${status ? `&status=${status}` : ''}`
+const paginatedAccountPlaces = (userId, nextPageKey, status) =>
+    `api/accounts/${userId}/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
+        status ? `&status=${status}` : ''
+    }`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
 const user = 'api/user'
 const login = '/api/auth/login'

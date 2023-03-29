@@ -3,7 +3,7 @@ import { callTerragridsApi, setMethodNotAllowedResponse } from '../../../../util
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            await callTerragridsApi(res, 'GET', `accounts/${req.query.accountId}/terracells`)
+            await callTerragridsApi(res, 'GET', `accounts/${req.query.userId}/terracells`)
             break
         default:
             setMethodNotAllowedResponse(res, ['GET'])

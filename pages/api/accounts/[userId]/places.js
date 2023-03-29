@@ -3,7 +3,7 @@ import { callProjectsApi, setMethodNotAllowedResponse } from '../../../../utils/
 export default async function handler(req, res) {
     switch (req.method) {
         case 'GET':
-            await callProjectsApi(res, 'GET', `creators/${req.query.accountId}/projects`, null, null, {
+            await callProjectsApi(res, 'GET', `users/${req.query.userId}/places`, null, null, {
                 pageSize: req.query.pageSize,
                 nextPageKey: req.query.nextPageKey,
                 status: req.query.status,
