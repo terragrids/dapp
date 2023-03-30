@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import { NextApiRequest, NextApiResponse } from 'next/types'
 import { callProjectsApi, setMethodNotAllowedResponse } from 'utils/api-config'
+import { getAuthToken } from 'utils/auth-utils.js'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
@@ -8,9 +9,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await callProjectsApi(res, 'GET', `places/${req.query.id}`)
             break
         case 'PUT':
-            await callProjectsApi(res, 'PUT', `places/${req.query.id}`, req.body, {
-                authorization: req.headers.authorization
-            })
+            const authToken = await getAuthToken(req, res)
+            if (authToken) {
+                await callProjectsApi(res, 'PUT', `places/${req.query.id}`, JSON.parse(req.body), {
+                    authorization: `Bearer ${authToken}`
+                })
+            }
             break
         case 'DELETE':
             await callProjectsApi(

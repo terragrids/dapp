@@ -12,8 +12,10 @@ import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
+import { setTimeout } from 'timers'
 import { PlaceType } from 'types/place'
 import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
+import { ONE_SECOND } from 'utils/constants'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import styles from './create-place-dialog.module.scss'
 
@@ -110,7 +112,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                     await user.walletAccount.tokenAccept(tokenId)
                 }
                 setDone(true)
-                setTimeout(onCreate, 2000)
+                setTimeout(onCreate, ONE_SECOND)
             }
         } catch (e) {
             setError(strings.errorCreatingPlace)
