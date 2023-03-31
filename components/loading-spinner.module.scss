@@ -1,31 +1,31 @@
 @use 'styles/colors' as colors;
 
 .ring {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 
-  &:after {
-    content: ' ';
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid;
-    border-color: colors.$color-alto transparent colors.$color-alto transparent;
-    animation: loading-dual-ring 1.2s linear infinite;
-  }
+    &:after {
+        content: ' ';
+        display: block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid;
+        border-color: colors.$color-alto transparent colors.$color-alto transparent;
+        animation: loading-dual-ring 1.2s linear infinite;
+    }
 
-  &.small:after {
-    width: 20px;
-    height: 20px;
-  }
+    &.small:after {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 @keyframes loading-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

@@ -60,12 +60,12 @@ const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogPr
         setIsFetching(false)
     }, [filterByUser, isFetching, nextPageKey, placeStatus, places, user])
 
-    function reset() {
+    function reset(keepSelected = false) {
         setPlaces(null)
         setNextPageKey(null)
-        setSelectedPlace(null)
         setError(null)
         setMessage(null)
+        if (!keepSelected) setSelectedPlace(null)
     }
 
     const prevVisible = usePrevious(visible)
@@ -195,7 +195,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogPr
                     </div>
                 )}
                 {places && places.length === 0 && <div className={styles.empty}>{strings.noPlacesFound}</div>}
-                {selectedPlace && <PlaceDetails id={selectedPlace} />}
+                {selectedPlace && <PlaceDetails id={selectedPlace} onUpdate={() => reset(true)} />}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}

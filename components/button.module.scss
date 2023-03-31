@@ -3,8 +3,7 @@
 @import 'styles/screens.scss';
 
 .this {
-    padding: 15px 20px;
-    min-height: 55px;
+    min-height: 44px;
     border-radius: $button-border-radius;
     border: none;
     cursor: pointer;
@@ -41,8 +40,6 @@
     border: 1px solid $color-white;
     font-size: 13px;
     text-transform: none;
-    min-height: auto;
-    padding: 10px 20px;
 
     &.disabled {
         border-color: $color-nomad;

@@ -1,4 +1,5 @@
 import ModalDialog from 'components/modal-dialog'
+import { useState } from 'react'
 import PlaceDetails from './place-details'
 import styles from './place-details-dialog.module.scss'
 
@@ -10,10 +11,11 @@ type PlaceDetailsDialogProps = {
 }
 
 const PlaceDetailsDialog = ({ visible, id, name, onClose }: PlaceDetailsDialogProps) => {
+    const [title, setTitle] = useState(name)
     return (
-        <ModalDialog visible={visible} title={name} onClose={onClose}>
+        <ModalDialog visible={visible} title={title} onClose={onClose}>
             <div className={styles.container}>
-                <PlaceDetails id={id} />
+                <PlaceDetails id={id} onUpdate={place => setTitle(place.name)} />
             </div>
         </ModalDialog>
     )

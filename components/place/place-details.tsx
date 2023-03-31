@@ -24,6 +24,7 @@ import styles from './place-details.module.scss'
 
 type PlaceDetailsProps = {
     id: string
+    onUpdate: (place: UpdatedPlaceDetails) => void
 }
 
 type PlaceDetails = {
@@ -34,23 +35,23 @@ type PlaceDetails = {
     offChainImageUrl: string
     description: string
     status: string
-    type: string
+    type: PlaceType
     positionX: number
     positionY: number
 }
 
-type UpdatedPlaceProperties = {
+type UpdatedPlaceDetails = {
     name: string
     description: string
     type: PlaceType
 }
 
-const PlaceDetails = ({ id }: PlaceDetailsProps) => {
+const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<PlaceDetails | null>()
-    const [updatedPlace, setUpdatedPlace] = useState<UpdatedPlaceProperties>({} as UpdatedPlaceProperties)
-    const [error, setError] = useState<string | null>()
+    const [updatedPlace, setUpdatedPlace] = useState<UpdatedPlaceDetails>({} as UpdatedPlaceDetails)
+    const [error, setError] = useState<string | null>(null)
     const [editing, setEditing] = useState<boolean>(false)
     const [inProgress, setInProgress] = useState<boolean>(false)
     const [done, setDone] = useState<boolean>(false)
@@ -69,7 +70,8 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
             const { id, name, reserve, created, userId, offChainImageUrl, status, positionX, positionY } =
                 await response.json()
 
-            setPlace({
+            setPlace(current => ({
+                ...(current as PlaceDetails),
                 id,
                 name,
                 created: parseInt(created),
@@ -78,7 +80,7 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                 offChainImageUrl,
                 positionX,
                 positionY
-            } as PlaceDetails)
+            }))
 
             // Try to fetch NFT metadata and image from IPFS
             try {
@@ -89,13 +91,13 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                 if (metadataResponse.ok) {
                     const { name, image, description, properties } = await metadataResponse.json()
                     setPlace(
-                        place =>
+                        current =>
                             ({
-                                ...place,
+                                ...current,
                                 logoUrl: ipfsUrlToGatewayUrl(image),
                                 name,
                                 description,
-                                type: PlaceType.new(properties.placeType.value).name
+                                type: PlaceType.new(properties.placeType.value)
                             } as PlaceDetails)
                     )
                 }
@@ -153,7 +155,7 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
         setUpdatedPlace({
             name: place.name,
             description: place.description,
-            type: PlaceType.new(place.type)
+            type: place.type
         })
 
         setError(null)
@@ -187,10 +189,11 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
     }
 
     function isUpdateInProgress() {
-        return !!error && inProgress
+        return inProgress && error === null
     }
 
     async function submit() {
+        setError(null)
         setInProgress(true)
 
         try {
@@ -214,7 +217,9 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
             if (!response.ok) {
                 setError(strings.errorUpdatingPlace)
             } else {
+                await fetchPlace()
                 setDone(true)
+                onUpdate(updatedPlace)
                 setTimeout(() => setEditing(false), ONE_SECOND)
             }
         } catch (e) {
@@ -245,7 +250,7 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                         {place.type && ( // in case ipfs request fails
                             <div className={styles.section}>
                                 <Label text={strings.type} />
-                                <div className={styles.content}>{place.type}</div>
+                                <div className={styles.content}>{place.type.name}</div>
                             </div>
                         )}
                         <div className={styles.section}>
@@ -282,6 +287,7 @@ const PlaceDetails = ({ id }: PlaceDetailsProps) => {
                             <DropDownSelector
                                 label={strings.whatTypeOfPlace}
                                 options={PlaceType.list().map(place => ({ key: place.code, value: place.name }))}
+                                defaultValue={place.type.code}
                                 onSelected={setType}
                             />
                         </div>
