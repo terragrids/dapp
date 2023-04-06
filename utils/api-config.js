@@ -41,6 +41,7 @@ const nftPurchase = id => `api/nfts/${id}/purchase`
 const nftPurchaseAuth = id => `api/nfts/${id}/purchase/auth`
 const fileUpload = 'api/files/upload'
 const ipfsFiles = 'api/ipfs/files'
+const ipfsMetadata = 'api/ipfs/metadata'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const places = 'api/places'
@@ -55,6 +56,7 @@ const paginatedAccountPlaces = (userId, nextPageKey, status) =>
         status ? `&status=${status}` : ''
     }`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
+const media = type => `api/media/${type}`
 const user = 'api/user'
 const login = '/api/auth/login'
 const logout = '/api/auth/logout'
@@ -74,6 +76,7 @@ export const endpoints = {
     nftPurchaseAuth,
     fileUpload,
     ipfsFiles,
+    ipfsMetadata,
     solarPowerPlant,
     places,
     paginatedPlaces,
@@ -81,6 +84,7 @@ export const endpoints = {
     placeApproval,
     paginatedAccountPlaces,
     authForWallet,
+    media,
     user,
     login,
     logout

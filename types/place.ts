@@ -1,4 +1,5 @@
 import { strings } from 'strings/en.js'
+import { MediaItem } from './media.js'
 
 export type Place = {
     id: string
@@ -20,8 +21,14 @@ export class PlaceType {
     static readonly BARN = new PlaceType('barn', 'Barn')
     static readonly FARM = new PlaceType('farm', 'Country Farm')
 
-    // private to disallow creating other instances of this type
-    private constructor(public readonly code: string, public readonly name: string) {}
+    private constructor(
+        public readonly code: string,
+        public readonly name: string,
+        public readonly flavor: string = '',
+        public readonly mediaId: string = ''
+    ) {
+        this.name = flavor ? `${name} Type ${flavor}` : name
+    }
 
     static list() {
         return [
@@ -38,9 +45,14 @@ export class PlaceType {
         ]
     }
 
-    static new(code: string) {
-        const newPlace = this.list().find(place => place.code === code)
-        return newPlace || PlaceType.DETACHED
+    static new(code: string, key = '', mediaId = ''): PlaceType {
+        const place = this.list().find(place => place.code === code) || PlaceType.DETACHED
+        return new PlaceType(place.code, place.name, key, mediaId)
+    }
+
+    static newFromMediaItem(item: MediaItem): PlaceType {
+        const [code, flavor] = item.key.split('|')
+        return PlaceType.new(code, flavor, item.id)
     }
 }
 

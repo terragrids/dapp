@@ -3,6 +3,7 @@ import Button, { ButtonType } from 'components/button'
 import { DropDownSelector } from 'components/drop-down-selector'
 import { InputField } from 'components/input-field'
 import { Label } from 'components/label'
+import LoadingSpinner from 'components/loading-spinner.js'
 import { Position2D } from 'components/map/plot.js'
 import ModalDialog from 'components/modal-dialog'
 import { UserContext } from 'context/user-context.js'
@@ -10,9 +11,10 @@ import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 import { useFilePinner } from 'hooks/use-file-pinner'
 import usePrevious from 'hooks/use-previous.js'
 import { User } from 'hooks/use-user.js'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { setTimeout } from 'timers'
+import { MediaItem } from 'types/media.js'
 import { PlaceType } from 'types/place'
 import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { ONE_SECOND } from 'utils/constants'
@@ -44,21 +46,42 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
     const [done, setDone] = useState<boolean>(false)
     const [place, setPlace] = useState<PlaceDetails>(defaultPlace as PlaceDetails)
     const [error, setError] = useState<string>('')
+    const [placeTypes, setPlaceTypes] = useState<Array<PlaceType>>([])
     const { pinFileToIpfs } = useFilePinner()
     const { fetchOrLogin } = useFetchOrLogin()
+
+    const setPlaceType = useCallback(
+        (mediaId: string) => {
+            setPlace(place => ({
+                ...place,
+                type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.DETACHED
+            }))
+        },
+        [placeTypes]
+    )
 
     /**
      * Reset state when opening the dialog
      */
     const prevVisible = usePrevious(visible)
     useEffect(() => {
+        async function fetchMedia() {
+            const response = await fetch(endpoints.media('place'))
+            if (response.ok) {
+                const { media } = await response.json()
+                const types = media.map((item: MediaItem) => PlaceType.newFromMediaItem(item))
+                setPlaceTypes(types)
+            }
+        }
+
         if (visible && prevVisible === false) {
             setPlace(defaultPlace)
             setError('')
             setInProgress(false)
             setDone(false)
+            fetchMedia()
         }
-    }, [prevVisible, visible])
+    }, [prevVisible, setPlaceType, visible])
 
     function setName(name: string) {
         setPlace(place => ({ ...place, name }))
@@ -66,10 +89,6 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
 
     function setDescription(description: string) {
         setPlace(place => ({ ...place, description }))
-    }
-
-    function setPlaceType(code: string) {
-        setPlace(place => ({ ...place, type: PlaceType.new(code) }))
     }
 
     function isValid() {
@@ -85,8 +104,8 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
         setInProgress(true)
 
         try {
-            const { assetName, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
-                id: '1cbeb62a-935d-434e-875d-f17c9f5a2d4c', // TODO replace with selected id
+            const { name, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
+                id: place.type.mediaId,
                 name: place.name,
                 description: place.description,
                 properties: { type: place.type }
@@ -96,7 +115,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                 method: 'POST',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({
-                    name: assetName,
+                    name,
                     cid: getHashFromIpfsUrl(ipfsMetadataUrl),
                     offChainImageUrl,
                     positionX: position.x,
@@ -128,34 +147,45 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                         {strings.formatString(strings.createNewPlaceAtNode, position.x, position.y)}
                     </div>
                 )}
-                <div className={styles.section}>
-                    <InputField label={strings.giveMemorablePlaceName} onChange={setName} />
-                </div>
-                <div className={styles.section}>
-                    <DropDownSelector
-                        label={strings.whatTypeOfPlace}
-                        options={PlaceType.list().map(place => ({ key: place.code, value: place.name }))}
-                        onSelected={setPlaceType}
-                    />
-                </div>
-                <div className={styles.section}>
-                    <Label text={strings.howToSeePlaceOnMap} />
-                    <img src={terragridsImageUrl('1cbeb62a-935d-434e-875d-f17c9f5a2d4c')} alt={'image'} />
-                </div>
-                <div className={styles.section}>
-                    <InputField max={5000} multiline label={strings.describeYourPlace} onChange={setDescription} />
-                </div>
-                <ActionBar>
-                    <Button
-                        className={styles.button}
-                        type={ButtonType.OUTLINE}
-                        disabled={!isValid()}
-                        label={strings.create}
-                        loading={isInProgress()}
-                        checked={done}
-                        onClick={submit}
-                    />
-                </ActionBar>
+                {!placeTypes.length && <LoadingSpinner />}
+                {placeTypes.length > 0 && (
+                    <>
+                        <div className={styles.section}>
+                            <InputField label={strings.giveMemorablePlaceName} onChange={setName} />
+                        </div>
+                        <div className={styles.section}>
+                            <DropDownSelector
+                                label={strings.whatTypeOfPlace}
+                                options={placeTypes.map(type => ({ key: type.mediaId, value: type.name }))}
+                                defaultValue={placeTypes[0].mediaId}
+                                onSelected={setPlaceType}
+                            />
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.howToSeePlaceOnMap} />
+                            <img src={terragridsImageUrl(place.type.mediaId || placeTypes[0].mediaId)} alt={'image'} />
+                        </div>
+                        <div className={styles.section}>
+                            <InputField
+                                max={5000}
+                                multiline
+                                label={strings.describeYourPlace}
+                                onChange={setDescription}
+                            />
+                        </div>
+                        <ActionBar>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                disabled={!isValid()}
+                                label={strings.create}
+                                loading={isInProgress()}
+                                checked={done}
+                                onClick={submit}
+                            />
+                        </ActionBar>
+                    </>
+                )}
                 <div className={styles.section}>
                     <div className={styles.error}>{error}</div>
                 </div>

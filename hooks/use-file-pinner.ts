@@ -11,7 +11,7 @@ type Params = {
 }
 
 type Result = {
-    assetName: string
+    name: string
     ipfsMetadataUrl: string
     offChainImageUrl: string
     integrity: string
@@ -26,24 +26,24 @@ export function useFilePinner() {
         async ({ id, name, description, properties }: Params): Promise<Result> => {
             if (!id || !name) throw new IpfsPinningError()
 
-            const response = await fetchOrLogin(endpoints.ipfsFiles, {
+            const response = await fetchOrLogin(endpoints.ipfsMetadata, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({
-                    assetName: name,
-                    assetDescription: description,
-                    assetProperties: properties,
-                    fileName: id
+                    name,
+                    description,
+                    properties,
+                    fileId: id
                 })
             })
 
             if (response.ok) {
-                const { assetName, url, integrity } = await response.json()
+                const { name, url, integrity } = await response.json()
                 return {
-                    assetName,
+                    name,
                     ipfsMetadataUrl: url,
                     offChainImageUrl: terragridsImageUrl(id),
                     integrity

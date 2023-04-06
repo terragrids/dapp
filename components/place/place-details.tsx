@@ -197,7 +197,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         setInProgress(true)
 
         try {
-            const { assetName, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
+            const { name, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
                 id: '1cbeb62a-935d-434e-875d-f17c9f5a2d4c', // TODO replace with selected id
                 name: updatedPlace.name,
                 description: updatedPlace.description,
@@ -208,7 +208,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                 method: 'PUT',
                 referrerPolicy: 'no-referrer',
                 body: JSON.stringify({
-                    name: assetName,
+                    name,
                     cid: getHashFromIpfsUrl(ipfsMetadataUrl),
                     offChainImageUrl
                 })
