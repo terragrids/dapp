@@ -6,7 +6,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { Place, PlaceStatus } from 'types/place'
 import { endpoints } from 'utils/api-config.js'
-import PlaceDetails from './place-details'
 import PlaceListItem from './place-list-item'
 import styles from './places-dialog.module.scss'
 import usePrevious from 'hooks/use-previous.js'
@@ -14,6 +13,7 @@ import Button, { ButtonType } from 'components/button'
 import { useAuth } from 'hooks/use-auth.js'
 import ActionBar from 'components/action-bar'
 import { DropDownSelector } from 'components/drop-down-selector'
+import PlaceDetails from './place-details'
 
 type PlacesDialogProps = {
     visible: boolean

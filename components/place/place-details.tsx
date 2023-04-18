@@ -21,13 +21,14 @@ import { ONE_SECOND } from 'utils/constants'
 import { getHashFromIpfsUrl, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
+import { MediaItem } from 'types/media.js'
 
 type PlaceDetailsProps = {
     id: string
-    onUpdate: (place: UpdatedPlaceDetails) => void
+    onUpdate: (place: UpdatedDetails) => void
 }
 
-type PlaceDetails = {
+type Details = {
     id: string
     name: string
     created: number
@@ -40,7 +41,7 @@ type PlaceDetails = {
     positionY: number
 }
 
-type UpdatedPlaceDetails = {
+type UpdatedDetails = {
     name: string
     description: string
     type: PlaceType
@@ -49,12 +50,13 @@ type UpdatedPlaceDetails = {
 const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
-    const [place, setPlace] = useState<PlaceDetails | null>()
-    const [updatedPlace, setUpdatedPlace] = useState<UpdatedPlaceDetails>({} as UpdatedPlaceDetails)
+    const [place, setPlace] = useState<Details | null>()
+    const [updatedPlace, setUpdatedPlace] = useState<UpdatedDetails>({} as UpdatedDetails)
     const [error, setError] = useState<string | null>(null)
     const [editing, setEditing] = useState<boolean>(false)
     const [inProgress, setInProgress] = useState<boolean>(false)
     const [done, setDone] = useState<boolean>(false)
+    const [placeTypes, setPlaceTypes] = useState<Array<PlaceType>>([])
     const { fetchOrLogin } = useFetchOrLogin()
     const { pinFileToIpfs } = useFilePinner()
 
@@ -71,7 +73,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                 await response.json()
 
             setPlace(current => ({
-                ...(current as PlaceDetails),
+                ...(current as Details),
                 id,
                 name,
                 created: parseInt(created),
@@ -98,7 +100,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                                 name,
                                 description,
                                 type: PlaceType.new(properties.placeType.value)
-                            } as PlaceDetails)
+                            } as Details)
                     )
                 }
 
@@ -141,7 +143,17 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     )
 
     useEffect(() => {
+        async function fetchMedia() {
+            const response = await fetch(endpoints.media('place'))
+            if (response.ok) {
+                const { media } = await response.json()
+                const types = media.map((item: MediaItem) => PlaceType.newFromMediaItem(item))
+                setPlaceTypes(types)
+            }
+        }
+
         setEditing(false)
+        fetchMedia()
         fetchPlace()
     }, [fetchPlace])
 
@@ -170,10 +182,10 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         }))
     }
 
-    function setType(type: string) {
+    function setType(mediaId: string) {
         setUpdatedPlace(place => ({
             ...place,
-            type: PlaceType.new(type)
+            type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.DETACHED
         }))
     }
 
@@ -198,7 +210,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
 
         try {
             const { name, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
-                id: '1cbeb62a-935d-434e-875d-f17c9f5a2d4c', // TODO replace with selected id
+                id: updatedPlace.type.mediaId,
                 name: updatedPlace.name,
                 description: updatedPlace.description,
                 properties: { type: updatedPlace.type }
@@ -286,8 +298,8 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                         <div className={styles.section}>
                             <DropDownSelector
                                 label={strings.whatTypeOfPlace}
-                                options={PlaceType.list().map(place => ({ key: place.code, value: place.name }))}
-                                defaultValue={place.type.code}
+                                options={placeTypes.map(type => ({ key: type.mediaId, value: type.name }))}
+                                defaultValue={placeTypes[0].mediaId}
                                 onSelected={setType}
                             />
                         </div>

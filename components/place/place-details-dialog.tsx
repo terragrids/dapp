@@ -1,7 +1,7 @@
 import ModalDialog from 'components/modal-dialog'
 import { useState } from 'react'
-import PlaceDetails from './place-details'
 import styles from './place-details-dialog.module.scss'
+import PlaceDetails from './place-details'
 
 type PlaceDetailsDialogProps = {
     visible: boolean
