@@ -14,7 +14,6 @@ import { User } from 'hooks/use-user.js'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'
 import { setTimeout } from 'timers'
-import { MediaItem } from 'types/media.js'
 import { PlaceType } from 'types/place'
 import { endpoints, terragridsImageUrl } from 'utils/api-config.js'
 import { ONE_SECOND } from 'utils/constants'
@@ -54,7 +53,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
         (mediaId: string) => {
             setPlace(place => ({
                 ...place,
-                type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.DETACHED
+                type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.TRADITIONAL_HOUSE
             }))
         },
         [placeTypes]
@@ -66,10 +65,10 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
     const prevVisible = usePrevious(visible)
     useEffect(() => {
         async function fetchMedia() {
-            const response = await fetch(endpoints.media('place'))
+            const response = await fetch(endpoints.media('place', 1))
             if (response.ok) {
                 const { media } = await response.json()
-                const types = media.map((item: MediaItem) => PlaceType.newFromMediaItem(item))
+                const types = PlaceType.newPlaceTypesFromMediaItems(media)
                 setPlaceTypes(types)
             }
         }

@@ -56,7 +56,7 @@ const paginatedAccountPlaces = (userId, nextPageKey, status) =>
         status ? `&status=${status}` : ''
     }`
 const authForWallet = wallet => `api/auth?wallet=${wallet}`
-const media = type => `api/media/${type}`
+const media = (type, rank) => `api/media/${type}${rank ? `?rank=${rank}` : ''}`
 const user = 'api/user'
 const login = '/api/auth/login'
 const logout = '/api/auth/logout'

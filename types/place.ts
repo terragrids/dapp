@@ -10,49 +10,39 @@ export type Place = {
 }
 
 export class PlaceType {
-    static readonly DETACHED = new PlaceType('detached', 'Deatched House')
-    static readonly SEMIDETACHED = new PlaceType('semidetached', 'Semi-detached House')
-    static readonly TERRACED = new PlaceType('terraced', 'Terraced House')
-    static readonly FLAT = new PlaceType('flat', 'Flat Apartment')
-    static readonly COMMUNITY = new PlaceType('community', 'Community Space')
-    static readonly COMMERCIAL = new PlaceType('commercial', 'Commercial Space')
-    static readonly WAREHOUSE = new PlaceType('warehouse', 'Warehouse')
-    static readonly RETAIL = new PlaceType('retail', 'Retail Store')
-    static readonly BARN = new PlaceType('barn', 'Barn')
-    static readonly FARM = new PlaceType('farm', 'Country Farm')
+    static readonly TRADITIONAL_HOUSE = new PlaceType('traditional-house', strings.traditionalHouse)
+    static readonly MODERN_HOUSE = new PlaceType('modern-house', strings.modernHouse)
+    static readonly MODERN_APARTMENT = new PlaceType('modern-apartment', strings.modernApartment)
 
     private constructor(
         public readonly code: string,
         public readonly name: string,
-        public readonly flavor: string = '',
+        public readonly rank: number = 1,
         public readonly mediaId: string = ''
-    ) {
-        this.name = flavor ? `${name} Type ${flavor}` : name
-    }
+    ) {}
 
     static list() {
-        return [
-            PlaceType.DETACHED,
-            PlaceType.SEMIDETACHED,
-            PlaceType.TERRACED,
-            PlaceType.FLAT,
-            PlaceType.COMMUNITY,
-            PlaceType.COMMERCIAL,
-            PlaceType.RETAIL,
-            PlaceType.WAREHOUSE,
-            PlaceType.BARN,
-            PlaceType.FARM
-        ]
+        return [PlaceType.TRADITIONAL_HOUSE, PlaceType.MODERN_HOUSE, PlaceType.MODERN_APARTMENT]
     }
 
-    static new(code: string, key = '', mediaId = ''): PlaceType {
-        const place = this.list().find(place => place.code === code) || PlaceType.DETACHED
-        return new PlaceType(place.code, place.name, key, mediaId)
+    static new(code: string, rank = 1, mediaId = ''): PlaceType {
+        const place = this.list().find(place => place.code === code) || PlaceType.TRADITIONAL_HOUSE
+        return new PlaceType(place.code, place.name, rank, mediaId)
+    }
+
+    static sort(places: Array<PlaceType>): Array<PlaceType> {
+        return this.list()
+            .map(place => places.find(p => place.code === p.code))
+            .filter(p => p !== undefined) as Array<PlaceType>
     }
 
     static newFromMediaItem(item: MediaItem): PlaceType {
-        const [code, flavor] = item.key.split('|')
-        return PlaceType.new(code, flavor, item.id)
+        return PlaceType.new(item.key, item.rank, item.id)
+    }
+
+    static newPlaceTypesFromMediaItems(items: Array<MediaItem>): Array<PlaceType> {
+        const types = items.map((item: MediaItem) => PlaceType.newFromMediaItem(item))
+        return PlaceType.sort(types) as Array<PlaceType>
     }
 }
 

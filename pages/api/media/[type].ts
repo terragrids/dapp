@@ -5,7 +5,9 @@ import { callTerragridsApi, setMethodNotAllowedResponse } from 'utils/api-config
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
-            await callTerragridsApi(res, 'GET', `media/${req.query.type}`)
+            await callTerragridsApi(res, 'GET', `media/${req.query.type}`, null, null, {
+                rank: req.query.rank
+            })
             break
         default:
             setMethodNotAllowedResponse(res, ['GET'])

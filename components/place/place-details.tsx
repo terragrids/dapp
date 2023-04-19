@@ -21,7 +21,6 @@ import { ONE_SECOND } from 'utils/constants'
 import { getHashFromIpfsUrl, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
-import { MediaItem } from 'types/media.js'
 
 type PlaceDetailsProps = {
     id: string
@@ -144,10 +143,10 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
 
     useEffect(() => {
         async function fetchMedia() {
-            const response = await fetch(endpoints.media('place'))
+            const response = await fetch(endpoints.media('place', 1))
             if (response.ok) {
                 const { media } = await response.json()
-                const types = media.map((item: MediaItem) => PlaceType.newFromMediaItem(item))
+                const types = PlaceType.newPlaceTypesFromMediaItems(media)
                 setPlaceTypes(types)
             }
         }
@@ -185,7 +184,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     function setType(mediaId: string) {
         setUpdatedPlace(place => ({
             ...place,
-            type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.DETACHED
+            type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.TRADITIONAL_HOUSE
         }))
     }
 
