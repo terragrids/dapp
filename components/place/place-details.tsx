@@ -18,7 +18,7 @@ import { setTimeout } from 'timers'
 import { PlaceStatus, PlaceType } from 'types/place'
 import { endpoints, ipfsUrl, terragridsImageUrl } from 'utils/api-config.js'
 import { ONE_SECOND } from 'utils/constants'
-import { getHashFromIpfsUrl, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
+import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
 
@@ -40,7 +40,7 @@ type Details = {
     positionY: number
 }
 
-type UpdatedDetails = {
+export type UpdatedDetails = {
     name: string
     description: string
     type: PlaceType
@@ -90,12 +90,11 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                 const metadataResponse = await fetch(metadataUrl)
 
                 if (metadataResponse.ok) {
-                    const { name, image, description, properties } = await metadataResponse.json()
+                    const { name, description, properties } = await metadataResponse.json()
                     setPlace(
                         current =>
                             ({
                                 ...current,
-                                logoUrl: ipfsUrlToGatewayUrl(image),
                                 name,
                                 description,
                                 type:
@@ -103,6 +102,8 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                                     PlaceType.TRADITIONAL_HOUSE
                             } as Details)
                     )
+                } else {
+                    setPlace(current => ({ ...current, type: PlaceType.TRADITIONAL_HOUSE } as Details))
                 }
 
                 setInProgress(false)

@@ -84,6 +84,10 @@ export default function Home() {
         setMapRefreshCounter(mapRefreshCounter + 1)
     }
 
+    function onUpdatePlaceDone() {
+        setMapRefreshCounter(mapRefreshCounter + 1)
+    }
+
     return (
         <Layout
             headerRef={headerRef}
@@ -107,22 +111,23 @@ export default function Home() {
 
             <WalletPicker visible={walletPickerVisible} onClose={() => setWalletPickerVisible(false)} />
             <NftMintDialog visible={nftMintVisible} onClose={() => setNftMintVisible(false)} />
-            <PlaceDetailsDialog
-                visible={placeDetailsVisible}
-                onClose={() => setPlaceDetailsVisible(false)}
-                id={selectedPlot ? selectedPlot.id : null}
-                name={selectedPlot ? selectedPlot.name : null}
-            />
             <PlacesDialog
                 visible={placesDialog.visible}
                 filterByUser={placesDialog.filterByUser}
                 onClose={() => setPlacesDialog({ visible: false })}
             />
+            <PlaceDetailsDialog
+                visible={placeDetailsVisible}
+                id={selectedPlot ? selectedPlot.id : null}
+                name={selectedPlot ? selectedPlot.name : null}
+                onUpdate={onUpdatePlaceDone}
+                onClose={() => setPlaceDetailsVisible(false)}
+            />
             <CreatePlaceDialog
                 visible={!!newPlacePosition}
                 position={newPlacePosition}
-                onClose={() => setNewPlacePosition(null)}
                 onCreate={onCreateNewPlaceDone}
+                onClose={() => setNewPlacePosition(null)}
             />
             <NftListDialog visible={assetsVisible} onClose={() => setAssetsVisible(false)} />
         </Layout>
