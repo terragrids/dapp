@@ -12,11 +12,11 @@ import { useAuth } from 'hooks/use-auth.js'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 import { useFilePinner } from 'hooks/use-file-pinner'
 import { User } from 'hooks/use-user.js'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { strings } from 'strings/en.js'
 import { setTimeout } from 'timers'
 import { PlaceStatus, PlaceType } from 'types/place'
-import { endpoints, ipfsUrl } from 'utils/api-config.js'
+import { endpoints, ipfsUrl, terragridsImageUrl } from 'utils/api-config.js'
 import { ONE_SECOND } from 'utils/constants'
 import { getHashFromIpfsUrl, ipfsUrlToGatewayUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
@@ -55,9 +55,9 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     const [editing, setEditing] = useState<boolean>(false)
     const [inProgress, setInProgress] = useState<boolean>(false)
     const [done, setDone] = useState<boolean>(false)
-    const [placeTypes, setPlaceTypes] = useState<Array<PlaceType>>([])
     const { fetchOrLogin } = useFetchOrLogin()
     const { pinFileToIpfs } = useFilePinner()
+    const placeTypes = useRef<Array<PlaceType>>([])
 
     const { getAuthHeader } = useAuth()
 
@@ -98,7 +98,9 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                                 logoUrl: ipfsUrlToGatewayUrl(image),
                                 name,
                                 description,
-                                type: PlaceType.new(properties.placeType.value)
+                                type:
+                                    placeTypes.current.find(type => type.code === properties.placeType.value) ||
+                                    PlaceType.TRADITIONAL_HOUSE
                             } as Details)
                     )
                 }
@@ -108,7 +110,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         } else {
             setError(strings.errorFetchingPlace)
         }
-    }, [id, stdlib])
+    }, [id, stdlib.algosdk])
 
     const approvePlace = useCallback(
         async (approvalStatus: boolean) => {
@@ -147,13 +149,13 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
             if (response.ok) {
                 const { media } = await response.json()
                 const types = PlaceType.newPlaceTypesFromMediaItems(media)
-                setPlaceTypes(types)
+                placeTypes.current = types
+                fetchPlace()
             }
         }
 
         setEditing(false)
         fetchMedia()
-        fetchPlace()
     }, [fetchPlace])
 
     function canEdit() {
@@ -184,7 +186,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     function setType(mediaId: string) {
         setUpdatedPlace(place => ({
             ...place,
-            type: placeTypes.find(type => type.mediaId === mediaId) || PlaceType.TRADITIONAL_HOUSE
+            type: placeTypes.current.find(type => type.mediaId === mediaId) || PlaceType.TRADITIONAL_HOUSE
         }))
     }
 
@@ -284,22 +286,22 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                 )}
                 {place && editing && (
                     <>
-                        <div className={`${styles.section} ${styles.image}`}>
-                            <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.created} />
-                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
-                        </div>
                         <div className={styles.section}>
                             <InputField initialValue={place.name} label={strings.name} onChange={setName} />
                         </div>
                         <div className={styles.section}>
                             <DropDownSelector
                                 label={strings.whatTypeOfPlace}
-                                options={placeTypes.map(type => ({ key: type.mediaId, value: type.name }))}
-                                defaultValue={placeTypes[0].mediaId}
+                                options={placeTypes.current.map(type => ({ key: type.mediaId, value: type.name }))}
+                                defaultValue={updatedPlace.type.mediaId}
                                 onSelected={setType}
+                            />
+                        </div>
+                        <div className={`${styles.section} ${styles.image}`}>
+                            <img
+                                src={terragridsImageUrl(updatedPlace.type.mediaId)}
+                                alt={place.name}
+                                className={styles.image}
                             />
                         </div>
                         <div className={styles.section}>
