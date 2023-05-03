@@ -1,4 +1,4 @@
-import { UserContext } from 'context/user-context.js'
+import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
 import React, { useContext, useState } from 'react'
 import { strings } from 'strings/en'

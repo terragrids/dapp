@@ -1,6 +1,6 @@
 import LoadingSpinner from 'components/loading-spinner.js'
 import ModalDialog from 'components/modal-dialog'
-import { UserContext } from 'context/user-context.js'
+import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { strings } from 'strings/en'

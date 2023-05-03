@@ -1,6 +1,6 @@
 import MenuDropDown, { Align } from 'components/menu-drop-down'
 import MenuDropDownItem from 'components/menu-drop-down-item'
-import { UserContext } from 'context/user-context.js'
+import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
 import { useContext } from 'react'
 import { strings } from 'strings/en.js'

@@ -1,6 +1,9 @@
 import styles from './modal-dialog.module.scss'
 import PropTypes from 'prop-types'
 import Button, { ButtonType } from 'components/button'
+import MenuDropDown, { Align } from './menu-drop-down'
+import MenuDropDownItem from './menu-drop-down-item'
+import { strings } from 'strings/en.js'
 
 export default function ModalDialog({
     visible,
@@ -13,6 +16,8 @@ export default function ModalDialog({
     button1Label = '',
     button1Loading = false,
     onClose,
+    onArchive,
+    onDelete,
     onScroll,
     onButton1Click = () => {
         /* */
@@ -29,7 +34,27 @@ export default function ModalDialog({
                         </h1>
 
                         {onClose && (
-                            <div>
+                            <div className={styles.controls}>
+                                {(onArchive || onDelete) && (
+                                    <MenuDropDown align={Align.RIGHT}>
+                                        {onArchive && (
+                                            <MenuDropDownItem
+                                                id={'archive'}
+                                                text={strings.archive}
+                                                icon={'icon-archive'}
+                                                onClick={onArchive}
+                                            />
+                                        )}
+                                        {onDelete && (
+                                            <MenuDropDownItem
+                                                id={'delete'}
+                                                text={strings.delete}
+                                                icon={'icon-bin'}
+                                                onClick={onDelete}
+                                            />
+                                        )}
+                                    </MenuDropDown>
+                                )}
                                 <i className={`${styles.close} icon-cross`} onClick={onClose} />
                             </div>
                         )}
@@ -66,5 +91,7 @@ ModalDialog.propTypes = {
     subtitle: PropTypes.string,
     className: PropTypes.string,
     onClose: PropTypes.func,
+    onArchive: PropTypes.func,
+    onDelete: PropTypes.func,
     onScroll: PropTypes.func
 }

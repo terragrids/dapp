@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 import { Terracell } from 'types/nft.js'
 
+export const PERMISSION_ALL = 0
+
 export type NftContract = {
     v: {
         View: { token: () => Promise<Array<{ toNumber: () => number }>> }
@@ -10,6 +12,7 @@ export type NftContract = {
 
 export type User = {
     id?: string | null
+    permissions: Array<number>
     walletAccount?: null | {
         networkAccount: {
             addr: string
@@ -36,10 +39,11 @@ export enum UserCapabilities {
 }
 
 export function useUser() {
-    const update = useCallback(({ id, walletAccount, walletBalance, terracells }: User) => {
+    const update = useCallback(({ id, permissions, walletAccount, walletBalance, terracells }: User) => {
         setUser(user => ({
             ...user,
             ...(id && { id }),
+            ...(permissions && { permissions }),
             ...(walletAccount && { walletAccount }),
             ...(walletBalance && { walletBalance }),
             ...(terracells && { terracells })
@@ -68,6 +72,7 @@ export function useUser() {
 
     const [user, setUser] = useState<User>({
         id: null,
+        permissions: [],
         walletAccount: null,
         walletBalance: '0',
         terracells: null,
@@ -82,9 +87,6 @@ export function useUser() {
         ...user,
         authenticated: user.id !== null,
         walletAddress: user.walletAccount ? user.walletAccount.networkAccount.addr : null,
-        isAdmin:
-            user.walletAccount && process.env.NEXT_PUBLIC_ADMIN_WALLETS
-                ? process.env.NEXT_PUBLIC_ADMIN_WALLETS.split(',').includes(user.walletAccount.networkAccount.addr)
-                : false
+        isAdmin: user.permissions?.some(p => p === PERMISSION_ALL)
     }
 }

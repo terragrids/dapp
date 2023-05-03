@@ -1,4 +1,4 @@
-import { UserContext } from 'context/user-context.js'
+import { UserContext } from 'context/user-context'
 import { useContext } from 'react'
 import { User } from 'hooks/use-user'
 import { useAuth } from './use-auth.js'

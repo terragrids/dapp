@@ -9,24 +9,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await callProjectsApi(res, 'GET', `places/${req.query.id}`)
             break
         case 'PUT':
-            const authToken = await getAuthToken(req, res)
-            if (authToken) {
-                await callProjectsApi(res, 'PUT', `places/${req.query.id}`, JSON.parse(req.body), {
-                    authorization: `Bearer ${authToken}`
-                })
+            {
+                const authToken = await getAuthToken(req, res)
+                if (authToken) {
+                    await callProjectsApi(res, 'PUT', `places/${req.query.id}`, JSON.parse(req.body), {
+                        authorization: `Bearer ${authToken}`
+                    })
+                }
             }
             break
         case 'DELETE':
-            await callProjectsApi(
-                res,
-                'DELETE',
-                `places/${req.query.id}`,
-                null,
-                { authorization: req.headers.authorization },
-                {
-                    ...(req.query.permanent && { permanent: req.query.permanent })
+            {
+                const authToken = await getAuthToken(req, res)
+                if (authToken) {
+                    await callProjectsApi(
+                        res,
+                        'DELETE',
+                        `places/${req.query.id}`,
+                        null,
+                        {
+                            authorization: `Bearer ${authToken}`
+                        },
+                        {
+                            ...(req.query.permanent && { permanent: req.query.permanent })
+                        }
+                    )
                 }
-            )
+            }
             break
         default:
             setMethodNotAllowedResponse(res, ['GET', 'PUT', 'DELETE'])

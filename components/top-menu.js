@@ -16,7 +16,7 @@ export default function TopMenu({ mainMenuVisible, onToggleMenu }) {
             setLoadingUser(false)
             if (identity.ok) {
                 const json = await identity.json()
-                user.update({ id: json.id })
+                user.update({ id: json.id, permissions: json.permissions })
             }
         }
         if (user) getUser()

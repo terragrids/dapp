@@ -41,9 +41,7 @@
 
         @media (hover: hover) {
             &:hover {
-                color: $color-abbey;
-                background-color: $color-alto;
-                border: 1px solid $color-black-60;
+                color: $color-white;
                 transition: $quick-transition;
 
                 + .tooltip {
