@@ -8,7 +8,6 @@ import LoadingSpinner from 'components/loading-spinner.js'
 import { ParagraphMaker } from 'components/paragraph-maker/paragraph-maker'
 import { ReachContext, ReachStdlib } from 'context/reach-context'
 import { UserContext } from 'context/user-context'
-import { useAuth } from 'hooks/use-auth.js'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 import { useFilePinner } from 'hooks/use-file-pinner'
 import { User } from 'hooks/use-user.js'
@@ -58,8 +57,6 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
     const { fetchOrLogin } = useFetchOrLogin()
     const { pinFileToIpfs } = useFilePinner()
     const placeTypes = useRef<Array<PlaceType>>([])
-
-    const { getAuthHeader } = useAuth()
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -113,36 +110,25 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         }
     }, [id, stdlib.algosdk])
 
-    const approvePlace = useCallback(
-        async (approvalStatus: boolean) => {
-            setError(null)
-            setInProgress(true)
-            try {
-                const authHeader = await getAuthHeader(user.walletAddress)
-                const response = await fetch(endpoints.placeApproval(id), {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: authHeader
-                    },
-                    referrerPolicy: 'no-referrer',
-                    body: JSON.stringify({
-                        approved: approvalStatus
-                    })
-                })
+    const approvePlace = useCallback(async () => {
+        setError(null)
+        setInProgress(true)
+        try {
+            const response = await fetch(endpoints.placeApproval(id), {
+                method: 'PUT',
+                referrerPolicy: 'no-referrer'
+            })
 
-                if (response.ok) {
-                    fetchPlace()
-                } else {
-                    throw new Error()
-                }
-            } catch (e) {
-                setError(strings.errorApprovingPlace)
-                setInProgress(false)
+            if (response.ok) {
+                fetchPlace()
+            } else {
+                throw new Error()
             }
-        },
-        [fetchPlace, getAuthHeader, id, user.walletAddress]
-    )
+        } catch (e) {
+            setError(strings.errorApprovingPlace)
+            setInProgress(false)
+        }
+    }, [fetchPlace, id])
 
     useEffect(() => {
         async function fetchMedia() {
@@ -329,12 +315,12 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                                 label={strings.edit}
                                 onClick={edit}
                             />
-                            {user && user.isAdmin && place && (
+                            {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
                                 <Button
                                     className={styles.button}
                                     type={ButtonType.OUTLINE}
-                                    label={place.status === PlaceStatus.APPROVED.key ? strings.reject : strings.approve}
-                                    onClick={() => approvePlace(!(place.status === PlaceStatus.APPROVED.key))}
+                                    label={strings.approve}
+                                    onClick={approvePlace}
                                 />
                             )}
                         </div>
