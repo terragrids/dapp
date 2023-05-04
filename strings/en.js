@@ -41,6 +41,7 @@ const enStrings = {
     edited: 'Edited',
     errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
     errorApprovingPlace: 'Something went wrong when approving this place. Please try again.',
+    errorArchivingPlace: 'Something went wrong when archiving this place. Please try again.',
     errorBuyingNft:
         'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
     errorConnectingWallet:
