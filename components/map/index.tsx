@@ -129,7 +129,9 @@ const Map = ({ width, height, refreshCounter, onSelectPlot, onSelectEmptyPlot }:
     useEffect(() => {
         const load = async () => {
             setLoading(true)
-            const projectResponse = await fetch(endpoints.paginatedPlaces(null, PlaceStatus.CREATED.key))
+            const projectResponse = await fetch(
+                endpoints.paginatedPlaces(null, `${PlaceStatus.CREATED.key},${PlaceStatus.APPROVED.key}`, 10)
+            )
             if (!projectResponse.ok) {
                 setError(strings.errorFetchingMap)
                 setLoading(false)

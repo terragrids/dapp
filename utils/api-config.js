@@ -45,8 +45,8 @@ const ipfsMetadata = 'api/ipfs/metadata'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const places = 'api/places'
-const paginatedPlaces = (nextPageKey, status) =>
-    `api/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
+const paginatedPlaces = (nextPageKey, status, size = pageSize) =>
+    `api/places?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }`
 const place = id => `api/places/${id}`
