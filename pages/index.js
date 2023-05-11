@@ -114,6 +114,7 @@ export default function Home() {
             <PlacesDialog
                 visible={placesDialog.visible}
                 filterByUser={placesDialog.filterByUser}
+                onUpdate={onUpdatePlaceDone}
                 onClose={() => setPlacesDialog({ visible: false })}
             />
             <PlaceDetailsDialog

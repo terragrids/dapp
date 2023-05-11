@@ -127,8 +127,8 @@ const Map = ({ width, height, refreshCounter, onSelectPlot, onSelectEmptyPlot }:
 
     const prevRefreshCounter = usePrevious(refreshCounter) || 0
     useEffect(() => {
-        const load = async () => {
-            setLoading(true)
+        const load = async (hideLoading = false) => {
+            if (!hideLoading) setLoading(true)
             const projectResponse = await fetch(
                 endpoints.paginatedPlaces(null, `${PlaceStatus.CREATED.key},${PlaceStatus.APPROVED.key}`, 10)
             )
@@ -147,7 +147,8 @@ const Map = ({ width, height, refreshCounter, onSelectPlot, onSelectEmptyPlot }:
             setMapPlots(plots)
             loadPlotImages(plots)
         }
-        if (mapPlots.length === 0 || (refreshCounter > 0 && refreshCounter > prevRefreshCounter)) load()
+        if (mapPlots.length === 0) load()
+        else if (refreshCounter > 0 && refreshCounter > prevRefreshCounter) load(true)
     }, [loadPlotImages, mapPlots.length, prevRefreshCounter, refreshCounter])
 
     useEffect(() => {

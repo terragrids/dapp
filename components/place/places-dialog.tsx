@@ -18,6 +18,7 @@ import PlaceDetails from './place-details'
 type PlacesDialogProps = {
     visible: boolean
     filterByUser: boolean
+    onUpdate: () => void
     onClose: () => void
 }
 
@@ -26,7 +27,7 @@ type Error = {
     description?: string
 }
 
-const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogProps) => {
+const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: PlacesDialogProps) => {
     const user = useContext<User>(UserContext)
     const [places, setPlaces] = useState<Array<Place> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -154,8 +155,18 @@ const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogPr
         else return filterByUser ? strings.myPlaces : strings.allPlaces
     }
 
+    function refresh() {
+        reset()
+        onUpdate()
+    }
+
     return (
-        <ModalDialog visible={visible} title={getTitle()} onClose={close} onScroll={handleScroll}>
+        <ModalDialog
+            visible={visible}
+            title={getTitle()}
+            withActionBar={!!selectedPlace}
+            onClose={close}
+            onScroll={handleScroll}>
             <div className={styles.container}>
                 {(filterByUser || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
@@ -195,7 +206,14 @@ const PlacesDialog = ({ visible, filterByUser = false, onClose }: PlacesDialogPr
                     </div>
                 )}
                 {places && places.length === 0 && <div className={styles.empty}>{strings.noPlacesFound}</div>}
-                {selectedPlace && <PlaceDetails id={selectedPlace} onUpdate={() => reset(true)} />}
+                {selectedPlace && (
+                    <PlaceDetails
+                        id={selectedPlace}
+                        onUpdate={() => reset(true)}
+                        onApprove={refresh}
+                        onArchive={refresh}
+                    />
+                )}
                 {(error || message || isProcessing) && (
                     <ActionBar>
                         {error && <div className={styles.error}>{error.message}</div>}

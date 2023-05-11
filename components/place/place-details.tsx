@@ -25,6 +25,8 @@ import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 type PlaceDetailsProps = {
     id: string
     onUpdate: (place: UpdatedDetails) => void
+    onApprove: () => void
+    onArchive: () => void
 }
 
 type Details = {
@@ -46,7 +48,7 @@ export type UpdatedDetails = {
     type: PlaceType
 }
 
-const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
+const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<Details | null>()
@@ -111,17 +113,18 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         }
     }, [id, stdlib.algosdk])
 
-    const approve = useCallback(async () => {
+    async function approve() {
         setError(null)
         setInProgress(true)
         try {
-            const response = await fetch(endpoints.placeApproval(id), {
+            const response = await fetchOrLogin(endpoints.placeApproval(id), {
                 method: 'PUT',
                 referrerPolicy: 'no-referrer'
             })
 
             if (response.ok) {
-                fetchPlace()
+                await fetchPlace()
+                onApprove()
             } else {
                 throw new Error()
             }
@@ -129,7 +132,25 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
             setError(strings.errorApprovingPlace)
             setInProgress(false)
         }
-    }, [fetchPlace, id])
+    }
+
+    async function archive() {
+        setError(null)
+        setInProgress(true)
+
+        const response = await fetchOrLogin(endpoints.place(id), {
+            method: 'DELETE',
+            referrerPolicy: 'no-referrer'
+        })
+
+        if (response.ok) {
+            await fetchPlace()
+            onArchive()
+        } else {
+            setInProgress(false)
+            setError(strings.errorArchivingPlace)
+        }
+    }
 
     useEffect(() => {
         async function fetchMedia() {
@@ -324,14 +345,12 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                                     onClick={approve}
                                 />
                             )}
-                            {user && user.isAdmin && (
+                            {user && user.isAdmin && place && place.status !== PlaceStatus.ARCHIVED.key && (
                                 <IconButton
                                     icon={Icon.ARCHIVE}
                                     tooltip={strings.archive}
                                     type={IconButtonType.OUTLINE}
-                                    onClick={() => {
-                                        /* */
-                                    }}
+                                    onClick={archive}
                                 />
                             )}
                         </div>
