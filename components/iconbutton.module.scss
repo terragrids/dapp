@@ -4,24 +4,25 @@
 @import 'styles/fonts.scss';
 
 .this {
-    min-height: 44px;
-    border-radius: $button-border-radius;
+    position: relative;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
     border: none;
     cursor: pointer;
-    font-size: 14px;
-    text-transform: uppercase;
-    color: $color-white;
-    transition: opacity 0.2s;
-    font-family: $font-default;
+    color: $color-mine-shaft;
 
     @media (hover: hover) {
         &:hover {
-            opacity: 0.9;
+            .tooltip {
+                opacity: 1;
+            }
         }
     }
 
     i {
-        font-size: 22px;
+        color: $color-white;
+        font-size: 18px;
     }
 }
 
@@ -39,7 +40,6 @@
 .outline {
     background-color: transparent;
     border: 1px solid $color-white;
-    font-size: 13px;
     text-transform: none;
 
     &.disabled {
@@ -49,15 +49,25 @@
     }
 }
 
-.outlineAlert {
-    @extend .outline;
-    color: $color-red;
-    border: 1px solid $color-red;
-}
-
 .outline:hover:not(.disabled),
 .outline:active:not(.disabled) {
     background-color: $color-white;
-    color: $color-abbey;
-    opacity: 1;
+    i {
+        color: $color-abbey;
+    }
+
+    .tooltip {
+        transition-delay: 0.3s;
+    }
+}
+
+.tooltip {
+    opacity: 0;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    padding: 5px 10px;
+    font-family: $font-default;
+    border-radius: $border-radius;
+    background-color: $color-white;
 }

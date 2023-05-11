@@ -20,6 +20,7 @@ import { ONE_SECOND } from 'utils/constants'
 import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
+import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 
 type PlaceDetailsProps = {
     id: string
@@ -110,7 +111,7 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
         }
     }, [id, stdlib.algosdk])
 
-    const approvePlace = useCallback(async () => {
+    const approve = useCallback(async () => {
         setError(null)
         setInProgress(true)
         try {
@@ -309,18 +310,28 @@ const PlaceDetails = ({ id, onUpdate }: PlaceDetailsProps) => {
                     {error && <div className={styles.error}>{error}</div>}
                     {!editing && !inProgress && (
                         <div className={styles.buttonContainer}>
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.edit}
+                            <IconButton
+                                icon={Icon.EDIT}
+                                tooltip={strings.edit}
+                                type={IconButtonType.OUTLINE}
                                 onClick={edit}
                             />
                             {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
-                                <Button
-                                    className={styles.button}
-                                    type={ButtonType.OUTLINE}
-                                    label={strings.approve}
-                                    onClick={approvePlace}
+                                <IconButton
+                                    icon={Icon.CHECK}
+                                    tooltip={strings.approve}
+                                    type={IconButtonType.OUTLINE}
+                                    onClick={approve}
+                                />
+                            )}
+                            {user && user.isAdmin && (
+                                <IconButton
+                                    icon={Icon.ARCHIVE}
+                                    tooltip={strings.archive}
+                                    type={IconButtonType.OUTLINE}
+                                    onClick={() => {
+                                        /* */
+                                    }}
                                 />
                             )}
                         </div>

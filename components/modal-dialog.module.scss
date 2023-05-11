@@ -24,7 +24,6 @@
     max-height: 85vh;
     background-color: $color-ebony-clay;
     border-radius: $dialog-border-radius;
-    overflow: hidden;
 
     @media (max-width: $screen-small) {
         max-width: none;
@@ -38,9 +37,12 @@
     }
 }
 
+.withActionBar {
+    margin-bottom: $action-bar-height;
+}
+
 .content {
     padding: 0 20px;
-    margin-bottom: 10px;
     max-height: 85vh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -64,6 +66,10 @@
     small {
         display: block;
         text-transform: none;
+    }
+
+    @media (max-width: $screen-small) {
+        padding: 10px 15px;
     }
 }
 

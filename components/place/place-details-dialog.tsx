@@ -59,6 +59,7 @@ const PlaceDetailsDialog = ({ visible, id, name, onClose, onUpdate }: PlaceDetai
         <ModalDialog
             visible={visible}
             title={title}
+            withActionBar={true}
             onArchive={user && user.isAdmin ? onArchive : null}
             onClose={onClose}>
             <div className={styles.container}>

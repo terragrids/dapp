@@ -15,6 +15,7 @@ export default function ModalDialog({
     error = '',
     button1Label = '',
     button1Loading = false,
+    withActionBar = false,
     onClose,
     onArchive,
     onDelete,
@@ -60,7 +61,9 @@ export default function ModalDialog({
                         )}
                     </header>
                 )}
-                <section className={styles.content} onScroll={onScroll}>
+                <section
+                    className={`${styles.content} ${withActionBar ? styles.withActionBar : ''}`}
+                    onScroll={onScroll}>
                     {children}
                 </section>
                 {withFooter && (

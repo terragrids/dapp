@@ -4,7 +4,6 @@
 
 .container {
     position: relative;
-    padding-bottom: 80px;
 
     img {
         padding: 10px;
@@ -33,6 +32,10 @@
     flex-direction: column;
     width: 100%;
     margin-bottom: 20px;
+
+    @media (max-width: $screen-small) {
+        padding: 0 10px;
+    }
 }
 
 .content {
@@ -55,6 +58,7 @@
 }
 
 .buttonContainer {
+    display: flex;
     text-align: center;
     & > * {
         margin: 2px 5px;
