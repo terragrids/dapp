@@ -252,8 +252,11 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
             } else {
                 await fetchPlace()
                 setDone(true)
-                onUpdateName(updatedPlace.name)
-                setTimeout(() => setUiStatus(UiStatus.VIEW), ONE_SECOND)
+                setTimeout(() => {
+                    setUiStatus(UiStatus.VIEW)
+                    setDone(false)
+                    onUpdateName(updatedPlace.name)
+                }, ONE_SECOND)
             }
         } catch (e) {
             setError(strings.errorUpdatingPlace)
@@ -340,6 +343,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                         </div>
                     </>
                 )}
+                {place && uiStatus === UiStatus.ADD_TRACKER && <div>{strings.addTracker}</div>}
             </div>
             {canEdit() && (
                 <ActionBar>
@@ -356,7 +360,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 icon={Icon.ADD}
                                 tooltip={strings.addTracker}
                                 type={IconButtonType.OUTLINE}
-                                onClick={addTracker}
+                                onClick={() => setUiStatus(UiStatus.ADD_TRACKER)}
                             />
                             {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
                                 <IconButton
@@ -378,15 +382,45 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                     )}
                     {uiStatus === UiStatus.VIEW && inProgress && <LoadingSpinner />}
                     {uiStatus === UiStatus.EDIT && (
-                        <Button
-                            className={styles.button}
-                            type={ButtonType.OUTLINE}
-                            label={strings.update}
-                            disabled={!isUpdateValid()}
-                            loading={isUpdateInProgress()}
-                            checked={done}
-                            onClick={update}
-                        />
+                        <div className={styles.buttonContainer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.update}
+                                disabled={!isUpdateValid()}
+                                loading={isUpdateInProgress()}
+                                checked={done}
+                                onClick={update}
+                            />
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.cancel}
+                                disabled={isUpdateInProgress()}
+                                checked={done}
+                                onClick={() => setUiStatus(UiStatus.VIEW)}
+                            />
+                        </div>
+                    )}
+                    {uiStatus === UiStatus.ADD_TRACKER && (
+                        <div className={styles.buttonContainer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.addTracker}
+                                loading={isUpdateInProgress()}
+                                checked={done}
+                                onClick={addTracker}
+                            />
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.cancel}
+                                disabled={isUpdateInProgress()}
+                                checked={done}
+                                onClick={() => setUiStatus(UiStatus.VIEW)}
+                            />
+                        </div>
                     )}
                 </ActionBar>
             )}

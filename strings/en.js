@@ -19,6 +19,7 @@ const enStrings = {
     basePrice: 'Base Price ($ALGO)',
     buy: 'Buy',
     buyFor: 'Buy for',
+    cancel: 'Cancel',
     capacity: 'Capacity',
     change: 'Change',
     close: 'Close',
