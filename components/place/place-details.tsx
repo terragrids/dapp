@@ -49,13 +49,19 @@ export type UpdatedDetails = {
     type: PlaceType
 }
 
+enum UiStatus {
+    VIEW,
+    EDIT,
+    ADD_TRACKER
+}
+
 const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<Details | null>()
     const [updatedPlace, setUpdatedPlace] = useState<UpdatedDetails>({} as UpdatedDetails)
     const [error, setError] = useState<string | null>(null)
-    const [editing, setEditing] = useState<boolean>(false)
+    const [uiStatus, setUiStatus] = useState<UiStatus>(UiStatus.VIEW)
     const [inProgress, setInProgress] = useState<boolean>(false)
     const [done, setDone] = useState<boolean>(false)
     const { fetchOrLogin } = useFetchOrLogin()
@@ -168,7 +174,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
             }
         }
 
-        setEditing(false)
+        setUiStatus(UiStatus.VIEW)
         fetchMedia()
     }, [fetchPlace])
 
@@ -186,7 +192,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         })
 
         setError(null)
-        setEditing(true)
+        setUiStatus(UiStatus.EDIT)
         setDone(false)
     }
 
@@ -219,7 +225,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         return inProgress && error === null
     }
 
-    async function submit() {
+    async function update() {
         setError(null)
         setInProgress(true)
 
@@ -247,7 +253,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                 await fetchPlace()
                 setDone(true)
                 onUpdateName(updatedPlace.name)
-                setTimeout(() => setEditing(false), ONE_SECOND)
+                setTimeout(() => setUiStatus(UiStatus.VIEW), ONE_SECOND)
             }
         } catch (e) {
             setError(strings.errorUpdatingPlace)
@@ -263,7 +269,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         <>
             <div className={styles.container}>
                 {!place && !error && <LoadingSpinner />}
-                {place && !editing && (
+                {place && uiStatus === UiStatus.VIEW && (
                     <>
                         <div className={`${styles.section} ${styles.image}`}>
                             <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
@@ -302,7 +308,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                         )}
                     </>
                 )}
-                {place && editing && (
+                {place && uiStatus === UiStatus.EDIT && (
                     <>
                         <div className={styles.section}>
                             <InputField initialValue={place.name} label={strings.name} onChange={setName} />
@@ -338,7 +344,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
             {canEdit() && (
                 <ActionBar>
                     {error && <div className={styles.error}>{error}</div>}
-                    {!editing && !inProgress && (
+                    {uiStatus === UiStatus.VIEW && !inProgress && (
                         <div className={styles.buttonContainer}>
                             <IconButton
                                 icon={Icon.EDIT}
@@ -370,8 +376,8 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             )}
                         </div>
                     )}
-                    {!editing && inProgress && <LoadingSpinner />}
-                    {editing && (
+                    {uiStatus === UiStatus.VIEW && inProgress && <LoadingSpinner />}
+                    {uiStatus === UiStatus.EDIT && (
                         <Button
                             className={styles.button}
                             type={ButtonType.OUTLINE}
@@ -379,7 +385,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             disabled={!isUpdateValid()}
                             loading={isUpdateInProgress()}
                             checked={done}
-                            onClick={submit}
+                            onClick={update}
                         />
                     )}
                 </ActionBar>
