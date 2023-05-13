@@ -24,7 +24,8 @@ import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 
 type PlaceDetailsProps = {
     id: string
-    onUpdate: (place: UpdatedDetails) => void
+    onFetchName: (name: string) => void
+    onUpdateName: (name: string) => void
     onApprove: () => void
     onArchive: () => void
 }
@@ -48,7 +49,7 @@ export type UpdatedDetails = {
     type: PlaceType
 }
 
-const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps) => {
+const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<Details | null>()
@@ -71,6 +72,8 @@ const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps)
             const { id, name, reserve, created, userId, offChainImageUrl, status, positionX, positionY } =
                 await response.json()
 
+            let placeName = name
+
             setPlace(current => ({
                 ...(current as Details),
                 id,
@@ -91,6 +94,7 @@ const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps)
 
                 if (metadataResponse.ok) {
                     const { name, description, properties } = await metadataResponse.json()
+                    placeName = name
                     setPlace(
                         current =>
                             ({
@@ -106,12 +110,13 @@ const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps)
                     setPlace(current => ({ ...current, type: PlaceType.TRADITIONAL_HOUSE } as Details))
                 }
 
+                onFetchName(placeName)
                 setInProgress(false)
             } catch (e) {}
         } else {
             setError(strings.errorFetchingPlace)
         }
-    }, [id, stdlib.algosdk])
+    }, [id, onFetchName, stdlib.algosdk])
 
     async function approve() {
         setError(null)
@@ -241,7 +246,7 @@ const PlaceDetails = ({ id, onUpdate, onApprove, onArchive }: PlaceDetailsProps)
             } else {
                 await fetchPlace()
                 setDone(true)
-                onUpdate(updatedPlace)
+                onUpdateName(updatedPlace.name)
                 setTimeout(() => setEditing(false), ONE_SECOND)
             }
         } catch (e) {

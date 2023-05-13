@@ -209,7 +209,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
                 {selectedPlace && (
                     <PlaceDetails
                         id={selectedPlace}
-                        onUpdate={() => reset(true)}
+                        onUpdateName={() => reset(true)}
                         onApprove={refresh}
                         onArchive={refresh}
                     />
