@@ -255,6 +255,10 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
+    async function addTracker() {
+        // TODO
+    }
+
     return (
         <>
             <div className={styles.container}>
@@ -341,6 +345,12 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 tooltip={strings.edit}
                                 type={IconButtonType.OUTLINE}
                                 onClick={edit}
+                            />
+                            <IconButton
+                                icon={Icon.ADD}
+                                tooltip={strings.addTracker}
+                                type={IconButtonType.OUTLINE}
+                                onClick={addTracker}
                             />
                             {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
                                 <IconButton

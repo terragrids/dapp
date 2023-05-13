@@ -3,6 +3,7 @@ import LocalizedStrings from 'react-localization'
 const enStrings = {
     account: 'Account',
     activeTerracells: 'Active terracells',
+    addTracker: 'Add tracker',
     algoSigner: 'AlgoSigner',
     allPlaces: 'All Places',
     approvalStatus: 'Approval status',

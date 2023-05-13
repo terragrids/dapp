@@ -8,6 +8,7 @@ export enum IconButtonType {
 export enum Icon {
     CHECK = 'icon-check',
     EDIT = 'icon-pencil',
+    ADD = 'icon-plus',
     ARCHIVE = 'icon-archive'
 }
 

@@ -59,6 +59,8 @@
 
 .buttonContainer {
     display: flex;
+    flex-flow: wrap;
+    justify-content: center;
     text-align: center;
     & > * {
         margin: 2px 5px;
