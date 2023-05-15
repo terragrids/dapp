@@ -21,6 +21,7 @@ import { getHashFromIpfsUrl } from 'utils/string-utils.js'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
+import { Tracker, TrackerType } from 'types/tracker'
 
 type PlaceDetailsProps = {
     id: string
@@ -55,10 +56,16 @@ enum UiStatus {
     ADD_TRACKER
 }
 
+const defaultTracker = {
+    name: '',
+    type: TrackerType.list()[0]
+} as Tracker
+
 const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<Details | null>()
+    const [newTracker, setNewTracker] = useState<Tracker>(defaultTracker)
     const [updatedPlace, setUpdatedPlace] = useState<UpdatedDetails>({} as UpdatedDetails)
     const [error, setError] = useState<string | null>(null)
     const [uiStatus, setUiStatus] = useState<UiStatus>(UiStatus.VIEW)
@@ -67,6 +74,8 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
     const { fetchOrLogin } = useFetchOrLogin()
     const { pinFileToIpfs } = useFilePinner()
     const placeTypes = useRef<Array<PlaceType>>([])
+    const trackerTypes = useRef<Array<TrackerType>>([])
+    const placeFetched = useRef(false)
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -165,17 +174,31 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
 
     useEffect(() => {
         async function fetchMedia() {
-            const response = await fetch(endpoints.media('place', 1))
-            if (response.ok) {
-                const { media } = await response.json()
-                const types = PlaceType.newPlaceTypesFromMediaItems(media)
-                placeTypes.current = types
-                fetchPlace()
+            const [responsePlace, responseTracker] = await Promise.all([
+                fetch(endpoints.media('place', 1)),
+                fetch(endpoints.media('tracker', 1))
+            ])
+
+            if (!responsePlace.ok || !responseTracker.ok) {
+                setError(strings.errorFetchingPlace)
+                return
             }
+
+            const { media: placeMedia } = await responsePlace.json()
+            placeTypes.current = PlaceType.newPlaceTypesFromMediaItems(placeMedia)
+            const { media: trackerMedia } = await responseTracker.json()
+            trackerTypes.current = TrackerType.newTrackerTypesFromMediaItems(trackerMedia)
         }
 
         setUiStatus(UiStatus.VIEW)
         fetchMedia()
+    }, [])
+
+    useEffect(() => {
+        if (!placeFetched.current) {
+            placeFetched.current = true
+            fetchPlace()
+        }
     }, [fetchPlace])
 
     function canEdit() {
@@ -264,6 +287,16 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
+    function setNewTrackerType(mediaId: string) {
+        setNewTracker(
+            tracker =>
+                ({
+                    ...tracker,
+                    type: trackerTypes.current.find(type => type.mediaId === mediaId) || TrackerType.ELECTRICITY_METER
+                } as Tracker)
+        )
+    }
+
     async function addTracker() {
         // TODO
     }
@@ -343,7 +376,27 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                         </div>
                     </>
                 )}
-                {place && uiStatus === UiStatus.ADD_TRACKER && <div>{strings.addTracker}</div>}
+                {place && uiStatus === UiStatus.ADD_TRACKER && (
+                    <>
+                        <div className={styles.section}>
+                            <InputField label={strings.giveMemorableTrackerName} onChange={setName} />
+                        </div>
+                        <div className={styles.section}>
+                            <DropDownSelector
+                                label={strings.whatTypeOfTracker}
+                                options={trackerTypes.current.map(type => ({ key: type.mediaId, value: type.name }))}
+                                defaultValue={trackerTypes.current[0].mediaId}
+                                onSelected={setNewTrackerType}
+                            />
+                        </div>
+                        <div className={`${styles.section} ${styles.image} ${styles.trackerImage}`}>
+                            <img
+                                src={terragridsImageUrl(newTracker.type.mediaId || trackerTypes.current[0].mediaId)}
+                                alt={'image'}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
             {canEdit() && (
                 <ActionBar>
