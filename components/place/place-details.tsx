@@ -287,6 +287,10 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
+    function setNewTrackerName(name: string) {
+        setNewTracker(tracker => ({ ...tracker, name } as Tracker))
+    }
+
     function setNewTrackerType(mediaId: string) {
         setNewTracker(
             tracker =>
@@ -295,6 +299,10 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                     type: trackerTypes.current.find(type => type.mediaId === mediaId) || TrackerType.ELECTRICITY_METER
                 } as Tracker)
         )
+    }
+
+    function isNewTrackerValid() {
+        return !!newTracker.name
     }
 
     async function addTracker() {
@@ -379,7 +387,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                 {place && uiStatus === UiStatus.ADD_TRACKER && (
                     <>
                         <div className={styles.section}>
-                            <InputField label={strings.giveMemorableTrackerName} onChange={setName} />
+                            <InputField label={strings.giveMemorableTrackerName} onChange={setNewTrackerName} />
                         </div>
                         <div className={styles.section}>
                             <DropDownSelector
@@ -461,6 +469,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 className={styles.button}
                                 type={ButtonType.OUTLINE}
                                 label={strings.addTracker}
+                                disabled={!isNewTrackerValid()}
                                 loading={isUpdateInProgress()}
                                 checked={done}
                                 onClick={addTracker}
