@@ -2,8 +2,10 @@ import { strings } from 'strings/en.js'
 import { MediaItem } from './media.js'
 
 export type Tracker = {
+    id: string
     type: TrackerType
     name: string
+    offChainImageUrl: string
 }
 
 export class TrackerType {

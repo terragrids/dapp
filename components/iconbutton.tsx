@@ -9,6 +9,7 @@ export enum Icon {
     CHECK = 'icon-check',
     EDIT = 'icon-pencil',
     ADD = 'icon-plus',
+    LIST = 'icon-menu',
     ARCHIVE = 'icon-archive'
 }
 

@@ -22,6 +22,7 @@ import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 import { Tracker, TrackerType } from 'types/tracker'
+import TrackerList from 'components/tracker/tracker-list'
 
 type PlaceDetailsProps = {
     id: string
@@ -53,7 +54,8 @@ export type UpdatedDetails = {
 enum UiStatus {
     VIEW,
     EDIT,
-    ADD_TRACKER
+    ADD_TRACKER,
+    TRACKER_LIST
 }
 
 const defaultTracker = {
@@ -357,6 +359,10 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
+    function showTrackerList() {
+        setUiStatus(UiStatus.TRACKER_LIST)
+    }
+
     return (
         <>
             <div className={styles.container}>
@@ -453,6 +459,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                         </div>
                     </>
                 )}
+                {place && uiStatus === UiStatus.TRACKER_LIST && <TrackerList placeId={place.id} />}
             </div>
             {canEdit() && (
                 <ActionBar>
@@ -470,6 +477,12 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 tooltip={strings.addTracker}
                                 type={IconButtonType.OUTLINE}
                                 onClick={showTrackerEditor}
+                            />
+                            <IconButton
+                                icon={Icon.LIST}
+                                tooltip={strings.viewTrackers}
+                                type={IconButtonType.OUTLINE}
+                                onClick={showTrackerList}
                             />
                             {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
                                 <IconButton
@@ -527,6 +540,16 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 type={ButtonType.OUTLINE}
                                 label={strings.cancel}
                                 disabled={isUpdateInProgress()}
+                                onClick={() => setUiStatus(UiStatus.VIEW)}
+                            />
+                        </div>
+                    )}
+                    {uiStatus === UiStatus.TRACKER_LIST && (
+                        <div className={styles.buttonContainer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.back}
                                 onClick={() => setUiStatus(UiStatus.VIEW)}
                             />
                         </div>
