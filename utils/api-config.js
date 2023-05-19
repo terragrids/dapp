@@ -45,6 +45,7 @@ const ipfsMetadata = 'api/ipfs/metadata'
 const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const places = 'api/places'
+const trackers = 'api/trackers'
 const paginatedPlaces = (nextPageKey, status, size = pageSize) =>
     `api/places?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
@@ -79,6 +80,7 @@ export const endpoints = {
     ipfsMetadata,
     solarPowerPlant,
     places,
+    trackers,
     paginatedPlaces,
     place,
     placeApproval,

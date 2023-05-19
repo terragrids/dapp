@@ -188,6 +188,10 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
             placeTypes.current = PlaceType.newPlaceTypesFromMediaItems(placeMedia)
             const { media: trackerMedia } = await responseTracker.json()
             trackerTypes.current = TrackerType.newTrackerTypesFromMediaItems(trackerMedia)
+
+            setNewTrackerType(
+                trackerTypes.current.find(t => t.code === TrackerType.ELECTRICITY_METER.code)?.mediaId || ''
+            )
         }
 
         setUiStatus(UiStatus.VIEW)
@@ -287,26 +291,70 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
+    function showTrackerEditor() {
+        setDone(false)
+        setError(null)
+        setInProgress(false)
+        setUiStatus(UiStatus.ADD_TRACKER)
+    }
+
     function setNewTrackerName(name: string) {
         setNewTracker(tracker => ({ ...tracker, name } as Tracker))
     }
 
     function setNewTrackerType(mediaId: string) {
-        setNewTracker(
-            tracker =>
-                ({
-                    ...tracker,
-                    type: trackerTypes.current.find(type => type.mediaId === mediaId) || TrackerType.ELECTRICITY_METER
-                } as Tracker)
-        )
+        const type = trackerTypes.current.find(type => type.mediaId === mediaId) || TrackerType.ELECTRICITY_METER
+        setNewTracker(tracker => ({ ...tracker, type } as Tracker))
     }
 
     function isNewTrackerValid() {
         return !!newTracker.name
     }
 
+    function onTrackerCreated() {
+        setUiStatus(UiStatus.VIEW)
+    }
+
     async function addTracker() {
-        // TODO
+        setInProgress(true)
+        setError(null)
+        const description = newTracker.type.name
+
+        try {
+            const { name, ipfsMetadataUrl, offChainImageUrl } = await pinFileToIpfs({
+                id: newTracker.type.mediaId,
+                name: newTracker.name,
+                description,
+                properties: { type: newTracker.type }
+            })
+
+            const response = await fetchOrLogin(endpoints.trackers, {
+                method: 'POST',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify({
+                    placeId: id,
+                    name,
+                    type: newTracker.type.code,
+                    description,
+                    cid: getHashFromIpfsUrl(ipfsMetadataUrl),
+                    offChainImageUrl
+                })
+            })
+
+            if (!response.ok) {
+                setError(strings.errorCreatingTracker)
+            } else {
+                if (user.walletAccount) {
+                    const { tokenId } = await response.json()
+                    await user.walletAccount.tokenAccept(tokenId)
+                }
+                setDone(true)
+                setTimeout(onTrackerCreated, ONE_SECOND)
+            }
+        } catch (e) {
+            setError(strings.errorCreatingTracker)
+        }
+        setInProgress(false)
     }
 
     return (
@@ -421,7 +469,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 icon={Icon.ADD}
                                 tooltip={strings.addTracker}
                                 type={IconButtonType.OUTLINE}
-                                onClick={() => setUiStatus(UiStatus.ADD_TRACKER)}
+                                onClick={showTrackerEditor}
                             />
                             {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
                                 <IconButton
@@ -479,7 +527,6 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 type={ButtonType.OUTLINE}
                                 label={strings.cancel}
                                 disabled={isUpdateInProgress()}
-                                checked={done}
                                 onClick={() => setUiStatus(UiStatus.VIEW)}
                             />
                         </div>

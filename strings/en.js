@@ -52,6 +52,7 @@ const enStrings = {
     errorCreatingNftSaleContract:
         'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
     errorCreatingPlace: 'Something went wrong when creating your place. Please try again.',
+    errorCreatingTracker: 'Something went wrong when creating your tracker. Please try again.',
     errorCreatingTerracellSaleContract:
         'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
     errorDeletingNftSaleContract:
@@ -80,7 +81,7 @@ const enStrings = {
     failedDeletingPlace: 'Failed deleting this place',
     gasMeter: 'Gas meter',
     giveMemorablePlaceName: 'Give your place a memorable name',
-    giveMemorableTrackerName: 'Give your tracker a nickname (e.g. my fancy proton meter)',
+    giveMemorableTrackerName: 'Give your tracker a nickname',
     helloExplorer: 'Hello, Terragrids explorer!',
     holder: 'Holder',
     howToSeePlaceOnMap: 'How your place will show on the map',
