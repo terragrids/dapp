@@ -377,7 +377,11 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                                 <Label text={strings.trackers} />
                                 <div className={`${Icon.CHART} ${styles.icon}`} />
                             </div>
-                            <TrackerList placeId={place.id} onAdd={showTrackerEditor} />
+                            <TrackerList
+                                placeId={place.id}
+                                canAdd={user && (user.isAdmin || user.id === place.userId)}
+                                onAdd={showTrackerEditor}
+                            />
                         </div>
                     </>
                 )}
@@ -477,30 +481,8 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
             <ActionBar>
                 {error && <div className={styles.error}>{error}</div>}
                 <div className={styles.buttonContainer}>
-                    {!inProgress && (
+                    {!inProgress && place && (
                         <>
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                place &&
-                                (user.isAdmin || user.id === place.userId) && (
-                                    <IconButton
-                                        icon={Icon.EDIT}
-                                        tooltip={strings.edit}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={edit}
-                                    />
-                                )}
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                place &&
-                                (user.isAdmin || user.id === place.userId) && (
-                                    <IconButton
-                                        icon={Icon.ADD}
-                                        tooltip={strings.addTracker}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={showTrackerEditor}
-                                    />
-                                )}
                             {uiStatus === UiStatus.VIEW && (
                                 <IconButton
                                     icon={Icon.DOCUMENT}
@@ -519,8 +501,27 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             )}
                             {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
                                 user &&
+                                (user.isAdmin || user.id === place.userId) && (
+                                    <IconButton
+                                        icon={Icon.EDIT}
+                                        tooltip={strings.edit}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={edit}
+                                    />
+                                )}
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
+                                (user.isAdmin || user.id === place.userId) && (
+                                    <IconButton
+                                        icon={Icon.ADD}
+                                        tooltip={strings.addTracker}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={showTrackerEditor}
+                                    />
+                                )}
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
                                 user.isAdmin &&
-                                place &&
                                 place.status !== PlaceStatus.APPROVED.key && (
                                     <IconButton
                                         icon={Icon.CHECK}
@@ -532,7 +533,6 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
                                 user &&
                                 user.isAdmin &&
-                                place &&
                                 place.status !== PlaceStatus.ARCHIVED.key && (
                                     <IconButton
                                         icon={Icon.ARCHIVE}
