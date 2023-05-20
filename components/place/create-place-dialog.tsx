@@ -70,6 +70,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                 const { media } = await response.json()
                 const types = PlaceType.newPlaceTypesFromMediaItems(media)
                 setPlaceTypes(types)
+                setPlace(place => ({ ...place, type: types[0] }))
             }
         }
 
@@ -173,6 +174,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                             />
                         </div>
                         <ActionBar>
+                            {error && <div className={styles.error}>{error}</div>}
                             <Button
                                 className={styles.button}
                                 type={ButtonType.OUTLINE}
@@ -185,9 +187,6 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
                         </ActionBar>
                     </>
                 )}
-                <div className={styles.section}>
-                    <div className={styles.error}>{error}</div>
-                </div>
             </div>
         </ModalDialog>
     )
