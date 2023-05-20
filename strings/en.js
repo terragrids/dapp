@@ -5,6 +5,7 @@ const enStrings = {
     activeTerracells: 'Active terracells',
     addTracker: 'Add tracker',
     back: 'Back',
+    viewDetails: 'View details',
     viewTrackers: 'View trackers',
     algoSigner: 'AlgoSigner',
     allPlaces: 'All Places',

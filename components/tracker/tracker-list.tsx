@@ -8,13 +8,13 @@ import Button, { ButtonType } from 'components/button'
 import { Tracker } from 'types/tracker.js'
 import TrackerListItem from './tracker-list-item'
 import styles from './tracker-list.module.scss'
-import { Label } from 'components/label'
 
 type TrackerListProps = {
     placeId: string
+    onAdd: () => void
 }
 
-const TrackerList = ({ placeId }: TrackerListProps) => {
+const TrackerList = ({ placeId, onAdd }: TrackerListProps) => {
     const user = useContext<User>(UserContext)
     const [trackers, setTrackers] = useState<Array<Tracker> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -56,7 +56,6 @@ const TrackerList = ({ placeId }: TrackerListProps) => {
 
     return (
         <div className={styles.container}>
-            <Label text={strings.trackers} />
             {!trackers && !error && (
                 <div className={styles.loading}>
                     <LoadingSpinner />
@@ -83,7 +82,17 @@ const TrackerList = ({ placeId }: TrackerListProps) => {
                     )}
                 </div>
             )}
-            {trackers && trackers.length === 0 && <div className={styles.empty}>{strings.noTrackersFound}</div>}
+            {trackers && trackers.length === 0 && (
+                <div className={styles.empty}>
+                    <div>{strings.noTrackersFound}</div>
+                    <Button
+                        className={styles.button}
+                        type={ButtonType.OUTLINE}
+                        label={strings.addTracker}
+                        onClick={onAdd}
+                    />
+                </div>
+            )}
         </div>
     )
 }

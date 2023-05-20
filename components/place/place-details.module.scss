@@ -74,3 +74,12 @@
 .button {
     min-width: 150px;
 }
+
+.iconLabel {
+    display: flex;
+    align-items: baseline;
+
+    .icon {
+        margin-left: 5px;
+    }
+}

@@ -21,3 +21,13 @@
     min-width: 600px;
     text-align: center;
 }
+
+.empty {
+    & > * {
+        margin-bottom: 15px;
+    }
+}
+
+.button {
+    min-width: 150px;
+}

@@ -55,7 +55,7 @@ enum UiStatus {
     VIEW,
     EDIT,
     ADD_TRACKER,
-    TRACKER_LIST
+    DETAILS
 }
 
 const defaultTracker = {
@@ -207,10 +207,6 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         }
     }, [fetchPlace])
 
-    function canEdit() {
-        return user && place && (user.isAdmin || user.id === place.userId) ? true : false
-    }
-
     async function edit() {
         if (!place) return
 
@@ -359,8 +355,12 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
         setInProgress(false)
     }
 
-    function showTrackerList() {
-        setUiStatus(UiStatus.TRACKER_LIST)
+    function showDetails() {
+        setUiStatus(UiStatus.DETAILS)
+    }
+
+    function showTrackers() {
+        setUiStatus(UiStatus.VIEW)
     }
 
     return (
@@ -373,37 +373,12 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
                         </div>
                         <div className={styles.section}>
-                            <Label text={strings.assetID} />
-                            <div className={styles.content}>
-                                <AssetLink assetId={place.id} />
+                            <div className={styles.iconLabel}>
+                                <Label text={strings.trackers} />
+                                <div className={`${Icon.CHART} ${styles.icon}`} />
                             </div>
+                            <TrackerList placeId={place.id} onAdd={showTrackerEditor} />
                         </div>
-                        <div className={styles.section}>
-                            <Label text={strings.created} />
-                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
-                        </div>
-                        {place.type && ( // in case ipfs request fails
-                            <div className={styles.section}>
-                                <Label text={strings.type} />
-                                <div className={styles.content}>{place.type.name}</div>
-                            </div>
-                        )}
-                        <div className={styles.section}>
-                            <Label text={strings.mapPosition} />
-                            <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
-                        </div>
-                        {place.description && ( // in case ipfs request fails
-                            <div className={styles.section}>
-                                <Label text={strings.description} />
-                                <div className={styles.content}>
-                                    <ParagraphMaker text={place.description} />
-                                </div>
-                            </div>
-                        )}
                     </>
                 )}
                 {place && uiStatus === UiStatus.EDIT && (
@@ -459,103 +434,159 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                         </div>
                     </>
                 )}
-                {place && uiStatus === UiStatus.TRACKER_LIST && <TrackerList placeId={place.id} />}
+                {place && uiStatus === UiStatus.DETAILS && (
+                    <>
+                        <div className={`${styles.section} ${styles.image}`}>
+                            <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.assetID} />
+                            <div className={styles.content}>
+                                <AssetLink assetId={place.id} />
+                            </div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.created} />
+                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
+                        </div>
+                        {place.type && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.type} />
+                                <div className={styles.content}>{place.type.name}</div>
+                            </div>
+                        )}
+                        <div className={styles.section}>
+                            <Label text={strings.mapPosition} />
+                            <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.approvalStatus} />
+                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
+                        </div>
+                        {place.description && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.description} />
+                                <div className={styles.content}>
+                                    <ParagraphMaker text={place.description} />
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
-            {canEdit() && (
-                <ActionBar>
-                    {error && <div className={styles.error}>{error}</div>}
-                    {uiStatus === UiStatus.VIEW && !inProgress && (
-                        <div className={styles.buttonContainer}>
-                            <IconButton
-                                icon={Icon.EDIT}
-                                tooltip={strings.edit}
-                                type={IconButtonType.OUTLINE}
-                                onClick={edit}
-                            />
-                            <IconButton
-                                icon={Icon.ADD}
-                                tooltip={strings.addTracker}
-                                type={IconButtonType.OUTLINE}
-                                onClick={showTrackerEditor}
-                            />
-                            <IconButton
-                                icon={Icon.LIST}
-                                tooltip={strings.viewTrackers}
-                                type={IconButtonType.OUTLINE}
-                                onClick={showTrackerList}
-                            />
-                            {user && user.isAdmin && place && place.status !== PlaceStatus.APPROVED.key && (
+            <ActionBar>
+                {error && <div className={styles.error}>{error}</div>}
+                <div className={styles.buttonContainer}>
+                    {!inProgress && (
+                        <>
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
+                                place &&
+                                (user.isAdmin || user.id === place.userId) && (
+                                    <IconButton
+                                        icon={Icon.EDIT}
+                                        tooltip={strings.edit}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={edit}
+                                    />
+                                )}
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
+                                place &&
+                                (user.isAdmin || user.id === place.userId) && (
+                                    <IconButton
+                                        icon={Icon.ADD}
+                                        tooltip={strings.addTracker}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={showTrackerEditor}
+                                    />
+                                )}
+                            {uiStatus === UiStatus.VIEW && (
                                 <IconButton
-                                    icon={Icon.CHECK}
-                                    tooltip={strings.approve}
+                                    icon={Icon.DOCUMENT}
+                                    tooltip={strings.viewDetails}
                                     type={IconButtonType.OUTLINE}
-                                    onClick={approve}
+                                    onClick={showDetails}
                                 />
                             )}
-                            {user && user.isAdmin && place && place.status !== PlaceStatus.ARCHIVED.key && (
+                            {uiStatus === UiStatus.DETAILS && (
                                 <IconButton
-                                    icon={Icon.ARCHIVE}
-                                    tooltip={strings.archive}
+                                    icon={Icon.CHART}
+                                    tooltip={strings.viewTrackers}
                                     type={IconButtonType.OUTLINE}
-                                    onClick={archive}
+                                    onClick={showTrackers}
                                 />
                             )}
-                        </div>
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
+                                user.isAdmin &&
+                                place &&
+                                place.status !== PlaceStatus.APPROVED.key && (
+                                    <IconButton
+                                        icon={Icon.CHECK}
+                                        tooltip={strings.approve}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={approve}
+                                    />
+                                )}
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
+                                user &&
+                                user.isAdmin &&
+                                place &&
+                                place.status !== PlaceStatus.ARCHIVED.key && (
+                                    <IconButton
+                                        icon={Icon.ARCHIVE}
+                                        tooltip={strings.archive}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={archive}
+                                    />
+                                )}
+                            {uiStatus === UiStatus.EDIT && (
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.update}
+                                        disabled={!isUpdateValid()}
+                                        loading={isUpdateInProgress()}
+                                        checked={done}
+                                        onClick={update}
+                                    />
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.cancel}
+                                        disabled={isUpdateInProgress()}
+                                        checked={done}
+                                        onClick={() => setUiStatus(UiStatus.VIEW)}
+                                    />
+                                </div>
+                            )}
+                            {uiStatus === UiStatus.ADD_TRACKER && (
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.addTracker}
+                                        disabled={!isNewTrackerValid()}
+                                        loading={isUpdateInProgress()}
+                                        checked={done}
+                                        onClick={addTracker}
+                                    />
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.cancel}
+                                        disabled={isUpdateInProgress()}
+                                        onClick={() => setUiStatus(UiStatus.VIEW)}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
-                    {uiStatus === UiStatus.VIEW && inProgress && <LoadingSpinner />}
-                    {uiStatus === UiStatus.EDIT && (
-                        <div className={styles.buttonContainer}>
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.update}
-                                disabled={!isUpdateValid()}
-                                loading={isUpdateInProgress()}
-                                checked={done}
-                                onClick={update}
-                            />
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.cancel}
-                                disabled={isUpdateInProgress()}
-                                checked={done}
-                                onClick={() => setUiStatus(UiStatus.VIEW)}
-                            />
-                        </div>
-                    )}
-                    {uiStatus === UiStatus.ADD_TRACKER && (
-                        <div className={styles.buttonContainer}>
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.addTracker}
-                                disabled={!isNewTrackerValid()}
-                                loading={isUpdateInProgress()}
-                                checked={done}
-                                onClick={addTracker}
-                            />
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.cancel}
-                                disabled={isUpdateInProgress()}
-                                onClick={() => setUiStatus(UiStatus.VIEW)}
-                            />
-                        </div>
-                    )}
-                    {uiStatus === UiStatus.TRACKER_LIST && (
-                        <div className={styles.buttonContainer}>
-                            <Button
-                                className={styles.button}
-                                type={ButtonType.OUTLINE}
-                                label={strings.back}
-                                onClick={() => setUiStatus(UiStatus.VIEW)}
-                            />
-                        </div>
-                    )}
-                </ActionBar>
-            )}
+                    {inProgress && <LoadingSpinner />}
+                </div>
+            </ActionBar>
         </>
     )
 }
