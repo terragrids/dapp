@@ -91,15 +91,6 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
         if (hasMore) fetchNfts()
     }
 
-    function handleScroll(e: React.UIEvent<HTMLElement>) {
-        const margin = 10
-        const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
-        const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom) {
-            fetchMoreNfts()
-        }
-    }
-
     function setNftSymbol(symbol: string) {
         setSymbol(symbol)
     }
@@ -118,7 +109,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
             visible={visible}
             title={selectedNft ? selectedNft.name : strings.assets}
             onClose={close}
-            onScroll={handleScroll}>
+            onScrolledToBottom={fetchMoreNfts}>
             <>
                 {selectedNft && (
                     <div className={styles.detailContainer}>

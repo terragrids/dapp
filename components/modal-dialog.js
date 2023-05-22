@@ -9,8 +9,17 @@ export default function ModalDialog({
     className,
     withActionBar = false,
     onClose,
-    onScroll
+    onScrolledToBottom
 }) {
+    function handleScroll(e) {
+        const margin = 10
+        const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
+        const bottom = scroll <= e.currentTarget.clientHeight
+        if (bottom && onScrolledToBottom) {
+            onScrolledToBottom()
+        }
+    }
+
     return visible ? (
         <div className={styles.container}>
             <div className={`${styles.dialog} ${className ? className : ''}`}>
@@ -30,7 +39,7 @@ export default function ModalDialog({
                 )}
                 <section
                     className={`${styles.content} ${withActionBar ? styles.withActionBar : ''}`}
-                    onScroll={onScroll}>
+                    onScroll={handleScroll}>
                     {children}
                 </section>
             </div>
@@ -47,5 +56,5 @@ ModalDialog.propTypes = {
     subtitle: PropTypes.string,
     className: PropTypes.string,
     onClose: PropTypes.func,
-    onScroll: PropTypes.func
+    onScrolledToBottom: PropTypes.func
 }

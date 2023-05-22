@@ -128,16 +128,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
 
     function fetchMorePlaces() {
         const hasMore = !!nextPageKey
-        if (hasMore) fetchPlaces()
-    }
-
-    function handleScroll(e: React.UIEvent<HTMLElement>) {
-        const margin = 10
-        const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
-        const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom && !selectedPlace) {
-            fetchMorePlaces()
-        }
+        if (hasMore && !selectedPlace) fetchPlaces()
     }
 
     function close() {
@@ -166,7 +157,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
             title={getTitle()}
             withActionBar={!!selectedPlace}
             onClose={close}
-            onScroll={handleScroll}>
+            onScrolledToBottom={fetchMorePlaces}>
             <div className={styles.container}>
                 {(filterByUser || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
