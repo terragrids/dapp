@@ -9,14 +9,14 @@ export default function ModalDialog({
     className,
     withActionBar = false,
     onClose,
-    onScrolledToBottom
+    onScrollToBottom
 }) {
     function handleScroll(e) {
         const margin = 10
         const scroll = e.currentTarget.scrollHeight - e.currentTarget.scrollTop - margin
         const bottom = scroll <= e.currentTarget.clientHeight
-        if (bottom && onScrolledToBottom) {
-            onScrolledToBottom()
+        if (bottom && onScrollToBottom) {
+            onScrollToBottom()
         }
     }
 
@@ -56,5 +56,5 @@ ModalDialog.propTypes = {
     subtitle: PropTypes.string,
     className: PropTypes.string,
     onClose: PropTypes.func,
-    onScrolledToBottom: PropTypes.func
+    onScrollToBottom: PropTypes.func
 }

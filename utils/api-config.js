@@ -50,7 +50,7 @@ const paginatedPlaces = (nextPageKey, status, size = pageSize) =>
     `api/places?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }`
-const paginatedTrackers = (placeId, status, type, nextPageKey, size = pageSize) =>
+const paginatedTrackers = (placeId, nextPageKey, status, type, size = pageSize) =>
     `api/places/${placeId}/trackers?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }${type ? `&type=${type}` : ''}`

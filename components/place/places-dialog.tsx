@@ -37,6 +37,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
     const [message, setMessage] = useState<string | null>()
     const [selectedPlace, setSelectedPlace] = useState<string | null>()
     const [placeStatus, setPlaceStatus] = useState<string | null>(PlaceStatus.CREATED.key)
+    const [bottomScrollCounter, setBottomScrollCounter] = useState(0)
     const { getAuthHeader } = useAuth()
 
     const fetchPlaces = useCallback(async () => {
@@ -151,13 +152,18 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
         onUpdate()
     }
 
+    function onScrollToBottom() {
+        fetchMorePlaces()
+        setBottomScrollCounter(counter => counter + 1)
+    }
+
     return (
         <ModalDialog
             visible={visible}
             title={getTitle()}
             withActionBar={!!selectedPlace}
             onClose={close}
-            onScrolledToBottom={fetchMorePlaces}>
+            onScrollToBottom={onScrollToBottom}>
             <div className={styles.container}>
                 {(filterByUser || (user && user.isAdmin)) && !selectedPlace && (
                     <DropDownSelector
@@ -200,6 +206,7 @@ const PlacesDialog = ({ visible, filterByUser = false, onUpdate, onClose }: Plac
                 {selectedPlace && (
                     <PlaceDetails
                         id={selectedPlace}
+                        bottomScrollCounter={bottomScrollCounter}
                         onFetchName={() => {
                             //
                         }}

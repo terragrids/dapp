@@ -26,6 +26,7 @@ import TrackerList from 'components/tracker/tracker-list'
 
 type PlaceDetailsProps = {
     id: string
+    bottomScrollCounter: number
     onFetchName: (name: string) => void
     onUpdateName: (name: string) => void
     onApprove: () => void
@@ -63,7 +64,14 @@ const defaultTracker = {
     type: TrackerType.list()[0]
 } as Tracker
 
-const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: PlaceDetailsProps) => {
+const PlaceDetails = ({
+    id,
+    bottomScrollCounter,
+    onFetchName,
+    onUpdateName,
+    onApprove,
+    onArchive
+}: PlaceDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [place, setPlace] = useState<Details | null>()
@@ -379,6 +387,7 @@ const PlaceDetails = ({ id, onFetchName, onUpdateName, onApprove, onArchive }: P
                             </div>
                             <TrackerList
                                 placeId={place.id}
+                                bottomScrollCounter={bottomScrollCounter}
                                 canAdd={user && (user.isAdmin || user.id === place.userId)}
                                 onAdd={showTrackerEditor}
                             />

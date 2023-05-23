@@ -109,7 +109,7 @@ const NftListDialog = ({ visible, onClose }: NftListDialogProps) => {
             visible={visible}
             title={selectedNft ? selectedNft.name : strings.assets}
             onClose={close}
-            onScrolledToBottom={fetchMoreNfts}>
+            onScrollToBottom={fetchMoreNfts}>
             <>
                 {selectedNft && (
                     <div className={styles.detailContainer}>

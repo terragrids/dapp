@@ -13,6 +13,7 @@ type PlaceDetailsDialogProps = {
 
 const PlaceDetailsDialog = ({ visible, id, name, onClose, onUpdate }: PlaceDetailsDialogProps) => {
     const [title, setTitle] = useState(name)
+    const [bottomScrollCounter, setBottomScrollCounter] = useState(0)
 
     function onSetName(name: string) {
         setTitle(name)
@@ -23,15 +24,25 @@ const PlaceDetailsDialog = ({ visible, id, name, onClose, onUpdate }: PlaceDetai
         onUpdate()
     }
 
+    function onScrollToBottom() {
+        setBottomScrollCounter(counter => counter + 1)
+    }
+
     useEffect(() => {
         if (visible) setTitle('')
     }, [visible])
 
     return (
-        <ModalDialog visible={visible} title={title} withActionBar={true} onClose={onClose}>
+        <ModalDialog
+            visible={visible}
+            title={title}
+            withActionBar={true}
+            onClose={onClose}
+            onScrollToBottom={onScrollToBottom}>
             <div className={styles.container}>
                 <PlaceDetails
                     id={id}
+                    bottomScrollCounter={bottomScrollCounter}
                     onFetchName={onSetName}
                     onUpdateName={onUpdateName}
                     onApprove={onUpdate}

@@ -8,14 +8,16 @@ import Button, { ButtonType } from 'components/button'
 import { Tracker } from 'types/tracker.js'
 import TrackerListItem from './tracker-list-item'
 import styles from './tracker-list.module.scss'
+import usePrevious from 'hooks/use-previous.js'
 
 type TrackerListProps = {
     placeId: string
     canAdd: boolean
+    bottomScrollCounter: number
     onAdd: () => void
 }
 
-const TrackerList = ({ placeId, canAdd, onAdd }: TrackerListProps) => {
+const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd }: TrackerListProps) => {
     const user = useContext<User>(UserContext)
     const [trackers, setTrackers] = useState<Array<Tracker> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -27,7 +29,7 @@ const TrackerList = ({ placeId, canAdd, onAdd }: TrackerListProps) => {
         setIsFetching(true)
         setError(null)
 
-        const response = await fetch(endpoints.paginatedTrackers(placeId))
+        const response = await fetch(endpoints.paginatedTrackers(placeId, nextPageKey))
 
         if (response.ok) {
             const jsonResponse = await response.json()
@@ -38,7 +40,12 @@ const TrackerList = ({ placeId, canAdd, onAdd }: TrackerListProps) => {
         }
 
         setIsFetching(false)
-    }, [isFetching, placeId, trackers, user])
+    }, [isFetching, nextPageKey, placeId, trackers, user])
+
+    const fetchMoreTrackers = useCallback(async () => {
+        const hasMore = !!nextPageKey
+        if (hasMore) fetchTrackers()
+    }, [fetchTrackers, nextPageKey])
 
     useEffect(() => {
         if (!trackers && !error) {
@@ -46,10 +53,11 @@ const TrackerList = ({ placeId, canAdd, onAdd }: TrackerListProps) => {
         }
     }, [error, fetchTrackers, trackers])
 
-    function fetchMoreTrackers() {
-        const hasMore = !!nextPageKey
-        if (hasMore) fetchTrackers()
-    }
+    const prevScrollCounter = usePrevious(bottomScrollCounter)
+
+    useEffect(() => {
+        if (prevScrollCounter && bottomScrollCounter > prevScrollCounter) fetchMoreTrackers()
+    }, [bottomScrollCounter, fetchMoreTrackers, prevScrollCounter])
 
     function openTracker() {
         // todo
