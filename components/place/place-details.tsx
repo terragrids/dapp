@@ -55,8 +55,9 @@ export type UpdatedDetails = {
 enum UiStatus {
     VIEW,
     EDIT,
+    DETAILS,
     ADD_TRACKER,
-    DETAILS
+    TRACKER_DETAILS
 }
 
 const defaultTracker = {
@@ -86,6 +87,7 @@ const PlaceDetails = ({
     const placeTypes = useRef<Array<PlaceType>>([])
     const trackerTypes = useRef<Array<TrackerType>>([])
     const placeFetched = useRef(false)
+    const [selectedTracker, setSelectedTracker] = useState<string | null>()
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -371,6 +373,11 @@ const PlaceDetails = ({
         setUiStatus(UiStatus.VIEW)
     }
 
+    function selectTracker(id: string) {
+        setSelectedTracker(id)
+        setUiStatus(UiStatus.TRACKER_DETAILS)
+    }
+
     return (
         <>
             <div className={styles.container}>
@@ -390,6 +397,7 @@ const PlaceDetails = ({
                                 bottomScrollCounter={bottomScrollCounter}
                                 canAdd={user && (user.isAdmin || user.id === place.userId)}
                                 onAdd={showTrackerEditor}
+                                onSelect={selectTracker}
                             />
                         </div>
                     </>
@@ -486,6 +494,7 @@ const PlaceDetails = ({
                         )}
                     </>
                 )}
+                {place && uiStatus === UiStatus.TRACKER_DETAILS && <div>{selectedTracker}</div>}
             </div>
             <ActionBar>
                 {error && <div className={styles.error}>{error}</div>}
@@ -582,6 +591,17 @@ const PlaceDetails = ({
                                         checked={done}
                                         onClick={addTracker}
                                     />
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.cancel}
+                                        disabled={isUpdateInProgress()}
+                                        onClick={() => setUiStatus(UiStatus.VIEW)}
+                                    />
+                                </div>
+                            )}
+                            {uiStatus === UiStatus.TRACKER_DETAILS && (
+                                <div className={styles.buttonContainer}>
                                     <Button
                                         className={styles.button}
                                         type={ButtonType.OUTLINE}

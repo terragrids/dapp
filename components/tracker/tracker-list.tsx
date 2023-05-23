@@ -15,9 +15,10 @@ type TrackerListProps = {
     canAdd: boolean
     bottomScrollCounter: number
     onAdd: () => void
+    onSelect: (id: string) => void
 }
 
-const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd }: TrackerListProps) => {
+const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd, onSelect }: TrackerListProps) => {
     const user = useContext<User>(UserContext)
     const [trackers, setTrackers] = useState<Array<Tracker> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -59,10 +60,6 @@ const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd }: TrackerLis
         if (prevScrollCounter && bottomScrollCounter > prevScrollCounter) fetchMoreTrackers()
     }, [bottomScrollCounter, fetchMoreTrackers, prevScrollCounter])
 
-    function openTracker() {
-        // todo
-    }
-
     return (
         <div className={styles.container}>
             {!trackers && !error && (
@@ -78,7 +75,7 @@ const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd }: TrackerLis
                             id={tracker.id}
                             name={tracker.name}
                             imageUrl={tracker.offChainImageUrl}
-                            onClick={openTracker}
+                            onClick={() => onSelect(tracker.id)}
                         />
                     ))}
                     {isFetching && (
