@@ -13,7 +13,7 @@
     color: $color-mine-shaft;
 
     @media (hover: hover) {
-        &:hover {
+        &:hover:not(.selected) {
             .tooltip {
                 opacity: 1;
             }
@@ -49,8 +49,8 @@
     }
 }
 
-.outline:hover:not(.disabled),
-.outline:active:not(.disabled) {
+.outline:hover:not(.disabled):not(.selected),
+.outline:active:not(.disabled):not(.selected) {
     background-color: $color-white;
     i {
         color: $color-abbey;
@@ -58,6 +58,13 @@
 
     .tooltip {
         transition-delay: 0.3s;
+    }
+}
+
+.selected {
+    background-color: $color-white;
+    i {
+        color: $color-abbey;
     }
 }
 

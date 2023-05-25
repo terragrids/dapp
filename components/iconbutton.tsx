@@ -11,12 +11,14 @@ export enum Icon {
     ADD = 'icon-plus',
     DOCUMENT = 'icon-document',
     CHART = 'icon-chart-growth',
+    LIST = 'icon-list',
     ARCHIVE = 'icon-archive'
 }
 
 type Props = {
     icon: Icon
     tooltip: string
+    selected?: boolean
     type?: IconButtonType
     disabled?: boolean
     className?: string
@@ -26,6 +28,7 @@ type Props = {
 export default function IconButton({
     icon,
     tooltip,
+    selected = false,
     disabled = false,
     className = '',
     onClick,
@@ -41,7 +44,9 @@ export default function IconButton({
     }
     return (
         <button
-            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${typeClass()}`}
+            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${
+                selected ? styles.selected : ''
+            } ${typeClass()}`}
             onClick={onClick}
             disabled={disabled}>
             <i className={icon} />

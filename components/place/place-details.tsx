@@ -57,6 +57,7 @@ enum UiStatus {
     EDIT,
     DETAILS,
     ADD_TRACKER,
+    TRACKER_VIEW,
     TRACKER_DETAILS
 }
 
@@ -375,7 +376,7 @@ const PlaceDetails = ({
 
     function selectTracker(id: string) {
         setSelectedTracker(id)
-        setUiStatus(UiStatus.TRACKER_DETAILS)
+        setUiStatus(UiStatus.TRACKER_VIEW)
     }
 
     return (
@@ -494,71 +495,63 @@ const PlaceDetails = ({
                         )}
                     </>
                 )}
-                {place && uiStatus === UiStatus.TRACKER_DETAILS && <div>{selectedTracker}</div>}
+                {place && uiStatus === UiStatus.TRACKER_VIEW && <div>{selectedTracker}</div>}
             </div>
             <ActionBar>
                 {error && <div className={styles.error}>{error}</div>}
                 <div className={styles.buttonContainer}>
                     {!inProgress && place && (
                         <>
-                            {uiStatus === UiStatus.VIEW && (
-                                <IconButton
-                                    icon={Icon.DOCUMENT}
-                                    tooltip={strings.viewDetails}
-                                    type={IconButtonType.OUTLINE}
-                                    onClick={showDetails}
-                                />
+                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) && (
+                                <>
+                                    <IconButton
+                                        icon={Icon.CHART}
+                                        selected={uiStatus === UiStatus.VIEW}
+                                        tooltip={strings.viewTrackers}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={showTrackers}
+                                    />
+                                    <IconButton
+                                        icon={Icon.DOCUMENT}
+                                        selected={uiStatus === UiStatus.DETAILS}
+                                        tooltip={strings.viewDetails}
+                                        type={IconButtonType.OUTLINE}
+                                        onClick={showDetails}
+                                    />
+                                    {user && (user.isAdmin || user.id === place.userId) && (
+                                        <>
+                                            <IconButton
+                                                icon={Icon.EDIT}
+                                                tooltip={strings.edit}
+                                                type={IconButtonType.OUTLINE}
+                                                onClick={edit}
+                                            />
+                                            <IconButton
+                                                icon={Icon.ADD}
+                                                tooltip={strings.addTracker}
+                                                type={IconButtonType.OUTLINE}
+                                                onClick={showTrackerEditor}
+                                            />
+                                        </>
+                                    )}
+                                    {user && user.isAdmin && place.status !== PlaceStatus.APPROVED.key && (
+                                        <IconButton
+                                            icon={Icon.CHECK}
+                                            tooltip={strings.approve}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={approve}
+                                        />
+                                    )}
+                                    {user && user.isAdmin && place.status !== PlaceStatus.ARCHIVED.key && (
+                                        <IconButton
+                                            icon={Icon.ARCHIVE}
+                                            tooltip={strings.archive}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={archive}
+                                        />
+                                    )}
+                                </>
                             )}
-                            {uiStatus === UiStatus.DETAILS && (
-                                <IconButton
-                                    icon={Icon.CHART}
-                                    tooltip={strings.viewTrackers}
-                                    type={IconButtonType.OUTLINE}
-                                    onClick={showTrackers}
-                                />
-                            )}
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                (user.isAdmin || user.id === place.userId) && (
-                                    <IconButton
-                                        icon={Icon.EDIT}
-                                        tooltip={strings.edit}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={edit}
-                                    />
-                                )}
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                (user.isAdmin || user.id === place.userId) && (
-                                    <IconButton
-                                        icon={Icon.ADD}
-                                        tooltip={strings.addTracker}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={showTrackerEditor}
-                                    />
-                                )}
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                user.isAdmin &&
-                                place.status !== PlaceStatus.APPROVED.key && (
-                                    <IconButton
-                                        icon={Icon.CHECK}
-                                        tooltip={strings.approve}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={approve}
-                                    />
-                                )}
-                            {(uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) &&
-                                user &&
-                                user.isAdmin &&
-                                place.status !== PlaceStatus.ARCHIVED.key && (
-                                    <IconButton
-                                        icon={Icon.ARCHIVE}
-                                        tooltip={strings.archive}
-                                        type={IconButtonType.OUTLINE}
-                                        onClick={archive}
-                                    />
-                                )}
                             {uiStatus === UiStatus.EDIT && (
                                 <div className={styles.buttonContainer}>
                                     <Button
@@ -600,15 +593,30 @@ const PlaceDetails = ({
                                     />
                                 </div>
                             )}
-                            {uiStatus === UiStatus.TRACKER_DETAILS && (
+                            {(uiStatus === UiStatus.TRACKER_VIEW || uiStatus === UiStatus.TRACKER_DETAILS) && (
                                 <div className={styles.buttonContainer}>
-                                    <Button
-                                        className={styles.button}
-                                        type={ButtonType.OUTLINE}
-                                        label={strings.cancel}
-                                        disabled={isUpdateInProgress()}
-                                        onClick={() => setUiStatus(UiStatus.VIEW)}
-                                    />
+                                    <>
+                                        <IconButton
+                                            icon={Icon.LIST}
+                                            selected={uiStatus === UiStatus.TRACKER_VIEW}
+                                            tooltip={strings.viewTrackerReadings}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={() => setUiStatus(UiStatus.TRACKER_VIEW)}
+                                        />
+                                        <IconButton
+                                            icon={Icon.DOCUMENT}
+                                            selected={uiStatus === UiStatus.TRACKER_DETAILS}
+                                            tooltip={strings.viewTrackerDetails}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={() => setUiStatus(UiStatus.TRACKER_DETAILS)}
+                                        />
+                                        <IconButton
+                                            icon={Icon.CHART}
+                                            tooltip={strings.backToPlaceTrackers}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={() => setUiStatus(UiStatus.VIEW)}
+                                        />
+                                    </>
                                 </div>
                             )}
                         </>
