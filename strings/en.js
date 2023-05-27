@@ -71,6 +71,7 @@ const enStrings = {
     errorFetchingTerracell: 'Unable to retrieve this Terracell. Please refresh the page and try again.',
     errorFetchingTerraland: 'Unable to retrieve this Terraland. Please refresh the page and try again.',
     errorFetchingTrackers: 'Unable to retrieve the trackers. Please refresh the page and try again.',
+    errorFetchingTracker: 'Unable to retrieve this tracker. Please refresh the page and try again.',
     errorFileReader: 'Unable to retrieve your NFT amounts',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorNoSppContract: 'Unable to find the Solar Power Plant Smart Contract.',

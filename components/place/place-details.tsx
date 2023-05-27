@@ -1,4 +1,3 @@
-import ActionBar from 'components/action-bar'
 import { AssetLink } from 'components/asset-link'
 import Button, { ButtonType } from 'components/button'
 import { DropDownSelector } from 'components/drop-down-selector'
@@ -23,6 +22,8 @@ import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
+import TrackerDetails from 'components/tracker/tracker-details'
+import ActionBar from 'components/action-bar'
 
 type PlaceDetailsProps = {
     id: string
@@ -495,7 +496,10 @@ const PlaceDetails = ({
                         )}
                     </>
                 )}
-                {place && uiStatus === UiStatus.TRACKER_VIEW && <div>{selectedTracker}</div>}
+                {place && uiStatus === UiStatus.TRACKER_VIEW && selectedTracker && (
+                    <TrackerDetails trackerId={selectedTracker} />
+                )}
+                {place && uiStatus === UiStatus.TRACKER_DETAILS && selectedTracker && <div>{selectedTracker}</div>}
             </div>
             <ActionBar>
                 {error && <div className={styles.error}>{error}</div>}

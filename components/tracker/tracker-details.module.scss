@@ -1,0 +1,33 @@
+@import 'styles/colors.scss';
+@import 'styles/dimens.scss';
+@import 'styles/screens.scss';
+
+.container {
+    position: relative;
+
+    img {
+        padding: 10px;
+        width: 250px;
+        height: auto;
+    }
+
+    @media (max-width: $screen-small) {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+
+    @media (max-width: $screen-small) {
+        padding: 0 10px;
+    }
+}
+
+.image {
+    align-items: center;
+}
