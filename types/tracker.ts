@@ -3,9 +3,12 @@ import { MediaItem } from './media.js'
 
 export type Tracker = {
     id: string
+    userId: string
     type: TrackerType
     name: string
+    status: string
     offChainImageUrl: string
+    created: number
 }
 
 export class TrackerType {

@@ -142,6 +142,7 @@ const enStrings = {
     totalOutput: 'Total output',
     totalTerracells: 'Total terracells',
     trackers: 'Trackers',
+    readings: 'Readings',
     traditionalHouse: 'Traditional House',
     transactionFailed: 'Your transaction failed or has been cancelled.',
     type: 'Type',

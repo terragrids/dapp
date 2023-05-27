@@ -22,7 +22,7 @@ import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
-import TrackerDetails from 'components/tracker/tracker-details'
+import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
 
 type PlaceDetailsProps = {
@@ -384,11 +384,13 @@ const PlaceDetails = ({
         <>
             <div className={styles.container}>
                 {!place && !error && <LoadingSpinner />}
+                {place && (uiStatus === UiStatus.VIEW || uiStatus === UiStatus.DETAILS) && (
+                    <div className={`${styles.section} ${styles.image}`}>
+                        <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
+                    </div>
+                )}
                 {place && uiStatus === UiStatus.VIEW && (
                     <>
-                        <div className={`${styles.section} ${styles.image}`}>
-                            <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
-                        </div>
                         <div className={styles.section}>
                             <div className={styles.iconLabel}>
                                 <Label text={strings.trackers} />
@@ -402,6 +404,42 @@ const PlaceDetails = ({
                                 onSelect={selectTracker}
                             />
                         </div>
+                    </>
+                )}
+                {place && uiStatus === UiStatus.DETAILS && (
+                    <>
+                        <div className={styles.section}>
+                            <Label text={strings.assetID} />
+                            <div className={styles.content}>
+                                <AssetLink assetId={place.id} />
+                            </div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.created} />
+                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
+                        </div>
+                        {place.type && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.type} />
+                                <div className={styles.content}>{place.type.name}</div>
+                            </div>
+                        )}
+                        <div className={styles.section}>
+                            <Label text={strings.mapPosition} />
+                            <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
+                        </div>
+                        <div className={styles.section}>
+                            <Label text={strings.approvalStatus} />
+                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
+                        </div>
+                        {place.description && ( // in case ipfs request fails
+                            <div className={styles.section}>
+                                <Label text={strings.description} />
+                                <div className={styles.content}>
+                                    <ParagraphMaker text={place.description} />
+                                </div>
+                            </div>
+                        )}
                     </>
                 )}
                 {place && uiStatus === UiStatus.EDIT && (
@@ -457,49 +495,17 @@ const PlaceDetails = ({
                         </div>
                     </>
                 )}
-                {place && uiStatus === UiStatus.DETAILS && (
-                    <>
-                        <div className={`${styles.section} ${styles.image}`}>
-                            <img src={place.offChainImageUrl} alt={place.name} className={styles.image} />
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.assetID} />
-                            <div className={styles.content}>
-                                <AssetLink assetId={place.id} />
-                            </div>
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.created} />
-                            <div className={styles.content}>{new Date(place.created).toLocaleDateString()}</div>
-                        </div>
-                        {place.type && ( // in case ipfs request fails
-                            <div className={styles.section}>
-                                <Label text={strings.type} />
-                                <div className={styles.content}>{place.type.name}</div>
-                            </div>
-                        )}
-                        <div className={styles.section}>
-                            <Label text={strings.mapPosition} />
-                            <div className={styles.content}>{`(${place.positionX},${place.positionY})`}</div>
-                        </div>
-                        <div className={styles.section}>
-                            <Label text={strings.approvalStatus} />
-                            <div className={styles.content}>{PlaceStatus.getByKey(place.status)}</div>
-                        </div>
-                        {place.description && ( // in case ipfs request fails
-                            <div className={styles.section}>
-                                <Label text={strings.description} />
-                                <div className={styles.content}>
-                                    <ParagraphMaker text={place.description} />
-                                </div>
-                            </div>
-                        )}
-                    </>
-                )}
-                {place && uiStatus === UiStatus.TRACKER_VIEW && selectedTracker && (
-                    <TrackerDetails trackerId={selectedTracker} />
-                )}
-                {place && uiStatus === UiStatus.TRACKER_DETAILS && selectedTracker && <div>{selectedTracker}</div>}
+                {place &&
+                    selectedTracker &&
+                    (uiStatus === UiStatus.TRACKER_VIEW || uiStatus === UiStatus.TRACKER_DETAILS) && (
+                        <TrackerDetails
+                            trackerId={selectedTracker}
+                            trackerTypes={trackerTypes.current}
+                            uiStatus={
+                                uiStatus === UiStatus.TRACKER_VIEW ? TrackerUiStatus.READINGS : TrackerUiStatus.DETAILS
+                            }
+                        />
+                    )}
             </div>
             <ActionBar>
                 {error && <div className={styles.error}>{error}</div>}

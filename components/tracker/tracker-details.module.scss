@@ -28,6 +28,28 @@
     }
 }
 
+.content {
+    padding: 10px;
+    background-color: $color-abbey;
+    border-radius: $border-radius;
+    color: $color-nomad;
+    font-size: 16px;
+    cursor: default;
+
+    a {
+        color: $color-nomad;
+    }
+}
+
 .image {
     align-items: center;
+}
+
+.iconLabel {
+    display: flex;
+    align-items: baseline;
+
+    .icon {
+        margin-left: 5px;
+    }
 }
