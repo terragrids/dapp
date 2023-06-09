@@ -22,7 +22,7 @@ import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
-import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
+import TrackerDetails, { Reading, TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
 
 type PlaceDetailsProps = {
@@ -59,7 +59,8 @@ enum UiStatus {
     DETAILS,
     ADD_TRACKER,
     TRACKER_VIEW,
-    TRACKER_DETAILS
+    TRACKER_DETAILS,
+    ADD_MANUAL_READING
 }
 
 const defaultTracker = {
@@ -90,6 +91,7 @@ const PlaceDetails = ({
     const trackerTypes = useRef<Array<TrackerType>>([])
     const placeFetched = useRef(false)
     const [selectedTracker, setSelectedTracker] = useState<string | null>()
+    const [manualReading, setManualReading] = useState<Reading | null>()
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -218,6 +220,10 @@ const PlaceDetails = ({
             fetchPlace()
         }
     }, [fetchPlace])
+
+    useEffect(() => {
+        if (uiStatus) setDone(false)
+    }, [uiStatus])
 
     async function edit() {
         if (!place) return
@@ -380,6 +386,22 @@ const PlaceDetails = ({
         setUiStatus(UiStatus.TRACKER_VIEW)
     }
 
+    function getTrackerUiStatus() {
+        switch (uiStatus) {
+            default:
+            case UiStatus.TRACKER_VIEW:
+                return TrackerUiStatus.READINGS
+            case UiStatus.TRACKER_DETAILS:
+                return TrackerUiStatus.DETAILS
+            case UiStatus.ADD_MANUAL_READING:
+                return TrackerUiStatus.ADD_MANUAL_READING
+        }
+    }
+
+    function addManualReading() {
+        // console.log('manual reading', manualReading)
+    }
+
     return (
         <>
             <div className={styles.container}>
@@ -497,13 +519,14 @@ const PlaceDetails = ({
                 )}
                 {place &&
                     selectedTracker &&
-                    (uiStatus === UiStatus.TRACKER_VIEW || uiStatus === UiStatus.TRACKER_DETAILS) && (
+                    (uiStatus === UiStatus.TRACKER_VIEW ||
+                        uiStatus === UiStatus.TRACKER_DETAILS ||
+                        uiStatus === UiStatus.ADD_MANUAL_READING) && (
                         <TrackerDetails
                             trackerId={selectedTracker}
                             trackerTypes={trackerTypes.current}
-                            uiStatus={
-                                uiStatus === UiStatus.TRACKER_VIEW ? TrackerUiStatus.READINGS : TrackerUiStatus.DETAILS
-                            }
+                            uiStatus={getTrackerUiStatus()}
+                            onManualReadingChange={setManualReading}
                         />
                     )}
             </div>
@@ -621,12 +644,38 @@ const PlaceDetails = ({
                                             onClick={() => setUiStatus(UiStatus.TRACKER_DETAILS)}
                                         />
                                         <IconButton
+                                            icon={Icon.ADD}
+                                            tooltip={strings.addManualReading}
+                                            type={IconButtonType.OUTLINE}
+                                            onClick={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
+                                        />
+                                        <IconButton
                                             icon={Icon.CHART}
                                             tooltip={strings.backToPlaceTrackers}
                                             type={IconButtonType.OUTLINE}
                                             onClick={() => setUiStatus(UiStatus.VIEW)}
                                         />
                                     </>
+                                </div>
+                            )}
+                            {uiStatus === UiStatus.ADD_MANUAL_READING && (
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.submit}
+                                        disabled={!manualReading || manualReading.value < 0}
+                                        loading={isUpdateInProgress()}
+                                        checked={done}
+                                        onClick={addManualReading}
+                                    />
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.cancel}
+                                        disabled={isUpdateInProgress()}
+                                        onClick={() => setUiStatus(UiStatus.TRACKER_VIEW)}
+                                    />
                                 </div>
                             )}
                         </>

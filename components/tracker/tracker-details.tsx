@@ -9,19 +9,27 @@ import { AssetLink } from 'components/asset-link'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import { ReachStdlib, ReachContext } from 'context/reach-context'
 import { Icon } from 'components/iconbutton'
+import { InputField } from 'components/input-field'
+
+export type Reading = {
+    value: number
+    unit: string
+}
 
 type TrackerDetailsProps = {
     trackerId: string
     uiStatus: TrackerUiStatus
     trackerTypes: Array<TrackerType>
+    onManualReadingChange: (reading: Reading) => void
 }
 
 export enum TrackerUiStatus {
     READINGS,
-    DETAILS
+    DETAILS,
+    ADD_MANUAL_READING
 }
 
-const TrackerDetails = ({ trackerId, uiStatus, trackerTypes }: TrackerDetailsProps) => {
+const TrackerDetails = ({ trackerId, uiStatus, trackerTypes, onManualReadingChange }: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const [tracker, setTracker] = useState<Tracker | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -81,6 +89,21 @@ const TrackerDetails = ({ trackerId, uiStatus, trackerTypes }: TrackerDetailsPro
         }
     }, [error, fetchTracker, tracker])
 
+    function getUnit() {
+        if (!tracker) return ''
+        switch (tracker.type.code) {
+            default:
+            case 'electricity-meter':
+                return 'kwh'
+            case 'gas-meter':
+                return 'm3'
+        }
+    }
+
+    function onReadingChange(value: string) {
+        onManualReadingChange({ value: parseInt(value), unit: getUnit() })
+    }
+
     return (
         <div className={styles.container}>
             {!tracker && !error && <LoadingSpinner />}
@@ -120,6 +143,17 @@ const TrackerDetails = ({ trackerId, uiStatus, trackerTypes }: TrackerDetailsPro
                             <div className={styles.content}>{tracker.type.name}</div>
                         </div>
                     )}
+                </>
+            )}
+            {tracker && uiStatus === TrackerUiStatus.ADD_MANUAL_READING && (
+                <>
+                    <div className={styles.section}>
+                        <InputField
+                            label={strings.formatString(strings.reading, getUnit()) as string}
+                            type={'number'}
+                            onChange={onReadingChange}
+                        />
+                    </div>
                 </>
             )}
         </div>
