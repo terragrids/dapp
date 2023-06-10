@@ -10,17 +10,18 @@ import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import { ReachStdlib, ReachContext } from 'context/reach-context'
 import { Icon } from 'components/iconbutton'
 import { InputField } from 'components/input-field'
-
-export type Reading = {
-    value: number
-    unit: string
-}
+import { Reading } from 'types/reading.js'
+import ReadingList from 'components/reading/reading-list'
+import { UserContext } from 'context/user-context'
+import { User } from 'hooks/use-user.js'
 
 type TrackerDetailsProps = {
     trackerId: string
     uiStatus: TrackerUiStatus
     trackerTypes: Array<TrackerType>
+    bottomScrollCounter: number
     onManualReadingChange: (reading: Reading) => void
+    onAddManualReading: () => void
 }
 
 export enum TrackerUiStatus {
@@ -29,8 +30,16 @@ export enum TrackerUiStatus {
     ADD_MANUAL_READING
 }
 
-const TrackerDetails = ({ trackerId, uiStatus, trackerTypes, onManualReadingChange }: TrackerDetailsProps) => {
+const TrackerDetails = ({
+    trackerId,
+    uiStatus,
+    trackerTypes,
+    bottomScrollCounter,
+    onManualReadingChange,
+    onAddManualReading
+}: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
+    const user = useContext<User>(UserContext)
     const [tracker, setTracker] = useState<Tracker | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [error, setError] = useState<string | null>()
@@ -94,14 +103,18 @@ const TrackerDetails = ({ trackerId, uiStatus, trackerTypes, onManualReadingChan
         switch (tracker.type.code) {
             default:
             case 'electricity-meter':
-                return 'kwh'
+                return 'kWh'
             case 'gas-meter':
                 return 'm3'
         }
     }
 
     function onReadingChange(value: string) {
-        onManualReadingChange({ value: parseInt(value), unit: getUnit() })
+        onManualReadingChange({ value: parseInt(value), unit: getUnit() } as Reading)
+    }
+
+    function selectReading() {
+        // todo
     }
 
     return (
@@ -123,6 +136,13 @@ const TrackerDetails = ({ trackerId, uiStatus, trackerTypes, onManualReadingChan
                         <Label text={strings.readings} />
                         <div className={`${Icon.CHART} ${styles.icon}`} />
                     </div>
+                    <ReadingList
+                        trackerId={tracker.id}
+                        bottomScrollCounter={bottomScrollCounter}
+                        canAdd={user && (user.isAdmin || user.id === tracker.userId)}
+                        onAdd={onAddManualReading}
+                        onSelect={selectReading}
+                    />
                 </>
             )}
             {tracker && uiStatus === TrackerUiStatus.DETAILS && (

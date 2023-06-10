@@ -55,3 +55,8 @@ export function getJsonStringFromContract(contract) {
 export const NFT_SUFFIX = '@arc3'
 
 export const formatNftName = str => str.replace(NFT_SUFFIX, '')
+
+export function formatTimestamp(timestamp) {
+    const date = new Date(timestamp)
+    return date.toLocaleString()
+}

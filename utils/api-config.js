@@ -55,6 +55,10 @@ const paginatedTrackers = (placeId, nextPageKey, status, type, size = pageSize) 
     `api/places/${placeId}/trackers?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }${type ? `&type=${type}` : ''}`
+const paginatedReadings = (trackerId, nextPageKey, status, size = pageSize) =>
+    `api/trackers/${trackerId}/readings?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
+        status ? `&status=${status}` : ''
+    }`
 const place = id => `api/places/${id}`
 const tracker = id => `api/trackers/${id}`
 const placeApproval = id => `api/places/${id}/approval`
@@ -90,6 +94,7 @@ export const endpoints = {
     readings,
     paginatedPlaces,
     paginatedTrackers,
+    paginatedReadings,
     place,
     tracker,
     placeApproval,

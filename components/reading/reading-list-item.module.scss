@@ -1,0 +1,53 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.container {
+    display: flex;
+    flex: auto 1 0;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    box-sizing: border-box;
+    height: 60px;
+    width: 100%;
+    margin: 10px 0;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: $border-radius;
+    background-color: $color-abbey;
+
+    @media (max-width: $screen-small) {
+        min-width: auto;
+        width: 100%;
+    }
+
+    &:hover {
+        background-color: $color-brand;
+    }
+}
+
+.leftContainer,
+.rightContainer {
+    display: flex;
+    justify-content: flex-start;
+
+    & > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+.value {
+    flex: 0 0 300px;
+    overflow: hidden;
+    text-align: start;
+
+    & > div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

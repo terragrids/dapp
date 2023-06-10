@@ -22,8 +22,9 @@ import styles from './place-details.module.scss'
 import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
 import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
-import TrackerDetails, { Reading, TrackerUiStatus } from 'components/tracker/tracker-details'
+import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
+import { Reading } from 'types/reading.js'
 
 type PlaceDetailsProps = {
     id: string
@@ -553,7 +554,9 @@ const PlaceDetails = ({
                             trackerId={selectedTracker}
                             trackerTypes={trackerTypes.current}
                             uiStatus={getTrackerUiStatus()}
+                            bottomScrollCounter={bottomScrollCounter}
                             onManualReadingChange={setManualReading}
+                            onAddManualReading={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
                         />
                     )}
             </div>
