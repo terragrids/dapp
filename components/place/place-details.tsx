@@ -222,7 +222,10 @@ const PlaceDetails = ({
     }, [fetchPlace])
 
     useEffect(() => {
-        if (uiStatus) setDone(false)
+        if (uiStatus) {
+            setDone(false)
+            setError(null)
+        }
     }, [uiStatus])
 
     async function edit() {
@@ -398,8 +401,32 @@ const PlaceDetails = ({
         }
     }
 
-    function addManualReading() {
-        // console.log('manual reading', manualReading)
+    async function addManualReading() {
+        if (!manualReading) return
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.readings, {
+            method: 'POST',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                trackerId: selectedTracker,
+                value: manualReading.value.toString(),
+                unit: manualReading.unit
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorSubmittingReading)
+        } else {
+            setDone(true)
+            setTimeout(() => {
+                setUiStatus(UiStatus.TRACKER_VIEW)
+                setDone(false)
+            }, ONE_SECOND)
+        }
+
+        setInProgress(false)
     }
 
     return (

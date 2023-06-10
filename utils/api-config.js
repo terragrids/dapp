@@ -46,6 +46,7 @@ const terralands = next => `api/nfts/type/trld${next ? `?next=${next}` : ''}`
 const solarPowerPlant = 'api/spp'
 const places = 'api/places'
 const trackers = 'api/trackers'
+const readings = 'api/readings'
 const paginatedPlaces = (nextPageKey, status, size = pageSize) =>
     `api/places?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
@@ -86,6 +87,7 @@ export const endpoints = {
     solarPowerPlant,
     places,
     trackers,
+    readings,
     paginatedPlaces,
     paginatedTrackers,
     place,

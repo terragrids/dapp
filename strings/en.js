@@ -76,6 +76,7 @@ const enStrings = {
     errorFileReader: 'Unable to retrieve your NFT amounts',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorNoSppContract: 'Unable to find the Solar Power Plant Smart Contract.',
+    errorSubmittingReading: 'Something went wrong when submitting your reading. Please try again.',
     errorTerminatingSppContract: 'Unable to terminate the Solar Power Plant Smart Contract.',
     errorUpdatingPlace: 'Something went wrong when updating your place. Please try again.',
     errorUpdatingSppContract: 'Unable to update the Solar Power Plant Smart Contract.',
