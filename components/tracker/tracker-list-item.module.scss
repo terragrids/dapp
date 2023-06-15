@@ -9,7 +9,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    box-sizing: border-box;
     height: 100px;
     width: 100%;
     margin: 10px 0;
@@ -40,7 +39,7 @@
 }
 
 .imageContainer {
-    flex: 0 0 80px;
+    flex: 0 0 auto;
     position: relative;
     overflow: hidden;
 

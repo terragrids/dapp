@@ -4,7 +4,7 @@ import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
 import { useContext } from 'react'
 import { strings } from 'strings/en.js'
-import { maskWalletAddress } from 'utils/string-utils.js'
+import { maskAddress } from 'utils/string-utils.js'
 import styles from './place-list-item.module.scss'
 
 type PlaceListItemProps = {
@@ -39,7 +39,7 @@ const PlaceListItem = ({
                 </div>
             </div>
             <div className={styles.rightContainer}>
-                {ownerWallet && <div className={styles.owner}>{maskWalletAddress(ownerWallet)}</div>}
+                {ownerWallet && <div className={styles.owner}>{maskAddress(ownerWallet)}</div>}
                 {user && user.isAdmin && (
                     <div className={styles.menuButton}>
                         <MenuDropDown align={Align.RIGHT}>

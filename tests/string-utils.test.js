@@ -1,8 +1,8 @@
-import { getIpfsHash, getQueryParameter, maskWalletAddress } from '../utils/string-utils'
+import { getIpfsHash, getQueryParameter, maskAddress } from '../utils/string-utils'
 
 describe('String utils', function () {
     it('maskWalletAddress', async () => {
-        expect(maskWalletAddress('NWGMU3UZ2IWGZT6Q6K6F473IXHCTJ5UKLEARG2ZL37B52UC2KBPSDK2UEY')).toEqual('NWGMU...2UEY')
+        expect(maskAddress('NWGMU3UZ2IWGZT6Q6K6F473IXHCTJ5UKLEARG2ZL37B52UC2KBPSDK2UEY')).toEqual('NWGMU...2UEY')
     })
 
     it('should return query parameter', async () => {

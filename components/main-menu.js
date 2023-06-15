@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { strings } from '../strings/en'
 import styles from './main-menu.module.scss'
 import { UserContext } from '../context/user-context'
-import { maskWalletAddress } from '../utils/string-utils'
+import { maskAddress } from '../utils/string-utils'
 import PropTypes from 'prop-types'
 import { Nft } from 'types/nft'
 import { endpoints } from 'utils/api-config.js'
@@ -63,7 +63,7 @@ export default function MainMenu({
                             {user.walletAddress && (
                                 <>
                                     <li className={`${styles.border} ${styles.static}`}>
-                                        {maskWalletAddress(user.walletAddress)}
+                                        {maskAddress(user.walletAddress)}
                                     </li>
                                     <li className={`${styles.darker} ${styles.static}`}>
                                         $ALGO <strong>{user.walletBalance}</strong>

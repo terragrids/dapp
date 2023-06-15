@@ -1,6 +1,6 @@
 import { ipfsUrl } from './api-config.js'
 
-export function maskWalletAddress(address) {
+export function maskAddress(address) {
     return address ? `${address.substring(0, 5)}...${address.substring(address.length - 4)}` : ''
 }
 
@@ -32,6 +32,11 @@ export function ipfsUrlToGatewayUrl(url) {
 export function getApplicationAlgoExplorerUrl(applicationId) {
     const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
     return `https://${prefix}algoexplorer.io/application/${applicationId}`
+}
+
+export function getTransactionAlgoExplorerUrl(transactionId) {
+    const prefix = process.env.NEXT_PUBLIC_REACH_CONSENSUS_NETWORK_PROVIDER === 'TestNet' ? 'testnet.' : ''
+    return `https://${prefix}algoexplorer.io/tx/${transactionId}`
 }
 
 export function getAssetPeraExplorerUrl(assetId) {

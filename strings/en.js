@@ -151,6 +151,7 @@ const enStrings = {
     trackers: 'Trackers',
     traditionalHouse: 'Traditional House',
     transactionFailed: 'Your transaction failed or has been cancelled.',
+    transactionId: 'Transaction ID',
     type: 'Type',
     underReview: 'Under review',
     update: 'Update',

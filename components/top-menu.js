@@ -2,7 +2,7 @@ import { strings } from '../strings/en'
 import styles from './top-menu.module.scss'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../context/user-context'
-import { maskWalletAddress } from '../utils/string-utils'
+import { maskAddress } from '../utils/string-utils'
 import PropTypes from 'prop-types'
 import { endpoints } from 'utils/api-config.js'
 
@@ -31,7 +31,7 @@ export default function TopMenu({ mainMenuVisible, onToggleMenu }) {
                         <>
                             <li>
                                 <button className={styles.brand} onClick={onToggleMenu}>
-                                    {maskWalletAddress(user.walletAddress)} | {user.walletBalance} ALGO
+                                    {maskAddress(user.walletAddress)} | {user.walletBalance} ALGO
                                 </button>
                             </li>
                             <li className={styles.toggle_menu} onClick={onToggleMenu}>

@@ -1,5 +1,5 @@
 import { Holder } from 'types/nft'
-import { maskWalletAddress } from 'utils/string-utils.js'
+import { maskAddress } from 'utils/string-utils.js'
 import styles from './nft-list-item.module.scss'
 
 type NftListItemProps = {
@@ -18,7 +18,7 @@ const NftListItem = ({ id, name, imageUrl, holder = null, onClick }: NftListItem
                 <img src={imageUrl} alt={name} className={styles.image} />
             </div>
             <div className={styles.name}>{name}</div>
-            {holder && <div className={styles.holder}>{maskWalletAddress(holder.address)}</div>}
+            {holder && <div className={styles.holder}>{maskAddress(holder.address)}</div>}
         </li>
     )
 }

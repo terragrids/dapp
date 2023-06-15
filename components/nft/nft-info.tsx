@@ -3,7 +3,7 @@ import { User } from 'hooks/use-user.js'
 import React, { useContext, useState } from 'react'
 import { strings } from 'strings/en'
 import { NftStatus, Terrabuild, Terracell, Terraland } from 'types/nft'
-import { getApplicationAlgoExplorerUrl, getAssetPeraExplorerUrl, maskWalletAddress } from 'utils/string-utils'
+import { getApplicationAlgoExplorerUrl, getAssetPeraExplorerUrl, maskAddress } from 'utils/string-utils'
 import styles from './nft-info.module.scss'
 
 type NftInfoProps = {
@@ -76,7 +76,7 @@ const NftInfo = ({ asset }: NftInfoProps) => {
             {asset.holders && (
                 <div className={dlItemClass}>
                     <dt>{strings.holder}</dt>
-                    <dd>{maskWalletAddress(asset.holders[0].address)}</dd>
+                    <dd>{maskAddress(asset.holders[0].address)}</dd>
                 </div>
             )}
 
