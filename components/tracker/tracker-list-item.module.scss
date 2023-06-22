@@ -30,6 +30,7 @@
 .rightContainer {
     display: flex;
     justify-content: flex-start;
+    overflow: hidden;
 
     & > div {
         display: flex;
