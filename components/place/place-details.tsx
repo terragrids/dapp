@@ -25,6 +25,7 @@ import TrackerList from 'components/tracker/tracker-list'
 import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
 import { Reading } from 'types/reading.js'
+import { UtilityAccount } from 'types/utility-account.js'
 
 type PlaceDetailsProps = {
     id: string
@@ -61,7 +62,8 @@ enum UiStatus {
     ADD_TRACKER,
     TRACKER_VIEW,
     TRACKER_DETAILS,
-    ADD_MANUAL_READING
+    ADD_MANUAL_READING,
+    UTILITY_API
 }
 
 const defaultTracker = {
@@ -93,6 +95,7 @@ const PlaceDetails = ({
     const placeFetched = useRef(false)
     const [selectedTracker, setSelectedTracker] = useState<string | null>()
     const [manualReading, setManualReading] = useState<Reading | null>()
+    const [utilityAccount, setUtilityAccount] = useState<UtilityAccount | null>()
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -399,6 +402,8 @@ const PlaceDetails = ({
                 return TrackerUiStatus.DETAILS
             case UiStatus.ADD_MANUAL_READING:
                 return TrackerUiStatus.ADD_MANUAL_READING
+            case UiStatus.UTILITY_API:
+                return TrackerUiStatus.UTILITY_API
         }
     }
 
@@ -419,6 +424,41 @@ const PlaceDetails = ({
 
         if (!response.ok) {
             setError(strings.errorSubmittingReading)
+        } else {
+            setDone(true)
+            setTimeout(() => {
+                setUiStatus(UiStatus.TRACKER_VIEW)
+                setDone(false)
+            }, ONE_SECOND)
+        }
+
+        setInProgress(false)
+    }
+
+    function updateUtilityAccountId(id: string) {
+        setUtilityAccount(account => ({ ...account, id } as UtilityAccount))
+    }
+
+    function updateUtilityAccountApiKey(apiKey: string) {
+        setUtilityAccount(account => ({ ...account, apiKey } as UtilityAccount))
+    }
+
+    async function updateTrackerUtilityAccount() {
+        if (!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey) return
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.tracker(selectedTracker), {
+            method: 'PUT',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                utilityAccountId: utilityAccount.id,
+                utilityAccountApiKey: utilityAccount.apiKey
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorUpdatingTracker)
         } else {
             setDone(true)
             setTimeout(() => {
@@ -549,13 +589,16 @@ const PlaceDetails = ({
                     selectedTracker &&
                     (uiStatus === UiStatus.TRACKER_VIEW ||
                         uiStatus === UiStatus.TRACKER_DETAILS ||
-                        uiStatus === UiStatus.ADD_MANUAL_READING) && (
+                        uiStatus === UiStatus.ADD_MANUAL_READING ||
+                        uiStatus === UiStatus.UTILITY_API) && (
                         <TrackerDetails
                             trackerId={selectedTracker}
                             trackerTypes={trackerTypes.current}
                             uiStatus={getTrackerUiStatus()}
                             bottomScrollCounter={bottomScrollCounter}
                             onManualReadingChange={setManualReading}
+                            onUtilityAccountChange={updateUtilityAccountId}
+                            onUtilityApiKeyChange={updateUtilityAccountApiKey}
                             onAddManualReading={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
                         />
                     )}
@@ -673,12 +716,22 @@ const PlaceDetails = ({
                                             type={IconButtonType.OUTLINE}
                                             onClick={() => setUiStatus(UiStatus.TRACKER_DETAILS)}
                                         />
-                                        <IconButton
-                                            icon={Icon.ADD}
-                                            tooltip={strings.addManualReading}
-                                            type={IconButtonType.OUTLINE}
-                                            onClick={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
-                                        />
+                                        {user && (user.isAdmin || user.id === place.userId) && (
+                                            <>
+                                                <IconButton
+                                                    icon={Icon.EDIT_CLIPBOARD}
+                                                    tooltip={strings.addManualReading}
+                                                    type={IconButtonType.OUTLINE}
+                                                    onClick={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
+                                                />
+                                                <IconButton
+                                                    icon={Icon.PLUG}
+                                                    tooltip={strings.connectToUtilityApi}
+                                                    type={IconButtonType.OUTLINE}
+                                                    onClick={() => setUiStatus(UiStatus.UTILITY_API)}
+                                                />
+                                            </>
+                                        )}
                                         <IconButton
                                             icon={Icon.CHART}
                                             tooltip={strings.backToPlaceTrackers}
@@ -698,6 +751,26 @@ const PlaceDetails = ({
                                         loading={isUpdateInProgress()}
                                         checked={done}
                                         onClick={addManualReading}
+                                    />
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.cancel}
+                                        disabled={isUpdateInProgress()}
+                                        onClick={() => setUiStatus(UiStatus.TRACKER_VIEW)}
+                                    />
+                                </div>
+                            )}
+                            {uiStatus === UiStatus.UTILITY_API && (
+                                <div className={styles.buttonContainer}>
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.OUTLINE}
+                                        label={strings.submit}
+                                        disabled={!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey}
+                                        loading={isUpdateInProgress()}
+                                        checked={done}
+                                        onClick={updateTrackerUtilityAccount}
                                     />
                                     <Button
                                         className={styles.button}

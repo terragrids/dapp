@@ -21,13 +21,16 @@ type TrackerDetailsProps = {
     trackerTypes: Array<TrackerType>
     bottomScrollCounter: number
     onManualReadingChange: (reading: Reading) => void
+    onUtilityAccountChange: (account: string) => void
+    onUtilityApiKeyChange: (apiKey: string) => void
     onAddManualReading: () => void
 }
 
 export enum TrackerUiStatus {
     READINGS,
     DETAILS,
-    ADD_MANUAL_READING
+    ADD_MANUAL_READING,
+    UTILITY_API
 }
 
 const TrackerDetails = ({
@@ -36,6 +39,8 @@ const TrackerDetails = ({
     trackerTypes,
     bottomScrollCounter,
     onManualReadingChange,
+    onUtilityAccountChange,
+    onUtilityApiKeyChange,
     onAddManualReading
 }: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
@@ -109,12 +114,20 @@ const TrackerDetails = ({
         }
     }
 
-    function onReadingChange(value: string) {
+    function updateReading(value: string) {
         onManualReadingChange({ value: parseInt(value), unit: getUnit() } as Reading)
     }
 
     function selectReading() {
-        // todo
+        // do nothing
+    }
+
+    function updateUtilityAccount(account: string) {
+        onUtilityAccountChange(account)
+    }
+
+    function updateUtilityApiKey(apiKey: string) {
+        onUtilityApiKeyChange(apiKey)
     }
 
     return (
@@ -171,8 +184,18 @@ const TrackerDetails = ({
                         <InputField
                             label={strings.formatString(strings.reading, getUnit()) as string}
                             type={'number'}
-                            onChange={onReadingChange}
+                            onChange={updateReading}
                         />
+                    </div>
+                </>
+            )}
+            {tracker && uiStatus === TrackerUiStatus.UTILITY_API && (
+                <>
+                    <div className={styles.section}>
+                        <InputField label={strings.utilityAccount} onChange={updateUtilityAccount} />
+                    </div>
+                    <div className={styles.section}>
+                        <InputField label={strings.utilityApiKey} onChange={updateUtilityApiKey} />
                     </div>
                 </>
             )}

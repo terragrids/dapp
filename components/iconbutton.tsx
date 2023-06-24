@@ -8,11 +8,13 @@ export enum IconButtonType {
 export enum Icon {
     CHECK = 'icon-check',
     EDIT = 'icon-pencil',
+    EDIT_CLIPBOARD = 'icon-clipboard-pencil',
     ADD = 'icon-plus',
     DOCUMENT = 'icon-document',
     CHART = 'icon-chart-growth',
     LIST = 'icon-list',
-    ARCHIVE = 'icon-archive'
+    ARCHIVE = 'icon-archive',
+    PLUG = 'icon-cord'
 }
 
 type Props = {

@@ -27,6 +27,7 @@ const enStrings = {
     close: 'Close',
     comingSoon: 'Coming soon',
     common: 'Common',
+    connectToUtilityApi: 'Connect to Utility API',
     connectToWalletToSeeSPP: 'You need to connect to a wallet to access the Solar Power Plant',
     connectWallet: 'Connect to a wallet',
     contract: 'Contract',
@@ -47,20 +48,14 @@ const enStrings = {
     errorAccountNfts: 'Unable to retrieve your NFTs. Either something went wrong, or you cancelled the transaction.',
     errorApprovingPlace: 'Something went wrong when approving this place. Please try again.',
     errorArchivingPlace: 'Something went wrong when archiving this place. Please try again.',
-    errorBuyingNft:
-        'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
-    errorConnectingWallet:
-        'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
-    errorCreatingNftSaleContract:
-        'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorBuyingNft: 'Unable to buy this NFT. Do you have enough ALGO in your wallet, or did you cancel the transaction?',
+    errorConnectingWallet: 'Unable to connect your wallet. Either something went wrong, or you cancelled the connection.',
+    errorCreatingNftSaleContract: 'Unable to put this NFT up for sale. Either something went wrong, or you cancelled the transaction.',
     errorCreatingPlace: 'Something went wrong when creating your place. Please try again.',
-    errorCreatingTerracellSaleContract:
-        'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
+    errorCreatingTerracellSaleContract: 'Unable to put this terracell up for sale. Either something went wrong, or you cancelled the transaction.',
     errorCreatingTracker: 'Something went wrong when creating your tracker. Please try again.',
-    errorDeletingNftSaleContract:
-        'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
-    errorDeletingTerracellSaleContract:
-        'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingNftSaleContract: 'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingTerracellSaleContract: 'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
     errorDeployingSppContract: 'Unable to deploy the Solar Power Plant Smart Contract.',
     errorFetchingMap: 'Something went wrong when fetching the Terragrids map.\nPlease refresh the page and try again.',
     errorFetchingNft: 'Unable to retrieve the NFT. Please refresh the page and try again.',
@@ -81,6 +76,7 @@ const enStrings = {
     errorTerminatingSppContract: 'Unable to terminate the Solar Power Plant Smart Contract.',
     errorUpdatingPlace: 'Something went wrong when updating your place. Please try again.',
     errorUpdatingSppContract: 'Unable to update the Solar Power Plant Smart Contract.',
+    errorUpdatingTracker: 'Something went wrong when updating your tracker. Please try again.',
     errorUploadingFile: 'Something went wrong when uploading or pinning your NFT file. Please try again.',
     failedArchivingPlace: 'Failed archiving this place',
     failedDeletingContract: 'Failed deleting the contract',
@@ -155,6 +151,8 @@ const enStrings = {
     type: 'Type',
     underReview: 'Under review',
     update: 'Update',
+    utilityAccount: 'Utility account',
+    utilityApiKey: 'Utility API key',
     viewDetails: 'View details',
     viewReadings: 'View readings',
     viewTrackerDetails: 'View tracker details',
