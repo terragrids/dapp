@@ -57,14 +57,16 @@ const TrackerDetails = ({
         const response = await fetch(endpoints.tracker(trackerId))
 
         if (response.ok) {
-            const { id, name, reserve, created, userId, offChainImageUrl, status } = await response.json()
+            const { id, name, reserve, created, userId, offChainImageUrl, status, utilityAccountId } =
+                await response.json()
             setTracker({
                 id,
                 name,
                 created: parseInt(created),
                 userId,
                 status,
-                offChainImageUrl
+                offChainImageUrl,
+                utilityAccountId
             } as Tracker)
 
             // Try to fetch NFT metadata and image from IPFS
@@ -166,16 +168,22 @@ const TrackerDetails = ({
                             <AssetLink assetId={tracker.id} />
                         </div>
                     </div>
-                    <div className={styles.section}>
-                        <Label text={strings.created} />
-                        <div className={styles.content}>{new Date(tracker.created).toLocaleDateString()}</div>
-                    </div>
                     {tracker.type && ( // in case ipfs request fails
                         <div className={styles.section}>
                             <Label text={strings.type} />
                             <div className={styles.content}>{tracker.type.name}</div>
                         </div>
                     )}
+                    {tracker.utilityAccountId && (
+                        <div className={styles.section}>
+                            <Label text={strings.utilityAccount} />
+                            <div className={styles.content}>{tracker.utilityAccountId}</div>
+                        </div>
+                    )}
+                    <div className={styles.section}>
+                        <Label text={strings.created} />
+                        <div className={styles.content}>{new Date(tracker.created).toLocaleDateString()}</div>
+                    </div>
                 </>
             )}
             {tracker && uiStatus === TrackerUiStatus.ADD_MANUAL_READING && (
@@ -192,7 +200,11 @@ const TrackerDetails = ({
             {tracker && uiStatus === TrackerUiStatus.UTILITY_API && (
                 <>
                     <div className={styles.section}>
-                        <InputField label={strings.utilityAccount} onChange={updateUtilityAccount} />
+                        <InputField
+                            label={strings.utilityAccount}
+                            initialValue={tracker.utilityAccountId}
+                            onChange={updateUtilityAccount}
+                        />
                     </div>
                     <div className={styles.section}>
                         <InputField label={strings.utilityApiKey} onChange={updateUtilityApiKey} />

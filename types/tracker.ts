@@ -9,6 +9,7 @@ export type Tracker = {
     status: string
     offChainImageUrl: string
     created: number
+    utilityAccountId: string
 }
 
 export class TrackerType {
