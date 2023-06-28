@@ -15,7 +15,7 @@ type TrackerListProps = {
     canAdd: boolean
     bottomScrollCounter: number
     onAdd: () => void
-    onSelect: (id: string) => void
+    onSelect: (tracker: Tracker) => void
 }
 
 const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd, onSelect }: TrackerListProps) => {
@@ -75,7 +75,7 @@ const TrackerList = ({ placeId, bottomScrollCounter, canAdd, onAdd, onSelect }: 
                             id={tracker.id}
                             name={tracker.name}
                             imageUrl={tracker.offChainImageUrl}
-                            onClick={() => onSelect(tracker.id)}
+                            onClick={() => onSelect(tracker)}
                         />
                     ))}
                     {isFetching && (

@@ -20,6 +20,7 @@ type TrackerDetailsProps = {
     uiStatus: TrackerUiStatus
     trackerTypes: Array<TrackerType>
     bottomScrollCounter: number
+    onLoad: (tracker: Tracker) => void
     onManualReadingChange: (reading: Reading) => void
     onUtilityAccountChange: (account: string) => void
     onUtilityApiKeyChange: (apiKey: string) => void
@@ -38,6 +39,7 @@ const TrackerDetails = ({
     uiStatus,
     trackerTypes,
     bottomScrollCounter,
+    onLoad,
     onManualReadingChange,
     onUtilityAccountChange,
     onUtilityApiKeyChange,
@@ -59,7 +61,8 @@ const TrackerDetails = ({
         if (response.ok) {
             const { id, name, reserve, created, userId, offChainImageUrl, status, utilityAccountId } =
                 await response.json()
-            setTracker({
+
+            let loadedTracker = {
                 id,
                 name,
                 created: parseInt(created),
@@ -67,7 +70,9 @@ const TrackerDetails = ({
                 status,
                 offChainImageUrl,
                 utilityAccountId
-            } as Tracker)
+            } as Tracker
+
+            setTracker(loadedTracker)
 
             // Try to fetch NFT metadata and image from IPFS
             try {
@@ -77,17 +82,18 @@ const TrackerDetails = ({
 
                 if (metadataResponse.ok) {
                     const { name, description, properties } = await metadataResponse.json()
-                    setTracker(
-                        current =>
-                            ({
-                                ...current,
-                                name,
-                                description,
-                                type:
-                                    trackerTypes.find(type => type.code === properties.placeType.value) ||
-                                    TrackerType.ELECTRICITY_METER
-                            } as Tracker)
-                    )
+                    setTracker(current => {
+                        loadedTracker = {
+                            ...current,
+                            name,
+                            description,
+                            type:
+                                trackerTypes.find(type => type.code === properties.placeType.value) ||
+                                TrackerType.ELECTRICITY_METER
+                        } as Tracker
+                        onLoad(loadedTracker)
+                        return loadedTracker
+                    })
                 } else {
                     setTracker(current => ({ ...current, type: TrackerType.ELECTRICITY_METER } as Tracker))
                 }
@@ -97,7 +103,7 @@ const TrackerDetails = ({
         }
 
         setIsFetching(false)
-    }, [isFetching, stdlib.algosdk, trackerId, trackerTypes])
+    }, [isFetching, onLoad, stdlib.algosdk, trackerId, trackerTypes])
 
     useEffect(() => {
         if (!tracker && !error) {
@@ -148,9 +154,12 @@ const TrackerDetails = ({
             {tracker && uiStatus === TrackerUiStatus.READINGS && (
                 <>
                     <div className={styles.iconLabel}>
-                        <Label text={strings.readings} />
+                        <Label text={strings.energyUsage} />
                         <div className={`${Icon.CHART} ${styles.icon}`} />
                     </div>
+                    {tracker.utilityAccountId && (
+                        <div className={styles.subLabel}>{`(${strings.connectedToUtilityApi})`}</div>
+                    )}
                     <ReadingList
                         trackerId={tracker.id}
                         bottomScrollCounter={bottomScrollCounter}

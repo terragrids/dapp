@@ -93,7 +93,7 @@ const PlaceDetails = ({
     const placeTypes = useRef<Array<PlaceType>>([])
     const trackerTypes = useRef<Array<TrackerType>>([])
     const placeFetched = useRef(false)
-    const [selectedTracker, setSelectedTracker] = useState<string | null>()
+    const [selectedTracker, setSelectedTracker] = useState<Tracker | null>()
     const [manualReading, setManualReading] = useState<Reading | null>()
     const [utilityAccount, setUtilityAccount] = useState<UtilityAccount | null>()
 
@@ -388,8 +388,8 @@ const PlaceDetails = ({
         setUiStatus(UiStatus.VIEW)
     }
 
-    function selectTracker(id: string) {
-        setSelectedTracker(id)
+    function selectTracker(tracker: Tracker) {
+        setSelectedTracker(tracker)
         setUiStatus(UiStatus.TRACKER_VIEW)
     }
 
@@ -416,7 +416,7 @@ const PlaceDetails = ({
             method: 'POST',
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
-                trackerId: selectedTracker,
+                trackerId: selectedTracker?.id,
                 value: manualReading.value.toString(),
                 unit: manualReading.unit
             })
@@ -448,7 +448,7 @@ const PlaceDetails = ({
         setInProgress(true)
         setError(null)
 
-        const response = await fetchOrLogin(endpoints.tracker(selectedTracker), {
+        const response = await fetchOrLogin(endpoints.tracker(selectedTracker?.id), {
             method: 'PUT',
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
@@ -592,10 +592,11 @@ const PlaceDetails = ({
                         uiStatus === UiStatus.ADD_MANUAL_READING ||
                         uiStatus === UiStatus.UTILITY_API) && (
                         <TrackerDetails
-                            trackerId={selectedTracker}
+                            trackerId={selectedTracker.id}
                             trackerTypes={trackerTypes.current}
                             uiStatus={getTrackerUiStatus()}
                             bottomScrollCounter={bottomScrollCounter}
+                            onLoad={tracker => setSelectedTracker(tracker)}
                             onManualReadingChange={setManualReading}
                             onUtilityAccountChange={updateUtilityAccountId}
                             onUtilityApiKeyChange={updateUtilityAccountApiKey}
@@ -726,7 +727,11 @@ const PlaceDetails = ({
                                                 />
                                                 <IconButton
                                                     icon={Icon.PLUG}
-                                                    tooltip={strings.connectToUtilityApi}
+                                                    tooltip={`${
+                                                        selectedTracker?.utilityAccountId
+                                                            ? strings.editConnectionToUtilityApi
+                                                            : strings.connectToUtilityApi
+                                                    }`}
                                                     type={IconButtonType.OUTLINE}
                                                     onClick={() => setUiStatus(UiStatus.UTILITY_API)}
                                                 />
