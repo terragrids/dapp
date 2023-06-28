@@ -601,6 +601,7 @@ const PlaceDetails = ({
                             onUtilityAccountChange={updateUtilityAccountId}
                             onUtilityApiKeyChange={updateUtilityAccountApiKey}
                             onAddManualReading={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
+                            onConnectToUtilityApi={() => setUiStatus(UiStatus.UTILITY_API)}
                         />
                     )}
             </div>

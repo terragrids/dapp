@@ -15,10 +15,11 @@ type ReadingListProps = {
     canAdd: boolean
     bottomScrollCounter: number
     onAdd: () => void
+    onConnect: () => void
     onSelect: (id: string) => void
 }
 
-const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onSelect }: ReadingListProps) => {
+const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect, onSelect }: ReadingListProps) => {
     const user = useContext<User>(UserContext)
     const [readings, setReadings] = useState<Array<Reading> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
@@ -94,12 +95,20 @@ const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onSelect }
                 <div className={styles.empty}>
                     <div>{strings.noReadingsFound}</div>
                     {canAdd && (
-                        <Button
-                            className={styles.button}
-                            type={ButtonType.OUTLINE}
-                            label={strings.addManualReading}
-                            onClick={onAdd}
-                        />
+                        <div className={styles.buttons}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.addManualReading}
+                                onClick={onAdd}
+                            />
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.connectToUtilityApi}
+                                onClick={onConnect}
+                            />
+                        </div>
                     )}
                 </div>
             )}

@@ -25,6 +25,7 @@ type TrackerDetailsProps = {
     onUtilityAccountChange: (account: string) => void
     onUtilityApiKeyChange: (apiKey: string) => void
     onAddManualReading: () => void
+    onConnectToUtilityApi: () => void
 }
 
 export enum TrackerUiStatus {
@@ -43,7 +44,8 @@ const TrackerDetails = ({
     onManualReadingChange,
     onUtilityAccountChange,
     onUtilityApiKeyChange,
-    onAddManualReading
+    onAddManualReading,
+    onConnectToUtilityApi
 }: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
@@ -165,6 +167,7 @@ const TrackerDetails = ({
                         bottomScrollCounter={bottomScrollCounter}
                         canAdd={user && (user.isAdmin || user.id === tracker.userId)}
                         onAdd={onAddManualReading}
+                        onConnect={onConnectToUtilityApi}
                         onSelect={selectReading}
                     />
                 </>
