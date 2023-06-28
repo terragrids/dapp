@@ -61,6 +61,7 @@ const paginatedReadings = (trackerId, nextPageKey, status, size = pageSize) =>
     }`
 const place = id => `api/places/${id}`
 const tracker = id => `api/trackers/${id}`
+const trackerUtilityMeters = id => `api/trackers/${id}/utility/meters`
 const placeApproval = id => `api/places/${id}/approval`
 const paginatedAccountPlaces = (userId, nextPageKey, status) =>
     `api/accounts/${userId}/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
@@ -97,6 +98,7 @@ export const endpoints = {
     paginatedReadings,
     place,
     tracker,
+    trackerUtilityMeters,
     placeApproval,
     paginatedAccountPlaces,
     authForWallet,

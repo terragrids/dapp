@@ -140,6 +140,27 @@ const TrackerDetails = ({
         onUtilityApiKeyChange(apiKey)
     }
 
+    useEffect(() => {
+        async function fetchUtilityMeters() {
+            setIsFetching(true)
+            setError(null)
+
+            const response = await fetch(endpoints.trackerUtilityMeters(tracker?.id))
+
+            if (response.ok) {
+                // const { electricityMeterPoints, gasMeterPoints } = await response.json()
+                await response.json()
+            } else {
+                setError(strings.errorFetchingUtilityMeters)
+            }
+
+            setIsFetching(false)
+        }
+        if (tracker && tracker.utilityAccountId && uiStatus === TrackerUiStatus.UTILITY_API) {
+            fetchUtilityMeters()
+        }
+    }, [tracker, uiStatus])
+
     return (
         <div className={styles.container}>
             {!tracker && !error && <LoadingSpinner />}
@@ -151,6 +172,7 @@ const TrackerDetails = ({
                     <div className={`${styles.section} ${styles.image}`}>
                         <img src={tracker.offChainImageUrl} alt={tracker.name} className={styles.image} />
                     </div>
+                    {error && <div className={styles.error}>{error}</div>}
                 </>
             )}
             {tracker && uiStatus === TrackerUiStatus.READINGS && (
@@ -209,7 +231,7 @@ const TrackerDetails = ({
                     </div>
                 </>
             )}
-            {tracker && uiStatus === TrackerUiStatus.UTILITY_API && (
+            {tracker && !isFetching && uiStatus === TrackerUiStatus.UTILITY_API && (
                 <>
                     <div className={styles.section}>
                         <InputField
@@ -223,6 +245,7 @@ const TrackerDetails = ({
                     </div>
                 </>
             )}
+            {tracker && isFetching && uiStatus === TrackerUiStatus.UTILITY_API && <LoadingSpinner />}
         </div>
     )
 }
