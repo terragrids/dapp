@@ -14,6 +14,11 @@ import { Reading } from 'types/reading.js'
 import ReadingList from 'components/reading/reading-list'
 import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
+import { ElectricityMeter, ElectricityMeterPoint, GasMeter, GasMeterPoint } from 'types/utility-meter.js'
+import { DropDownSelector } from 'components/drop-down-selector'
+import Button, { ButtonSize, ButtonType } from 'components/button'
+import { UtilityAccount } from 'types/utility-account'
+import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 
 type TrackerDetailsProps = {
     trackerId: string
@@ -22,10 +27,9 @@ type TrackerDetailsProps = {
     bottomScrollCounter: number
     onLoad: (tracker: Tracker) => void
     onManualReadingChange: (reading: Reading) => void
-    onUtilityAccountChange: (account: string) => void
-    onUtilityApiKeyChange: (apiKey: string) => void
     onAddManualReading: () => void
     onConnectToUtilityApi: () => void
+    onUpdating: (inProgress: boolean) => void
 }
 
 export enum TrackerUiStatus {
@@ -35,6 +39,11 @@ export enum TrackerUiStatus {
     UTILITY_API
 }
 
+const meterSelectorPrompt = {
+    key: 'none',
+    value: strings.selectMeter
+}
+
 const TrackerDetails = ({
     trackerId,
     uiStatus,
@@ -42,16 +51,22 @@ const TrackerDetails = ({
     bottomScrollCounter,
     onLoad,
     onManualReadingChange,
-    onUtilityAccountChange,
-    onUtilityApiKeyChange,
     onAddManualReading,
-    onConnectToUtilityApi
+    onConnectToUtilityApi,
+    onUpdating
 }: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
     const [tracker, setTracker] = useState<Tracker | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
+    const [inProgress, setInProgress] = useState<boolean>(false)
     const [error, setError] = useState<string | null>()
+    const [electricityMeters, setElectricityMeters] = useState<Array<ElectricityMeter> | null>()
+    const [gasMeters, setGasMeters] = useState<Array<GasMeter> | null>()
+    const [utilityAccount, setUtilityAccount] = useState<UtilityAccount | null>()
+    const [electricityMeter, setElectricityMeter] = useState<ElectricityMeter | null>()
+    const [gasMeter, setGasMeter] = useState<GasMeter | null>()
+    const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchTracker = useCallback(async () => {
         if (isFetching) return
@@ -73,6 +88,8 @@ const TrackerDetails = ({
                 offChainImageUrl,
                 utilityAccountId
             } as Tracker
+
+            setUtilityAccount({ id: utilityAccountId } as UtilityAccount)
 
             setTracker(loadedTracker)
 
@@ -113,6 +130,10 @@ const TrackerDetails = ({
         }
     }, [error, fetchTracker, tracker])
 
+    useEffect(() => {
+        onUpdating(inProgress)
+    }, [inProgress, onUpdating])
+
     function getUnit() {
         if (!tracker) return ''
         switch (tracker.type.code) {
@@ -132,12 +153,20 @@ const TrackerDetails = ({
         // do nothing
     }
 
-    function updateUtilityAccount(account: string) {
-        onUtilityAccountChange(account)
+    function updateUtilityAccount(id: string) {
+        setUtilityAccount(account => ({ ...account, id } as UtilityAccount))
     }
 
     function updateUtilityApiKey(apiKey: string) {
-        onUtilityApiKeyChange(apiKey)
+        setUtilityAccount(account => ({ ...account, apiKey } as UtilityAccount))
+    }
+
+    function updateElectricityMeter(serialNumber: string) {
+        setElectricityMeter(electricityMeters?.find(meter => meter.serialNumber === serialNumber) as ElectricityMeter)
+    }
+
+    function updateGasMeter(serialNumber: string) {
+        setGasMeter(gasMeters?.find(meter => meter.serialNumber === serialNumber) as GasMeter)
     }
 
     useEffect(() => {
@@ -148,18 +177,112 @@ const TrackerDetails = ({
             const response = await fetch(endpoints.trackerUtilityMeters(tracker?.id))
 
             if (response.ok) {
-                // const { electricityMeterPoints, gasMeterPoints } = await response.json()
-                await response.json()
+                const { electricityMeterPoints, gasMeterPoints } = await response.json()
+
+                switch (tracker?.type.code) {
+                    default:
+                    case 'electricity-meter':
+                        {
+                            const meters = [] as Array<ElectricityMeter>
+                            electricityMeterPoints.forEach((point: ElectricityMeterPoint) => {
+                                meters.push(
+                                    ...point.meters.map(
+                                        meter =>
+                                            ({ mpan: point.mpan, serialNumber: meter.serialNumber } as ElectricityMeter)
+                                    )
+                                )
+                            })
+                            setElectricityMeters(meters)
+                            setElectricityMeter(null)
+                        }
+                        break
+                    case 'gas-meter':
+                        {
+                            const meters = [] as Array<GasMeter>
+                            gasMeterPoints.forEach((point: GasMeterPoint) => {
+                                meters.push(
+                                    ...point.meters.map(
+                                        meter => ({ mprn: point.mprn, serialNumber: meter.serialNumber } as GasMeter)
+                                    )
+                                )
+                            })
+                            setGasMeters(meters)
+                            setGasMeter(null)
+                        }
+                        break
+                }
             } else {
                 setError(strings.errorFetchingUtilityMeters)
             }
 
             setIsFetching(false)
         }
-        if (tracker && tracker.utilityAccountId && uiStatus === TrackerUiStatus.UTILITY_API) {
+        if (tracker && tracker.type && tracker.utilityAccountId && uiStatus === TrackerUiStatus.UTILITY_API) {
             fetchUtilityMeters()
         }
     }, [tracker, uiStatus])
+
+    async function updateTrackerUtilityAccount() {
+        if (!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey) return
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.tracker(tracker?.id), {
+            method: 'PUT',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                utilityAccountId: utilityAccount.id,
+                utilityAccountApiKey: utilityAccount.apiKey
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorUpdatingTracker)
+        } else {
+            // TODO show a success message
+        }
+
+        setInProgress(false)
+    }
+
+    async function updateTrackerMeter() {
+        if (!electricityMeter && !gasMeter) return
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.tracker(tracker?.id), {
+            method: 'PUT',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                ...(electricityMeter && {
+                    electricityMeterMpan: electricityMeter.mpan,
+                    electricityMeterSerialNumber: electricityMeter.serialNumber
+                }),
+                ...(gasMeter && {
+                    gasMeterMprn: gasMeter.mprn,
+                    gasMeterSerialNumber: gasMeter.serialNumber
+                })
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorUpdatingTracker)
+        } else {
+            // TODO show a success message
+        }
+
+        setInProgress(false)
+    }
+
+    function isUtilityAccountValid() {
+        return !!utilityAccount && !!utilityAccount.id && !!utilityAccount.apiKey
+    }
+
+    function isMeterValid() {
+        if (electricityMeter && electricityMeter.serialNumber && electricityMeter.serialNumber !== 'none') return true
+        if (gasMeter && gasMeter.serialNumber && gasMeter.serialNumber !== 'none') return true
+        return false
+    }
 
     return (
         <div className={styles.container}>
@@ -241,8 +364,74 @@ const TrackerDetails = ({
                         />
                     </div>
                     <div className={styles.section}>
-                        <InputField label={strings.utilityApiKey} onChange={updateUtilityApiKey} />
+                        <InputField
+                            label={strings.utilityApiKey}
+                            placeholder={'*****'}
+                            type={'password'}
+                            onChange={updateUtilityApiKey}
+                        />
                     </div>
+
+                    <div className={styles.buttons}>
+                        <Button
+                            className={styles.button}
+                            type={ButtonType.FULL}
+                            size={ButtonSize.SMALL}
+                            label={strings.updateAccount}
+                            disabled={inProgress || !isUtilityAccountValid()}
+                            onClick={updateTrackerUtilityAccount}
+                        />
+                    </div>
+
+                    {(electricityMeters || gasMeters) && (
+                        <>
+                            <hr className={styles.separator} />
+                            <div className={styles.section}>
+                                {electricityMeters && (
+                                    <div className={styles.section}>
+                                        <DropDownSelector
+                                            label={strings.electricityMeter}
+                                            options={[
+                                                meterSelectorPrompt,
+                                                ...electricityMeters.map(meter => ({
+                                                    key: meter.serialNumber,
+                                                    value: `MPAN: ${meter.mpan}\nS/N: ${meter.serialNumber}`
+                                                }))
+                                            ]}
+                                            onSelected={updateElectricityMeter}
+                                        />
+                                    </div>
+                                )}
+
+                                {gasMeters && (
+                                    <div className={styles.section}>
+                                        <DropDownSelector
+                                            label={strings.gasMeter}
+                                            options={[
+                                                meterSelectorPrompt,
+                                                ...gasMeters.map(meter => ({
+                                                    key: meter.serialNumber,
+                                                    value: `MPRN: ${meter.mprn} S/N: ${meter.serialNumber}`
+                                                }))
+                                            ]}
+                                            onSelected={updateGasMeter}
+                                        />
+                                    </div>
+                                )}
+
+                                <div className={styles.buttons}>
+                                    <Button
+                                        className={styles.button}
+                                        type={ButtonType.FULL}
+                                        size={ButtonSize.SMALL}
+                                        label={strings.updateMeter}
+                                        disabled={inProgress || !isMeterValid()}
+                                        onClick={updateTrackerMeter}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
             {tracker && isFetching && uiStatus === TrackerUiStatus.UTILITY_API && <LoadingSpinner />}

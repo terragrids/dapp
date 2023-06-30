@@ -7,9 +7,15 @@ export enum ButtonType {
     OUTLINE_ALERT
 }
 
+export enum ButtonSize {
+    BIG,
+    SMALL
+}
+
 type Props = {
     label: string
     type?: ButtonType
+    size?: ButtonSize
     loading?: boolean
     checked?: boolean
     disabled?: boolean
@@ -24,7 +30,8 @@ export default function Button({
     disabled = false,
     className = '',
     onClick,
-    type = ButtonType.FULL
+    type = ButtonType.FULL,
+    size = ButtonSize.BIG
 }: Props) {
     const typeClass = () => {
         switch (type) {
@@ -36,9 +43,20 @@ export default function Button({
                 return styles.default
         }
     }
+
+    const sizeClass = () => {
+        switch (size) {
+            case ButtonSize.SMALL:
+                return styles.small
+            case ButtonSize.BIG:
+            default:
+                return styles.big
+        }
+    }
+
     return (
         <button
-            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${typeClass()}`}
+            className={`${styles.this} ${className} ${disabled ? styles.disabled : ''} ${typeClass()} ${sizeClass()}`}
             onClick={onClick}
             disabled={disabled || loading || checked}>
             {loading && <LoadingSpinner small />}

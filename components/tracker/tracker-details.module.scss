@@ -7,7 +7,7 @@
 
     img {
         padding: 10px;
-        width: 200px;
+        width: 150px;
         height: auto;
     }
 
@@ -62,4 +62,18 @@
 .error {
     padding: 10px 0;
     color: $color-red;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.separator {
+    height: 1px;
+    margin: 20px 0;
+    height: 1px;
+    border: 0;
+    background-color: $color-abbey;
 }

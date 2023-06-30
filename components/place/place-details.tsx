@@ -25,7 +25,6 @@ import TrackerList from 'components/tracker/tracker-list'
 import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
 import { Reading } from 'types/reading.js'
-import { UtilityAccount } from 'types/utility-account.js'
 
 type PlaceDetailsProps = {
     id: string
@@ -95,7 +94,7 @@ const PlaceDetails = ({
     const placeFetched = useRef(false)
     const [selectedTracker, setSelectedTracker] = useState<Tracker | null>()
     const [manualReading, setManualReading] = useState<Reading | null>()
-    const [utilityAccount, setUtilityAccount] = useState<UtilityAccount | null>()
+    const [updatingTracker, setUpdatingTracker] = useState<boolean>(false)
 
     const fetchPlace = useCallback(async () => {
         if (!id) return
@@ -435,41 +434,6 @@ const PlaceDetails = ({
         setInProgress(false)
     }
 
-    function updateUtilityAccountId(id: string) {
-        setUtilityAccount(account => ({ ...account, id } as UtilityAccount))
-    }
-
-    function updateUtilityAccountApiKey(apiKey: string) {
-        setUtilityAccount(account => ({ ...account, apiKey } as UtilityAccount))
-    }
-
-    async function updateTrackerUtilityAccount() {
-        if (!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey) return
-        setInProgress(true)
-        setError(null)
-
-        const response = await fetchOrLogin(endpoints.tracker(selectedTracker?.id), {
-            method: 'PUT',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-                utilityAccountId: utilityAccount.id,
-                utilityAccountApiKey: utilityAccount.apiKey
-            })
-        })
-
-        if (!response.ok) {
-            setError(strings.errorUpdatingTracker)
-        } else {
-            setDone(true)
-            setTimeout(() => {
-                setUiStatus(UiStatus.TRACKER_VIEW)
-                setDone(false)
-            }, ONE_SECOND)
-        }
-
-        setInProgress(false)
-    }
-
     return (
         <>
             <div className={styles.container}>
@@ -598,10 +562,9 @@ const PlaceDetails = ({
                             bottomScrollCounter={bottomScrollCounter}
                             onLoad={tracker => setSelectedTracker(tracker)}
                             onManualReadingChange={setManualReading}
-                            onUtilityAccountChange={updateUtilityAccountId}
-                            onUtilityApiKeyChange={updateUtilityAccountApiKey}
                             onAddManualReading={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
                             onConnectToUtilityApi={() => setUiStatus(UiStatus.UTILITY_API)}
+                            onUpdating={inProgress => setUpdatingTracker(inProgress)}
                         />
                     )}
             </div>
@@ -772,17 +735,8 @@ const PlaceDetails = ({
                                     <Button
                                         className={styles.button}
                                         type={ButtonType.OUTLINE}
-                                        label={strings.submit}
-                                        disabled={!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey}
-                                        loading={isUpdateInProgress()}
-                                        checked={done}
-                                        onClick={updateTrackerUtilityAccount}
-                                    />
-                                    <Button
-                                        className={styles.button}
-                                        type={ButtonType.OUTLINE}
                                         label={strings.cancel}
-                                        disabled={isUpdateInProgress()}
+                                        loading={updatingTracker}
                                         onClick={() => setUiStatus(UiStatus.TRACKER_VIEW)}
                                     />
                                 </div>

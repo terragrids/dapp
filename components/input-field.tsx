@@ -10,6 +10,7 @@ export type SelectOption = {
 
 type Props = {
     initialValue?: string
+    placeholder?: string
     label: string
     multiline?: boolean
     max?: number
@@ -20,6 +21,7 @@ type Props = {
 
 export const InputField = ({
     initialValue,
+    placeholder,
     label,
     multiline = false,
     max = 64,
@@ -41,6 +43,7 @@ export const InputField = ({
                     id={id.current}
                     className={styles.field}
                     defaultValue={initialValue}
+                    placeholder={placeholder}
                     maxLength={max}
                     type={type}
                     onChange={onTextChange}

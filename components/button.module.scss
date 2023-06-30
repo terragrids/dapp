@@ -4,8 +4,6 @@
 @import 'styles/fonts.scss';
 
 .this {
-    min-height: 44px;
-    padding: 0 20px;
     border-radius: $button-border-radius;
     border: none;
     cursor: pointer;
@@ -61,4 +59,14 @@
     background-color: $color-white;
     color: $color-abbey;
     opacity: 1;
+}
+
+.big {
+    min-height: 44px;
+    padding: 0 20px;
+}
+
+.small {
+    padding: 8px 20px;
+    font-size: 12px;
 }

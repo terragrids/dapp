@@ -1,5 +1,6 @@
 import { strings } from 'strings/en.js'
 import { MediaItem } from './media.js'
+import { ElectricityMeter, GasMeter } from './utility-meter.js'
 
 export type Tracker = {
     id: string
@@ -9,7 +10,9 @@ export type Tracker = {
     status: string
     offChainImageUrl: string
     created: number
-    utilityAccountId: string
+    utilityAccountId?: string
+    electricityMeter?: ElectricityMeter
+    gasMeter?: GasMeter
 }
 
 export class TrackerType {
