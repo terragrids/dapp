@@ -19,6 +19,7 @@ import { DropDownSelector } from 'components/drop-down-selector'
 import Button, { ButtonSize, ButtonType } from 'components/button'
 import { UtilityAccount } from 'types/utility-account'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
+import { ONE_SECOND } from 'utils/constants'
 
 type TrackerDetailsProps = {
     trackerId: string
@@ -66,6 +67,8 @@ const TrackerDetails = ({
     const [utilityAccount, setUtilityAccount] = useState<UtilityAccount | null>()
     const [electricityMeter, setElectricityMeter] = useState<ElectricityMeter | null>()
     const [gasMeter, setGasMeter] = useState<GasMeter | null>()
+    const [accountUpdated, setAccountUpdated] = useState(false)
+    const [meterUpdated, setMeterUpdated] = useState(false)
     const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchTracker = useCallback(async () => {
@@ -239,7 +242,10 @@ const TrackerDetails = ({
         if (!response.ok) {
             setError(strings.errorUpdatingTracker)
         } else {
-            // TODO show a success message
+            setAccountUpdated(true)
+            setTimeout(() => {
+                setAccountUpdated(false)
+            }, ONE_SECOND)
         }
 
         setInProgress(false)
@@ -268,7 +274,10 @@ const TrackerDetails = ({
         if (!response.ok) {
             setError(strings.errorUpdatingTracker)
         } else {
-            // TODO show a success message
+            setMeterUpdated(true)
+            setTimeout(() => {
+                setMeterUpdated(false)
+            }, ONE_SECOND)
         }
 
         setInProgress(false)
@@ -379,6 +388,7 @@ const TrackerDetails = ({
                             size={ButtonSize.SMALL}
                             label={strings.updateAccount}
                             disabled={inProgress || !isUtilityAccountValid()}
+                            checked={accountUpdated}
                             onClick={updateTrackerUtilityAccount}
                         />
                     </div>
@@ -426,6 +436,7 @@ const TrackerDetails = ({
                                         size={ButtonSize.SMALL}
                                         label={strings.updateMeter}
                                         disabled={inProgress || !isMeterValid()}
+                                        checked={meterUpdated}
                                         onClick={updateTrackerMeter}
                                     />
                                 </div>
