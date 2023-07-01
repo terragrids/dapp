@@ -79,8 +79,19 @@ const TrackerDetails = ({
         const response = await fetch(endpoints.tracker(trackerId))
 
         if (response.ok) {
-            const { id, name, reserve, created, userId, offChainImageUrl, status, utilityAccountId } =
-                await response.json()
+            const {
+                id,
+                name,
+                reserve,
+                created,
+                userId,
+                offChainImageUrl,
+                status,
+                utilityAccountId,
+                meterMpan,
+                meterMprn,
+                meterSerialNumber
+            } = await response.json()
 
             let loadedTracker = {
                 id,
@@ -89,7 +100,9 @@ const TrackerDetails = ({
                 userId,
                 status,
                 offChainImageUrl,
-                utilityAccountId
+                utilityAccountId,
+                ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
+                ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
             } as Tracker
 
             setUtilityAccount({ id: utilityAccountId } as UtilityAccount)
@@ -196,7 +209,9 @@ const TrackerDetails = ({
                                 )
                             })
                             setElectricityMeters(meters)
-                            setElectricityMeter(null)
+                            setElectricityMeter(
+                                meters.find(meter => meter.serialNumber === tracker?.electricityMeter?.serialNumber)
+                            )
                         }
                         break
                     case 'gas-meter':
@@ -210,7 +225,7 @@ const TrackerDetails = ({
                                 )
                             })
                             setGasMeters(meters)
-                            setGasMeter(null)
+                            setGasMeter(meters.find(meter => meter.serialNumber === tracker?.gasMeter?.serialNumber))
                         }
                         break
                 }
@@ -261,12 +276,12 @@ const TrackerDetails = ({
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
                 ...(electricityMeter && {
-                    electricityMeterMpan: electricityMeter.mpan,
-                    electricityMeterSerialNumber: electricityMeter.serialNumber
+                    meterMpan: electricityMeter.mpan,
+                    meterSerialNumber: electricityMeter.serialNumber
                 }),
                 ...(gasMeter && {
-                    gasMeterMprn: gasMeter.mprn,
-                    gasMeterSerialNumber: gasMeter.serialNumber
+                    meterMprn: gasMeter.mprn,
+                    meterSerialNumber: gasMeter.serialNumber
                 })
             })
         })
@@ -288,8 +303,20 @@ const TrackerDetails = ({
     }
 
     function isMeterValid() {
-        if (electricityMeter && electricityMeter.serialNumber && electricityMeter.serialNumber !== 'none') return true
-        if (gasMeter && gasMeter.serialNumber && gasMeter.serialNumber !== 'none') return true
+        if (
+            electricityMeter &&
+            electricityMeter.serialNumber &&
+            electricityMeter.serialNumber !== 'none' &&
+            electricityMeter.serialNumber !== tracker?.electricityMeter?.serialNumber
+        )
+            return true
+        if (
+            gasMeter &&
+            gasMeter.serialNumber &&
+            gasMeter.serialNumber !== 'none' &&
+            gasMeter.serialNumber !== tracker?.gasMeter?.serialNumber
+        )
+            return true
         return false
     }
 
@@ -403,6 +430,7 @@ const TrackerDetails = ({
                                     <div className={styles.section}>
                                         <DropDownSelector
                                             label={strings.electricityMeter}
+                                            defaultValue={electricityMeter?.serialNumber}
                                             options={[
                                                 meterSelectorPrompt,
                                                 ...electricityMeters.map(meter => ({
@@ -419,6 +447,7 @@ const TrackerDetails = ({
                                     <div className={styles.section}>
                                         <DropDownSelector
                                             label={strings.gasMeter}
+                                            defaultValue={gasMeter?.serialNumber}
                                             options={[
                                                 meterSelectorPrompt,
                                                 ...gasMeters.map(meter => ({
