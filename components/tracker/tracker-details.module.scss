@@ -66,8 +66,13 @@
 
 .buttons {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     padding: 20px 0;
+}
+
+.button {
+    width: 100%;
+    max-width: 200px;
 }
 
 .separator {

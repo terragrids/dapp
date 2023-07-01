@@ -308,7 +308,7 @@ const TrackerDetails = ({
                 </>
             )}
             {tracker && uiStatus === TrackerUiStatus.READINGS && (
-                <>
+                <div className={styles.section}>
                     <div className={styles.iconLabel}>
                         <Label text={strings.energyUsage} />
                         <div className={`${Icon.CHART} ${styles.icon}`} />
@@ -324,7 +324,7 @@ const TrackerDetails = ({
                         onConnect={onConnectToUtilityApi}
                         onSelect={selectReading}
                     />
-                </>
+                </div>
             )}
             {tracker && uiStatus === TrackerUiStatus.DETAILS && (
                 <>
@@ -366,31 +366,33 @@ const TrackerDetails = ({
             {tracker && !isFetching && uiStatus === TrackerUiStatus.UTILITY_API && (
                 <>
                     <div className={styles.section}>
-                        <InputField
-                            label={strings.utilityAccount}
-                            initialValue={tracker.utilityAccountId}
-                            onChange={updateUtilityAccount}
-                        />
-                    </div>
-                    <div className={styles.section}>
-                        <InputField
-                            label={strings.utilityApiKey}
-                            placeholder={'*****'}
-                            type={'password'}
-                            onChange={updateUtilityApiKey}
-                        />
-                    </div>
+                        <div className={styles.section}>
+                            <InputField
+                                label={strings.utilityAccount}
+                                initialValue={tracker.utilityAccountId}
+                                onChange={updateUtilityAccount}
+                            />
+                        </div>
+                        <div className={styles.section}>
+                            <InputField
+                                label={strings.utilityApiKey}
+                                placeholder={'*****'}
+                                type={'password'}
+                                onChange={updateUtilityApiKey}
+                            />
+                        </div>
 
-                    <div className={styles.buttons}>
-                        <Button
-                            className={styles.button}
-                            type={ButtonType.FULL}
-                            size={ButtonSize.SMALL}
-                            label={strings.updateAccount}
-                            disabled={inProgress || !isUtilityAccountValid()}
-                            checked={accountUpdated}
-                            onClick={updateTrackerUtilityAccount}
-                        />
+                        <div className={styles.buttons}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.FULL}
+                                size={ButtonSize.SMALL}
+                                label={strings.updateAccount}
+                                disabled={inProgress || !isUtilityAccountValid()}
+                                checked={accountUpdated}
+                                onClick={updateTrackerUtilityAccount}
+                            />
+                        </div>
                     </div>
 
                     {(electricityMeters || gasMeters) && (

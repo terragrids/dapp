@@ -12,6 +12,7 @@
     color: $color-white;
     transition: opacity 0.2s;
     font-family: $font-default;
+    -webkit-tap-highlight-color: transparent;
 
     @media (hover: hover) {
         &:hover {
@@ -71,6 +72,7 @@
     font-size: 12px;
 
     i {
-        font-size: 18px;
+        font-size: 15px;
+        font-weight: bold;
     }
 }
