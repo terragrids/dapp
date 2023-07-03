@@ -71,74 +71,77 @@ const TrackerDetails = ({
     const [meterUpdated, setMeterUpdated] = useState(false)
     const { fetchOrLogin } = useFetchOrLogin()
 
-    const fetchTracker = useCallback(async () => {
-        if (isFetching) return
-        setIsFetching(true)
-        setError(null)
+    const fetchTracker = useCallback(
+        async (showFetching = true) => {
+            if (isFetching) return
+            setIsFetching(showFetching)
+            setError(null)
 
-        const response = await fetch(endpoints.tracker(trackerId))
+            const response = await fetch(endpoints.tracker(trackerId))
 
-        if (response.ok) {
-            const {
-                id,
-                name,
-                reserve,
-                created,
-                userId,
-                offChainImageUrl,
-                status,
-                utilityAccountId,
-                meterMpan,
-                meterMprn,
-                meterSerialNumber
-            } = await response.json()
+            if (response.ok) {
+                const {
+                    id,
+                    name,
+                    reserve,
+                    created,
+                    userId,
+                    offChainImageUrl,
+                    status,
+                    utilityAccountId,
+                    meterMpan,
+                    meterMprn,
+                    meterSerialNumber
+                } = await response.json()
 
-            let loadedTracker = {
-                id,
-                name,
-                created: parseInt(created),
-                userId,
-                status,
-                offChainImageUrl,
-                utilityAccountId,
-                ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
-                ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
-            } as Tracker
+                let loadedTracker = {
+                    id,
+                    name,
+                    created: parseInt(created),
+                    userId,
+                    status,
+                    offChainImageUrl,
+                    utilityAccountId,
+                    ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
+                    ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
+                } as Tracker
 
-            setUtilityAccount({ id: utilityAccountId } as UtilityAccount)
+                setUtilityAccount({ id: utilityAccountId } as UtilityAccount)
 
-            setTracker(loadedTracker)
+                setTracker(loadedTracker)
 
-            // Try to fetch NFT metadata and image from IPFS
-            try {
-                const cid = cidFromAlgorandAddress(stdlib.algosdk, reserve)
-                const metadataUrl = ipfsUrl(cid)
-                const metadataResponse = await fetch(metadataUrl)
+                // Try to fetch NFT metadata and image from IPFS
+                try {
+                    const cid = cidFromAlgorandAddress(stdlib.algosdk, reserve)
+                    const metadataUrl = ipfsUrl(cid)
+                    const metadataResponse = await fetch(metadataUrl)
 
-                if (metadataResponse.ok) {
-                    const { name, description, properties } = await metadataResponse.json()
-                    setTracker(current => {
-                        loadedTracker = {
-                            ...current,
-                            name,
-                            description,
-                            type:
-                                trackerTypes.find(type => type.code === properties.placeType.value) ||
-                                TrackerType.ELECTRICITY_METER
-                        } as Tracker
-                        onLoad(loadedTracker)
-                        return loadedTracker
-                    })
-                } else {
-                    setTracker(current => ({ ...current, type: TrackerType.ELECTRICITY_METER } as Tracker))
-                }
-            } catch (e) {}
-        } else {
-            setError(strings.errorFetchingTracker)
-        }
+                    if (metadataResponse.ok) {
+                        const { name, description, properties } = await metadataResponse.json()
+                        setTracker(current => {
+                            loadedTracker = {
+                                ...current,
+                                name,
+                                description,
+                                type:
+                                    trackerTypes.find(type => type.code === properties.placeType.value) ||
+                                    TrackerType.ELECTRICITY_METER
+                            } as Tracker
+                            onLoad(loadedTracker)
+                            return loadedTracker
+                        })
+                    } else {
+                        setTracker(current => ({ ...current, type: TrackerType.ELECTRICITY_METER } as Tracker))
+                    }
+                } catch (e) {}
+            } else {
+                setError(strings.errorFetchingTracker)
+            }
 
-        setIsFetching(false)
-    }, [isFetching, onLoad, stdlib.algosdk, trackerId, trackerTypes])
+            setIsFetching(false)
+        },
+        [isFetching, onLoad, stdlib.algosdk, trackerId, trackerTypes]
+    )
 
     useEffect(() => {
         if (!tracker && !error) {
@@ -189,8 +192,12 @@ const TrackerDetails = ({
         async function fetchUtilityMeters() {
             setIsFetching(true)
             setError(null)
+            setElectricityMeters(null)
+            setElectricityMeter(null)
+            setGasMeters(null)
+            setGasMeter(null)
 
-            const response = await fetch(endpoints.trackerUtilityMeters(tracker?.id))
+            const response = await fetchOrLogin(endpoints.trackerUtilityMeters(tracker?.id))
 
             if (response.ok) {
                 const { electricityMeterPoints, gasMeterPoints } = await response.json()
@@ -238,7 +245,7 @@ const TrackerDetails = ({
         if (tracker && tracker.type && tracker.utilityAccountId && uiStatus === TrackerUiStatus.UTILITY_API) {
             fetchUtilityMeters()
         }
-    }, [tracker, uiStatus])
+    }, [fetchOrLogin, tracker, uiStatus])
 
     async function updateTrackerUtilityAccount() {
         if (!utilityAccount || !utilityAccount.id || !utilityAccount.apiKey) return
@@ -257,6 +264,7 @@ const TrackerDetails = ({
         if (!response.ok) {
             setError(strings.errorUpdatingTracker)
         } else {
+            await fetchTracker(false)
             setAccountUpdated(true)
             setTimeout(() => {
                 setAccountUpdated(false)
