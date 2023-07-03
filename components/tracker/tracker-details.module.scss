@@ -66,13 +66,19 @@
 
 .buttons {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
     padding: 20px 0;
+
+    @media (max-width: $screen-small) {
+        flex-direction: column;
+    }
 }
 
 .button {
     width: 100%;
     max-width: 200px;
+    margin: 10px;
 }
 
 .separator {
@@ -81,4 +87,16 @@
     height: 1px;
     border: 0;
     background-color: $color-abbey;
+}
+
+.notice {
+    padding: 10px;
+    border-radius: $border-radius;
+    border: 1px solid $color-abbey;
+    font-size: 14px;
+    box-sizing: content-box;
+
+    a {
+        color: $color-accent;
+    }
 }

@@ -76,6 +76,10 @@ const TrackerDetails = ({
             if (isFetching) return
             setIsFetching(showFetching)
             setError(null)
+            setElectricityMeters(null)
+            setElectricityMeter(null)
+            setGasMeters(null)
+            setGasMeter(null)
 
             const response = await fetch(endpoints.tracker(trackerId))
 
@@ -135,6 +139,7 @@ const TrackerDetails = ({
                     }
                 } catch (e) {}
             } else {
+                setTracker(null)
                 setError(strings.errorFetchingTracker)
             }
 
@@ -192,10 +197,6 @@ const TrackerDetails = ({
         async function fetchUtilityMeters() {
             setIsFetching(true)
             setError(null)
-            setElectricityMeters(null)
-            setElectricityMeter(null)
-            setGasMeters(null)
-            setGasMeter(null)
 
             const response = await fetchOrLogin(endpoints.trackerUtilityMeters(tracker?.id))
 
@@ -256,9 +257,32 @@ const TrackerDetails = ({
             method: 'PUT',
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
+                utilityAccountName: 'Octopus Energy',
                 utilityAccountId: utilityAccount.id,
                 utilityAccountApiKey: utilityAccount.apiKey
             })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorUpdatingTracker)
+        } else {
+            await fetchTracker(false)
+            setAccountUpdated(true)
+            setTimeout(() => {
+                setAccountUpdated(false)
+            }, ONE_SECOND)
+        }
+
+        setInProgress(false)
+    }
+
+    async function removeTrackerUtilityAccount() {
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.trackerUtility(tracker?.id), {
+            method: 'DELETE',
+            referrerPolicy: 'no-referrer'
         })
 
         if (!response.ok) {
@@ -401,6 +425,14 @@ const TrackerDetails = ({
             {tracker && !isFetching && uiStatus === TrackerUiStatus.UTILITY_API && (
                 <>
                     <div className={styles.section}>
+                        <div className={styles.notice}>
+                            <span>{strings.youCanOnlyConnectToOctopusEnergy} </span>
+                            <a href={'https://octopus.energy/about-us/'} target={'_blank'} rel={'noreferrer'}>
+                                {strings.learnMore}
+                            </a>
+                        </div>
+                    </div>
+                    <div className={styles.section}>
                         <div className={styles.section}>
                             <InputField
                                 label={strings.utilityAccount}
@@ -422,11 +454,21 @@ const TrackerDetails = ({
                                 className={styles.button}
                                 type={ButtonType.FULL}
                                 size={ButtonSize.SMALL}
-                                label={strings.updateAccount}
+                                label={tracker.utilityAccountId ? strings.updateAccount : strings.connectAccount}
                                 disabled={inProgress || !isUtilityAccountValid()}
                                 checked={accountUpdated}
                                 onClick={updateTrackerUtilityAccount}
                             />
+                            {tracker.utilityAccountId && (
+                                <Button
+                                    className={styles.button}
+                                    type={ButtonType.FULL}
+                                    size={ButtonSize.SMALL}
+                                    label={strings.removeAccount}
+                                    disabled={inProgress}
+                                    onClick={removeTrackerUtilityAccount}
+                                />
+                            )}
                         </div>
                     </div>
 
