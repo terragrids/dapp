@@ -69,16 +69,25 @@
     justify-content: center;
     align-items: center;
     padding: 20px 0;
-
-    @media (max-width: $screen-small) {
-        flex-direction: column;
-    }
+    flex-direction: column;
 }
 
 .button {
     width: 100%;
     max-width: 200px;
     margin: 10px;
+}
+
+.link {
+    margin: 10px 0;
+    font-size: 12px;
+    text-transform: capitalize;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+        border-bottom: 1px solid $color-alto;
+    }
 }
 
 .separator {

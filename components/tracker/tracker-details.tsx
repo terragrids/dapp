@@ -277,6 +277,7 @@ const TrackerDetails = ({
     }
 
     async function removeTrackerUtilityAccount() {
+        if (inProgress) return
         setInProgress(true)
         setError(null)
 
@@ -460,14 +461,9 @@ const TrackerDetails = ({
                                 onClick={updateTrackerUtilityAccount}
                             />
                             {tracker.utilityAccountId && (
-                                <Button
-                                    className={styles.button}
-                                    type={ButtonType.FULL}
-                                    size={ButtonSize.SMALL}
-                                    label={strings.removeAccount}
-                                    disabled={inProgress}
-                                    onClick={removeTrackerUtilityAccount}
-                                />
+                                <div className={styles.link} onClick={removeTrackerUtilityAccount}>
+                                    {strings.disconnectAccount}
+                                </div>
                             )}
                         </div>
                     </div>
