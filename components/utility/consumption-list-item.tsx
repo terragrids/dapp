@@ -7,7 +7,11 @@ type ConsumptionListItemProps = {
 }
 
 const ConsumptionListItem = ({ start, end, consumption }: ConsumptionListItemProps) => {
-    return <li className={styles.container}>{`${start} -> ${end} ${consumption}`}</li>
+    return (
+        <li className={styles.container}>{`${new Date(start).toLocaleString()} -> ${new Date(
+            end
+        ).toLocaleString()} ${consumption}`}</li>
+    )
 }
 
 export default ConsumptionListItem

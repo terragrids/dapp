@@ -2,8 +2,12 @@
 @import 'styles/screens.scss';
 
 .container {
-    width: 700px;
-    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100px;
 
     @media (max-width: $screen-medium) {
         width: 100%;
@@ -11,6 +15,7 @@
 }
 
 .scrollContainer {
+    width: 100%;
     padding-bottom: 40px;
     text-align: center;
 }
@@ -28,5 +33,6 @@
 }
 
 .button {
-    min-width: 150px;
+    width: 100%;
+    max-width: 200px;
 }
