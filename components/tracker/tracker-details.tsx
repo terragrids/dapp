@@ -20,6 +20,7 @@ import Button, { ButtonSize, ButtonType } from 'components/button'
 import { UtilityAccount } from 'types/utility-account'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 import { ONE_SECOND } from 'utils/constants'
+import ConsumptionList from 'components/utility/consumption-list'
 
 type TrackerDetailsProps = {
     trackerId: string
@@ -516,6 +517,7 @@ const TrackerDetails = ({
                                         checked={meterUpdated}
                                         onClick={updateTrackerMeter}
                                     />
+                                    <ConsumptionList trackerId={tracker.id} bottomScrollCounter={bottomScrollCounter} />
                                 </div>
                             </div>
                         </>
