@@ -140,7 +140,7 @@ const CreatePlaceDialog = ({ visible, position, onClose, onCreate }: CreatePlace
     }
 
     return (
-        <ModalDialog visible={visible} title={strings.createPlace} onClose={onClose}>
+        <ModalDialog visible={visible} title={strings.createPlace} onClose={onClose} withActionBar={true}>
             <div className={styles.container}>
                 {position && (
                     <div className={styles.section}>
