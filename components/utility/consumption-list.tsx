@@ -11,18 +11,20 @@ import ConsumptionListItem from './consumption-list-item'
 type ConsumptionListProps = {
     trackerId: string
     bottomScrollCounter: number
+    onError: (error: string | null) => void
 }
 
-const ConsumptionList = ({ trackerId, bottomScrollCounter }: ConsumptionListProps) => {
+const ConsumptionList = ({ trackerId, bottomScrollCounter, onError }: ConsumptionListProps) => {
     const [consumptions, setConsumptions] = useState<Array<Consumption> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPage, setNextPage] = useState<string | null>(null)
-    const [, setError] = useState<string | null>()
+    const [error, setError] = useState<string | null>()
 
     const fetchConsumptions = useCallback(async () => {
         if (isFetching) return
         setIsFetching(true)
         setError(null)
+        onError(null)
 
         const response = await fetch(endpoints.trackerUtilityConsumption(trackerId, nextPage))
 
@@ -31,11 +33,12 @@ const ConsumptionList = ({ trackerId, bottomScrollCounter }: ConsumptionListProp
             setConsumptions(!consumptions ? jsonResponse.consumptions : consumptions.concat(jsonResponse.consumptions))
             setNextPage(jsonResponse.nextPage)
         } else {
-            setError(strings.errorFetchingTrackers)
+            setError(strings.errorFetchingConsumptions)
+            onError(strings.errorFetchingConsumptions)
         }
 
         setIsFetching(false)
-    }, [consumptions, isFetching, nextPage, trackerId])
+    }, [consumptions, isFetching, nextPage, onError, trackerId])
 
     const fetchMoreConsumptions = useCallback(async () => {
         const hasMore = !!nextPage
@@ -44,8 +47,8 @@ const ConsumptionList = ({ trackerId, bottomScrollCounter }: ConsumptionListProp
 
     const prevScrollCounter = usePrevious(bottomScrollCounter)
     useEffect(() => {
-        if (prevScrollCounter && bottomScrollCounter > prevScrollCounter) fetchMoreConsumptions()
-    }, [bottomScrollCounter, fetchMoreConsumptions, prevScrollCounter])
+        if (prevScrollCounter && bottomScrollCounter > prevScrollCounter && !error) fetchMoreConsumptions()
+    }, [bottomScrollCounter, error, fetchMoreConsumptions, prevScrollCounter])
 
     return (
         <div className={styles.container}>

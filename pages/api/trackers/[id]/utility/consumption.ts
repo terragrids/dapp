@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                     {
                         page: req.query.page,
+                        pageSize: req.query.pageSize,
                         periodFrom: req.query.periodFrom,
                         periodTo: req.query.periodTo,
                         groupBy: req.query.groupBy,
