@@ -9,12 +9,12 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    height: 100px;
     width: 100%;
     margin: 10px 0;
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: $border-radius;
+    background-color: $color-abbey;
 
     @media (max-width: $screen-small) {
         min-width: auto;
@@ -26,40 +26,43 @@
     }
 }
 
-.leftContainer,
-.rightContainer {
+.interval {
     display: flex;
-    justify-content: flex-start;
-    overflow: hidden;
+    font-size: 14px;
 
-    & > div {
-        display: flex;
+    @media (max-width: $screen-small) {
         flex-direction: column;
-        justify-content: center;
+    }
+
+    @media (max-width: $screen-xsmall) {
+        font-size: 12px;
     }
 }
 
-.imageContainer {
-    flex: 0 0 auto;
-    position: relative;
-    overflow: hidden;
+.rightArrow {
+    padding: 0 5px;
 
-    .image {
-        width: 80px;
-        height: auto;
-        position: relative;
+    @media (max-width: $screen-small) {
+        display: none;
     }
 }
 
-.name {
-    flex: 0 0 300px;
-    padding: 20px;
-    overflow: hidden;
-    text-align: start;
+.downArrow {
+    display: none;
 
-    & > div {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    @media (max-width: $screen-small) {
+        display: block;
+    }
+}
+
+.value {
+    font-size: 18px;
+
+    @media (max-width: $screen-small) {
+        font-size: 16px;
+    }
+
+    @media (max-width: $screen-xsmall) {
+        font-size: 14px;
     }
 }

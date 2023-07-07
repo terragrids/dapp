@@ -10,11 +10,12 @@ import ConsumptionListItem from './consumption-list-item'
 
 type ConsumptionListProps = {
     trackerId: string
+    unit: string
     bottomScrollCounter: number
     onError: (error: string | null) => void
 }
 
-const ConsumptionList = ({ trackerId, bottomScrollCounter, onError }: ConsumptionListProps) => {
+const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: ConsumptionListProps) => {
     const [consumptions, setConsumptions] = useState<Array<Consumption> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPage, setNextPage] = useState<string | null>(null)
@@ -73,6 +74,7 @@ const ConsumptionList = ({ trackerId, bottomScrollCounter, onError }: Consumptio
                             start={item.start}
                             end={item.end}
                             consumption={item.consumption}
+                            unit={unit}
                         />
                     ))}
                     {isFetching && (

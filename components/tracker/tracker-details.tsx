@@ -522,6 +522,7 @@ const TrackerDetails = ({
                                     <ConsumptionList
                                         trackerId={tracker.id}
                                         bottomScrollCounter={bottomScrollCounter}
+                                        unit={getUnit()}
                                         onError={onError}
                                     />
                                 </div>
