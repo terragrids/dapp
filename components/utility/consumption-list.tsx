@@ -7,6 +7,8 @@ import styles from './consumption-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import { Consumption } from 'types/consumption.js'
 import ConsumptionListItem from './consumption-list-item'
+import DatePicker from 'components/date-picker/date-picker'
+import { getTimeDaysAgo } from 'utils/time-utils'
 
 type ConsumptionListProps = {
     trackerId: string
@@ -20,18 +22,24 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>()
+    const [startDate, setStartDate] = useState<number>(getTimeDaysAgo(1).getTime())
 
     const fetchConsumptions = useCallback(async () => {
         if (isFetching) return
+        if (!nextPage) setConsumptions(null)
         setIsFetching(true)
         setError(null)
         onError(null)
 
-        const response = await fetch(endpoints.trackerUtilityConsumption(trackerId, nextPage))
+        const response = await fetch(endpoints.trackerUtilityConsumption(trackerId, nextPage, startDate))
 
         if (response.ok) {
             const jsonResponse = await response.json()
-            setConsumptions(!consumptions ? jsonResponse.consumptions : consumptions.concat(jsonResponse.consumptions))
+            if (nextPage && consumptions) {
+                setConsumptions(consumptions.concat(jsonResponse.consumptions))
+            } else if (!nextPage || !consumptions) {
+                setConsumptions(jsonResponse.consumptions)
+            }
             setNextPage(jsonResponse.nextPage)
         } else {
             setError(strings.errorFetchingConsumptions)
@@ -39,7 +47,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         }
 
         setIsFetching(false)
-    }, [consumptions, isFetching, nextPage, onError, trackerId])
+    }, [consumptions, isFetching, nextPage, onError, startDate, trackerId])
 
     const fetchMoreConsumptions = useCallback(async () => {
         const hasMore = !!nextPage
@@ -51,16 +59,24 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         if (prevScrollCounter && bottomScrollCounter > prevScrollCounter && !error) fetchMoreConsumptions()
     }, [bottomScrollCounter, error, fetchMoreConsumptions, prevScrollCounter])
 
+    function updateStartDate(timestamp: number) {
+        setStartDate(timestamp)
+        setNextPage(null)
+    }
+
     return (
         <div className={styles.container}>
-            <Button
-                className={styles.button}
-                type={ButtonType.FULL}
-                size={ButtonSize.SMALL}
-                label={strings.importConsumption}
-                disabled={false}
-                onClick={fetchConsumptions}
-            />
+            <div className={styles.navigation}>
+                <DatePicker className={styles.datePicker} start={startDate} onChange={updateStartDate} />
+                <Button
+                    className={styles.button}
+                    size={ButtonSize.SMALL}
+                    label={strings.viewConsumption}
+                    disabled={false}
+                    onClick={fetchConsumptions}
+                />
+            </div>
+
             {isFetching && (
                 <div className={styles.loading}>
                     <LoadingSpinner />

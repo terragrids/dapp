@@ -63,8 +63,10 @@ const place = id => `api/places/${id}`
 const tracker = id => `api/trackers/${id}`
 const trackerUtility = id => `api/trackers/${id}/utility`
 const trackerUtilityMeters = id => `api/trackers/${id}/utility/meters`
-const trackerUtilityConsumption = (id, page) =>
-    `api/trackers/${id}/utility/consumption?sort=desc&pageSize=10&groupBy=hour${page ? `&page=${page}` : ''}`
+const trackerUtilityConsumption = (id, page, startDate) =>
+    `api/trackers/${id}/utility/consumption?sort=asc&pageSize=10&groupBy=hour${page ? `&page=${page}` : ''}${
+        startDate ? `&from=${startDate}` : ''
+    }`
 const placeApproval = id => `api/places/${id}/approval`
 const paginatedAccountPlaces = (userId, nextPageKey, status) =>
     `api/accounts/${userId}/places?sort=desc&pageSize=${pageSize}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${

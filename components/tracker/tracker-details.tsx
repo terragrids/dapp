@@ -519,13 +519,16 @@ const TrackerDetails = ({
                                         checked={meterUpdated}
                                         onClick={updateTrackerMeter}
                                     />
-                                    <ConsumptionList
-                                        trackerId={tracker.id}
-                                        bottomScrollCounter={bottomScrollCounter}
-                                        unit={getUnit()}
-                                        onError={onError}
-                                    />
                                 </div>
+
+                                <hr className={styles.separator} />
+
+                                <ConsumptionList
+                                    trackerId={tracker.id}
+                                    bottomScrollCounter={bottomScrollCounter}
+                                    unit={getUnit()}
+                                    onError={onError}
+                                />
                             </div>
                         </>
                     )}

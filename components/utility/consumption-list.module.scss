@@ -14,6 +14,17 @@
     }
 }
 
+.navigation {
+    display: flex;
+    justify-content: flex-start;
+    align-items: last baseline;
+    width: 100%;
+}
+
+.datePicker {
+    margin-right: 20px;
+}
+
 .scrollContainer {
     margin-top: 10px;
     width: 100%;

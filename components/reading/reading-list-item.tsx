@@ -1,8 +1,8 @@
-import { formatTimestamp } from 'utils/string-utils.js'
 import styles from './reading-list-item.module.scss'
 import { useState } from 'react'
 import { TransactionLink } from 'components/transaction-link'
 import { strings } from 'strings/en.js'
+import { formatTimestamp } from 'utils/time-utils'
 
 type ReadingListItemProps = {
     id: string
