@@ -18,8 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     {
                         page: req.query.page,
                         pageSize: req.query.pageSize,
-                        periodFrom: req.query.periodFrom,
-                        periodTo: req.query.periodTo,
+                        from: req.query.from,
+                        to: req.query.to,
                         groupBy: req.query.groupBy,
                         sort: req.query.sort
                     }
