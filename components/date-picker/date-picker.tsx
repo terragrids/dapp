@@ -7,11 +7,12 @@ import { strings } from 'strings/en.js'
 
 type DatePickerProps = {
     start?: number
+    maxDate?: Date
     className: string
     onChange: (date: number) => void
 }
 
-export default function DatePicker({ start, className, onChange }: DatePickerProps) {
+export default function DatePicker({ start, maxDate, className, onChange }: DatePickerProps) {
     const [startDate, setStartDate] = useState(start ? new Date(start) : new Date())
 
     function handleChange(date: Date) {
@@ -27,6 +28,7 @@ export default function DatePicker({ start, className, onChange }: DatePickerPro
                 selected={startDate}
                 dateFormat={'MMMM d, yyyy'}
                 onChange={handleChange}
+                maxDate={maxDate}
             />
         </div>
     )
