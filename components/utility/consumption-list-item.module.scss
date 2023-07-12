@@ -26,6 +26,10 @@
     }
 }
 
+.selected {
+    background-color: $color-brand;
+}
+
 .interval {
     display: flex;
     font-size: 14px;

@@ -1,5 +1,6 @@
 @import 'styles/colors.scss';
 @import 'styles/screens.scss';
+@import 'styles/mixins.scss';
 
 .container {
     display: flex;
@@ -8,6 +9,7 @@
     flex-direction: column;
     width: 100%;
     min-height: 100px;
+    @include no-user-select();
 
     @media (max-width: $screen-medium) {
         width: 100%;

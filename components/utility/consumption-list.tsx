@@ -37,6 +37,8 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         const date = getStartOfDay(getTimeDaysAgo(1).getTime())
         return getStartDate(date.getTime())
     })
+    const [selectStartDate, setSelectStartDate] = useState<number | null>()
+    const [selectEndDate, setSelectEndDate] = useState<number | null>()
 
     const fetchConsumptions = useCallback(
         async (reset = false) => {
@@ -88,6 +90,22 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         setFetchDisabled(true)
     }
 
+    function selectItem(start: number) {
+        setSelectStartDate(start)
+        setSelectEndDate(null)
+    }
+
+    function shiftSelectItem(start: number) {
+        setSelectEndDate(start)
+    }
+
+    function isSelected(start: number) {
+        if (!selectStartDate && !selectEndDate) return false
+        if (selectStartDate === start) return true
+        if (selectStartDate && selectStartDate < start && selectEndDate && selectEndDate >= start) return true
+        return false
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.navigation}>
@@ -120,6 +138,9 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
                             end={item.end}
                             consumption={item.consumption}
                             unit={unit}
+                            selected={isSelected(item.start)}
+                            onClick={selectItem}
+                            onShiftClick={shiftSelectItem}
                         />
                     ))}
                     {isFetching && (
