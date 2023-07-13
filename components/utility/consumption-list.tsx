@@ -10,6 +10,8 @@ import ConsumptionListItem from './consumption-list-item'
 import DatePicker from 'components/date-picker/date-picker'
 import { getStartOfDay, getTimeDaysAgo, getUTCFromLocal } from 'utils/time-utils'
 import { ONE_MINUTE } from 'utils/constants'
+import { ReadingType } from 'types/reading'
+import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
 
 type ConsumptionListProps = {
     trackerId: string
@@ -30,6 +32,7 @@ function getStartDate(timestamp: number) {
 const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: ConsumptionListProps) => {
     const [consumptions, setConsumptions] = useState<Array<Consumption> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
+    const [isImporting, setIsImporting] = useState<boolean>(false)
     const [nextPage, setNextPage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>()
     const [fetchDisabled, setFetchDisabled] = useState<boolean>(false)
@@ -39,6 +42,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
     })
     const [selectStartDate, setSelectStartDate] = useState<number | null>()
     const [selectEndDate, setSelectEndDate] = useState<number | null>()
+    const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchConsumptions = useCallback(
         async (reset = false) => {
@@ -111,8 +115,33 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         return !consumptions ? [] : consumptions.filter(c => isSelected(c.start))
     }
 
-    function importConsumptions() {
-        // TODO
+    async function importConsumptions() {
+        setIsImporting(false)
+        setError(null)
+
+        const readings = getSelectedItems()
+        const response = await fetchOrLogin(endpoints.readings, {
+            method: 'POST',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                trackerId,
+                readings: readings.map(reading => ({
+                    type: ReadingType.CONSUMPTION,
+                    value: reading.consumption.toString(),
+                    unit,
+                    start: reading.start.toString(),
+                    end: reading.end.toString()
+                }))
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorImportingConsumptions)
+        } else {
+            // TODO
+        }
+
+        setIsImporting(false)
     }
 
     return (
@@ -142,7 +171,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
                 </div>
             </div>
 
-            {isFetching && (
+            {(isFetching || isImporting) && (
                 <div className={styles.loading}>
                     <LoadingSpinner />
                 </div>

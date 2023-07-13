@@ -4,3 +4,8 @@ export type Reading = {
     unit: string
     created: string
 }
+
+export enum ReadingType {
+    ABSOLUTE = 'absolute',
+    CONSUMPTION = 'consumption'
+}

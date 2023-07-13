@@ -85,6 +85,7 @@ const enStrings = {
     errorFetchingUtilityMeters:
         'Unable to retrieve utility meters. Please check that your account details are correct and try again.',
     errorFileReader: 'Unable to retrieve your NFT amounts',
+    errorImportingConsumptions: 'Something went wrong when importing your energy consumption. Please try again.',
     errorMinting: 'Something went wrong when minting your NFT. Please try again',
     errorNoSppContract: 'Unable to find the Solar Power Plant Smart Contract.',
     errorSubmittingReading: 'Something went wrong when submitting your reading. Please try again.',

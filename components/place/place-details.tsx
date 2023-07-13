@@ -24,7 +24,7 @@ import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
 import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
-import { Reading } from 'types/reading.js'
+import { Reading, ReadingType } from 'types/reading'
 
 type PlaceDetailsProps = {
     id: string
@@ -416,8 +416,13 @@ const PlaceDetails = ({
             referrerPolicy: 'no-referrer',
             body: JSON.stringify({
                 trackerId: selectedTracker?.id,
-                value: manualReading.value.toString(),
-                unit: manualReading.unit
+                readings: [
+                    {
+                        type: ReadingType.ABSOLUTE,
+                        value: manualReading.value.toString(),
+                        unit: manualReading.unit
+                    }
+                ]
             })
         })
 
