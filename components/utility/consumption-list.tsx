@@ -103,7 +103,16 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         if (!selectStartDate && !selectEndDate) return false
         if (selectStartDate === start) return true
         if (selectStartDate && selectStartDate < start && selectEndDate && selectEndDate >= start) return true
+        if (selectStartDate && selectStartDate > start && selectEndDate && selectEndDate <= start) return true
         return false
+    }
+
+    function getSelectedItems() {
+        return !consumptions ? [] : consumptions.filter(c => isSelected(c.start))
+    }
+
+    function importConsumptions() {
+        // TODO
     }
 
     return (
@@ -115,13 +124,22 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
                     maxDate={new Date()}
                     onChange={updateStartDate}
                 />
-                <Button
-                    className={styles.button}
-                    size={ButtonSize.SMALL}
-                    label={strings.viewConsumption}
-                    disabled={fetchDisabled}
-                    onClick={startFetchingConsumptions}
-                />
+                <div className={styles.buttons}>
+                    <Button
+                        className={styles.button}
+                        size={ButtonSize.SMALL}
+                        label={strings.viewConsumption}
+                        disabled={fetchDisabled}
+                        onClick={startFetchingConsumptions}
+                    />
+                    <Button
+                        className={styles.button}
+                        size={ButtonSize.SMALL}
+                        label={strings.importConsumption}
+                        disabled={getSelectedItems()?.length === 0}
+                        onClick={importConsumptions}
+                    />
+                </div>
             </div>
 
             {isFetching && (

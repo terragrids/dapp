@@ -102,6 +102,7 @@ const enStrings = {
     helloExplorer: 'Hello, Terragrids explorer!',
     holder: 'Holder',
     howToSeePlaceOnMap: 'How your place will show on the map',
+    importConsumption: 'Import consumption',
     lastSalePrice: 'Last sale price',
     learnMore: 'Learn more',
     legendary: 'Legendary',

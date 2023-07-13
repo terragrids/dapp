@@ -18,13 +18,36 @@
 
 .navigation {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: flex-end;
     width: 100%;
 
+    @media (max-width: $screen-medium) {
+        align-items: flex-start;
+    }
+
     @media (max-width: $screen-small) {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+    }
+
+    .buttons {
+        flex: 1 0 0;
+        display: flex;
+        align-items: center;
+
+        @media (max-width: $screen-medium) {
+            flex-direction: column;
+        }
+    }
+
+    .button {
+        margin: 0 5px;
+        text-align: center;
+
+        @media (max-width: $screen-medium) {
+            margin: 5px 0;
+        }
     }
 }
 
