@@ -2,6 +2,7 @@ export type Reading = {
     id: string
     value: number
     unit: string
+    type: string
     created: string
 }
 

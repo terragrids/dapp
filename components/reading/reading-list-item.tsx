@@ -3,16 +3,18 @@ import { useState } from 'react'
 import { TransactionLink } from 'components/transaction-link'
 import { strings } from 'strings/en.js'
 import { formatTimestamp } from 'utils/time-utils'
+import { ReadingType } from 'types/reading'
 
 type ReadingListItemProps = {
     id: string
     value: number
     unit: string
     date: string
+    type: string
     onClick: (id: string) => void
 }
 
-const ReadingListItem = ({ id, value, unit, date, onClick }: ReadingListItemProps) => {
+const ReadingListItem = ({ id, value, unit, date, type, onClick }: ReadingListItemProps) => {
     const [showDetails, setShowDetails] = useState<boolean>()
 
     function handleClick() {
@@ -27,6 +29,9 @@ const ReadingListItem = ({ id, value, unit, date, onClick }: ReadingListItemProp
                     <div className={styles.value}>
                         <div>
                             {value} {unit}
+                        </div>
+                        <div className={styles.type}>
+                            {type === ReadingType.CONSUMPTION ? strings.consumption : strings.meterReading}
                         </div>
                     </div>
                 </div>

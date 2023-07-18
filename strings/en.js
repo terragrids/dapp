@@ -32,6 +32,8 @@ const enStrings = {
     connectToUtilityApi: 'Connect to Utility API',
     connectToWalletToSeeSPP: 'You need to connect to a wallet to access the Solar Power Plant',
     connectWallet: 'Connect to a wallet',
+    consumption: 'Consumption',
+    meterReading: 'Meter reading',
     contract: 'Contract',
     contractId: 'Contract ID',
     create: 'Create',

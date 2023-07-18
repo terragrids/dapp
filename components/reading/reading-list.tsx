@@ -78,6 +78,7 @@ const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect,
                             value={reading.value}
                             unit={reading.unit}
                             date={reading.created}
+                            type={reading.type}
                             onClick={() => onSelect(reading.id)}
                         />
                     ))}
