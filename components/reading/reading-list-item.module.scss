@@ -41,8 +41,7 @@
     padding-top: 20px;
 }
 
-.leftContainer,
-.rightContainer {
+.leftContainer {
     display: flex;
     justify-content: flex-start;
 
@@ -80,4 +79,8 @@
     text-align: center;
     border: 1px solid $color-white;
     border-radius: $border-radius;
+}
+
+.date {
+    font-size: 14px;
 }

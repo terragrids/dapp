@@ -8,7 +8,7 @@ import Button, { ButtonType } from 'components/button'
 import styles from './reading-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import ReadingListItem from './reading-list-item'
-import { Reading } from 'types/reading.js'
+import { Reading } from 'types/reading'
 
 type ReadingListProps = {
     trackerId: string
@@ -79,6 +79,8 @@ const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect,
                             unit={reading.unit}
                             date={reading.created}
                             type={reading.type}
+                            start={reading.start ? parseInt(reading.start) : undefined}
+                            end={reading.end ? parseInt(reading.end) : undefined}
                             onClick={() => onSelect(reading.id)}
                         />
                     ))}

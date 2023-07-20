@@ -25,15 +25,11 @@
     background-color: $color-ebony-clay;
     border-radius: $dialog-border-radius;
 
-    @media (max-width: $screen-small) {
+    @media (max-width: $screen-medium) {
         max-width: none;
         width: 95%;
         margin: 0 15px;
         max-height: 95vh;
-    }
-
-    @media (min-width: $screen-medium) {
-        min-width: 322px;
     }
 }
 

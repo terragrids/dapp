@@ -1,0 +1,32 @@
+@import 'styles/colors.scss';
+@import 'styles/screens.scss';
+@import 'styles/dimens.scss';
+
+.interval {
+    display: flex;
+    font-size: 14px;
+
+    @media (max-width: $screen-small) {
+        flex-direction: column;
+    }
+
+    @media (max-width: $screen-xsmall) {
+        font-size: 12px;
+    }
+}
+
+.rightArrow {
+    padding: 0 5px;
+
+    @media (max-width: $screen-small) {
+        display: none;
+    }
+}
+
+.downArrow {
+    display: none;
+
+    @media (max-width: $screen-small) {
+        display: block;
+    }
+}

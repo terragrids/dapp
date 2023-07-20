@@ -4,6 +4,7 @@ import { TransactionLink } from 'components/transaction-link'
 import { strings } from 'strings/en.js'
 import { formatTimestamp } from 'utils/time-utils'
 import { ReadingType } from 'types/reading'
+import Interval from 'components/interval/interval'
 
 type ReadingListItemProps = {
     id: string
@@ -11,10 +12,12 @@ type ReadingListItemProps = {
     unit: string
     date: string
     type: string
+    start: number | undefined
+    end: number | undefined
     onClick: (id: string) => void
 }
 
-const ReadingListItem = ({ id, value, unit, date, type, onClick }: ReadingListItemProps) => {
+const ReadingListItem = ({ id, value, unit, date, type, start, end, onClick }: ReadingListItemProps) => {
     const [showDetails, setShowDetails] = useState<boolean>()
 
     function handleClick() {
@@ -36,16 +39,23 @@ const ReadingListItem = ({ id, value, unit, date, type, onClick }: ReadingListIt
                     </div>
                 </div>
                 <div className={styles.rightContainer}>
-                    <div className={styles.date}>
-                        <div>{formatTimestamp(parseInt(date))}</div>
-                    </div>
+                    {type === ReadingType.CONSUMPTION && start && end && <Interval start={start} end={end} />}
+                    {(type !== ReadingType.CONSUMPTION || !start || !end) && (
+                        <div className={styles.date}>{formatTimestamp(parseInt(date))}</div>
+                    )}
                 </div>
             </div>
             {showDetails && (
-                <div className={styles.bottom}>
-                    <div className={styles.label}>{strings.transactionId}</div>
-                    <TransactionLink transactionId={id} />
-                </div>
+                <>
+                    <div className={styles.bottom}>
+                        <div className={styles.label}>{strings.created}</div>
+                        <div>{formatTimestamp(parseInt(date))}</div>
+                    </div>
+                    <div className={styles.bottom}>
+                        <div className={styles.label}>{strings.transactionId}</div>
+                        <TransactionLink transactionId={id} />
+                    </div>
+                </>
             )}
         </li>
     )
