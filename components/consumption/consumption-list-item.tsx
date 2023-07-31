@@ -1,6 +1,7 @@
 import { MouseEvent } from 'react'
 import styles from './consumption-list-item.module.scss'
 import Interval from 'components/interval/interval'
+import { strings } from 'strings/en.js'
 
 type ConsumptionListItemProps = {
     start: number
@@ -8,6 +9,7 @@ type ConsumptionListItemProps = {
     consumption: number
     unit: string
     selected: boolean
+    imported: boolean
     onClick: (start: number) => void
     onShiftClick: (start: number) => void
 }
@@ -18,6 +20,7 @@ const ConsumptionListItem = ({
     consumption,
     unit = '',
     selected,
+    imported,
     onClick,
     onShiftClick
 }: ConsumptionListItemProps) => {
@@ -28,7 +31,10 @@ const ConsumptionListItem = ({
 
     return (
         <li className={`${styles.container} ${selected ? styles.selected : ''}`} onClick={select}>
-            <Interval start={start} end={end} />
+            <div className={styles.left}>
+                <Interval start={start} end={end} />
+                {imported && <div className={styles.imported}>{strings.imported}</div>}
+            </div>
             <div className={styles.value}>{`${consumption} ${unit}`}</div>
         </li>
     )

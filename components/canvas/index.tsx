@@ -40,7 +40,7 @@ const Canvas = ({
         const currentScale = context.getTransform().a
         const scale = getOptimalScale(Number(width))
 
-        if (BASE_SCREEN_SIZE >= width && currentScale > scale) {
+        if (BASE_SCREEN_SIZE >= (width as number) && currentScale > scale) {
             context.scale(scale, scale)
         }
     }, [width, canvasRef])

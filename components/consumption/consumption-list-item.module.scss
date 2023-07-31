@@ -26,6 +26,17 @@
     }
 }
 
+.left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    @media (max-width: $screen-small) {
+        flex-direction: column;
+    }
+}
+
 .selected {
     background-color: $color-brand;
 }
@@ -68,5 +79,21 @@
 
     @media (max-width: $screen-xsmall) {
         font-size: 14px;
+    }
+}
+
+.imported {
+    display: inline;
+    padding: 2px 5px;
+    font-size: 9px;
+    text-transform: uppercase;
+    text-align: center;
+    border: 1px solid $color-white;
+    border-radius: $border-radius;
+    margin: 0 20px;
+
+    @media (max-width: $screen-small) {
+        flex-direction: column;
+        margin: 10px 0;
     }
 }

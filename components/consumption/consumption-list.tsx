@@ -186,6 +186,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
                             consumption={item.consumption}
                             unit={unit}
                             selected={isSelected(item.start)}
+                            imported={item.imported}
                             onClick={selectItem}
                             onShiftClick={shiftSelectItem}
                         />
