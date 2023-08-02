@@ -48,7 +48,7 @@ const ReadingListItem = ({ id, value, unit, date, type, start, end, onClick }: R
             {showDetails && (
                 <>
                     <div className={styles.bottom}>
-                        <div className={styles.label}>{strings.created}</div>
+                        <div className={styles.label}>{strings.imported}</div>
                         <div>{formatTimestamp(parseInt(date))}</div>
                     </div>
                     <div className={styles.bottom}>

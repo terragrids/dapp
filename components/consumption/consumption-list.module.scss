@@ -1,6 +1,7 @@
 @import 'styles/colors.scss';
 @import 'styles/screens.scss';
 @import 'styles/mixins.scss';
+@import 'styles/dimens.scss';
 
 .container {
     display: flex;
@@ -21,6 +22,11 @@
     justify-content: space-between;
     align-items: flex-end;
     width: 100%;
+    position: sticky;
+    top: -1px;
+    background-color: $color-ebony-clay;
+    padding-bottom: 20px;
+    z-index: $z-index-navbar;
 
     @media (max-width: $screen-medium) {
         align-items: flex-start;

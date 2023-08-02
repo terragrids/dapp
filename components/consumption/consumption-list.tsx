@@ -116,7 +116,8 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
     }
 
     async function importConsumptions() {
-        setIsImporting(false)
+        if (!consumptions) return
+        setIsImporting(true)
         setError(null)
 
         const readings = getSelectedItems()
@@ -138,7 +139,9 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
         if (!response.ok) {
             setError(strings.errorImportingConsumptions)
         } else {
-            // TODO
+            setConsumptions(consumptions.map(c => ({ ...c, imported: isSelected(c.start) || c.imported })))
+            setSelectStartDate(null)
+            setSelectEndDate(null)
         }
 
         setIsImporting(false)
@@ -166,6 +169,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
                         size={ButtonSize.SMALL}
                         label={strings.importConsumption}
                         disabled={getSelectedItems()?.length === 0}
+                        loading={isImporting}
                         onClick={importConsumptions}
                     />
                 </div>
