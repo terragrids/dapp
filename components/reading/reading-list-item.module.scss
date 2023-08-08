@@ -21,6 +21,10 @@
     }
 
     &:hover {
+        background-color: $color-cape-cod;
+    }
+
+    &.selected {
         background-color: $color-brand;
     }
 }

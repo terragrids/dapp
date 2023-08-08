@@ -8,7 +8,6 @@ import { Label } from 'components/label'
 import { AssetLink } from 'components/asset-link'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import { ReachStdlib, ReachContext } from 'context/reach-context'
-import { Icon } from 'components/iconbutton'
 import { InputField } from 'components/input-field'
 import { Reading } from 'types/reading.js'
 import ReadingList from 'components/reading/reading-list'
@@ -372,17 +371,12 @@ const TrackerDetails = ({
             )}
             {tracker && uiStatus === TrackerUiStatus.READINGS && (
                 <div className={styles.section}>
-                    <div className={styles.iconLabel}>
-                        <Label text={strings.energyUsage} />
-                        <div className={`${Icon.CHART} ${styles.icon}`} />
-                    </div>
-                    {tracker.utilityAccountId && (
-                        <div className={styles.subLabel}>{`(${strings.connectedToUtilityApi})`}</div>
-                    )}
                     <ReadingList
                         trackerId={tracker.id}
                         bottomScrollCounter={bottomScrollCounter}
                         canAdd={user && (user.isAdmin || user.id === tracker.userId)}
+                        canDelete={user && (user.isAdmin || user.id === tracker.userId)}
+                        connectedToUtilityApi={!!tracker.utilityAccountId}
                         onAdd={onAddManualReading}
                         onConnect={onConnectToUtilityApi}
                         onSelect={selectReading}

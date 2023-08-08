@@ -14,10 +14,11 @@ type ReadingListItemProps = {
     type: string
     start: number | undefined
     end: number | undefined
+    selected: boolean
     onClick: (id: string) => void
 }
 
-const ReadingListItem = ({ id, value, unit, date, type, start, end, onClick }: ReadingListItemProps) => {
+const ReadingListItem = ({ id, value, unit, date, type, start, end, selected, onClick }: ReadingListItemProps) => {
     const [showDetails, setShowDetails] = useState<boolean>()
 
     function handleClick() {
@@ -26,7 +27,7 @@ const ReadingListItem = ({ id, value, unit, date, type, start, end, onClick }: R
     }
 
     return (
-        <li className={styles.container} onClick={handleClick}>
+        <li className={`${styles.container} ${selected ? styles.selected : ''}`} onClick={handleClick}>
             <div className={styles.top}>
                 <div className={styles.leftContainer}>
                     <div className={styles.value}>

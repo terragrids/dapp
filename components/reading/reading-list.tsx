@@ -9,19 +9,33 @@ import styles from './reading-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import ReadingListItem from './reading-list-item'
 import { Reading } from 'types/reading'
+import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
+import { Label } from 'components/label'
 
 type ReadingListProps = {
     trackerId: string
     canAdd: boolean
+    canDelete: boolean
     bottomScrollCounter: number
+    connectedToUtilityApi: boolean
     onAdd: () => void
     onConnect: () => void
     onSelect: (id: string) => void
 }
 
-const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect, onSelect }: ReadingListProps) => {
+const ReadingList = ({
+    trackerId,
+    bottomScrollCounter,
+    canAdd,
+    canDelete,
+    connectedToUtilityApi,
+    onAdd,
+    onConnect,
+    onSelect
+}: ReadingListProps) => {
     const user = useContext<User>(UserContext)
     const [readings, setReadings] = useState<Array<Reading> | null>(null)
+    const [selectedReadingId, setSelectedReadingId] = useState<string | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<string | null>()
@@ -62,8 +76,36 @@ const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect,
         if (prevScrollCounter && bottomScrollCounter > prevScrollCounter) fetchMoreReadings()
     }, [bottomScrollCounter, fetchMoreReadings, prevScrollCounter])
 
+    function selectReading(id: string) {
+        setSelectedReadingId(id)
+        onSelect(id)
+    }
+
+    function deleteReading() {
+        // TODO
+    }
+
     return (
         <div className={styles.container}>
+            <div className={styles.listHeader}>
+                <div>
+                    <div className={styles.iconLabel}>
+                        <Label text={strings.energyUsage} />
+                        <div className={`${Icon.CHART} ${styles.icon}`} />
+                    </div>
+                    {connectedToUtilityApi && (
+                        <div className={styles.subLabel}>{`(${strings.connectedToUtilityApi})`}</div>
+                    )}
+                </div>
+                {canDelete && selectedReadingId && (
+                    <IconButton
+                        icon={Icon.DELETE}
+                        tooltip={strings.delete}
+                        type={IconButtonType.OUTLINE}
+                        onClick={deleteReading}
+                    />
+                )}
+            </div>
             {!readings && !error && (
                 <div className={styles.loading}>
                     <LoadingSpinner />
@@ -81,7 +123,8 @@ const ReadingList = ({ trackerId, bottomScrollCounter, canAdd, onAdd, onConnect,
                             type={reading.type}
                             start={reading.start ? parseInt(reading.start) : undefined}
                             end={reading.end ? parseInt(reading.end) : undefined}
-                            onClick={() => onSelect(reading.id)}
+                            selected={reading.id === selectedReadingId}
+                            onClick={() => selectReading(reading.id)}
                         />
                     ))}
                     {isFetching && (

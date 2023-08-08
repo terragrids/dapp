@@ -14,6 +14,7 @@ export enum Icon {
     CHART = 'icon-chart-growth',
     LIST = 'icon-list',
     ARCHIVE = 'icon-archive',
+    DELETE = 'icon-bin',
     PLUG = 'icon-cord'
 }
 

@@ -45,20 +45,6 @@
     align-items: center;
 }
 
-.iconLabel {
-    display: flex;
-    align-items: baseline;
-
-    .icon {
-        margin-left: 5px;
-    }
-}
-
-.subLabel {
-    padding: 0 5px;
-    font-size: 12px;
-}
-
 .error {
     padding: 10px 0;
     color: $color-red;

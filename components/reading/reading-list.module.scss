@@ -1,5 +1,6 @@
 @import 'styles/colors.scss';
 @import 'styles/screens.scss';
+@import 'styles/dimens.scss';
 
 .container {
     width: 700px;
@@ -35,4 +36,29 @@
 .button {
     min-width: 150px;
     margin: 5px 0;
+}
+
+.iconLabel {
+    display: flex;
+    align-items: baseline;
+
+    .icon {
+        margin-left: 5px;
+    }
+}
+
+.subLabel {
+    padding: 0 5px;
+    font-size: 12px;
+}
+
+.listHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: -1px;
+    background-color: $color-ebony-clay;
+    padding-bottom: 20px;
+    z-index: $z-index-navbar;
 }
