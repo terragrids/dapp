@@ -47,6 +47,7 @@ const solarPowerPlant = 'api/spp'
 const places = 'api/places'
 const trackers = 'api/trackers'
 const readings = 'api/readings'
+const reading = id => `api/readings/${id}`
 const paginatedPlaces = (nextPageKey, status, size = pageSize) =>
     `api/places?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
@@ -98,6 +99,7 @@ export const endpoints = {
     places,
     trackers,
     readings,
+    reading,
     paginatedPlaces,
     paginatedTrackers,
     paginatedReadings,

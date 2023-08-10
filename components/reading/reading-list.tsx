@@ -37,6 +37,7 @@ const ReadingList = ({
     const [readings, setReadings] = useState<Array<Reading> | null>(null)
     const [selectedReadingId, setSelectedReadingId] = useState<string | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
+    const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<string | null>()
 
@@ -81,8 +82,23 @@ const ReadingList = ({
         onSelect(id)
     }
 
-    function deleteReading() {
-        // TODO
+    async function deleteReading() {
+        if (!readings || !selectedReadingId) return
+
+        setIsDeleting(true)
+
+        const response = await fetch(endpoints.reading(selectedReadingId), {
+            method: 'DELETE',
+            referrerPolicy: 'no-referrer'
+        })
+
+        if (response.ok) {
+            setReadings(readings.filter(reading => reading.id != selectedReadingId))
+        } else {
+            setError(strings.errorDeletingReading)
+        }
+
+        setIsDeleting(false)
     }
 
     return (
@@ -97,14 +113,16 @@ const ReadingList = ({
                         <div className={styles.subLabel}>{`(${strings.connectedToUtilityApi})`}</div>
                     )}
                 </div>
-                {canDelete && selectedReadingId && (
+                {canDelete && selectedReadingId && !isDeleting && (
                     <IconButton
                         icon={Icon.DELETE}
                         tooltip={strings.delete}
                         type={IconButtonType.OUTLINE}
+                        disabled={isDeleting}
                         onClick={deleteReading}
                     />
                 )}
+                {canDelete && selectedReadingId && isDeleting && <LoadingSpinner small={true} />}
             </div>
             {!readings && !error && (
                 <div className={styles.loading}>

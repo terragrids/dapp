@@ -67,6 +67,7 @@ const enStrings = {
     errorCreatingTracker: 'Something went wrong when creating your tracker. Please try again.',
     errorDeletingNftSaleContract:
         'Unable to withdraw this NFT from sale. Either something went wrong, or you cancelled the transaction.',
+    errorDeletingReading: 'Unable to delete the reading. Please try again.',
     errorDeletingTerracellSaleContract:
         'Unable to withdraw this terracell from sale. Either something went wrong, or you cancelled the transaction.',
     errorDeployingSppContract: 'Unable to deploy the Solar Power Plant Smart Contract.',
