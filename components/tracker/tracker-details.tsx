@@ -407,7 +407,7 @@ const TrackerDetails = ({
                     )}
                     {tracker.consumptionReadingCount && (
                         <div className={styles.section}>
-                            <Label text={strings.consumptionReading} />
+                            <Label text={strings.consumptionReadings} />
                             <div className={styles.content}>{tracker.consumptionReadingCount}</div>
                         </div>
                     )}

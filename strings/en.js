@@ -33,7 +33,7 @@ const enStrings = {
     connectToWalletToSeeSPP: 'You need to connect to a wallet to access the Solar Power Plant',
     connectWallet: 'Connect to a wallet',
     consumption: 'Consumption',
-    consumptionReading: 'Consumption readings',
+    consumptionReadings: 'Consumption readings',
     contract: 'Contract',
     contractId: 'Contract ID',
     create: 'Create',
