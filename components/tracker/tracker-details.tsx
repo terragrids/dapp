@@ -97,7 +97,8 @@ const TrackerDetails = ({
                     utilityAccountId,
                     meterMpan,
                     meterMprn,
-                    meterSerialNumber
+                    meterSerialNumber,
+                    consumptionReadingCount
                 } = await response.json()
 
                 let loadedTracker = {
@@ -108,6 +109,7 @@ const TrackerDetails = ({
                     status,
                     offChainImageUrl,
                     utilityAccountId,
+                    consumptionReadingCount,
                     ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
                     ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
                 } as Tracker
@@ -401,6 +403,12 @@ const TrackerDetails = ({
                         <div className={styles.section}>
                             <Label text={strings.utilityAccount} />
                             <div className={styles.content}>{tracker.utilityAccountId}</div>
+                        </div>
+                    )}
+                    {tracker.consumptionReadingCount && (
+                        <div className={styles.section}>
+                            <Label text={strings.consumptionReading} />
+                            <div className={styles.content}>{tracker.consumptionReadingCount}</div>
                         </div>
                     )}
                     <div className={styles.section}>

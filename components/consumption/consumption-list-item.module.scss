@@ -21,7 +21,7 @@
         width: 100%;
     }
 
-    &:hover {
+    &:hover:not(.selected) {
         background-color: $color-cape-cod;
     }
 }

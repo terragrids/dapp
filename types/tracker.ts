@@ -13,6 +13,7 @@ export type Tracker = {
     utilityAccountId?: string
     electricityMeter?: ElectricityMeter
     gasMeter?: GasMeter
+    consumptionReadingCount?: number
 }
 
 export class TrackerType {
