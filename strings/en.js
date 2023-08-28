@@ -1,6 +1,7 @@
 import LocalizedStrings from 'react-localization'
 
 const enStrings = {
+    absoluteMeterReadings: 'Absolute meter readings',
     account: 'Account',
     activeTerracells: 'Active terracells',
     addManualReading: 'Add manual reading',

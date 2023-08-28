@@ -98,7 +98,8 @@ const TrackerDetails = ({
                     meterMpan,
                     meterMprn,
                     meterSerialNumber,
-                    consumptionReadingCount
+                    consumptionReadingCount,
+                    absoluteReadingCount
                 } = await response.json()
 
                 let loadedTracker = {
@@ -110,6 +111,7 @@ const TrackerDetails = ({
                     offChainImageUrl,
                     utilityAccountId,
                     consumptionReadingCount,
+                    absoluteReadingCount,
                     ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
                     ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
                 } as Tracker
@@ -409,6 +411,12 @@ const TrackerDetails = ({
                         <div className={styles.section}>
                             <Label text={strings.consumptionReadings} />
                             <div className={styles.content}>{tracker.consumptionReadingCount}</div>
+                        </div>
+                    )}
+                    {tracker.absoluteReadingCount && (
+                        <div className={styles.section}>
+                            <Label text={strings.absoluteMeterReadings} />
+                            <div className={styles.content}>{tracker.absoluteReadingCount}</div>
                         </div>
                     )}
                     <div className={styles.section}>

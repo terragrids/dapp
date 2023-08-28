@@ -14,6 +14,7 @@ export type Tracker = {
     electricityMeter?: ElectricityMeter
     gasMeter?: GasMeter
     consumptionReadingCount?: number
+    absoluteReadingCount?: number
 }
 
 export class TrackerType {

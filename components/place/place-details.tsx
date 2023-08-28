@@ -47,6 +47,7 @@ type Details = {
     positionX: number
     positionY: number
     consumptionReadingCount?: number
+    absoluteReadingCount?: number
 }
 
 export type UpdatedDetails = {
@@ -114,7 +115,8 @@ const PlaceDetails = ({
                 status,
                 positionX,
                 positionY,
-                consumptionReadingCount
+                consumptionReadingCount,
+                absoluteReadingCount
             } = await response.json()
 
             let placeName = name
@@ -129,7 +131,8 @@ const PlaceDetails = ({
                 offChainImageUrl,
                 positionX,
                 positionY,
-                consumptionReadingCount
+                consumptionReadingCount,
+                absoluteReadingCount
             }))
 
             // Try to fetch NFT metadata and image from IPFS
@@ -499,6 +502,12 @@ const PlaceDetails = ({
                             <div className={styles.section}>
                                 <Label text={strings.consumptionReadings} />
                                 <div className={styles.content}>{place.consumptionReadingCount}</div>
+                            </div>
+                        )}
+                        {place.absoluteReadingCount && (
+                            <div className={styles.section}>
+                                <Label text={strings.absoluteMeterReadings} />
+                                <div className={styles.content}>{place.absoluteReadingCount}</div>
                             </div>
                         )}
                         <div className={styles.section}>
