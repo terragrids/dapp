@@ -19,6 +19,7 @@ type ReadingListProps = {
     bottomScrollCounter: number
     connectedToUtilityApi: boolean
     onAdd: () => void
+    onDelete: (type: string) => void
     onConnect: () => void
     onSelect: (id: string) => void
 }
@@ -30,6 +31,7 @@ const ReadingList = ({
     canDelete,
     connectedToUtilityApi,
     onAdd,
+    onDelete,
     onConnect,
     onSelect
 }: ReadingListProps) => {
@@ -93,7 +95,11 @@ const ReadingList = ({
         })
 
         if (response.ok) {
-            setReadings(readings.filter(reading => reading.id != selectedReadingId))
+            const deleted = readings.find(reading => reading.id != selectedReadingId)
+            if (deleted) {
+                setReadings(readings.filter(reading => reading.id != selectedReadingId))
+                onDelete(deleted.type)
+            }
         } else {
             setError(strings.errorDeletingReading)
         }

@@ -9,7 +9,7 @@ import { AssetLink } from 'components/asset-link'
 import { cidFromAlgorandAddress } from 'utils/token-utils.js'
 import { ReachStdlib, ReachContext } from 'context/reach-context'
 import { InputField } from 'components/input-field'
-import { Reading } from 'types/reading.js'
+import { Reading, ReadingType } from 'types/reading'
 import ReadingList from 'components/reading/reading-list'
 import { UserContext } from 'context/user-context'
 import { User } from 'hooks/use-user.js'
@@ -27,8 +27,8 @@ type TrackerDetailsProps = {
     trackerTypes: Array<TrackerType>
     bottomScrollCounter: number
     onLoad: (tracker: Tracker) => void
-    onManualReadingChange: (reading: Reading) => void
     onAddManualReading: () => void
+    onManualReadingAdded: () => void
     onConnectToUtilityApi: () => void
     onUpdating: (inProgress: boolean) => void
     onError: (error: string | null) => void
@@ -52,8 +52,8 @@ const TrackerDetails = ({
     trackerTypes,
     bottomScrollCounter,
     onLoad,
-    onManualReadingChange,
     onAddManualReading,
+    onManualReadingAdded,
     onConnectToUtilityApi,
     onUpdating,
     onError
@@ -71,6 +71,8 @@ const TrackerDetails = ({
     const [gasMeter, setGasMeter] = useState<GasMeter | null>()
     const [accountUpdated, setAccountUpdated] = useState(false)
     const [meterUpdated, setMeterUpdated] = useState(false)
+    const [manualReading, setManualReading] = useState<Reading | null>()
+    const [done, setDone] = useState<boolean>(false)
     const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchTracker = useCallback(
@@ -110,8 +112,8 @@ const TrackerDetails = ({
                     status,
                     offChainImageUrl,
                     utilityAccountId,
-                    consumptionReadingCount,
-                    absoluteReadingCount,
+                    ...(consumptionReadingCount && { consumptionReadingCount: parseInt(consumptionReadingCount) }),
+                    ...(absoluteReadingCount && { absoluteReadingCount: parseInt(absoluteReadingCount) }),
                     ...(meterMpan && { electricityMeter: { mpan: meterMpan, serialNumber: meterSerialNumber } }),
                     ...(meterMprn && { gasMeter: { mprn: meterMprn, serialNumber: meterSerialNumber } })
                 } as Tracker
@@ -176,7 +178,7 @@ const TrackerDetails = ({
     }
 
     function updateReading(value: string) {
-        onManualReadingChange({ value: parseInt(value), unit: getUnit() } as Reading)
+        setManualReading({ value: parseInt(value), unit: getUnit() } as Reading)
     }
 
     function selectReading() {
@@ -359,6 +361,97 @@ const TrackerDetails = ({
         return false
     }
 
+    function isUpdateInProgress() {
+        return inProgress && error === null
+    }
+
+    async function addManualReading() {
+        if (!manualReading) return
+        setInProgress(true)
+        setError(null)
+
+        const response = await fetchOrLogin(endpoints.readings, {
+            method: 'POST',
+            referrerPolicy: 'no-referrer',
+            body: JSON.stringify({
+                trackerId: tracker?.id,
+                readings: [
+                    {
+                        type: ReadingType.ABSOLUTE,
+                        value: manualReading.value.toString(),
+                        unit: manualReading.unit
+                    }
+                ]
+            })
+        })
+
+        if (!response.ok) {
+            setError(strings.errorSubmittingReading)
+        } else {
+            setDone(true)
+            setTimeout(() => {
+                onManualReadingAdded()
+                setDone(false)
+                onAddReadings(ReadingType.ABSOLUTE, 1)
+            }, ONE_SECOND)
+        }
+
+        setInProgress(false)
+    }
+
+    function onAddReadings(type: string, count: number) {
+        if (type === ReadingType.CONSUMPTION) {
+            setTracker(
+                current =>
+                    ({
+                        ...current,
+                        ...(current && {
+                            consumptionReadingCount: current.consumptionReadingCount
+                                ? current.consumptionReadingCount + count
+                                : count
+                        })
+                    } as Tracker)
+            )
+        } else if (type === ReadingType.ABSOLUTE) {
+            setTracker(
+                current =>
+                    ({
+                        ...current,
+                        ...(current && {
+                            absoluteReadingCount: current.absoluteReadingCount
+                                ? current.absoluteReadingCount + count
+                                : count
+                        })
+                    } as Tracker)
+            )
+        }
+    }
+
+    function onDeleteReading(type: string) {
+        if (type === ReadingType.CONSUMPTION)
+            setTracker(
+                current =>
+                    ({
+                        ...current,
+                        ...(current &&
+                            current.consumptionReadingCount && {
+                                consumptionReadingCount: current.consumptionReadingCount - 1
+                            })
+                    } as Tracker)
+            )
+        else if (type === ReadingType.ABSOLUTE)
+            setTracker(
+                current =>
+                    ({
+                        ...current,
+                        ...(current &&
+                            current.absoluteReadingCount && {
+                                absoluteReadingCount: current.absoluteReadingCount - 1
+                            })
+                    } as Tracker)
+            )
+    }
+
     return (
         <div className={styles.container}>
             {!tracker && !error && <LoadingSpinner />}
@@ -382,6 +475,7 @@ const TrackerDetails = ({
                         canDelete={user && (user.isAdmin || user.id === tracker.userId)}
                         connectedToUtilityApi={!!tracker.utilityAccountId}
                         onAdd={onAddManualReading}
+                        onDelete={onDeleteReading}
                         onConnect={onConnectToUtilityApi}
                         onSelect={selectReading}
                     />
@@ -433,6 +527,17 @@ const TrackerDetails = ({
                             type={'number'}
                             onChange={updateReading}
                         />
+                        <div className={styles.buttonContainer}>
+                            <Button
+                                className={styles.button}
+                                type={ButtonType.OUTLINE}
+                                label={strings.submit}
+                                disabled={!manualReading || manualReading.value < 0}
+                                loading={isUpdateInProgress()}
+                                checked={done}
+                                onClick={addManualReading}
+                            />
+                        </div>
                     </div>
                 </>
             )}
@@ -537,6 +642,7 @@ const TrackerDetails = ({
                                     trackerId={tracker.id}
                                     bottomScrollCounter={bottomScrollCounter}
                                     unit={getUnit()}
+                                    onImported={readings => onAddReadings(ReadingType.CONSUMPTION, readings.length)}
                                     onError={onError}
                                 />
                             </div>

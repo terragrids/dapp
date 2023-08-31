@@ -17,6 +17,7 @@ type ConsumptionListProps = {
     trackerId: string
     unit: string
     bottomScrollCounter: number
+    onImported: (readings: Array<Consumption>) => void
     onError: (error: string | null) => void
 }
 
@@ -29,7 +30,7 @@ function getStartDate(timestamp: number) {
     return utc.getTime() - ONE_MINUTE
 }
 
-const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: ConsumptionListProps) => {
+const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported, onError }: ConsumptionListProps) => {
     const [consumptions, setConsumptions] = useState<Array<Consumption> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [isImporting, setIsImporting] = useState<boolean>(false)
@@ -142,6 +143,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onError }: Cons
             setConsumptions(consumptions.map(c => ({ ...c, imported: isSelected(c.start) || c.imported })))
             setSelectStartDate(null)
             setSelectEndDate(null)
+            onImported(readings)
         }
 
         setIsImporting(false)

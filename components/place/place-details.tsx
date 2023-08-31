@@ -24,7 +24,6 @@ import { Tracker, TrackerType } from 'types/tracker'
 import TrackerList from 'components/tracker/tracker-list'
 import TrackerDetails, { TrackerUiStatus } from 'components/tracker/tracker-details'
 import ActionBar from 'components/action-bar'
-import { Reading, ReadingType } from 'types/reading'
 
 type PlaceDetailsProps = {
     id: string
@@ -95,7 +94,6 @@ const PlaceDetails = ({
     const trackerTypes = useRef<Array<TrackerType>>([])
     const placeFetched = useRef(false)
     const [selectedTracker, setSelectedTracker] = useState<Tracker | null>()
-    const [manualReading, setManualReading] = useState<Reading | null>()
     const [updatingTracker, setUpdatingTracker] = useState<boolean>(false)
 
     const fetchPlace = useCallback(async () => {
@@ -422,36 +420,7 @@ const PlaceDetails = ({
     }
 
     async function addManualReading() {
-        if (!manualReading) return
-        setInProgress(true)
-        setError(null)
-
-        const response = await fetchOrLogin(endpoints.readings, {
-            method: 'POST',
-            referrerPolicy: 'no-referrer',
-            body: JSON.stringify({
-                trackerId: selectedTracker?.id,
-                readings: [
-                    {
-                        type: ReadingType.ABSOLUTE,
-                        value: manualReading.value.toString(),
-                        unit: manualReading.unit
-                    }
-                ]
-            })
-        })
-
-        if (!response.ok) {
-            setError(strings.errorSubmittingReading)
-        } else {
-            setDone(true)
-            setTimeout(() => {
-                setUiStatus(UiStatus.TRACKER_VIEW)
-                setDone(false)
-            }, ONE_SECOND)
-        }
-
-        setInProgress(false)
+        setUiStatus(UiStatus.ADD_MANUAL_READING)
     }
 
     return (
@@ -593,8 +562,8 @@ const PlaceDetails = ({
                             uiStatus={getTrackerUiStatus()}
                             bottomScrollCounter={bottomScrollCounter}
                             onLoad={tracker => setSelectedTracker(tracker)}
-                            onManualReadingChange={setManualReading}
-                            onAddManualReading={() => setUiStatus(UiStatus.ADD_MANUAL_READING)}
+                            onAddManualReading={addManualReading}
+                            onManualReadingAdded={() => setUiStatus(UiStatus.TRACKER_VIEW)}
                             onConnectToUtilityApi={() => setUiStatus(UiStatus.UTILITY_API)}
                             onUpdating={inProgress => setUpdatingTracker(inProgress)}
                             onError={error => setError(error)}
@@ -745,15 +714,6 @@ const PlaceDetails = ({
                             )}
                             {uiStatus === UiStatus.ADD_MANUAL_READING && (
                                 <div className={styles.buttonContainer}>
-                                    <Button
-                                        className={styles.button}
-                                        type={ButtonType.OUTLINE}
-                                        label={strings.submit}
-                                        disabled={!manualReading || manualReading.value < 0}
-                                        loading={isUpdateInProgress()}
-                                        checked={done}
-                                        onClick={addManualReading}
-                                    />
                                     <Button
                                         className={styles.button}
                                         type={ButtonType.OUTLINE}
