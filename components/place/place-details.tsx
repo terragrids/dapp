@@ -566,7 +566,6 @@ const PlaceDetails = ({
                             onManualReadingAdded={() => setUiStatus(UiStatus.TRACKER_VIEW)}
                             onConnectToUtilityApi={() => setUiStatus(UiStatus.UTILITY_API)}
                             onUpdating={inProgress => setUpdatingTracker(inProgress)}
-                            onError={error => setError(error)}
                         />
                     )}
             </div>

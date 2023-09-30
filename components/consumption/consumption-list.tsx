@@ -18,7 +18,6 @@ type ConsumptionListProps = {
     unit: string
     bottomScrollCounter: number
     onImported: (readings: Array<Consumption>) => void
-    onError: (error: string | null) => void
 }
 
 function getStartDate(timestamp: number) {
@@ -30,7 +29,7 @@ function getStartDate(timestamp: number) {
     return utc.getTime() - ONE_MINUTE
 }
 
-const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported, onError }: ConsumptionListProps) => {
+const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: ConsumptionListProps) => {
     const [consumptions, setConsumptions] = useState<Array<Consumption> | null>(null)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [isImporting, setIsImporting] = useState<boolean>(false)
@@ -51,7 +50,6 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported, onE
             if (reset || !nextPage) setConsumptions(null)
             setIsFetching(true)
             setError(null)
-            onError(null)
 
             const response = await fetch(endpoints.trackerUtilityConsumption(trackerId, nextPage, startDate))
 
@@ -65,12 +63,11 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported, onE
                 setNextPage(jsonResponse.nextPage)
             } else {
                 setError(strings.errorFetchingConsumptions)
-                onError(strings.errorFetchingConsumptions)
             }
 
             setIsFetching(false)
         },
-        [consumptions, isFetching, nextPage, onError, startDate, trackerId]
+        [consumptions, isFetching, nextPage, startDate, trackerId]
     )
 
     const fetchMoreConsumptions = useCallback(async () => {
@@ -152,29 +149,32 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported, onE
     return (
         <div className={styles.container}>
             <div className={styles.navigation}>
-                <DatePicker
-                    className={styles.datePicker}
-                    start={startDate}
-                    maxDate={new Date()}
-                    onChange={updateStartDate}
-                />
-                <div className={styles.buttons}>
-                    <Button
-                        className={styles.button}
-                        size={ButtonSize.SMALL}
-                        label={strings.viewConsumption}
-                        disabled={fetchDisabled}
-                        onClick={startFetchingConsumptions}
+                <div className={styles.controls}>
+                    <DatePicker
+                        className={styles.datePicker}
+                        start={startDate}
+                        maxDate={new Date()}
+                        onChange={updateStartDate}
                     />
-                    <Button
-                        className={styles.button}
-                        size={ButtonSize.SMALL}
-                        label={strings.importConsumption}
-                        disabled={getSelectedItems()?.length === 0}
-                        loading={isImporting}
-                        onClick={importConsumptions}
-                    />
+                    <div className={styles.buttons}>
+                        <Button
+                            className={styles.button}
+                            size={ButtonSize.SMALL}
+                            label={strings.viewConsumption}
+                            disabled={fetchDisabled}
+                            onClick={startFetchingConsumptions}
+                        />
+                        <Button
+                            className={styles.button}
+                            size={ButtonSize.SMALL}
+                            label={strings.importConsumption}
+                            disabled={getSelectedItems()?.length === 0}
+                            loading={isImporting}
+                            onClick={importConsumptions}
+                        />
+                    </div>
                 </div>
+                {error && <div className={styles.error}>{error}</div>}
             </div>
 
             {(isFetching || isImporting) && (

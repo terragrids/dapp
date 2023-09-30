@@ -2,7 +2,16 @@
     "files.associations": {
         "*.rsh": "javascript"
     },
-    "cSpell.enableFiletypes": ["!css", "!javascriptreact", "!json", "!scss", "!yaml", "!yml", "javascript", "markdown"],
+    "cSpell.enableFiletypes": [
+        "!css",
+        "!javascriptreact",
+        "!json",
+        "!scss",
+        "!yaml",
+        "!yml",
+        "javascript",
+        "markdown"
+    ],
     "cSpell.language": "en,en-GB,en-US",
     "javascript.suggest.completeFunctionCalls": true,
     "cSpell.words": [

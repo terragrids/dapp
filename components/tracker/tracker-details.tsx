@@ -31,7 +31,6 @@ type TrackerDetailsProps = {
     onManualReadingAdded: () => void
     onConnectToUtilityApi: () => void
     onUpdating: (inProgress: boolean) => void
-    onError: (error: string | null) => void
 }
 
 export enum TrackerUiStatus {
@@ -55,8 +54,7 @@ const TrackerDetails = ({
     onAddManualReading,
     onManualReadingAdded,
     onConnectToUtilityApi,
-    onUpdating,
-    onError
+    onUpdating
 }: TrackerDetailsProps) => {
     const { stdlib } = useContext<ReachStdlib>(ReachContext)
     const user = useContext<User>(UserContext)
@@ -643,7 +641,6 @@ const TrackerDetails = ({
                                     bottomScrollCounter={bottomScrollCounter}
                                     unit={getUnit()}
                                     onImported={readings => onAddReadings(ReadingType.CONSUMPTION, readings.length)}
-                                    onError={onError}
                                 />
                             </div>
                         </>
