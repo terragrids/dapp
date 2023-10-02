@@ -128,6 +128,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
                     type: ReadingType.CONSUMPTION,
                     value: reading.consumption.toString(),
                     unit,
+                    frequency: 'daily',
                     start: reading.start.toString(),
                     end: reading.end.toString()
                 }))

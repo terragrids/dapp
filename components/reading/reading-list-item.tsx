@@ -12,13 +12,25 @@ type ReadingListItemProps = {
     unit: string
     date: string
     type: string
+    frequency: string
     start: number | undefined
     end: number | undefined
     selected: boolean
     onClick: (id: string) => void
 }
 
-const ReadingListItem = ({ id, value, unit, date, type, start, end, selected, onClick }: ReadingListItemProps) => {
+const ReadingListItem = ({
+    id,
+    value,
+    unit,
+    date,
+    type,
+    frequency,
+    start,
+    end,
+    selected,
+    onClick
+}: ReadingListItemProps) => {
     const [showDetails, setShowDetails] = useState<boolean>()
 
     function handleClick() {
@@ -35,7 +47,9 @@ const ReadingListItem = ({ id, value, unit, date, type, start, end, selected, on
                             {value} {unit}
                         </div>
                         <div className={styles.type}>
-                            {type === ReadingType.CONSUMPTION ? strings.consumption : strings.meterReading}
+                            {type === ReadingType.CONSUMPTION
+                                ? `${frequency || ''} ${strings.consumption}`
+                                : strings.meterReading}
                         </div>
                     </div>
                 </div>

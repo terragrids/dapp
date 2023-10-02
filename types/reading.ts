@@ -3,6 +3,7 @@ export type Reading = {
     value: number
     unit: string
     type: string
+    frequency: string
     start: string
     end: string
     created: string
