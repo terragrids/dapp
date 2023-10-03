@@ -43,6 +43,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
     })
     const [selectStartDate, setSelectStartDate] = useState<number | null>()
     const [selectEndDate, setSelectEndDate] = useState<number | null>()
+    const [consumptionPeriod, setConsumptionPeriod] = useState<string>(ConsumptionPeriod.DAILY.key)
     const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchConsumptions = useCallback(
@@ -52,7 +53,9 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
             setIsFetching(true)
             setError(null)
 
-            const response = await fetch(endpoints.trackerUtilityConsumption(trackerId, nextPage, startDate))
+            const response = await fetch(
+                endpoints.trackerUtilityConsumption(trackerId, nextPage, startDate, consumptionPeriod)
+            )
 
             if (response.ok) {
                 const jsonResponse = await response.json()
@@ -68,7 +71,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
 
             setIsFetching(false)
         },
-        [consumptions, isFetching, nextPage, startDate, trackerId]
+        [consumptionPeriod, consumptions, isFetching, nextPage, startDate, trackerId]
     )
 
     const fetchMoreConsumptions = useCallback(async () => {
@@ -129,7 +132,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
                     type: ReadingType.CONSUMPTION,
                     value: reading.consumption.toString(),
                     unit,
-                    frequency: 'daily',
+                    frequency: consumptionPeriod,
                     start: reading.start.toString(),
                     end: reading.end.toString()
                 }))
@@ -148,8 +151,10 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
         setIsImporting(false)
     }
 
-    function setConsumptionPeriod() {
-        // todo
+    function onConsumptionPeriodChange(period: string) {
+        setConsumptionPeriod(period)
+        setNextPage(null)
+        setFetchDisabled(false)
     }
 
     return (
@@ -167,7 +172,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
                             label={strings.consumptionPeriod}
                             options={ConsumptionPeriod.list().map(period => ({ key: period.key, value: period.name }))}
                             defaultValue={ConsumptionPeriod.DAILY.key}
-                            onSelected={setConsumptionPeriod}
+                            onSelected={onConsumptionPeriodChange}
                         />
                     </div>
                     <div className={styles.buttons}>

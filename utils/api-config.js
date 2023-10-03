@@ -64,8 +64,8 @@ const place = id => `api/places/${id}`
 const tracker = id => `api/trackers/${id}`
 const trackerUtility = id => `api/trackers/${id}/utility`
 const trackerUtilityMeters = id => `api/trackers/${id}/utility/meters`
-const trackerUtilityConsumption = (id, page, startDate) =>
-    `api/trackers/${id}/utility/consumption?sort=asc&pageSize=10&groupBy=day${page ? `&page=${page}` : ''}${
+const trackerUtilityConsumption = (id, page, startDate, groupBy) =>
+    `api/trackers/${id}/utility/consumption?sort=asc&pageSize=10&groupBy=${groupBy}${page ? `&page=${page}` : ''}${
         startDate ? `&from=${startDate}` : ''
     }`
 const placeApproval = id => `api/places/${id}/approval`

@@ -7,9 +7,9 @@ export type Consumption = {
 }
 
 export class ConsumptionPeriod {
-    static readonly DAILY = new ConsumptionPeriod('daily', strings.daily)
-    static readonly WEEKLY = new ConsumptionPeriod('weekly', strings.weekly)
-    static readonly MONTHLY = new ConsumptionPeriod('monthly', strings.monthly)
+    static readonly DAILY = new ConsumptionPeriod('day', strings.daily)
+    static readonly WEEKLY = new ConsumptionPeriod('week', strings.weekly)
+    static readonly MONTHLY = new ConsumptionPeriod('month', strings.monthly)
 
     private constructor(public readonly key: string, public readonly name: string) {}
 
