@@ -5,13 +5,14 @@ import { endpoints } from 'utils/api-config.js'
 import Button, { ButtonSize, ButtonType } from 'components/button'
 import styles from './consumption-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
-import { Consumption } from 'types/consumption.js'
+import { Consumption, ConsumptionPeriod } from 'types/consumption'
 import ConsumptionListItem from './consumption-list-item'
 import DatePicker from 'components/date-picker/date-picker'
 import { getStartOfDay, getTimeDaysAgo, getUTCFromLocal } from 'utils/time-utils'
 import { ONE_MINUTE } from 'utils/constants'
 import { ReadingType } from 'types/reading'
 import { useFetchOrLogin } from 'hooks/use-fetch-or-login'
+import { DropDownSelector } from 'components/drop-down-selector'
 
 type ConsumptionListProps = {
     trackerId: string
@@ -147,16 +148,28 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
         setIsImporting(false)
     }
 
+    function setConsumptionPeriod() {
+        // todo
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.navigation}>
                 <div className={styles.controls}>
-                    <DatePicker
-                        className={styles.datePicker}
-                        start={startDate}
-                        maxDate={new Date()}
-                        onChange={updateStartDate}
-                    />
+                    <div className={styles.pickers}>
+                        <DatePicker
+                            className={styles.datePicker}
+                            start={startDate}
+                            maxDate={new Date()}
+                            onChange={updateStartDate}
+                        />
+                        <DropDownSelector
+                            label={strings.consumptionPeriod}
+                            options={ConsumptionPeriod.list().map(period => ({ key: period.key, value: period.name }))}
+                            defaultValue={ConsumptionPeriod.DAILY.key}
+                            onSelected={setConsumptionPeriod}
+                        />
+                    </div>
                     <div className={styles.buttons}>
                         <Button
                             className={styles.button}

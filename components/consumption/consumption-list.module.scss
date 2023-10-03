@@ -31,8 +31,8 @@
 
     .controls {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
-        align-items: flex-end;
         width: 100%;
 
         @media (max-width: $screen-xsmall) {
@@ -41,12 +41,21 @@
         }
     }
 
+    .pickers {
+        display: flex;
+        padding-bottom: 20px;
+
+        @media (max-width: $screen-xsmall) {
+            flex-direction: column;
+        }
+    }
+
     .buttons {
         flex: 1 0 0;
         display: flex;
         align-items: flex-end;
 
-        @media (max-width: $screen-midi) {
+        @media (max-width: $screen-xsmall) {
             flex-direction: column;
         }
     }
@@ -55,7 +64,7 @@
         margin: 0 5px;
         text-align: center;
 
-        @media (max-width: $screen-midi) {
+        @media (max-width: $screen-xsmall) {
             margin: 5px 0;
         }
     }
