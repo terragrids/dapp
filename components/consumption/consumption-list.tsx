@@ -54,7 +54,12 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
             setError(null)
 
             const response = await fetch(
-                endpoints.trackerUtilityConsumption(trackerId, nextPage, startDate, consumptionPeriod)
+                endpoints.trackerUtilityConsumption(
+                    trackerId,
+                    nextPage,
+                    startDate,
+                    ConsumptionPeriod.toShort(consumptionPeriod)
+                )
             )
 
             if (response.ok) {
