@@ -145,7 +145,7 @@ const ReadingList = ({
                             unit={reading.unit}
                             date={reading.created}
                             type={reading.type}
-                            frequency={reading.frequency}
+                            cycle={reading.cycle}
                             start={reading.start ? parseInt(reading.start) : undefined}
                             end={reading.end ? parseInt(reading.end) : undefined}
                             selected={reading.id === selectedReadingId}

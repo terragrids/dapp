@@ -12,7 +12,7 @@ type ReadingListItemProps = {
     unit: string
     date: string
     type: string
-    frequency: string
+    cycle: string
     start: number | undefined
     end: number | undefined
     selected: boolean
@@ -25,7 +25,7 @@ const ReadingListItem = ({
     unit,
     date,
     type,
-    frequency,
+    cycle,
     start,
     end,
     selected,
@@ -48,7 +48,7 @@ const ReadingListItem = ({
                         </div>
                         <div className={styles.type}>
                             {type === ReadingType.CONSUMPTION
-                                ? `${frequency || ''} ${strings.consumption}`
+                                ? `${cycle || ''} ${strings.consumption}`
                                 : strings.meterReading}
                         </div>
                     </div>
