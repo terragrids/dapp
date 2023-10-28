@@ -56,10 +56,10 @@ const paginatedTrackers = (placeId, nextPageKey, status, type, size = pageSize) 
     `api/places/${placeId}/trackers?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
     }${type ? `&type=${type}` : ''}`
-const paginatedReadings = (trackerId, nextPageKey, status, size = pageSize) =>
+const paginatedReadings = (trackerId, nextPageKey, cycle, status, size = pageSize) =>
     `api/trackers/${trackerId}/readings?sort=desc&pageSize=${size}${nextPageKey ? `&nextPageKey=${nextPageKey}` : ''}${
         status ? `&status=${status}` : ''
-    }`
+    }${cycle ? `&cycle=${cycle}` : ''}`
 const place = id => `api/places/${id}`
 const tracker = id => `api/trackers/${id}`
 const trackerUtility = id => `api/trackers/${id}/utility`

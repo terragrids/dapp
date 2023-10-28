@@ -7,6 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             await callProjectsApi(res, 'GET', `trackers/${req.query.id}/readings`, null, null, {
                 pageSize: req.query.pageSize,
                 nextPageKey: req.query.nextPageKey,
+                cycle: req.query.cycle,
                 status: req.query.status,
                 sort: req.query.sort
             })

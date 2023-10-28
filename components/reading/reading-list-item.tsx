@@ -5,6 +5,7 @@ import { strings } from 'strings/en.js'
 import { formatTimestamp } from 'utils/time-utils'
 import { ReadingType } from 'types/reading'
 import Interval from 'components/interval/interval'
+import Button, { ButtonSize, ButtonType } from 'components/button'
 
 type ReadingListItemProps = {
     id: string
@@ -16,7 +17,10 @@ type ReadingListItemProps = {
     start: number | undefined
     end: number | undefined
     selected: boolean
+    canDelete: boolean
+    isDeleting: boolean
     onClick: (id: string) => void
+    onDelete: (id: string) => void
 }
 
 const ReadingListItem = ({
@@ -29,6 +33,9 @@ const ReadingListItem = ({
     start,
     end,
     selected,
+    canDelete,
+    isDeleting,
+    onDelete,
     onClick
 }: ReadingListItemProps) => {
     const [showDetails, setShowDetails] = useState<boolean>()
@@ -36,6 +43,11 @@ const ReadingListItem = ({
     function handleClick() {
         onClick(id)
         setShowDetails(!showDetails)
+    }
+
+    function handleDelete(e: React.UIEvent<HTMLElement>) {
+        onDelete(id)
+        e.stopPropagation()
     }
 
     return (
@@ -69,6 +81,17 @@ const ReadingListItem = ({
                     <div className={styles.bottom}>
                         <div className={styles.label}>{strings.transactionId}</div>
                         <TransactionLink transactionId={id} />
+                    </div>
+                    <div className={styles.actions}>
+                        {canDelete && (
+                            <Button
+                                type={ButtonType.OUTLINE}
+                                size={ButtonSize.SMALL}
+                                label={strings.delete}
+                                loading={isDeleting}
+                                onClick={handleDelete}
+                            />
+                        )}
                     </div>
                 </>
             )}

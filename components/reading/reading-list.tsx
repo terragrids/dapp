@@ -9,8 +9,10 @@ import styles from './reading-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
 import ReadingListItem from './reading-list-item'
 import { Reading } from 'types/reading'
-import IconButton, { Icon, IconButtonType } from 'components/iconbutton'
+import { Icon } from 'components/iconbutton'
 import { Label } from 'components/label'
+import { DropDownSelector } from 'components/drop-down-selector'
+import { ConsumptionCycle } from 'types/consumption'
 
 type ReadingListProps = {
     trackerId: string
@@ -42,13 +44,14 @@ const ReadingList = ({
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [nextPageKey, setNextPageKey] = useState<string | null>(null)
     const [error, setError] = useState<string | null>()
+    const [readingCycle, setReadingCycle] = useState<string>(ConsumptionCycle.DAILY.key)
 
     const fetchReadings = useCallback(async () => {
         if (!user || isFetching) return
         setIsFetching(true)
         setError(null)
 
-        const response = await fetch(endpoints.paginatedReadings(trackerId, nextPageKey))
+        const response = await fetch(endpoints.paginatedReadings(trackerId, nextPageKey, readingCycle))
 
         if (response.ok) {
             const jsonResponse = await response.json()
@@ -60,7 +63,7 @@ const ReadingList = ({
         }
 
         setIsFetching(false)
-    }, [isFetching, nextPageKey, readings, trackerId, user])
+    }, [isFetching, nextPageKey, readingCycle, readings, trackerId, user])
 
     const fetchMoreReadings = useCallback(async () => {
         const hasMore = !!nextPageKey
@@ -74,30 +77,34 @@ const ReadingList = ({
     }, [error, fetchReadings, readings])
 
     const prevScrollCounter = usePrevious(bottomScrollCounter)
-
     useEffect(() => {
         if (prevScrollCounter && bottomScrollCounter > prevScrollCounter) fetchMoreReadings()
     }, [bottomScrollCounter, fetchMoreReadings, prevScrollCounter])
+
+    const prevReadingCycle = usePrevious(readingCycle)
+    useEffect(() => {
+        if (prevReadingCycle != readingCycle) setReadings(null)
+    }, [prevReadingCycle, readingCycle])
 
     function selectReading(id: string) {
         setSelectedReadingId(id)
         onSelect(id)
     }
 
-    async function deleteReading() {
+    async function deleteReading(id: string) {
         if (!readings || !selectedReadingId) return
 
         setIsDeleting(true)
 
-        const response = await fetch(endpoints.reading(selectedReadingId), {
+        const response = await fetch(endpoints.reading(id), {
             method: 'DELETE',
             referrerPolicy: 'no-referrer'
         })
 
         if (response.ok) {
-            const deleted = readings.find(reading => reading.id != selectedReadingId)
+            const deleted = readings.find(reading => reading.id != id)
             if (deleted) {
-                setReadings(readings.filter(reading => reading.id != selectedReadingId))
+                setReadings(readings.filter(reading => reading.id != id))
                 onDelete(deleted.type)
             }
         } else {
@@ -105,6 +112,10 @@ const ReadingList = ({
         }
 
         setIsDeleting(false)
+    }
+
+    function onReadingCycleChange(cycle: string) {
+        setReadingCycle(cycle)
     }
 
     return (
@@ -119,16 +130,12 @@ const ReadingList = ({
                         <div className={styles.subLabel}>{`(${strings.connectedToUtilityApi})`}</div>
                     )}
                 </div>
-                {canDelete && selectedReadingId && !isDeleting && (
-                    <IconButton
-                        icon={Icon.DELETE}
-                        tooltip={strings.delete}
-                        type={IconButtonType.OUTLINE}
-                        disabled={isDeleting}
-                        onClick={deleteReading}
-                    />
-                )}
-                {canDelete && selectedReadingId && isDeleting && <LoadingSpinner small={true} />}
+                <DropDownSelector
+                    label={strings.consumptionCycle}
+                    options={ConsumptionCycle.list().map(period => ({ key: period.key, value: period.name }))}
+                    defaultValue={ConsumptionCycle.DAILY.key}
+                    onSelected={onReadingCycleChange}
+                />
             </div>
             {!readings && !error && (
                 <div className={styles.loading}>
@@ -149,7 +156,10 @@ const ReadingList = ({
                             start={reading.start ? parseInt(reading.start) : undefined}
                             end={reading.end ? parseInt(reading.end) : undefined}
                             selected={reading.id === selectedReadingId}
+                            canDelete={canDelete}
+                            isDeleting={isDeleting}
                             onClick={() => selectReading(reading.id)}
+                            onDelete={deleteReading}
                         />
                     ))}
                     {isFetching && (

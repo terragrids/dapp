@@ -6,15 +6,15 @@ export type Consumption = {
     imported: boolean
 }
 
-export class ConsumptionPeriod {
-    static readonly DAILY = new ConsumptionPeriod('daily', strings.daily)
-    static readonly WEEKLY = new ConsumptionPeriod('weekly', strings.weekly)
-    static readonly MONTHLY = new ConsumptionPeriod('monthly', strings.monthly)
+export class ConsumptionCycle {
+    static readonly DAILY = new ConsumptionCycle('daily', strings.daily)
+    static readonly WEEKLY = new ConsumptionCycle('weekly', strings.weekly)
+    static readonly MONTHLY = new ConsumptionCycle('monthly', strings.monthly)
 
     private constructor(public readonly key: string, public readonly name: string) {}
 
     static list() {
-        return [ConsumptionPeriod.DAILY, ConsumptionPeriod.WEEKLY, ConsumptionPeriod.MONTHLY]
+        return [ConsumptionCycle.DAILY, ConsumptionCycle.WEEKLY, ConsumptionCycle.MONTHLY]
     }
 
     static toShort(period: string) {

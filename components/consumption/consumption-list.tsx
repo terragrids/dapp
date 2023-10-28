@@ -5,7 +5,7 @@ import { endpoints } from 'utils/api-config.js'
 import Button, { ButtonSize, ButtonType } from 'components/button'
 import styles from './consumption-list.module.scss'
 import usePrevious from 'hooks/use-previous.js'
-import { Consumption, ConsumptionPeriod } from 'types/consumption'
+import { Consumption, ConsumptionCycle } from 'types/consumption'
 import ConsumptionListItem from './consumption-list-item'
 import DatePicker from 'components/date-picker/date-picker'
 import { getStartOfDay, getTimeDaysAgo, getUTCFromLocal } from 'utils/time-utils'
@@ -43,7 +43,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
     })
     const [selectStartDate, setSelectStartDate] = useState<number | null>()
     const [selectEndDate, setSelectEndDate] = useState<number | null>()
-    const [consumptionPeriod, setConsumptionPeriod] = useState<string>(ConsumptionPeriod.DAILY.key)
+    const [consumptionPeriod, setConsumptionPeriod] = useState<string>(ConsumptionCycle.DAILY.key)
     const { fetchOrLogin } = useFetchOrLogin()
 
     const fetchConsumptions = useCallback(
@@ -58,7 +58,7 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
                     trackerId,
                     nextPage,
                     startDate,
-                    ConsumptionPeriod.toShort(consumptionPeriod)
+                    ConsumptionCycle.toShort(consumptionPeriod)
                 )
             )
 
@@ -174,9 +174,9 @@ const ConsumptionList = ({ trackerId, unit, bottomScrollCounter, onImported }: C
                             onChange={updateStartDate}
                         />
                         <DropDownSelector
-                            label={strings.consumptionPeriod}
-                            options={ConsumptionPeriod.list().map(period => ({ key: period.key, value: period.name }))}
-                            defaultValue={ConsumptionPeriod.DAILY.key}
+                            label={strings.consumptionCycle}
+                            options={ConsumptionCycle.list().map(period => ({ key: period.key, value: period.name }))}
+                            defaultValue={ConsumptionCycle.DAILY.key}
                             onSelected={onConsumptionPeriodChange}
                         />
                     </div>

@@ -20,7 +20,7 @@ type Props = {
     checked?: boolean
     disabled?: boolean
     className?: string
-    onClick?: () => void
+    onClick?: (e: React.UIEvent<HTMLElement>) => void
 }
 
 export default function Button({
