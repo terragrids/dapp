@@ -2,12 +2,13 @@ import styles from './interval.module.scss'
 
 type IntervalProps = {
     start: number
-    end: number
+    end?: number
+    withTime?: boolean
 }
 
-const Interval = ({ start, end }: IntervalProps) => {
+const Interval = ({ start, end, withTime }: IntervalProps) => {
     const dateFormat = {
-        timeStyle: 'short',
+        ...withTime && {timeStyle: 'short'},
         dateStyle: 'short',
         timeZone: 'UTC'
     } as Intl.DateTimeFormatOptions
@@ -15,9 +16,13 @@ const Interval = ({ start, end }: IntervalProps) => {
     return (
         <div className={styles.interval}>
             <div>{new Date(start).toLocaleString([], dateFormat)}</div>
-            <div className={styles.rightArrow}>{'\u2192'}</div>
-            <div className={styles.downArrow}>{'\u2193'}</div>
-            <div>{new Date(end).toLocaleString([], dateFormat)}</div>
+            {end && (
+                <>
+                    <div className={styles.rightArrow}>{'\u2192'}</div>
+                    <div className={styles.downArrow}>{'\u2193'}</div>
+                    <div>{new Date(end).toLocaleString([], dateFormat)}</div>
+                </>
+            )}
         </div>
     )
 }

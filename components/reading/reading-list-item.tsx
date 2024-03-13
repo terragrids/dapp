@@ -66,7 +66,7 @@ const ReadingListItem = ({
                     </div>
                 </div>
                 <div className={styles.rightContainer}>
-                    {type === ReadingType.CONSUMPTION && start && end && <Interval start={start} end={end} />}
+                    {type === ReadingType.CONSUMPTION && start && <Interval start={start} />}
                     {(type !== ReadingType.CONSUMPTION || !start || !end) && (
                         <div className={styles.date}>{formatTimestamp(parseInt(date))}</div>
                     )}
